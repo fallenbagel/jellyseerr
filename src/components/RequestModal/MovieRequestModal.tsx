@@ -6,6 +6,7 @@ import QuotaDisplay from '@app/components/RequestModal/QuotaDisplay';
 import { useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
+import { ANIME_KEYWORD_ID } from '@server/api/themoviedb/constants';
 import { MediaStatus } from '@server/constants/media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
 import type { NonFunctionProperties } from '@server/interfaces/api/common';
@@ -69,6 +70,10 @@ const MovieRequestModal = ({
       : null
   );
 
+  const isAnime = data?.keywords.some(
+    (keyword) => keyword.id === ANIME_KEYWORD_ID
+  );
+
   useEffect(() => {
     if (onUpdating) {
       onUpdating(isUpdating);
@@ -98,6 +103,7 @@ const MovieRequestModal = ({
           mediaId: data?.id,
           mediaType: 'movie',
           is4k,
+          isAnime,
           ...overrideParams,
         }),
       });
@@ -144,6 +150,7 @@ const MovieRequestModal = ({
     data?.id,
     data?.title,
     is4k,
+    isAnime,
     onComplete,
     addToast,
     intl,
@@ -378,6 +385,7 @@ const MovieRequestModal = ({
         <AdvancedRequester
           type="movie"
           is4k={is4k}
+          isAnime={isAnime}
           onChange={(overrides) => {
             setRequestOverrides(overrides);
           }}

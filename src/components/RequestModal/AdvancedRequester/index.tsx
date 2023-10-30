@@ -154,7 +154,8 @@ const AdvancedRequester = ({
 
   useEffect(() => {
     let defaultServer = data?.find(
-      (server) => server.isDefault && is4k === server.is4k
+      (server) =>
+        server.isDefault && is4k === server.is4k && isAnime === server.isAnime
     );
 
     if (!defaultServer && (data ?? []).length > 0) {
@@ -295,7 +296,9 @@ const AdvancedRequester = ({
   if (
     (!data ||
       selectedServer === null ||
-      (data.filter((server) => server.is4k === is4k).length < 2 &&
+      (data.filter(
+        (server) => server.is4k === is4k && server.isAnime === isAnime
+      ).length < 2 &&
         (!serverData ||
           (serverData.profiles.length < 2 &&
             serverData.rootFolders.length < 2 &&
@@ -314,7 +317,9 @@ const AdvancedRequester = ({
       <div className="rounded-md">
         {!!data && selectedServer !== null && (
           <div className="flex flex-col md:flex-row">
-            {data.filter((server) => server.is4k === is4k).length > 1 && (
+            {data.filter(
+              (server) => server.is4k === is4k && server.isAnime === isAnime
+            ).length > 1 && (
               <div className="mb-3 w-full flex-shrink-0 flex-grow last:pr-0 md:w-1/4 md:pr-4">
                 <label htmlFor="server">
                   {intl.formatMessage(messages.destinationserver)}
@@ -328,7 +333,10 @@ const AdvancedRequester = ({
                   className="border-gray-700 bg-gray-800"
                 >
                   {data
-                    .filter((server) => server.is4k === is4k)
+                    .filter(
+                      (server) =>
+                        server.is4k === is4k && server.isAnime === isAnime
+                    )
                     .map((server) => (
                       <option
                         key={`server-list-${server.id}`}

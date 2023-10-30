@@ -28,7 +28,10 @@ const useRequestOverride = (request: MediaRequest): OverrideStatus => {
   }
 
   const defaultServer = allServers.find(
-    (server) => server.is4k === request.is4k && server.isDefault
+    (server) =>
+      server.is4k === request.is4k &&
+      server.isAnime === request.isAnime &&
+      server.isDefault
   );
 
   const activeServer = allServers.find(

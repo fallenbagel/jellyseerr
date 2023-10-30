@@ -32,10 +32,8 @@ const messages = defineMessages('components.Settings', {
   default: 'Default',
   default4k: 'Default 4K',
   defaultAnime: 'Default Anime',
-  default4kAnime: 'Default 4K Anime',
   is4k: '4K',
   isAnime: 'Anime',
-  is4kAnime: '4K Anime',
   address: 'Address',
   activeProfile: 'Active Profile',
   addradarr: 'Add Radarr Server',
@@ -61,6 +59,7 @@ interface ServerInstanceProps {
   name: string;
   isDefault?: boolean;
   is4k?: boolean;
+  isAnime?: boolean;
   hostname: string;
   port: number;
   isSSL?: boolean;
@@ -104,6 +103,7 @@ const ServerInstance = ({
   port,
   profileName,
   is4k = false,
+  isAnime = false,
   isDefault = false,
   isSSL = false,
   isSonarr = false,
@@ -132,7 +132,7 @@ const ServerInstance = ({
                 {name}
               </a>
             </h3>
-            {isDefault && !is4k && (
+            {isDefault && !is4k && !isAnime && (
               <Badge>{intl.formatMessage(messages.default)}</Badge>
             )}
             {isDefault && is4k && isAnime && (
@@ -141,20 +141,15 @@ const ServerInstance = ({
             {isDefault && is4k && !isAnime && (
               <Badge>{intl.formatMessage(messages.default4k)}</Badge>
             )}
-            {isDefault && !is4k && isAnime && (
+            {isDefault && isAnime && (
               <Badge>{intl.formatMessage(messages.defaultAnime)}</Badge>
             )}
-            {!isDefault && is4k && isAnime && (
-              <Badge badgeType="warning">
-                {intl.formatMessage(messages.is4kAnime)}
-              </Badge>
-            )}
-            {!isDefault && is4k && !isAnime && (
+            {!isDefault && is4k && (
               <Badge badgeType="warning">
                 {intl.formatMessage(messages.is4k)}
               </Badge>
             )}
-            {!isDefault && !is4k && isAnime && (
+            {!isDefault && isAnime && (
               <Badge badgeType="warning">
                 {intl.formatMessage(messages.isAnime)}
               </Badge>
@@ -372,8 +367,8 @@ const SettingsServices = () => {
                   })}
                 />
               ) : !radarrData.some(
-                (radarr) => radarr.isDefault && !radarr.is4k
-              ) ? (
+                  (radarr) => radarr.isDefault && !radarr.is4k
+                ) ? (
                 <Alert
                   title={intl.formatMessage(messages.noDefaultNon4kServer, {
                     serverType: 'Radarr',
@@ -385,8 +380,8 @@ const SettingsServices = () => {
                   })}
                 />
               ) : !radarrData.some(
-                (radarr) => radarr.isDefault && !radarr.isAnime
-              ) ? (
+                  (radarr) => radarr.isDefault && !radarr.isAnime
+                ) ? (
                 <Alert
                   title={intl.formatMessage(messages.noDefaultNonAnimeServer, {
                     serverType: 'Radarr',
@@ -474,8 +469,8 @@ const SettingsServices = () => {
                   })}
                 />
               ) : !sonarrData.some(
-                (sonarr) => sonarr.isDefault && !sonarr.is4k
-              ) ? (
+                  (sonarr) => sonarr.isDefault && !sonarr.is4k
+                ) ? (
                 <Alert
                   title={intl.formatMessage(messages.noDefaultNon4kServer, {
                     serverType: 'Sonarr',
@@ -487,8 +482,8 @@ const SettingsServices = () => {
                   })}
                 />
               ) : !sonarrData.some(
-                (sonarr) => sonarr.isDefault && !sonarr.isAnime
-              ) ? (
+                  (sonarr) => sonarr.isDefault && !sonarr.isAnime
+                ) ? (
                 <Alert
                   title={intl.formatMessage(messages.noDefaultNonAnimeServer, {
                     serverType: 'Sonarr',

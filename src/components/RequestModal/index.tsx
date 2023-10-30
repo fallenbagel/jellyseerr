@@ -11,6 +11,7 @@ interface RequestModalProps {
   type: 'movie' | 'tv' | 'collection';
   tmdbId: number;
   is4k?: boolean;
+  isAnime?: boolean;
   editRequest?: NonFunctionProperties<MediaRequest>;
   onComplete?: (newStatus: MediaStatus) => void;
   onCancel?: () => void;
