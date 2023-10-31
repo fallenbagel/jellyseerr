@@ -20,8 +20,12 @@ type OptionType = {
 const messages = defineMessages('components.Settings.RadarrModal', {
   createradarr: 'Add New Radarr Server',
   create4kradarr: 'Add New 4K Radarr Server',
+  createAnimeradarr: 'Add New Anime Radarr Server',
+  create4kAnimeradarr: 'Add New 4K Anime Radarr Server',
   editradarr: 'Edit Radarr Server',
   edit4kradarr: 'Edit 4K Radarr Server',
+  editAnimeradarr: 'Edit Anime Radarr Server',
+  edit4kAnimeradarr: 'Edit 4K Anime Radarr Server',
   validationNameRequired: 'You must provide a server name',
   validationHostnameRequired: 'You must provide a valid hostname or IP address',
   validationPortRequired: 'You must provide a valid port number',
@@ -35,6 +39,8 @@ const messages = defineMessages('components.Settings.RadarrModal', {
   add: 'Add Server',
   defaultserver: 'Default Server',
   default4kserver: 'Default 4K Server',
+  defaultAnimeserver: 'Default Anime Server',
+  default4kAnimeserver: 'Default 4K Anime Server',
   servername: 'Server Name',
   hostname: 'Hostname or IP Address',
   port: 'Port',
@@ -306,8 +312,8 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
                 isSubmitting
                   ? intl.formatMessage(globalMessages.saving)
                   : radarr
-                  ? intl.formatMessage(globalMessages.save)
-                  : intl.formatMessage(messages.add)
+                    ? intl.formatMessage(globalMessages.save)
+                    : intl.formatMessage(messages.add)
               }
               secondaryButtonType="warning"
               secondaryText={
@@ -341,22 +347,36 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
               title={
                 !radarr
                   ? intl.formatMessage(
-                      values.is4k
-                        ? messages.create4kradarr
-                        : messages.createradarr
-                    )
+                    values.isAnime && values.is4k
+                      ? messages.create4kAnimeradarr
+                      : values.isAnime
+                        ? messages.createAnimeradarr
+                        : values.is4k
+                          ? messages.create4kradarr
+                          : messages.createradarr
+                  )
                   : intl.formatMessage(
-                      values.is4k ? messages.edit4kradarr : messages.editradarr
-                    )
+                    values.isAnime && values.is4k
+                      ? messages.edit4kAnimeradarr
+                      : values.isAnime
+                        ? messages.editAnimeradarr
+                        : values.is4k
+                          ? messages.edit4kradarr
+                          : messages.editradarr
+                  )
               }
             >
               <div className="mb-6">
                 <div className="form-row">
                   <label htmlFor="isDefault" className="checkbox-label">
                     {intl.formatMessage(
-                      values.is4k
-                        ? messages.default4kserver
-                        : messages.defaultserver
+                      values.isAnime && values.is4k
+                        ? messages.default4kAnimeserver
+                        : values.isAnime
+                          ? messages.defaultAnimeserver
+                          : values.is4k
+                            ? messages.default4kserver
+                            : messages.defaultserver
                     )}
                   </label>
                   <div className="form-input-area">
@@ -534,10 +554,10 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
                           {isTesting
                             ? intl.formatMessage(messages.loadingprofiles)
                             : !isValidated
-                            ? intl.formatMessage(
+                              ? intl.formatMessage(
                                 messages.testFirstQualityProfiles
                               )
-                            : intl.formatMessage(messages.selectQualityProfile)}
+                              : intl.formatMessage(messages.selectQualityProfile)}
                         </option>
                         {testResponse.profiles.length > 0 &&
                           testResponse.profiles.map((profile) => (
@@ -574,8 +594,8 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
                           {isTesting
                             ? intl.formatMessage(messages.loadingrootfolders)
                             : !isValidated
-                            ? intl.formatMessage(messages.testFirstRootFolders)
-                            : intl.formatMessage(messages.selectRootFolder)}
+                              ? intl.formatMessage(messages.testFirstRootFolders)
+                              : intl.formatMessage(messages.selectRootFolder)}
                         </option>
                         {testResponse.rootFolders.length > 0 &&
                           testResponse.rootFolders.map((folder) => (
@@ -635,9 +655,9 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
                       options={
                         isValidated
                           ? testResponse.tags.map((tag) => ({
-                              label: tag.label,
-                              value: tag.id,
-                            }))
+                            label: tag.label,
+                            value: tag.id,
+                          }))
                           : []
                       }
                       isMulti
@@ -646,8 +666,8 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
                         !isValidated
                           ? intl.formatMessage(messages.testFirstTags)
                           : isTesting
-                          ? intl.formatMessage(messages.loadingTags)
-                          : intl.formatMessage(messages.selecttags)
+                            ? intl.formatMessage(messages.loadingTags)
+                            : intl.formatMessage(messages.selecttags)
                       }
                       className="react-select-container"
                       classNamePrefix="react-select"
