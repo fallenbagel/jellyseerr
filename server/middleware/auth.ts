@@ -21,6 +21,19 @@ export const checkUser: Middleware = async (req, _res, next) => {
     }
 
     user = await userRepository.findOne({ where: { id: userId } });
+  } else if (req.header('x-forwarded-user')) {
+    const userRepository = getRepository(User);
+    user = await userRepository.findOne({
+      where: { email: req.header('x-forwarded-user') },
+    });
+
+    if (user) {
+      req.user = user;
+    }
+
+    req.locale = user?.settings?.locale
+      ? user.settings.locale
+      : settings.main.locale;
   } else if (req.session?.userId) {
     const userRepository = getRepository(User);
 
@@ -44,7 +57,18 @@ export const isAuthenticated = (
   permissions?: Permission | Permission[],
   options?: PermissionCheckOptions
 ): Middleware => {
-  const authMiddleware: Middleware = (req, res, next) => {
+  const authMiddleware: Middleware = async (req, res, next) => {
+    if (req.header('x-forwarded-user')) {
+      const userRepository = getRepository(User);
+      const user = await userRepository.findOne({
+        where: { email: req.header('x-forwarded-user') },
+      });
+
+      if (user) {
+        req.user = user;
+      }
+    }
+
     if (!req.user || !req.user.hasPermission(permissions ?? 0, options)) {
       res.status(403).json({
         status: 403,
