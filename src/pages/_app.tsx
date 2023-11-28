@@ -254,8 +254,7 @@ CoreApp.getInitialProps = async (initialProps) => {
   if (ctx.res) {
     // Check if app is initialized and redirect if necessary
     const response = await axios.get<PublicSettingsResponse>(
-      `http://${process.env.HOST || 'localhost'}:${
-        process.env.PORT || 5055
+      `http://${process.env.HOST || 'localhost'}:${process.env.PORT || 5055
       }/api/v1/settings/public`
     );
 
@@ -274,14 +273,10 @@ CoreApp.getInitialProps = async (initialProps) => {
       try {
         // Attempt to get the user by running a request to the local api
         const response = await axios.get<User>(
-          `http://${process.env.HOST || 'localhost'}:${
-            process.env.PORT || 5055
+          `http://${process.env.HOST || 'localhost'}:${process.env.PORT || 5055
           }/api/v1/auth/me`,
           {
-            headers:
-              ctx.req && ctx.req.headers.cookie
-                ? { cookie: ctx.req.headers.cookie }
-                : undefined,
+            headers: getRequestHeaders(ctx),
           }
         );
         user = response.data;
