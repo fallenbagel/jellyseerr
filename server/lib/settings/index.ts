@@ -135,6 +135,7 @@ export interface MainSettings {
   partialRequestsEnabled: boolean;
   enableSpecialEpisodes: boolean;
   locale: string;
+  youtubeUrl: string;
 }
 
 export interface NetworkSettings {
@@ -172,6 +173,7 @@ interface FullPublicSettings extends PublicSettings {
   emailEnabled: boolean;
   userEmailRequired: boolean;
   newPlexLogin: boolean;
+  youtubeUrl: string;
 }
 
 export interface NotificationAgentConfig {
@@ -375,6 +377,7 @@ class Settings {
         partialRequestsEnabled: true,
         enableSpecialEpisodes: false,
         locale: 'en',
+        youtubeUrl: '',
       },
       plex: {
         name: '',
@@ -646,6 +649,7 @@ class Settings {
       userEmailRequired:
         this.data.notifications.agents.email.options.userEmailRequired,
       newPlexLogin: this.data.main.newPlexLogin,
+      youtubeUrl: this.data.main.youtubeUrl,
     };
   }
 
