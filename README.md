@@ -40,11 +40,11 @@ With more features on the way! Check out our [issue tracker](https://github.com/
 
 #### Pre-requisite (Important)
 
-_*On Jellyfin/Emby, ensure the `settings > Home > Automatically group content from the following folders into views such as 'Movies', 'Music' and 'TV'` is turned off*_
+_*On Jellyfin/Emby, ensure the `Settings > Home > Automatically group content from the following folders into views such as 'Movies', 'Music' and 'TV'` is turned off*_
 
 ### Launching Jellyseerr using Docker (Recommended)
 
-Check out our dockerhub for instructions on how to install and run Jellyseerr:
+Check out our docker hub for instructions on how to install and run Jellyseerr:
 https://hub.docker.com/r/fallenbagel/jellyseerr
 
 ### Building from source (ADVANCED):
@@ -65,16 +65,16 @@ yarn run build
 yarn start
 ```
 
-(you can use task scheduler to run a bat script with `@echo off` and `yarn start` to run jellyseerr in the background)
+(You can use task scheduler to run a bat script with `@echo off` and `yarn start` to run jellyseerr in the background)
 
-_to set env variables such as `JELLYFIN_TYPE=emby` create a file called `.env` in the root directory of jellyseerr_
+_To set env variables such as `JELLYFIN_TYPE=emby` create a file called `.env` in the root directory of jellyseerr_
 
 #### Linux
 
 **Pre-requisites:**
 
 - Nodejs [v18](https://nodejs.org/en/download/package-manager)
-- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install) (on debian based distros, the package manager provided `yarn` is different and is a package called cmdlet. You can remove that using `apt-remove cmdlet` then install yarn using `npm install -g yarn`)
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install) (on Debian based distros, the package manager provided `yarn` is different and is a package called cmdlet. You can remove that using `apt-remove cmdlet` then install yarn using `npm install -g yarn`)
 - Git
 
 **Steps:**
@@ -85,7 +85,7 @@ _to set env variables such as `JELLYFIN_TYPE=emby` create a file called `.env` i
 cd /opt
 ```
 
-2. Then clone the follow commands to clone and checkout to the stable version
+2. Then execute the following commands to clone and checkout to the stable version
 
 ```bash
 git clone https://github.com/Fallenbagel/jellyseerr.git && cd jellyseerr
@@ -104,9 +104,9 @@ yarn run build
 5. If you want to run jellyseerr as a _Systemd-service:_
 
 - assuming jellyseerr was cloned to `/opt/`
-- first create the environmentfile at `/etc/jellyseerr/jellyseerr.conf`
+- first create the environment file at `/etc/jellyseerr/jellyseerr.conf`
 
-Environmentfile:
+Environment file:
 
 ```
 # Jellyseerr's default port is 5055, if you want to use both, change this.
