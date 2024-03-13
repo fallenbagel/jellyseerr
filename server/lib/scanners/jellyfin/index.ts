@@ -461,8 +461,9 @@ class JellyfinScanner {
               tmdbId: tvShow.id,
               tvdbId: tvShow.external_ids.tvdb_id,
               mediaAddedAt: new Date(metadata.DateCreated ?? ''),
-              jellyfinMediaId: Id,
-              jellyfinMediaId4k: Id,
+              jellyfinMediaId: isAllStandardSeasons ? Id : undefined,
+              jellyfinMediaId4k:
+                isAll4kSeasons && this.enable4kShow ? Id : undefined,
               status: isAllStandardSeasons
                 ? MediaStatus.AVAILABLE
                 : newSeasons.some(
