@@ -345,11 +345,11 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
         user.username = '';
       }
 
-      // If JELLYFIN_TYPE is set to 'emby' then set mediaServerType to EMBY
-      if (process.env.JELLYFIN_TYPE === 'emby') {
-        settings.main.mediaServerType = MediaServerType.EMBY;
-        settings.save();
-      }
+      // TODO: If JELLYFIN_TYPE is set to 'emby' then set mediaServerType to EMBY
+      // if (process.env.JELLYFIN_TYPE === 'emby') {
+      //   settings.main.mediaServerType = MediaServerType.EMBY;
+      //   settings.save();
+      // }
 
       await userRepository.save(user);
     } else if (!settings.main.newPlexLogin) {
