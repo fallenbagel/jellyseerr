@@ -9,6 +9,9 @@ export interface JellyfinUserResponse {
   ServerId: string;
   ServerName: string;
   Id: string;
+  Policy: {
+    IsAdministrator: boolean;
+  };
   PrimaryImageTag?: string;
 }
 

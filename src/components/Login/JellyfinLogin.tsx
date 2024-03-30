@@ -24,6 +24,7 @@ const messages = defineMessages({
   validationusernamerequired: 'Username required',
   validationpasswordrequired: 'Password required',
   loginerror: 'Something went wrong while trying to sign in.',
+  adminerror: 'You must use an admin account to sign in.',
   credentialerror: 'The username or password is incorrect.',
   signingin: 'Signing in…',
   signin: 'Sign In',
@@ -94,6 +95,8 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
               intl.formatMessage(
                 e.message == 'Request failed with status code 401'
                   ? messages.credentialerror
+                  : e.message == 'Request failed with status code 403'
+                  ? messages.adminerror
                   : messages.loginerror
               ),
               {

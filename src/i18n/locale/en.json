@@ -220,6 +220,7 @@
   "components.Layout.VersionStatus.streamdevelop": "Overseerr Develop",
   "components.Layout.VersionStatus.streamstable": "Overseerr Stable",
   "components.Login.credentialerror": "The username or password is incorrect.",
+  "components.Login.adminerror": "You must use an admin account to sign in.",
   "components.Login.description": "Since this is your first time logging into {applicationName}, you are required to add a valid email address.",
   "components.Login.email": "Email Address",
   "components.Login.emailtooltip": "Address does not need to be associated with your {mediaServerName} instance.",
