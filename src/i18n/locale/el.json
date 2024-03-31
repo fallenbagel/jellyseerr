@@ -634,7 +634,7 @@
   "components.TvDetails.anime": "Anime",
   "components.TvDetails.TvCrew.fullseriescrew": "Όλο το Πλήρωμα της Σειράς",
   "components.TvDetails.TvCast.fullseriescast": "Όλοι οι Ηθοποιοί της Σειράς",
-  "components.StatusChacker.reloadJellyseerr": "Επαναφόρτωση",
+  "components.StatusChacker.reloadOverseerr": "Επαναφόρτωση",
   "components.StatusChacker.newversionavailable": "Ενημέρωση εφαρμογής",
   "components.StatusChacker.newversionDescription": "Το Jellyseerr έχει ενημερωθεί! Κάνε κλικ στο παρακάτω κουμπί για να φορτώσει ξανά η σελίδα.",
   "components.StatusBadge.status4k": "4K {status}",

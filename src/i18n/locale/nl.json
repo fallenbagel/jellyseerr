@@ -223,7 +223,7 @@
   "components.TvDetails.network": "{networkCount, plural, one {Netwerk} other {Netwerken}}",
   "components.TvDetails.firstAirDate": "Datum eerste uitzending",
   "components.TvDetails.anime": "Anime",
-  "components.StatusChacker.reloadJellyseerr": "Herladen",
+  "components.StatusChacker.reloadOverseerr": "Herladen",
   "components.StatusChacker.newversionavailable": "Toepassingsupdate",
   "components.StatusChacker.newversionDescription": "Jellyseerr is geüpdatet! Klik op de onderstaande knop om de pagina opnieuw te laden.",
   "components.Settings.toastSettingsSuccess": "Instellingen succesvol opgeslagen!",

@@ -1152,7 +1152,7 @@
   "components.Settings.SettingsMain.applicationurl": "URL applicazione",
   "components.Settings.SettingsMain.validationApplicationTitle": "Devi fornire un titolo dell'applicazione",
   "components.Settings.SettingsMain.validationApplicationUrl": "Devi fornire un URL valido",
-  "components.Settings.restartrequiredTooltip": "Overseerr deve essere riavviato per rendere effettive le modifiche",
+  "components.Settings.restartrequiredTooltip": "Jellyseerr deve essere riavviato per rendere effettive le modifiche",
   "components.TitleCard.tvdbid": "TheTVDB ID",
   "components.UserProfile.emptywatchlist": "I media aggiunti alla tua <PlexWatchlistSupportLink>Plex Watchlist</PlexWatchlistSupportLink> appariranno qui.",
   "components.TvDetails.status4k": "4K {status}",

@@ -889,7 +889,7 @@
   "components.StatusBadge.status4k": "4K {status}",
   "components.StatusChacker.newversionDescription": "Jellyseerr wurde aktualisiert! Bitte klicke auf die Schaltfläche unten, um die Seite neu zu laden.",
   "components.StatusChacker.newversionavailable": "Anwendungsaktualisierung",
-  "components.StatusChacker.reloadJellyseerr": "Jellyseerr neu laden",
+  "components.StatusChacker.reloadOverseerr": "Jellyseerr neu laden",
   "components.StatusChecker.appUpdated": "{applicationTitle} aktualisiert",
   "components.StatusChecker.appUpdatedDescription": "Klicke bitte auf die Schaltfläche unten, um die Anwendung neu zu laden.",
   "components.StatusChecker.reloadApp": "{applicationTitle} neu laden",

@@ -724,7 +724,7 @@
   "components.StatusBadge.status4k": "4K {status}",
   "components.Setup.tip": "Tip",
   "components.Setup.welcome": "Velkommen til Jellyseerr",
-  "components.StatusChacker.reloadJellyseerr": "Genindlæs",
+  "components.StatusChacker.reloadOverseerr": "Genindlæs",
   "components.TvDetails.anime": "Anime",
   "components.TvDetails.cast": "Roller",
   "components.TvDetails.episodeRuntimeMinutes": "{runtime} minutter",

@@ -332,7 +332,7 @@
   "components.TvDetails.anime": "Anime",
   "components.TvDetails.TvCrew.fullseriescrew": "Equipa Técnica Completa da Série",
   "components.TvDetails.TvCast.fullseriescast": "Elenco Completo da Série",
-  "components.StatusChacker.reloadJellyseerr": "Recarregar",
+  "components.StatusChacker.reloadOverseerr": "Recarregar",
   "components.StatusChacker.newversionavailable": "Atualização de Aplicação",
   "components.StatusChacker.newversionDescription": "Jellyseerr foi atualizado! Clique no botão abaixo para recarregar a página.",
   "components.StatusBadge.status4k": "4K {status}",
