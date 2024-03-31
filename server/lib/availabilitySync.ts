@@ -548,7 +548,7 @@ class AvailabilitySync {
         media[is4k ? 'ratingKey4k' : 'ratingKey'] =
           mediaStatus === MediaStatus.PROCESSING
             ? media[is4k ? 'ratingKey4k' : 'ratingKey']
-            : undefined;
+            : null;
       } else if (
         mediaServerType === MediaServerType.JELLYFIN ||
         mediaServerType === MediaServerType.EMBY
@@ -556,7 +556,7 @@ class AvailabilitySync {
         media[is4k ? 'jellyfinMediaId4k' : 'jellyfinMediaId'] =
           mediaStatus === MediaStatus.PROCESSING
             ? media[is4k ? 'jellyfinMediaId4k' : 'jellyfinMediaId']
-            : undefined;
+            : null;
       }
       logger.info(
         `The ${is4k ? '4K' : 'non-4K'} ${

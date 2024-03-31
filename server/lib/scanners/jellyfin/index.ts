@@ -168,9 +168,9 @@ class JellyfinScanner {
           newMedia.jellyfinMediaId =
             hasOtherResolution || (!this.enable4kMovie && has4k)
               ? metadata.Id
-              : undefined;
+              : null;
           newMedia.jellyfinMediaId4k =
-            has4k && this.enable4kMovie ? metadata.Id : undefined;
+            has4k && this.enable4kMovie ? metadata.Id : null;
           await mediaRepository.save(newMedia);
           this.log(`Saved ${metadata.Name}`);
         }
@@ -461,9 +461,9 @@ class JellyfinScanner {
               tmdbId: tvShow.id,
               tvdbId: tvShow.external_ids.tvdb_id,
               mediaAddedAt: new Date(metadata.DateCreated ?? ''),
-              jellyfinMediaId: isAllStandardSeasons ? Id : undefined,
+              jellyfinMediaId: isAllStandardSeasons ? Id : null,
               jellyfinMediaId4k:
-                isAll4kSeasons && this.enable4kShow ? Id : undefined,
+                isAll4kSeasons && this.enable4kShow ? Id : null,
               status: isAllStandardSeasons
                 ? MediaStatus.AVAILABLE
                 : newSeasons.some(

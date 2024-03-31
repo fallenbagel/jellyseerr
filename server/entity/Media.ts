@@ -151,11 +151,11 @@ class Media {
   @Column({ nullable: true, type: 'varchar' })
   public ratingKey4k?: string | null;
 
-  @Column({ nullable: true })
-  public jellyfinMediaId?: string;
+  @Column({ nullable: true, type: 'varchar' })
+  public jellyfinMediaId?: string | null;
 
-  @Column({ nullable: true })
-  public jellyfinMediaId4k?: string;
+  @Column({ nullable: true, type: 'varchar' })
+  public jellyfinMediaId4k?: string | null;
 
   public serviceUrl?: string;
   public serviceUrl4k?: string;
