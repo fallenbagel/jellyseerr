@@ -6,9 +6,9 @@ on:
 
 jobs:
   support:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: dessant/support-requests@v2
+      - uses: dessant/support-requests@v4
         with:
           github-token: ${{ github.token }}
           support-label: 'support'
