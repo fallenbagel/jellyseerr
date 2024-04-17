@@ -1,10 +1,8 @@
 import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
-import useSettings from '@app/hooks/useSettings';
 import globalMessages from '@app/i18n/globalMessages';
 import { Transition } from '@headlessui/react';
-import { MediaServerType } from '@server/constants/server';
-import { type SonarrSettings } from '@server/lib/settings';
+import type { SonarrSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -111,7 +109,6 @@ const SonarrModal = ({ onClose, sonarr, onSave }: SonarrModalProps) => {
   const { addToast } = useToasts();
   const [isValidated, setIsValidated] = useState(sonarr ? true : false);
   const [isTesting, setIsTesting] = useState(false);
-  const settings = useSettings();
   const [testResponse, setTestResponse] = useState<TestResponse>({
     profiles: [],
     rootFolders: [],
@@ -258,9 +255,7 @@ const SonarrModal = ({ onClose, sonarr, onSave }: SonarrModalProps) => {
           animeTags: sonarr?.animeTags ?? [],
           isDefault: sonarr?.isDefault ?? false,
           is4k: sonarr?.is4k ?? false,
-          enableSeasonFolders:
-            sonarr?.enableSeasonFolders ??
-            settings.currentSettings.mediaServerType !== MediaServerType.PLEX,
+          enableSeasonFolders: sonarr?.enableSeasonFolders ?? false,
           externalUrl: sonarr?.externalUrl,
           syncEnabled: sonarr?.syncEnabled ?? false,
           enableSearch: !sonarr?.preventSearch,
@@ -966,24 +961,11 @@ const SonarrModal = ({ onClose, sonarr, onSave }: SonarrModalProps) => {
                   >
                     {intl.formatMessage(messages.seasonfolders)}
                   </label>
-                  <div
-                    className={`form-input-area ${
-                      settings.currentSettings.mediaServerType ===
-                        MediaServerType.JELLYFIN ||
-                      settings.currentSettings.mediaServerType ===
-                        MediaServerType.EMBY
-                        ? 'opacity-50'
-                        : 'opacity-100'
-                    }`}
-                  >
+                  <div className="form-input-area">
                     <Field
                       type="checkbox"
                       id="enableSeasonFolders"
                       name="enableSeasonFolders"
-                      disabled={
-                        settings.currentSettings.mediaServerType !==
-                        MediaServerType.PLEX
-                      }
                     />
                   </div>
                 </div>
