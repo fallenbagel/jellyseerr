@@ -2092,6 +2092,13 @@ paths:
             application/json:
               schema:
                 type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    userId:
+                      type: integer
   /settings/jellyfin/sync:
     get:
       summary: Get status of full Jellyfin library sync
@@ -3395,6 +3402,12 @@ paths:
         Updates a single slider and return the newly updated slider. Requires the `ADMIN` permission.
       tags:
         - settings
+      parameters:
+        - in: path
+          name: sliderId
+          required: true
+          schema:
+            type: number
       requestBody:
         required: true
         content:
@@ -3724,7 +3737,7 @@ paths:
                   results:
                     type: array
                     items:
-                    $ref: '#/components/schemas/User'
+                      $ref: '#/components/schemas/User'
     post:
       summary: Create new user
       description: |
