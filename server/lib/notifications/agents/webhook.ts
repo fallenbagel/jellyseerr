@@ -141,7 +141,7 @@ class WebhookAgent
     const payloadString = Buffer.from(
       this.getSettings().options.jsonPayload,
       'base64'
-    ).toString('ascii');
+    ).toString('utf8');
 
     const parsedJSON = JSON.parse(JSON.parse(payloadString));
 
