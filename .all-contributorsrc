@@ -322,6 +322,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "joshuaboniface",
+      "name": "Joshua M. Boniface",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4031396?v=4",
+      "profile": "https://www.boniface.me",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
