@@ -98,6 +98,7 @@ userSettingsRoutes.post<
     }
 
     user.username = req.body.username;
+    user.email = req.body.email ?? user.email;
 
     // Update quota values only if the user has the correct permissions
     if (
@@ -127,20 +128,19 @@ userSettingsRoutes.post<
       user.settings.originalLanguage = req.body.originalLanguage;
       user.settings.watchlistSyncMovies = req.body.watchlistSyncMovies;
       user.settings.watchlistSyncTv = req.body.watchlistSyncTv;
-      user.email = req.body.email ?? user.email;
     }
 
-    await userRepository.save(user);
+    const savedUser = await userRepository.save(user);
 
     return res.status(200).json({
-      username: user.username,
-      discordId: user.settings.discordId,
-      locale: user.settings.locale,
-      region: user.settings.region,
-      originalLanguage: user.settings.originalLanguage,
-      watchlistSyncMovies: user.settings.watchlistSyncMovies,
-      watchlistSyncTv: user.settings.watchlistSyncTv,
-      email: user.email,
+      username: savedUser.username,
+      discordId: savedUser.settings?.discordId,
+      locale: savedUser.settings?.locale,
+      region: savedUser.settings?.region,
+      originalLanguage: savedUser.settings?.originalLanguage,
+      watchlistSyncMovies: savedUser.settings?.watchlistSyncMovies,
+      watchlistSyncTv: savedUser.settings?.watchlistSyncTv,
+      email: savedUser.email,
     });
   } catch (e) {
     next({ status: 500, message: e.message });
