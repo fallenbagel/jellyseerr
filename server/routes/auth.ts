@@ -1,5 +1,6 @@
 import JellyfinAPI from '@server/api/jellyfin';
 import PlexTvAPI from '@server/api/plextv';
+import { ApiErrorCode } from '@server/constants/error';
 import { MediaServerType } from '@server/constants/server';
 import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
@@ -9,6 +10,7 @@ import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
+import { ApiError } from '@server/types/error';
 import * as EmailValidator from 'email-validator';
 import { Router } from 'express';
 import gravatarUrl from 'gravatar-url';
@@ -278,7 +280,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
     if (!user && !(await userRepository.count())) {
       // Check if user is admin on jellyfin
       if (account.User.Policy.IsAdministrator === false) {
-        throw new Error('not_admin');
+        throw new ApiError(403, ApiErrorCode.NotAdmin);
       }
 
       logger.info(
@@ -412,43 +414,63 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
 
     return res.status(200).json(user?.filter() ?? {});
   } catch (e) {
-    if (e.message === 'Unauthorized') {
-      logger.warn(
-        'Failed login attempt from user with incorrect Jellyfin credentials',
-        {
-          label: 'Auth',
-          account: {
-            ip: req.ip,
-            email: body.username,
-            password: '__REDACTED__',
-          },
-        }
-      );
-      return next({
-        status: 401,
-        message: 'Unauthorized',
-      });
-    } else if (e.message === 'not_admin') {
-      return next({
-        status: 403,
-        message: 'CREDENTIAL_ERROR_NOT_ADMIN',
-      });
-    } else if (e.message === 'add_email') {
-      return next({
-        status: 406,
-        message: 'CREDENTIAL_ERROR_ADD_EMAIL',
-      });
-    } else if (e.message === 'select_server_type') {
-      return next({
-        status: 406,
-        message: 'CREDENTIAL_ERROR_NO_SERVER_TYPE',
-      });
-    } else {
-      logger.error(e.message, { label: 'Auth' });
-      return next({
-        status: 500,
-        message: 'Something went wrong.',
-      });
+    switch (e.errorCode) {
+      case ApiErrorCode.InvalidUrl:
+        logger.error(
+          `The provided ${
+            process.env.JELLYFIN_TYPE == 'emby' ? 'Emby' : 'Jellyfin'
+          } is invalid or the server is not reachable.`,
+          {
+            label: 'Auth',
+            error: e.errorCode,
+            status: e.statusCode,
+            hostname: body.hostname,
+          }
+        );
+        return next({
+          status: e.statusCode,
+          message: e.errorCode,
+        });
+
+      case ApiErrorCode.InvalidCredentials:
+        logger.warn(
+          'Failed login attempt from user with incorrect Jellyfin credentials',
+          {
+            label: 'Auth',
+            account: {
+              ip: req.ip,
+              email: body.username,
+              password: '__REDACTED__',
+            },
+          }
+        );
+        return next({
+          status: e.statusCode,
+          message: e.errorCode,
+        });
+
+      case ApiErrorCode.NotAdmin:
+        logger.warn(
+          'Failed login attempt from user without admin permissions',
+          {
+            label: 'Auth',
+            account: {
+              ip: req.ip,
+              email: body.username,
+            },
+          }
+        );
+        return next({
+          status: e.statusCode,
+          message: e.errorCode,
+        });
+
+      default:
+        logger.error(e.message, { label: 'Auth' });
+        return next({
+          status: 500,
+          message: 'Something went wrong.',
+        });
     }
   }
 });
