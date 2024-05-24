@@ -340,6 +340,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Kara-Zor-El",
+      "name": "Kara",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69772087?v=4",
+      "profile": "https://github.com/Kara-Zor-El",
+      "contributions": [
+        "infra"
+      ]
     }
   ]
 }
