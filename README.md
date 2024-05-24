@@ -11,7 +11,7 @@
 <a href="http://jellyseerr.borgcube.de/engage/jellyseerr/"><img src="http://jellyseerr.borgcube.de/widget/jellyseerr/jellyseerr-frontend/svg-badge.svg" alt="Translation status" /></a>
 <a href="https://github.com/fallenbagel/jellyseerr/blob/develop/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/fallenbagel/jellyseerr"></a>
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-35-orange.svg"/></a>
+<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-36-orange.svg"/></a>
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Jellyseerr** is a free and open source software application for managing requests for your media library.
@@ -230,6 +230,9 @@ Thanks goes to these wonderful people from Overseerr ([emoji key](https://allcon
       <td align="center" valign="top" width="14.28%"><a href="http://danishhumair.com"><img src="https://avatars.githubusercontent.com/u/121830048?v=4?s=100" width="100px;" alt="Danish Humair"/><br /><sub><b>Danish Humair</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=Danish-H" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://arm0.red"><img src="https://avatars.githubusercontent.com/u/16858514?v=4?s=100" width="100px;" alt="Stephen Harris"/><br /><sub><b>Stephen Harris</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=trackmastersteve" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.boniface.me"><img src="https://avatars.githubusercontent.com/u/4031396?v=4?s=100" width="100px;" alt="Joshua M. Boniface"/><br /><sub><b>Joshua M. Boniface</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=joshuaboniface" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://gauthierth.fr/"><img src="https://avatars.githubusercontent.com/u/37781713?v=4?s=100" width="100px;" alt="Gauthier"/><br /><sub><b>Gauthier</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=gauthier-th" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
