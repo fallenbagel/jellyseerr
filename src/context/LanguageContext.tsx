@@ -9,6 +9,7 @@ export type AvailableLocale =
   | 'en'
   | 'el'
   | 'es'
+  | 'es-MX'
   | 'fr'
   | 'hr'
   | 'hu'
@@ -58,6 +59,10 @@ export const availableLanguages: AvailableLanguageObject = {
   es: {
     code: 'es',
     display: 'Español',
+  },
+  'es-MX': {
+    code: 'es-MX',
+    display: 'Español (Latinoamérica)',
   },
   fr: {
     code: 'fr',
