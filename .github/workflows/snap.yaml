@@ -1,9 +1,13 @@
 name: Publish Snap
 
-on:
-  push:
-    branches:
-      - develop
+# turn off edge snap builds temporarily and make it manual
+
+# on: 
+#  push:
+#    branches:
+#      - develop
+
+on: workflow_dispatch
 
 jobs:
   jobs:
