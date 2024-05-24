@@ -349,6 +349,15 @@
       "contributions": [
         "infra"
       ]
+    },
+    {
+      "login": "JoaquinOlivero",
+      "name": "Joaquin Olivero",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66050823?v=4",
+      "profile": "https://joaquinolivero.com",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
