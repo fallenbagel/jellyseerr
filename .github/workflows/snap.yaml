@@ -2,7 +2,7 @@ name: Publish Snap
 
 # turn off edge snap builds temporarily and make it manual
 
-# on: 
+# on:
 #  push:
 #    branches:
 #      - develop
