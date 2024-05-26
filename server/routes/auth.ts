@@ -314,6 +314,9 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
         userType: UserType.JELLYFIN,
       });
 
+      const serverName = await jellyfinserver.getServerName();
+
+      settings.jellyfin.name = serverName;
       settings.jellyfin.hostname = body.hostname ?? '';
       settings.jellyfin.serverId = account.User.ServerId;
       settings.save();
