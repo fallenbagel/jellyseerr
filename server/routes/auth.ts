@@ -325,7 +325,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       await userRepository.save(user);
     }
     // User already exists, let's update their information
-    else if (body.username === user?.jellyfinUsername) {
+    else if (account.User.Id === user?.jellyfinUserId) {
       logger.info(
         `Found matching ${
           settings.main.mediaServerType === MediaServerType.JELLYFIN
