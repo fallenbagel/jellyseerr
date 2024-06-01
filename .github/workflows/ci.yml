@@ -24,7 +24,7 @@ jobs:
       - name: Lint
         run: yarn lint
       - name: Formatting
-        run: yarn format:check
+        run: yarn format:check --ignore-path .prettierignore
       - name: Build
         run: yarn build
 
