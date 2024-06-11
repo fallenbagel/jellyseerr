@@ -83,13 +83,17 @@ class JellyfinScanner {
       }
 
       const has4k = metadata.MediaSources?.some((MediaSource) => {
-        return MediaSource.MediaStreams.some((MediaStream) => {
+        return MediaSource.MediaStreams.filter(
+          (MediaStream) => MediaStream.Type === 'Video'
+        ).some((MediaStream) => {
           return (MediaStream.Width ?? 0) > 2000;
         });
       });
 
       const hasOtherResolution = metadata.MediaSources?.some((MediaSource) => {
-        return MediaSource.MediaStreams.some((MediaStream) => {
+        return MediaSource.MediaStreams.filter(
+          (MediaStream) => MediaStream.Type === 'Video'
+        ).some((MediaStream) => {
           return (MediaStream.Width ?? 0) <= 2000;
         });
       });
