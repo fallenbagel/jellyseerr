@@ -53,6 +53,8 @@ const messages = defineMessages({
   discordId: 'Discord User ID',
   discordIdTip:
     'The <FindDiscordIdLink>multi-digit ID number</FindDiscordIdLink> associated with your Discord user account',
+  validationemailrequired: 'Email required',
+  validationemailformat: 'Valid email required',
   validationDiscordId: 'You must provide a valid Discord user ID',
   plexwatchlistsyncmovies: 'Auto-Request Movies',
   plexwatchlistsyncmoviestip:
@@ -88,6 +90,9 @@ const UserGeneralSettings = () => {
   );
 
   const UserGeneralSettingsSchema = Yup.object().shape({
+    email: Yup.string()
+      .email(intl.formatMessage(messages.validationemailformat))
+      .required(intl.formatMessage(messages.validationemailrequired)),
     discordId: Yup.string()
       .nullable()
       .matches(/^\d{17,19}$/, intl.formatMessage(messages.validationDiscordId)),
