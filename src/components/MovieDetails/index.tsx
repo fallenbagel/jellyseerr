@@ -434,33 +434,38 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                 </Button>
               </Tooltip>
             )}
-          {hasPermission(Permission.MANAGE_REQUESTS) && data.mediaInfo && (
-            <Tooltip content={intl.formatMessage(messages.managemovie)}>
-              <Button
-                buttonType="ghost"
-                onClick={() => setShowManager(true)}
-                className="relative ml-2 first:ml-0"
-              >
-                <CogIcon className="!mr-0" />
-                {hasPermission(
-                  [Permission.MANAGE_ISSUES, Permission.VIEW_ISSUES],
-                  {
-                    type: 'or',
-                  }
-                ) &&
-                  (
-                    data.mediaInfo?.issues.filter(
-                      (issue) => issue.status === IssueStatus.OPEN
-                    ) ?? []
-                  ).length > 0 && (
-                    <>
-                      <div className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-red-600" />
-                      <div className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-red-600" />
-                    </>
-                  )}
-              </Button>
-            </Tooltip>
-          )}
+          {hasPermission(Permission.MANAGE_REQUESTS) &&
+            data.mediaInfo &&
+            (data.mediaInfo.jellyfinMediaId ||
+              data.mediaInfo.jellyfinMediaId4k ||
+              data.mediaInfo.status !== MediaStatus.UNKNOWN ||
+              data.mediaInfo.status4k !== MediaStatus.UNKNOWN) && (
+              <Tooltip content={intl.formatMessage(messages.managemovie)}>
+                <Button
+                  buttonType="ghost"
+                  onClick={() => setShowManager(true)}
+                  className="relative ml-2 first:ml-0"
+                >
+                  <CogIcon className="!mr-0" />
+                  {hasPermission(
+                    [Permission.MANAGE_ISSUES, Permission.VIEW_ISSUES],
+                    {
+                      type: 'or',
+                    }
+                  ) &&
+                    (
+                      data.mediaInfo?.issues.filter(
+                        (issue) => issue.status === IssueStatus.OPEN
+                      ) ?? []
+                    ).length > 0 && (
+                      <>
+                        <div className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-red-600" />
+                        <div className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-red-600" />
+                      </>
+                    )}
+                </Button>
+              </Tooltip>
+            )}
         </div>
       </div>
       <div className="media-overview">
