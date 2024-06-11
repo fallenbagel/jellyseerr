@@ -23,6 +23,7 @@ import imageproxy from '@server/routes/imageproxy';
 import { getAppVersion } from '@server/utils/appVersion';
 import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
+import type CacheableLookupType from 'cacheable-lookup';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
@@ -32,9 +33,13 @@ import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
 import session from 'express-session';
 import next from 'next';
+import http from 'node:http';
+import https from 'node:https';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+
+const _importDynamic = new Function('modulePath', 'return import(modulePath)');
 
 const API_SPEC_PATH = path.join(__dirname, '../overseerr-api.yml');
 
@@ -46,6 +51,12 @@ const handle = app.getRequestHandler();
 app
   .prepare()
   .then(async () => {
+    const CacheableLookup = (await _importDynamic('cacheable-lookup'))
+      .default as typeof CacheableLookupType;
+    const cacheable = new CacheableLookup();
+    cacheable.install(http.globalAgent);
+    cacheable.install(https.globalAgent);
+
     const dbConnection = await dataSource.initialize();
 
     // Run migrations in production
