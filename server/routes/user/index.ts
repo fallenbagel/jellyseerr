@@ -20,6 +20,7 @@ import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
+import { getHostname } from '@server/utils/getHostname';
 import { Router } from 'express';
 import gravatarUrl from 'gravatar-url';
 import { findIndex, sortBy } from 'lodash';
@@ -496,7 +497,6 @@ router.post(
         order: { id: 'ASC' },
       });
       const jellyfinClient = new JellyfinAPI(
-        settings.jellyfin.hostname ?? '',
         admin.jellyfinAuthToken ?? '',
         admin.jellyfinDeviceId ?? ''
       );
@@ -504,15 +504,14 @@ router.post(
 
       //const jellyfinUsersResponse = await jellyfinClient.getUsers();
       const createdUsers: User[] = [];
-      const { hostname, externalHostname } = getSettings().jellyfin;
-      let jellyfinHost =
+      const { externalHostname } = getSettings().jellyfin;
+      const hostname = getHostname();
+
+      const jellyfinHost =
         externalHostname && externalHostname.length > 0
           ? externalHostname
           : hostname;
 
-      jellyfinHost = jellyfinHost.endsWith('/')
-        ? jellyfinHost.slice(0, -1)
-        : jellyfinHost;
       jellyfinClient.setUserId(admin.jellyfinUserId ?? '');
       const jellyfinUsers = await jellyfinClient.getUsers();
 

@@ -16,6 +16,7 @@ import { User } from '@server/entity/User';
 import type { RadarrSettings, SonarrSettings } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import { getHostname } from '@server/utils/getHostname';
 
 class AvailabilitySync {
   public running = false;
@@ -84,7 +85,7 @@ class AvailabilitySync {
       ) {
         if (admin) {
           this.jellyfinClient = new JellyfinAPI(
-            settings.jellyfin.hostname ?? '',
+            getHostname(),
             admin.jellyfinAuthToken,
             admin.jellyfinDeviceId
           );

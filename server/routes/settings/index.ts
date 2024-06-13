@@ -2,6 +2,7 @@ import JellyfinAPI from '@server/api/jellyfin';
 import PlexAPI from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
 import TautulliAPI from '@server/api/tautulli';
+import { ApiErrorCode } from '@server/constants/error';
 import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';
 import { MediaRequest } from '@server/entity/MediaRequest';
@@ -24,8 +25,10 @@ import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import discoverSettingRoutes from '@server/routes/settings/discover';
+import { ApiError } from '@server/types/error';
 import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
+import { getHostname } from '@server/utils/getHostname';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import fs from 'fs';
@@ -252,11 +255,59 @@ settingsRoutes.get('/jellyfin', (_req, res) => {
   res.status(200).json(settings.jellyfin);
 });
 
-settingsRoutes.post('/jellyfin', (req, res) => {
+settingsRoutes.post('/jellyfin', async (req, res, next) => {
+  const userRepository = getRepository(User);
   const settings = getSettings();
 
-  settings.jellyfin = merge(settings.jellyfin, req.body);
-  settings.save();
+  try {
+    const admin = await userRepository.findOneOrFail({
+      where: { id: 1 },
+      select: ['id', 'jellyfinAuthToken', 'jellyfinUserId', 'jellyfinDeviceId'],
+      order: { id: 'ASC' },
+    });
+
+    const tempJellyfinSettings = { ...settings.jellyfin, ...req.body };
+
+    const jellyfinClient = new JellyfinAPI(
+      getHostname(tempJellyfinSettings),
+      admin.jellyfinAuthToken ?? '',
+      admin.jellyfinDeviceId ?? ''
+    );
+
+    const result = await jellyfinClient.getSystemInfo();
+
+    if (!result?.Id) {
+      throw new ApiError(result?.status, ApiErrorCode.InvalidUrl);
+    }
+
+    Object.assign(settings.jellyfin, req.body);
+    settings.jellyfin.serverId = result.Id;
+    settings.jellyfin.name = result.ServerName;
+    settings.save();
+  } catch (e) {
+    if (e instanceof ApiError) {
+      logger.error('Something went wrong testing Jellyfin connection', {
+        label: 'API',
+        status: e.statusCode,
+        errorMessage: ApiErrorCode.InvalidUrl,
+      });
+
+      return next({
+        status: e.statusCode,
+        message: ApiErrorCode.InvalidUrl,
+      });
+    } else {
+      logger.error('Something went wrong', {
+        label: 'API',
+        errorMessage: e.message,
+      });
+
+      return next({
+        status: e.statusCode ?? 500,
+        message: ApiErrorCode.Unknown,
+      });
+    }
+  }
 
   return res.status(200).json(settings.jellyfin);
 });
@@ -272,7 +323,7 @@ settingsRoutes.get('/jellyfin/library', async (req, res, next) => {
       order: { id: 'ASC' },
     });
     const jellyfinClient = new JellyfinAPI(
-      settings.jellyfin.hostname ?? '',
+      getHostname(),
       admin.jellyfinAuthToken ?? '',
       admin.jellyfinDeviceId ?? ''
     );
@@ -288,10 +339,13 @@ settingsRoutes.get('/jellyfin/library', async (req, res, next) => {
 
       // Automatic Library grouping is not supported when user views are used to get library
       if (account.Configuration.GroupedFolders.length > 0) {
-        return next({ status: 501, message: 'SYNC_ERROR_GROUPED_FOLDERS' });
+        return next({
+          status: 501,
+          message: ApiErrorCode.SyncErrorGroupedFolders,
+        });
       }
 
-      return next({ status: 404, message: 'SYNC_ERROR_NO_LIBRARIES' });
+      return next({ status: 404, message: ApiErrorCode.SyncErrorNoLibraries });
     }
 
     const newLibraries: Library[] = libraries.map((library) => {
@@ -322,16 +376,12 @@ settingsRoutes.get('/jellyfin/library', async (req, res, next) => {
 });
 
 settingsRoutes.get('/jellyfin/users', async (req, res) => {
-  const settings = getSettings();
-  const { hostname, externalHostname } = getSettings().jellyfin;
-  let jellyfinHost =
+  const { externalHostname } = getSettings().jellyfin;
+  const jellyfinHost =
     externalHostname && externalHostname.length > 0
       ? externalHostname
-      : hostname;
+      : getHostname();
 
-  jellyfinHost = jellyfinHost.endsWith('/')
-    ? jellyfinHost.slice(0, -1)
-    : jellyfinHost;
   const userRepository = getRepository(User);
   const admin = await userRepository.findOneOrFail({
     select: ['id', 'jellyfinAuthToken', 'jellyfinDeviceId', 'jellyfinUserId'],
@@ -339,7 +389,6 @@ settingsRoutes.get('/jellyfin/users', async (req, res) => {
     order: { id: 'ASC' },
   });
   const jellyfinClient = new JellyfinAPI(
-    settings.jellyfin.hostname ?? '',
     admin.jellyfinAuthToken ?? '',
     admin.jellyfinDeviceId ?? ''
   );

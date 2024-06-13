@@ -1,10 +1,11 @@
 import { MediaServerType } from '@server/constants/server';
+import { Permission } from '@server/lib/permissions';
+import { runMigrations } from '@server/lib/settings/migrator';
 import { randomUUID } from 'crypto';
 import fs from 'fs';
 import { merge } from 'lodash';
 import path from 'path';
 import webpush from 'web-push';
-import { Permission } from './permissions';
 
 export interface Library {
   id: string;
@@ -38,7 +39,10 @@ export interface PlexSettings {
 
 export interface JellyfinSettings {
   name: string;
-  hostname: string;
+  ip: string;
+  port: number;
+  useSsl?: boolean;
+  urlBase?: string;
   externalHostname?: string;
   jellyfinForgotPasswordUrl?: string;
   libraries: Library[];
@@ -130,7 +134,6 @@ interface FullPublicSettings extends PublicSettings {
   region: string;
   originalLanguage: string;
   mediaServerType: number;
-  jellyfinHost?: string;
   jellyfinExternalHost?: string;
   jellyfinForgotPasswordUrl?: string;
   jellyfinServerName?: string;
@@ -274,7 +277,7 @@ export type JobId =
   | 'image-cache-cleanup'
   | 'availability-sync';
 
-interface AllSettings {
+export interface AllSettings {
   clientId: string;
   vapidPublic: string;
   vapidPrivate: string;
@@ -291,7 +294,7 @@ interface AllSettings {
 
 const SETTINGS_PATH = process.env.CONFIG_DIRECTORY
   ? `${process.env.CONFIG_DIRECTORY}/settings.json`
-  : path.join(__dirname, '../../config/settings.json');
+  : path.join(__dirname, '../../../config/settings.json');
 
 class Settings {
   private data: AllSettings;
@@ -331,7 +334,10 @@ class Settings {
       },
       jellyfin: {
         name: '',
-        hostname: '',
+        ip: '',
+        port: 8096,
+        useSsl: false,
+        urlBase: '',
         externalHostname: '',
         jellyfinForgotPasswordUrl: '',
         libraries: [],
@@ -547,8 +553,6 @@ class Settings {
       region: this.data.main.region,
       originalLanguage: this.data.main.originalLanguage,
       mediaServerType: this.main.mediaServerType,
-      jellyfinHost: this.jellyfin.hostname,
-      jellyfinExternalHost: this.jellyfin.externalHostname,
       partialRequestsEnabled: this.data.main.partialRequestsEnabled,
       cacheImages: this.data.main.cacheImages,
       vapidPublic: this.vapidPublic,
@@ -637,7 +641,11 @@ class Settings {
     const data = fs.readFileSync(SETTINGS_PATH, 'utf-8');
 
     if (data) {
-      this.data = merge(this.data, JSON.parse(data));
+      const parsedJson = JSON.parse(data);
+      this.data = runMigrations(parsedJson);
+
+      this.data = merge(this.data, parsedJson);
+
       this.save();
     }
     return this;

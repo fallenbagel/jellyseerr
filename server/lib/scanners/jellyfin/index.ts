@@ -12,6 +12,7 @@ import type { Library } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import AsyncLock from '@server/utils/asyncLock';
+import { getHostname } from '@server/utils/getHostname';
 import { randomUUID as uuid } from 'crypto';
 import { uniqWith } from 'lodash';
 
@@ -594,8 +595,10 @@ class JellyfinScanner {
         return this.log('No admin configured. Jellyfin sync skipped.', 'warn');
       }
 
+      const hostname = getHostname();
+
       this.jfClient = new JellyfinAPI(
-        settings.jellyfin.hostname ?? '',
+        hostname,
         admin.jellyfinAuthToken,
         admin.jellyfinDeviceId
       );

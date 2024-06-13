@@ -184,6 +184,16 @@ class JellyfinAPI extends ExternalAPI {
     return;
   }
 
+  public async getSystemInfo(): Promise<any> {
+    try {
+      const systemInfoResponse = await this.get<any>('/System/Info');
+
+      return systemInfoResponse;
+    } catch (e) {
+      throw new ApiError(e.response?.status, ApiErrorCode.InvalidAuthToken);
+    }
+  }
+
   public async getServerName(): Promise<string> {
     try {
       const serverResponse = await this.get<JellyfinUserResponse>(
