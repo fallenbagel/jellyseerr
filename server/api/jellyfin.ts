@@ -126,25 +126,31 @@ class JellyfinAPI extends ExternalAPI {
     Password?: string,
     ClientIP?: string
   ): Promise<JellyfinLoginResponse> {
-    try {
-      const headers = ClientIP
-        ? {
-            'X-Forwarded-For': ClientIP,
-          }
-        : {};
+    const authenticate = async (useHeaders: boolean) => {
+      const headers =
+        useHeaders && ClientIP ? { 'X-Forwarded-For': ClientIP } : {};
 
-      const authResponse = await this.post<JellyfinLoginResponse>(
+      return this.post<JellyfinLoginResponse>(
         '/Users/AuthenticateByName',
         {
-          Username: Username,
+          Username,
           Pw: Password,
         },
-        {
-          headers: headers,
-        }
+        { headers }
       );
+    };
 
-      return authResponse;
+    try {
+      return await authenticate(true);
+    } catch (e) {
+      logger.debug(`Failed to authenticate with headers: ${e.message}`, {
+        label: 'Jellyfin API',
+        ip: ClientIP,
+      });
+    }
+
+    try {
+      return await authenticate(false);
     } catch (e) {
       const status = e.response?.status;
 
