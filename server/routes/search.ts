@@ -20,7 +20,7 @@ searchRoutes.get('/', async (req, res, next) => {
         .match(searchProvider.pattern) as RegExpMatchArray;
       results = await searchProvider.search({
         id,
-        language: req.locale ?? (req.query.language as string),
+        language: (req.query.language as string) ?? req.locale,
         query: queryString,
       });
     } else {
@@ -29,7 +29,7 @@ searchRoutes.get('/', async (req, res, next) => {
       results = await tmdb.searchMulti({
         query: queryString,
         page: Number(req.query.page),
-        language: req.locale ?? (req.query.language as string),
+        language: (req.query.language as string) ?? req.locale,
       });
     }
 

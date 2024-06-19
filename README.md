@@ -378,6 +378,9 @@ Thanks goes to these wonderful people from Overseerr ([emoji key](https://allcon
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/RemiRigal"><img src="https://avatars.githubusercontent.com/u/19256051?v=4?s=100" width="100px;" alt="RemiRigal"/><br /><sub><b>RemiRigal</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=RemiRigal" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://josephrisk.com"><img src="https://avatars.githubusercontent.com/u/18372584?v=4?s=100" width="100px;" alt="Joseph Risk"/><br /><sub><b>Joseph Risk</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=j0srisk" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Loetwiek"><img src="https://avatars.githubusercontent.com/u/79059734?v=4?s=100" width="100px;" alt="Loetwiek"/><br /><sub><b>Loetwiek</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=Loetwiek" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Fuochi"><img src="https://avatars.githubusercontent.com/u/4720478?v=4?s=100" width="100px;" alt="Fuochi"/><br /><sub><b>Fuochi</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=Fuochi" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

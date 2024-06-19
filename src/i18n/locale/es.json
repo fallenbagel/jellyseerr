@@ -1204,5 +1204,11 @@
   "i18n.collection": "Colección",
   "components.Settings.RadarrModal.tagRequestsInfo": "Añadir automáticamente una etiqueta adicional con el nombre de usuario y el nombre para mostrar del solicitante",
   "components.Settings.SonarrModal.tagRequestsInfo": "Añadir automáticamente una etiqueta adicional con el nombre de usuario y el nombre para mostrar del solicitante",
-  "components.MovieDetails.imdbuserscore": "Puntuación de los usuarios de IMDB"
+  "components.MovieDetails.imdbuserscore": "Puntuación de los usuarios de IMDB",
+  "components.Settings.SonarrModal.animeSeriesType": "Tipo de anime",
+  "components.Settings.SonarrModal.seriesType": "Tipo de series",
+  "components.Settings.Notifications.NotificationsPushover.sound": "Sonido para las notificaciones",
+  "components.UserProfile.UserSettings.UserNotificationSettings.deviceDefault": "Dispositivo predeterminado",
+  "components.UserProfile.UserSettings.UserNotificationSettings.sound": "Sonido para las notificaciones",
+  "components.Settings.Notifications.NotificationsPushover.deviceDefault": "Dispositivo predeterminado"
 }

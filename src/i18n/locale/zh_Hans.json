@@ -1203,7 +1203,7 @@
   "components.Discover.PlexWatchlistSlider.emptywatchlist": "您的 <PlexWatchlistSupportLink>Plex 关注列表</PlexWatchlistSupportLink>中的媒体会显示在这里。",
   "components.Selector.starttyping": "开始打字以进行搜索。",
   "components.Discover.CreateSlider.starttyping": "开始打字以进行搜索。",
-  "components.Discover.CreateSlider.needresults": "你需要至少有 1 个结果。",
+  "components.Discover.CreateSlider.needresults": "需要至少有 1 个结果。",
   "components.Selector.showless": "显示更少",
   "components.Discover.resetfailed": "重置探索媒体设置时出了点问题。",
   "components.Settings.SettingsMain.validationApplicationTitle": "你必须提供一个应用程序标题",
@@ -1260,5 +1260,12 @@
   "components.Settings.SonarrModal.tagRequests": "标记请求",
   "i18n.collection": "合集",
   "components.Discover.FilterSlideover.tmdbuservotecount": "TMDB 用户评分数",
-  "components.Settings.SonarrModal.tagRequestsInfo": "自动添加带有请求者的用户 ID 和显示名称的附加标签"
+  "components.Settings.SonarrModal.tagRequestsInfo": "自动添加带有请求者的用户 ID 和显示名称的附加标签",
+  "components.MovieDetails.imdbuserscore": "IMDB 用户评分",
+  "components.Settings.Notifications.NotificationsPushover.sound": "通知提示音",
+  "components.UserProfile.UserSettings.UserNotificationSettings.deviceDefault": "默认设备",
+  "components.Settings.SonarrModal.animeSeriesType": "动漫剧集类型",
+  "components.Settings.SonarrModal.seriesType": "剧集类型",
+  "components.UserProfile.UserSettings.UserNotificationSettings.sound": "通知提示音",
+  "components.Settings.Notifications.NotificationsPushover.deviceDefault": "默认设备"
 }

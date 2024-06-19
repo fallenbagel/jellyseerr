@@ -1256,5 +1256,10 @@
   "components.Discover.tmdbmoviestreamingservices": "Serviços de Streaming de Filmes do TMDB",
   "components.Discover.FilterSlideover.tmdbuservotecount": "Qtd de Votos de Usuários TMDB",
   "components.Discover.FilterSlideover.voteCount": "Qtd the votos entre {minValue} e {maxValue}",
-  "components.Settings.RadarrModal.tagRequestsInfo": "Adicione automaticamente uma tag extra com o ID de usuário e o nome de exibição do solicitante"
+  "components.Settings.RadarrModal.tagRequestsInfo": "Adicione automaticamente uma tag extra com o ID de usuário e o nome de exibição do solicitante",
+  "i18n.collection": "Coleção",
+  "components.MovieDetails.imdbuserscore": "Pontuação de usuário IMDB",
+  "components.Settings.SonarrModal.tagRequestsInfo": "Adiciona automaticamente uma tag adicional com o ID de usuário e nome de exibição de quem pediu",
+  "components.Settings.SonarrModal.tagRequests": "Marcar Pedidos",
+  "components.Settings.RadarrModal.tagRequests": "Marcar Pedidos"
 }

@@ -1269,5 +1269,11 @@
   "components.UserProfile.UserSettings.UserGeneralSettings.discordId": "Αναγνωριστικό χρήστη Discord",
   "components.UserProfile.UserSettings.UserGeneralSettings.plexwatchlistsyncseriestip": "Ζητήστε αυτόματα σειρές που βρίσκονται στη <PlexWatchlistSupportLink>λίστα παρακολούθησης του Plex</PlexWatchlistSupportLink>",
   "components.UserProfile.plexwatchlist": "Λίστα παρακολούθησης Plex",
-  "components.MovieDetails.imdbuserscore": "Βαθμολογία χρηστών IMDB"
+  "components.MovieDetails.imdbuserscore": "Βαθμολογία χρηστών IMDB",
+  "components.Settings.SonarrModal.animeSeriesType": "Τύπος σειράς άνιμε",
+  "components.Settings.SonarrModal.seriesType": "Τύπος σειράς",
+  "components.Settings.Notifications.NotificationsPushover.sound": "Ήχος ειδοποίησης",
+  "components.UserProfile.UserSettings.UserNotificationSettings.deviceDefault": "Προεπιλογή συσκευής",
+  "components.UserProfile.UserSettings.UserNotificationSettings.sound": "Ήχος ειδοποίησης",
+  "components.Settings.Notifications.NotificationsPushover.deviceDefault": "Προεπιλογή συσκευής"
 }

@@ -452,7 +452,7 @@
   "components.Settings.Notifications.NotificationsWebhook.webhookUrl": "Webhook adresa",
   "components.ManageSlideOver.manageModalAdvanced": "Napredno",
   "components.ManageSlideOver.manageModalMedia": "Mediji",
-  "components.Settings.Notifications.NotificationsWebhook.customJson": "JSON Payload",
+  "components.Settings.Notifications.NotificationsWebhook.customJson": "JSON zadržaj",
   "components.Settings.SettingsLogs.label": "Labela",
   "components.Settings.SettingsLogs.level": "Ozbiljnost",
   "components.Settings.SettingsAbout.Releases.versionChangelog": "{version} Dnevnik promena",

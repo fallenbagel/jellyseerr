@@ -14,7 +14,12 @@ import {
 import type { NotificationAgent, NotificationPayload } from './agent';
 import { BaseAgent } from './agent';
 
-interface PushoverPayload {
+interface PushoverImagePayload {
+  attachment_base64: string;
+  attachment_type: string;
+}
+
+interface PushoverPayload extends PushoverImagePayload {
   token: string;
   user: string;
   title: string;
@@ -43,10 +48,36 @@ class PushoverAgent
     return true;
   }
 
-  private getNotificationPayload(
+  private async getImagePayload(
+    imageUrl: string
+  ): Promise<Partial<PushoverImagePayload>> {
+    try {
+      const response = await axios.get(imageUrl, {
+        responseType: 'arraybuffer',
+      });
+      const base64 = Buffer.from(response.data, 'binary').toString('base64');
+      const contentType = (
+        response.headers['Content-Type'] || response.headers['content-type']
+      )?.toString();
+
+      return {
+        attachment_base64: base64,
+        attachment_type: contentType,
+      };
+    } catch (e) {
+      logger.error('Error getting image payload', {
+        label: 'Notifications',
+        errorMessage: e.message,
+        response: e.response?.data,
+      });
+      return {};
+    }
+  }
+
+  private async getNotificationPayload(
     type: Notification,
     payload: NotificationPayload
-  ): Partial<PushoverPayload> {
+  ): Promise<Partial<PushoverPayload>> {
     const { applicationUrl, applicationTitle } = getSettings().main;
 
     const title = payload.event ?? payload.subject;
@@ -122,6 +153,16 @@ class PushoverAgent
       ? `View ${payload.issue ? 'Issue' : 'Media'} in ${applicationTitle}`
       : undefined;
 
+    let attachment_base64;
+    let attachment_type;
+    if (payload.image) {
+      const imagePayload = await this.getImagePayload(payload.image);
+      if (imagePayload.attachment_base64 && imagePayload.attachment_type) {
+        attachment_base64 = imagePayload.attachment_base64;
+        attachment_type = imagePayload.attachment_type;
+      }
+    }
+
     return {
       title,
       message,
@@ -129,6 +170,8 @@ class PushoverAgent
       url_title,
       priority,
       html: 1,
+      attachment_base64,
+      attachment_type,
     };
   }
 
@@ -138,7 +181,10 @@ class PushoverAgent
   ): Promise<boolean> {
     const settings = this.getSettings();
     const endpoint = 'https://api.pushover.net/1/messages.json';
-    const notificationPayload = this.getNotificationPayload(type, payload);
+    const notificationPayload = await this.getNotificationPayload(
+      type,
+      payload
+    );
 
     // Send system notification
     if (

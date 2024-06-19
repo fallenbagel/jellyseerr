@@ -376,6 +376,33 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "j0srisk",
+      "name": "Joseph Risk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18372584?v=4",
+      "profile": "http://josephrisk.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Loetwiek",
+      "name": "Loetwiek",
+      "avatar_url": "https://avatars.githubusercontent.com/u/79059734?v=4",
+      "profile": "https://github.com/Loetwiek",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Fuochi",
+      "name": "Fuochi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4720478?v=4",
+      "profile": "https://github.com/Fuochi",
+      "contributions": [
+        "doc"
+      ]
     }
   ]
 }

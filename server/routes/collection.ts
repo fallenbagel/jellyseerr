@@ -12,7 +12,7 @@ collectionRoutes.get<{ id: string }>('/:id', async (req, res, next) => {
   try {
     const collection = await tmdb.getCollection({
       collectionId: Number(req.params.id),
-      language: req.locale ?? (req.query.language as string),
+      language: (req.query.language as string) ?? req.locale,
     });
 
     const media = await Media.getRelatedMedia(

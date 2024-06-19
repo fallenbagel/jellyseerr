@@ -1261,5 +1261,19 @@
   "components.Settings.SettingsJobsCache.editJobScheduleSelectorSeconds": "Elke {jobScheduleSeconds, plural, one {seconde} other {{jobScheduleSeconds} seconden}}",
   "components.Settings.SettingsJobsCache.availability-sync": "Synchronisatie van mediabeschikbaarheid",
   "components.Discover.tmdbmoviestreamingservices": "Streamingdiensten voor films TMDB",
-  "components.Discover.tmdbtvstreamingservices": "Streamingdiensten voor series TMDB"
+  "components.Discover.tmdbtvstreamingservices": "Streamingdiensten voor series TMDB",
+  "components.Discover.FilterSlideover.tmdbuservotecount": "Aantal stemmen TMDB-gebruikers",
+  "components.Discover.FilterSlideover.voteCount": "Aantal stemmen tussen {minValue} en {maxValue}",
+  "components.Settings.RadarrModal.tagRequests": "Tagverzoeken",
+  "components.Settings.RadarrModal.tagRequestsInfo": "Voeg automatisch een extra tag toe met de gebruikers-ID en weergavenaam van de aanvrager",
+  "components.MovieDetails.imdbuserscore": "Gebruikersscore IMDB",
+  "components.Settings.SonarrModal.tagRequests": "Tagverzoeken",
+  "components.Settings.SonarrModal.tagRequestsInfo": "Voeg automatisch een extra tag toe met de gebruikers-ID en weergavenaam van de aanvrager",
+  "i18n.collection": "Collectie",
+  "components.Settings.Notifications.NotificationsPushover.sound": "Meldingsgeluid",
+  "components.UserProfile.UserSettings.UserNotificationSettings.deviceDefault": "Apparaatstandaard",
+  "components.Settings.SonarrModal.animeSeriesType": "Serietype anime",
+  "components.Settings.SonarrModal.seriesType": "Serietype",
+  "components.UserProfile.UserSettings.UserNotificationSettings.sound": "Meldingsgeluid",
+  "components.Settings.Notifications.NotificationsPushover.deviceDefault": "Apparaatstandaard"
 }
