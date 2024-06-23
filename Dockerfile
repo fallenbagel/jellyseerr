@@ -14,7 +14,7 @@ RUN \
   ;; \
   esac
 
-Run npm install --global pnpm
+RUN npm install --global pnpm
 
 COPY package.json pnpm-lock.yaml ./
 RUN CYPRESS_INSTALL_BINARY=0 pnpm install --frozen-lockfile
@@ -44,6 +44,8 @@ LABEL org.opencontainers.image.source="https://github.com/Fallenbagel/jellyseerr
 WORKDIR /app
 
 RUN apk add --no-cache tzdata tini && rm -rf /tmp/*
+
+RUN npm install -g pnpm
 
 # copy from build image
 COPY --from=BUILD_IMAGE /app ./
