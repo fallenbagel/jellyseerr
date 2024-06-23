@@ -3,14 +3,15 @@ import ListView from '@app/components/Common/ListView';
 import PageTitle from '@app/components/Common/PageTitle';
 import useDiscover from '@app/hooks/useDiscover';
 import Error from '@app/pages/_error';
+import defineMessages from '@app/utils/defineMessages';
 import type { TvResult } from '@server/models/Search';
 import type { TvDetails } from '@server/models/Tv';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.TvDetails', {
   recommendations: 'Recommendations',
 });
 
@@ -40,8 +41,8 @@ const TvRecommendations = () => {
       <div className="mt-1 mb-5">
         <Header
           subtext={
-            <Link href={`/tv/${tvData?.id}`}>
-              <a className="hover:underline">{tvData?.name}</a>
+            <Link href={`/tv/${tvData?.id}`} className="hover:underline">
+              {tvData?.name}
             </Link>
           }
         >

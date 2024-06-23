@@ -5,13 +5,14 @@ import DownloadBlock from '@app/components/DownloadBlock';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { MediaStatus } from '@server/constants/media';
 import { MediaServerType } from '@server/constants/server';
 import type { DownloadingItem } from '@server/lib/downloadtracker';
 import getConfig from 'next/config';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.StatusBadge', {
   status: '{status}',
   status4k: '4K {status}',
   playonplex: 'Play on {mediaServerName}',

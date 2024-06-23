@@ -1,9 +1,10 @@
 import Badge from '@app/components/Common/Badge';
 import Tooltip from '@app/components/Common/Tooltip';
 import globalMessages from '@app/i18n/globalMessages';
-import { defineMessages, useIntl } from 'react-intl';
+import defineMessages from '@app/utils/defineMessages';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Settings', {
   advancedTooltip:
     'Incorrectly configuring this setting may result in broken functionality',
   experimentalTooltip:

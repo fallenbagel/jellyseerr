@@ -1,14 +1,18 @@
 import Infinity from '@app/assets/infinity.svg';
 import { SmallLoadingSpinner } from '@app/components/Common/LoadingSpinner';
 import ProgressCircle from '@app/components/Common/ProgressCircle';
+import defineMessages from '@app/utils/defineMessages';
 import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const messages = defineMessages({
-  movierequests: 'Movie Requests',
-  seriesrequests: 'Series Requests',
-});
+const messages = defineMessages(
+  'components.Layout.UserDropdown.MiniQuotaDisplay',
+  {
+    movierequests: 'Movie Requests',
+    seriesrequests: 'Series Requests',
+  }
+);
 
 type MiniQuotaDisplayProps = {
   userId: number;

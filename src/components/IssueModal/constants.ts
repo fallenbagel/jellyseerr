@@ -1,8 +1,8 @@
+import defineMessages from '@app/utils/defineMessages';
 import { IssueType } from '@server/constants/issue';
 import type { MessageDescriptor } from 'react-intl';
-import { defineMessages } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.IssueModal', {
   issueAudio: 'Audio',
   issueVideo: 'Video',
   issueSubtitles: 'Subtitle',

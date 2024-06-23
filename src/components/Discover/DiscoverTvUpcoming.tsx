@@ -3,12 +3,11 @@ import ListView from '@app/components/Common/ListView';
 import PageTitle from '@app/components/Common/PageTitle';
 import useDiscover from '@app/hooks/useDiscover';
 import Error from '@app/pages/_error';
+import defineMessages from '@app/utils/defineMessages';
 import type { TvResult } from '@server/models/Search';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
-  upcomingtv: 'Upcoming Series',
-});
+const messages = defineMessages('components.DiscoverTvUpcoming', {});
 
 const DiscoverTvUpcoming = () => {
   const intl = useIntl();

@@ -3,24 +3,28 @@ import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import NotificationTypeSelector from '@app/components/NotificationTypeSelector';
 import { useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 
-const messages = defineMessages({
-  discordsettingssaved: 'Discord notification settings saved successfully!',
-  discordsettingsfailed: 'Discord notification settings failed to save.',
-  discordId: 'User ID',
-  discordIdTip:
-    'The <FindDiscordIdLink>multi-digit ID number</FindDiscordIdLink> associated with your user account',
-  validationDiscordId: 'You must provide a valid user ID',
-});
+const messages = defineMessages(
+  'components.UserProfile.UserSettings.UserNotificationSettings',
+  {
+    discordsettingssaved: 'Discord notification settings saved successfully!',
+    discordsettingsfailed: 'Discord notification settings failed to save.',
+    discordId: 'User ID',
+    discordIdTip:
+      'The <FindDiscordIdLink>multi-digit ID number</FindDiscordIdLink> associated with your user account',
+    validationDiscordId: 'You must provide a valid user ID',
+  }
+);
 
 const UserNotificationsDiscord = () => {
   const intl = useIntl();

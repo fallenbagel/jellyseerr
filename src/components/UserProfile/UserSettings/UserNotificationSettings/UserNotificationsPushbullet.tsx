@@ -4,24 +4,29 @@ import SensitiveInput from '@app/components/Common/SensitiveInput';
 import NotificationTypeSelector from '@app/components/NotificationTypeSelector';
 import { useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 
-const messages = defineMessages({
-  pushbulletsettingssaved:
-    'Pushbullet notification settings saved successfully!',
-  pushbulletsettingsfailed: 'Pushbullet notification settings failed to save.',
-  pushbulletAccessToken: 'Access Token',
-  pushbulletAccessTokenTip:
-    'Create a token from your <PushbulletSettingsLink>Account Settings</PushbulletSettingsLink>',
-  validationPushbulletAccessToken: 'You must provide an access token',
-});
+const messages = defineMessages(
+  'components.UserProfile.UserSettings.UserNotificationSettings',
+  {
+    pushbulletsettingssaved:
+      'Pushbullet notification settings saved successfully!',
+    pushbulletsettingsfailed:
+      'Pushbullet notification settings failed to save.',
+    pushbulletAccessToken: 'Access Token',
+    pushbulletAccessTokenTip:
+      'Create a token from your <PushbulletSettingsLink>Account Settings</PushbulletSettingsLink>',
+    validationPushbulletAccessToken: 'You must provide an access token',
+  }
+);
 
 const UserPushbulletSettings = () => {
   const intl = useIntl();

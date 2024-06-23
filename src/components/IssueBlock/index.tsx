@@ -45,10 +45,9 @@ const IssueBlock = ({ issue }: IssueBlockProps) => {
                     ? '/profile'
                     : `/users/${issue.createdBy.id}`
                 }
+                className="font-semibold text-gray-100 transition duration-300 hover:text-white hover:underline"
               >
-                <a className="font-semibold text-gray-100 transition duration-300 hover:text-white hover:underline">
-                  {issue.createdBy.displayName}
-                </a>
+                {issue.createdBy.displayName}
               </Link>
             </span>
           </div>
@@ -64,7 +63,7 @@ const IssueBlock = ({ issue }: IssueBlockProps) => {
           </div>
         </div>
         <div className="ml-2 flex flex-shrink-0 flex-wrap">
-          <Link href={`/issues/${issue.id}`} passHref>
+          <Link href={`/issues/${issue.id}`} passHref legacyBehavior>
             <Button buttonType="primary" as="a">
               <EyeIcon />
             </Button>

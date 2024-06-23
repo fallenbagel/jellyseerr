@@ -1,11 +1,13 @@
 import Alert from '@app/components/Common/Alert';
 import Modal from '@app/components/Common/Modal';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import type { SonarrSeries } from '@server/api/servarr/sonarr';
-import { defineMessages, useIntl } from 'react-intl';
+import Image from 'next/image';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.RequestModal.SearchByNameModal', {
   notvdbiddescription:
     'We were unable to automatically match this series. Please select the correct match below.',
   nomatches: 'We were unable to find a match for this series.',
@@ -87,13 +89,14 @@ const SearchByNameModal = ({
               } `}
             >
               <div className="flex w-24 flex-none items-center space-x-4">
-                <img
+                <Image
                   src={
                     item.remotePoster ??
                     '/images/overseerr_poster_not_found.png'
                   }
                   alt={item.title}
                   className="h-100 w-auto rounded-md"
+                  fill
                 />
               </div>
               <div className="flex-grow self-start p-3 text-left">

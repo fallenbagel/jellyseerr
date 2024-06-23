@@ -3,12 +3,12 @@ import type { SettingsRoute } from '@app/components/Common/SettingsTabs';
 import SettingsTabs from '@app/components/Common/SettingsTabs';
 import useSettings from '@app/hooks/useSettings';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { MediaServerType } from '@server/constants/server';
 import getConfig from 'next/config';
-import type React from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Settings', {
   menuGeneralSettings: 'General',
   menuUsers: 'Users',
   menuPlexSettings: 'Plex',

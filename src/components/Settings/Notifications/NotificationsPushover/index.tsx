@@ -2,35 +2,39 @@ import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import NotificationTypeSelector from '@app/components/NotificationTypeSelector';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
 import type { PushoverSound } from '@server/api/pushover';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 
-const messages = defineMessages({
-  agentenabled: 'Enable Agent',
-  accessToken: 'Application API Token',
-  accessTokenTip:
-    '<ApplicationRegistrationLink>Register an application</ApplicationRegistrationLink> for use with Jellyseerr',
-  userToken: 'User or Group Key',
-  userTokenTip:
-    'Your 30-character <UsersGroupsLink>user or group identifier</UsersGroupsLink>',
-  sound: 'Notification Sound',
-  deviceDefault: 'Device Default',
-  validationAccessTokenRequired: 'You must provide a valid application token',
-  validationUserTokenRequired: 'You must provide a valid user or group key',
-  pushoversettingssaved: 'Pushover notification settings saved successfully!',
-  pushoversettingsfailed: 'Pushover notification settings failed to save.',
-  toastPushoverTestSending: 'Sending Pushover test notification…',
-  toastPushoverTestSuccess: 'Pushover test notification sent!',
-  toastPushoverTestFailed: 'Pushover test notification failed to send.',
-  validationTypes: 'You must select at least one notification type',
-});
+const messages = defineMessages(
+  'components.Settings.Notifications.NotificationsPushover',
+  {
+    agentenabled: 'Enable Agent',
+    accessToken: 'Application API Token',
+    accessTokenTip:
+      '<ApplicationRegistrationLink>Register an application</ApplicationRegistrationLink> for use with Jellyseerr',
+    userToken: 'User or Group Key',
+    userTokenTip:
+      'Your 30-character <UsersGroupsLink>user or group identifier</UsersGroupsLink>',
+    sound: 'Notification Sound',
+    deviceDefault: 'Device Default',
+    validationAccessTokenRequired: 'You must provide a valid application token',
+    validationUserTokenRequired: 'You must provide a valid user or group key',
+    pushoversettingssaved: 'Pushover notification settings saved successfully!',
+    pushoversettingsfailed: 'Pushover notification settings failed to save.',
+    toastPushoverTestSending: 'Sending Pushover test notification…',
+    toastPushoverTestSuccess: 'Pushover test notification sent!',
+    toastPushoverTestFailed: 'Pushover test notification failed to send.',
+    validationTypes: 'You must select at least one notification type',
+  }
+);
 
 const NotificationsPushover = () => {
   const intl = useIntl();

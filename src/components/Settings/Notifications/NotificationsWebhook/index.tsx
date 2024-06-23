@@ -2,6 +2,7 @@ import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import NotificationTypeSelector from '@app/components/NotificationTypeSelector';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
 import {
   ArrowPathIcon,
@@ -12,7 +13,7 @@ import { Field, Form, Formik } from 'formik';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 import * as Yup from 'yup';
@@ -66,23 +67,26 @@ const defaultPayload = {
   '{{extra}}': [],
 };
 
-const messages = defineMessages({
-  agentenabled: 'Enable Agent',
-  webhookUrl: 'Webhook URL',
-  authheader: 'Authorization Header',
-  validationJsonPayloadRequired: 'You must provide a valid JSON payload',
-  webhooksettingssaved: 'Webhook notification settings saved successfully!',
-  webhooksettingsfailed: 'Webhook notification settings failed to save.',
-  toastWebhookTestSending: 'Sending webhook test notification…',
-  toastWebhookTestSuccess: 'Webhook test notification sent!',
-  toastWebhookTestFailed: 'Webhook test notification failed to send.',
-  resetPayload: 'Reset to Default',
-  resetPayloadSuccess: 'JSON payload reset successfully!',
-  customJson: 'JSON Payload',
-  templatevariablehelp: 'Template Variable Help',
-  validationWebhookUrl: 'You must provide a valid URL',
-  validationTypes: 'You must select at least one notification type',
-});
+const messages = defineMessages(
+  'components.Settings.Notifications.NotificationsWebhook',
+  {
+    agentenabled: 'Enable Agent',
+    webhookUrl: 'Webhook URL',
+    authheader: 'Authorization Header',
+    validationJsonPayloadRequired: 'You must provide a valid JSON payload',
+    webhooksettingssaved: 'Webhook notification settings saved successfully!',
+    webhooksettingsfailed: 'Webhook notification settings failed to save.',
+    toastWebhookTestSending: 'Sending webhook test notification…',
+    toastWebhookTestSuccess: 'Webhook test notification sent!',
+    toastWebhookTestFailed: 'Webhook test notification failed to send.',
+    resetPayload: 'Reset to Default',
+    resetPayloadSuccess: 'JSON payload reset successfully!',
+    customJson: 'JSON Payload',
+    templatevariablehelp: 'Template Variable Help',
+    validationWebhookUrl: 'You must provide a valid URL',
+    validationTypes: 'You must select at least one notification type',
+  }
+);
 
 const NotificationsWebhook = () => {
   const intl = useIntl();
@@ -309,6 +313,7 @@ const NotificationsWebhook = () => {
                   <Link
                     href="https://docs.overseerr.dev/using-overseerr/notifications/webhooks#template-variables"
                     passHref
+                    legacyBehavior
                   >
                     <Button
                       as="a"

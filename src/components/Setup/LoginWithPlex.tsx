@@ -1,10 +1,11 @@
 import PlexLoginButton from '@app/components/PlexLoginButton';
 import { useUser } from '@app/hooks/useUser';
+import defineMessages from '@app/utils/defineMessages';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Setup', {
   welcome: 'Welcome to Jellyseerr',
   signinMessage: 'Get started by signing in with your Plex account',
 });

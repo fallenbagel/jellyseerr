@@ -9,6 +9,7 @@ import useDebouncedState from '@app/hooks/useDebouncedState';
 import { useUpdateQueryParams } from '@app/hooks/useUpdateQueryParams';
 import globalMessages from '@app/i18n/globalMessages';
 import Error from '@app/pages/_error';
+import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import {
   ChevronLeftIcon,
@@ -27,11 +28,11 @@ import type {
 import copy from 'copy-to-clipboard';
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Settings.SettingsLogs', {
   logs: 'Logs',
   logsDescription:
     'You can also view these logs directly via <code>stdout</code>, or in <code>{appDataPath}/logs/overseerr.log</code>.',

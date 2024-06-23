@@ -1,5 +1,6 @@
 import MiniQuotaDisplay from '@app/components/Layout/UserDropdown/MiniQuotaDisplay';
 import { useUser } from '@app/hooks/useUser';
+import defineMessages from '@app/utils/defineMessages';
 import { Menu, Transition } from '@headlessui/react';
 import {
   ArrowRightOnRectangleIcon,
@@ -7,12 +8,13 @@ import {
 } from '@heroicons/react/24/outline';
 import { CogIcon, UserIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
+import Image from 'next/image';
 import type { LinkProps } from 'next/link';
 import Link from 'next/link';
 import { forwardRef, Fragment } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Layout.UserDropdown', {
   myprofile: 'Profile',
   settings: 'Settings',
   requests: 'Requests',
@@ -24,10 +26,8 @@ const ForwardedLink = forwardRef<
   LinkProps & React.ComponentPropsWithoutRef<'a'>
 >(({ href, children, ...rest }, ref) => {
   return (
-    <Link href={href}>
-      <a ref={ref} {...rest}>
-        {children}
-      </a>
+    <Link href={href} ref={ref} {...rest}>
+      {children}
     </Link>
   );
 });
@@ -53,10 +53,12 @@ const UserDropdown = () => {
           className="flex max-w-xs items-center rounded-full text-sm ring-1 ring-gray-700 hover:ring-gray-500 focus:outline-none focus:ring-gray-500"
           data-testid="user-menu"
         >
-          <img
+          <Image
             className="h-8 w-8 rounded-full object-cover sm:h-10 sm:w-10"
-            src={user?.avatar}
+            src={user?.avatar || ''}
             alt=""
+            width={40}
+            height={40}
           />
         </Menu.Button>
       </div>
@@ -74,10 +76,12 @@ const UserDropdown = () => {
           <div className="divide-y divide-gray-700 rounded-md bg-gray-800 bg-opacity-80 ring-1 ring-gray-700 backdrop-blur">
             <div className="flex flex-col space-y-4 px-4 py-4">
               <div className="flex items-center space-x-2">
-                <img
+                <Image
                   className="h-8 w-8 rounded-full object-cover sm:h-10 sm:w-10"
-                  src={user?.avatar}
+                  src={user?.avatar || ''}
                   alt=""
+                  width={40}
+                  height={40}
                 />
                 <div className="flex min-w-0 flex-col">
                   <span className="truncate text-xl font-semibold text-gray-200">

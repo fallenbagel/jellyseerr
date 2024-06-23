@@ -1,7 +1,8 @@
+import defineMessages from '@app/utils/defineMessages';
 import React, { useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.QuotaSelector', {
   movieRequests:
     '{quotaLimit} <quotaUnits>{movies} per {quotaDays} {days}</quotaUnits>',
   tvRequests:

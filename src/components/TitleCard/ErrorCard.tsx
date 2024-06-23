@@ -1,8 +1,9 @@
 import Button from '@app/components/Common/Button';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { CheckIcon, TrashIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { mutate } from 'swr';
 
 interface ErrorCardProps {
@@ -13,7 +14,7 @@ interface ErrorCardProps {
   canExpand?: boolean;
 }
 
-const messages = defineMessages({
+const messages = defineMessages('components.TitleCard', {
   mediaerror: '{mediaType} Not Found',
   tmdbid: 'TMDB ID',
   tvdbid: 'TheTVDB ID',

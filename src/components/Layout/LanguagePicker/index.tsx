@@ -2,12 +2,13 @@ import type { AvailableLocale } from '@app/context/LanguageContext';
 import { availableLanguages } from '@app/context/LanguageContext';
 import useClickOutside from '@app/hooks/useClickOutside';
 import useLocale from '@app/hooks/useLocale';
+import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import { LanguageIcon } from '@heroicons/react/24/solid';
 import { useRef, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Layout.LanguagePicker', {
   displaylanguage: 'Display Language',
 });
 

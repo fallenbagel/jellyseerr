@@ -1,9 +1,10 @@
 import useSearchInput from '@app/hooks/useSearchInput';
+import defineMessages from '@app/utils/defineMessages';
 import { XCircleIcon } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Layout.SearchInput', {
   searchPlaceholder: 'Search Movies & TV',
 });
 

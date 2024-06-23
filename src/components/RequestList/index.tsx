@@ -6,6 +6,7 @@ import RequestItem from '@app/components/RequestList/RequestItem';
 import { useUpdateQueryParams } from '@app/hooks/useUpdateQueryParams';
 import { useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import {
   BarsArrowDownIcon,
   ChevronLeftIcon,
@@ -16,10 +17,10 @@ import type { RequestResultsResponse } from '@server/interfaces/api/requestInter
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.RequestList', {
   requests: 'Requests',
   showallrequests: 'Show All Requests',
   sortAdded: 'Most Recent',
@@ -122,12 +123,12 @@ const RequestList = () => {
         <Header
           subtext={
             router.pathname.startsWith('/profile') ? (
-              <Link href={`/profile`}>
-                <a className="hover:underline">{currentUser?.displayName}</a>
+              <Link href={`/profile`} className="hover:underline">
+                {currentUser?.displayName}
               </Link>
             ) : router.query.userId ? (
-              <Link href={`/users/${user?.id}`}>
-                <a className="hover:underline">{user?.displayName}</a>
+              <Link href={`/users/${user?.id}`} className="hover:underline">
+                {user?.displayName}
               </Link>
             ) : (
               ''

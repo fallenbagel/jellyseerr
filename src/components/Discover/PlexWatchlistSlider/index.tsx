@@ -1,13 +1,14 @@
 import Slider from '@app/components/Slider';
 import TmdbTitleCard from '@app/components/TitleCard/TmdbTitleCard';
 import { useUser } from '@app/hooks/useUser';
+import defineMessages from '@app/utils/defineMessages';
 import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
 import type { WatchlistItem } from '@server/interfaces/api/discoverInterfaces';
 import Link from 'next/link';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Discover.PlexWatchlistSlider', {
   plexwatchlist: 'Your Watchlist',
   emptywatchlist:
     'Media added to your <PlexWatchlistSupportLink>Plex Watchlist</PlexWatchlistSupportLink> will appear here.',
@@ -39,11 +40,9 @@ const PlexWatchlistSlider = () => {
   return (
     <>
       <div className="slider-header">
-        <Link href="/discover/watchlist">
-          <a className="slider-title">
-            <span>{intl.formatMessage(messages.plexwatchlist)}</span>
-            <ArrowRightCircleIcon />
-          </a>
+        <Link href="/discover/watchlist" className="slider-title">
+          <span>{intl.formatMessage(messages.plexwatchlist)}</span>
+          <ArrowRightCircleIcon />
         </Link>
       </div>
       <Slider

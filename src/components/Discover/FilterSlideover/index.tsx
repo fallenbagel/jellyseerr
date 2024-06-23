@@ -15,11 +15,12 @@ import {
   useBatchUpdateQueryParams,
   useUpdateQueryParams,
 } from '@app/hooks/useUpdateQueryParams';
+import defineMessages from '@app/utils/defineMessages';
 import { XCircleIcon } from '@heroicons/react/24/outline';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import Datepicker from 'react-tailwindcss-datepicker-sct';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Discover.FilterSlideover', {
   filters: 'Filters',
   activefilters:
     '{count, plural, one {# Active Filter} other {# Active Filters}}',

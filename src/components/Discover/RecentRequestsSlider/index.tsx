@@ -24,11 +24,9 @@ const RecentRequestsSlider = () => {
   return (
     <>
       <div className="slider-header">
-        <Link href="/requests?filter=all">
-          <a className="slider-title">
-            <span>{intl.formatMessage(sliderTitles.recentrequests)}</span>
-            <ArrowRightCircleIcon />
-          </a>
+        <Link href="/requests?filter=all" className="slider-title">
+          <span>{intl.formatMessage(sliderTitles.recentrequests)}</span>
+          <ArrowRightCircleIcon />
         </Link>
       </div>
       <Slider

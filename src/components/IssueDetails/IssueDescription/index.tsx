@@ -1,14 +1,15 @@
 import Button from '@app/components/Common/Button';
 import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { Menu, Transition } from '@headlessui/react';
 import { EllipsisVerticalIcon } from '@heroicons/react/24/solid';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import ReactMarkdown from 'react-markdown';
 
-const messages = defineMessages({
+const messages = defineMessages('components.IssueDetails.IssueDescription', {
   description: 'Description',
   edit: 'Edit Description',
   deleteissue: 'Delete Issue',

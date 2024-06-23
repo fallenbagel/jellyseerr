@@ -1,10 +1,11 @@
+import defineMessages from '@app/utils/defineMessages';
 import { ClipboardDocumentIcon } from '@heroicons/react/24/solid';
 import { useEffect } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useClipboard from 'react-use-clipboard';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Settings', {
   copied: 'Copied API key to clipboard.',
 });
 

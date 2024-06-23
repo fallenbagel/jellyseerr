@@ -12,6 +12,7 @@ import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import Error from '@app/pages/_error';
+import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import {
   ChatBubbleOvalLeftEllipsisIcon,
@@ -29,15 +30,16 @@ import type { TvDetails } from '@server/models/Tv';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import getConfig from 'next/config';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { defineMessages, FormattedRelativeTime, useIntl } from 'react-intl';
+import { FormattedRelativeTime, useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 
-const messages = defineMessages({
+const messages = defineMessages('components.IssueDetails', {
   openedby: '#{issueId} opened {relativeTime} by {username}',
   closeissue: 'Close Issue',
   closeissueandcomment: 'Close with Comment',
@@ -210,8 +212,8 @@ const IssueDetails = () => {
           <CachedImage
             alt=""
             src={`https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${data.backdropPath}`}
-            layout="fill"
-            objectFit="cover"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            fill
             priority
           />
           <div
@@ -232,7 +234,8 @@ const IssueDetails = () => {
                 : '/images/overseerr_poster_not_found.png'
             }
             alt=""
-            layout="responsive"
+            sizes="100vw"
+            style={{ width: '100%', height: 'auto' }}
             width={600}
             height={900}
             priority
@@ -256,8 +259,9 @@ const IssueDetails = () => {
               href={`/${
                 issueData.media.mediaType === MediaType.MOVIE ? 'movie' : 'tv'
               }/${data.id}`}
+              className="hover:underline"
             >
-              <a className="hover:underline">{title}</a>
+              {title}
             </Link>{' '}
             {releaseYear && (
               <span className="media-year">({releaseYear.slice(0, 4)})</span>
@@ -273,17 +277,18 @@ const IssueDetails = () => {
                       ? '/profile'
                       : `/users/${issueData.createdBy.id}`
                   }
+                  className="group ml-1 inline-flex h-full items-center xl:ml-1.5"
                 >
-                  <a className="group ml-1 inline-flex h-full items-center xl:ml-1.5">
-                    <img
-                      className="mr-0.5 h-5 w-5 scale-100 transform-gpu rounded-full object-cover transition duration-300 group-hover:scale-105 xl:mr-1 xl:h-6 xl:w-6"
-                      src={issueData.createdBy.avatar}
-                      alt=""
-                    />
-                    <span className="font-semibold text-gray-100 transition duration-300 group-hover:text-white group-hover:underline">
-                      {issueData.createdBy.displayName}
-                    </span>
-                  </a>
+                  <Image
+                    className="mr-0.5 h-5 w-5 scale-100 transform-gpu rounded-full object-cover transition duration-300 group-hover:scale-105 xl:mr-1 xl:h-6 xl:w-6"
+                    src={issueData.createdBy.avatar}
+                    alt=""
+                    width={20}
+                    height={20}
+                  />
+                  <span className="font-semibold text-gray-100 transition duration-300 group-hover:text-white group-hover:underline">
+                    {issueData.createdBy.displayName}
+                  </span>
                 </Link>
               ),
               relativeTime: (

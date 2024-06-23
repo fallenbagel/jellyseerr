@@ -8,13 +8,14 @@ import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import Error from '@app/pages/_error';
+import defineMessages from '@app/utils/defineMessages';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import { useRouter } from 'next/router';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.UserProfile.UserSettings', {
   menuGeneralSettings: 'General',
   menuChangePass: 'Password',
   menuNotifications: 'Notifications',

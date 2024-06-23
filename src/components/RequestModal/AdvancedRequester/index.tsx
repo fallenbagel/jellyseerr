@@ -3,6 +3,7 @@ import { SmallLoadingSpinner } from '@app/components/Common/LoadingSpinner';
 import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { formatBytes } from '@app/utils/numberHelpers';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
@@ -13,8 +14,9 @@ import type {
 import type { UserResultsResponse } from '@server/interfaces/api/userInterfaces';
 import { hasPermission } from '@server/lib/permissions';
 import { isEqual } from 'lodash';
+import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import Select from 'react-select';
 import useSWR from 'swr';
 
@@ -23,7 +25,7 @@ type OptionType = {
   label: string;
 };
 
-const messages = defineMessages({
+const messages = defineMessages('components.RequestModal.AdvancedRequester', {
   advancedoptions: 'Advanced',
   destinationserver: 'Destination Server',
   qualityprofile: 'Quality Profile',
@@ -559,10 +561,12 @@ const AdvancedRequester = ({
                     <span className="inline-block w-full rounded-md shadow-sm">
                       <Listbox.Button className="focus:shadow-outline-blue relative w-full cursor-default rounded-md border border-gray-700 bg-gray-800 py-2 pl-3 pr-10 text-left text-white transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none sm:text-sm sm:leading-5">
                         <span className="flex items-center">
-                          <img
+                          <Image
                             src={selectedUser.avatar}
                             alt=""
                             className="h-6 w-6 flex-shrink-0 rounded-full object-cover"
+                            width={24}
+                            height={24}
                           />
                           <span className="ml-3 block">
                             {selectedUser.displayName}
@@ -609,10 +613,12 @@ const AdvancedRequester = ({
                                     selected ? 'font-semibold' : 'font-normal'
                                   } flex items-center`}
                                 >
-                                  <img
+                                  <Image
                                     src={user.avatar}
                                     alt=""
                                     className="h-6 w-6 flex-shrink-0 rounded-full object-cover"
+                                    width={24}
+                                    height={24}
                                   />
                                   <span className="ml-3 block flex-shrink-0">
                                     {user.displayName}

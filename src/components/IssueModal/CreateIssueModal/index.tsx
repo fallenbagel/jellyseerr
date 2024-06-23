@@ -4,6 +4,7 @@ import { issueOptions } from '@app/components/IssueModal/constants';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { RadioGroup } from '@headlessui/react';
 import { ArrowRightCircleIcon } from '@heroicons/react/24/solid';
 import { MediaStatus } from '@server/constants/media';
@@ -13,12 +14,12 @@ import type { TvDetails } from '@server/models/Tv';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
 import Link from 'next/link';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 
-const messages = defineMessages({
+const messages = defineMessages('components.IssueModal.CreateIssueModal', {
   validationMessageRequired: 'You must provide a description',
   whatswrong: "What's wrong?",
   providedetail:
@@ -118,7 +119,7 @@ const CreateIssueModal = ({
                     strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
                   })}
                 </div>
-                <Link href={`/issues/${newIssue.data.id}`}>
+                <Link href={`/issues/${newIssue.data.id}`} legacyBehavior>
                   <Button as="a" className="mt-4">
                     <span>{intl.formatMessage(messages.toastviewissue)}</span>
                     <ArrowRightCircleIcon />

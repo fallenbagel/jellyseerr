@@ -5,6 +5,7 @@ import PageTitle from '@app/components/Common/PageTitle';
 import IssueItem from '@app/components/IssueList/IssueItem';
 import { useUpdateQueryParams } from '@app/hooks/useUpdateQueryParams';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import {
   BarsArrowDownIcon,
   ChevronLeftIcon,
@@ -14,10 +15,10 @@ import {
 import type { IssueResultsResponse } from '@server/interfaces/api/issueInterfaces';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.IssueList', {
   issues: 'Issues',
   sortAdded: 'Most Recent',
   sortModified: 'Last Modified',

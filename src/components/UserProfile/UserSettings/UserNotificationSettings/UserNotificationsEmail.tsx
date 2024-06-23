@@ -8,24 +8,28 @@ import { OpenPgpLink } from '@app/components/Settings/Notifications/Notification
 import SettingsBadge from '@app/components/Settings/SettingsBadge';
 import { useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 
-const messages = defineMessages({
-  emailsettingssaved: 'Email notification settings saved successfully!',
-  emailsettingsfailed: 'Email notification settings failed to save.',
-  pgpPublicKey: 'PGP Public Key',
-  pgpPublicKeyTip:
-    'Encrypt email messages using <OpenPgpLink>OpenPGP</OpenPgpLink>',
-  validationPgpPublicKey: 'You must provide a valid PGP public key',
-});
+const messages = defineMessages(
+  'components.UserProfile.UserSettings.UserNotificationSettings',
+  {
+    emailsettingssaved: 'Email notification settings saved successfully!',
+    emailsettingsfailed: 'Email notification settings failed to save.',
+    pgpPublicKey: 'PGP Public Key',
+    pgpPublicKeyTip:
+      'Encrypt email messages using <OpenPgpLink>OpenPGP</OpenPgpLink>',
+    validationPgpPublicKey: 'You must provide a valid PGP public key',
+  }
+);
 
 const UserEmailSettings = () => {
   const intl = useIntl();

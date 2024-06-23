@@ -4,6 +4,7 @@ import { sliderTitles } from '@app/components/Discover/constants';
 import MediaSlider from '@app/components/MediaSlider';
 import { WatchProviderSelector } from '@app/components/Selector';
 import { encodeURIExtraParams } from '@app/hooks/useDiscover';
+import defineMessages from '@app/utils/defineMessages';
 import type {
   TmdbCompanySearchResponse,
   TmdbGenre,
@@ -16,12 +17,12 @@ import type { Keyword, ProductionCompany } from '@server/models/common';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import AsyncSelect from 'react-select/async';
 import { useToasts } from 'react-toast-notifications';
 import * as Yup from 'yup';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Discover.CreateSlider', {
   addSlider: 'Add Slider',
   editSlider: 'Edit Slider',
   slidernameplaceholder: 'Slider Name',

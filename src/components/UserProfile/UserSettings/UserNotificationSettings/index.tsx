@@ -9,18 +9,22 @@ import SettingsTabs from '@app/components/Common/SettingsTabs';
 import { useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import Error from '@app/pages/_error';
+import defineMessages from '@app/utils/defineMessages';
 import { CloudIcon, EnvelopeIcon } from '@heroicons/react/24/solid';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { useRouter } from 'next/router';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const messages = defineMessages({
-  notifications: 'Notifications',
-  notificationsettings: 'Notification Settings',
-  email: 'Email',
-  webpush: 'Web Push',
-});
+const messages = defineMessages(
+  'components.UserProfile.UserSettings.UserNotificationSettings',
+  {
+    notifications: 'Notifications',
+    notificationsettings: 'Notification Settings',
+    email: 'Email',
+    webpush: 'Web Push',
+  }
+);
 
 type UserNotificationSettingsProps = {
   children: React.ReactNode;

@@ -1,7 +1,8 @@
 import Badge from '@app/components/Common/Badge';
-import { defineMessages, FormattedRelativeTime, useIntl } from 'react-intl';
+import defineMessages from '@app/utils/defineMessages';
+import { FormattedRelativeTime, useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.AirDateBadge', {
   airedrelative: 'Aired {relativeTime}',
   airsrelative: 'Airing {relativeTime}',
 });

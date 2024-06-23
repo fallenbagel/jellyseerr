@@ -2,11 +2,12 @@ import NotificationType from '@app/components/NotificationTypeSelector/Notificat
 import useSettings from '@app/hooks/useSettings';
 import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
+import defineMessages from '@app/utils/defineMessages';
 import { sortBy } from 'lodash';
 import { useMemo, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.NotificationTypeSelector', {
   notificationTypes: 'Notification Types',
   mediarequested: 'Request Pending Approval',
   mediarequestedDescription:

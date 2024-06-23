@@ -13,20 +13,35 @@ jobs:
     name: Lint & Test Build
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-22.04
-    container: node:18.18-alpine
+    container: node:20-alpine
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Pnpm Setup
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Get pnpm store directory
+        shell: sh
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         env:
           HUSKY: 0
-        run: yarn
+        run: pnpm install
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
       - name: Formatting
-        run: yarn format:check
+        run: pnpm format:check
       - name: Build
-        run: yarn build
+        run: pnpm build
 
   build_and_push:
     name: Build & Publish Docker Images
@@ -60,7 +75,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           push: true
           build-args: |
             COMMIT_TAG=${{ github.sha }}

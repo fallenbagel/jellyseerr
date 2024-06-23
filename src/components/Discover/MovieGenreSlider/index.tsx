@@ -1,14 +1,15 @@
 import { genreColorMap } from '@app/components/Discover/constants';
 import GenreCard from '@app/components/GenreCard';
 import Slider from '@app/components/Slider';
+import defineMessages from '@app/utils/defineMessages';
 import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
 import type { GenreSliderItem } from '@server/interfaces/api/discoverInterfaces';
 import Link from 'next/link';
 import React from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Discover.MovieGenreSlider', {
   moviegenres: 'Movie Genres',
 });
 
@@ -25,11 +26,9 @@ const MovieGenreSlider = () => {
   return (
     <>
       <div className="slider-header">
-        <Link href="/discover/movies/genres">
-          <a className="slider-title">
-            <span>{intl.formatMessage(messages.moviegenres)}</span>
-            <ArrowRightCircleIcon />
-          </a>
+        <Link href="/discover/movies/genres" className="slider-title">
+          <span>{intl.formatMessage(messages.moviegenres)}</span>
+          <ArrowRightCircleIcon />
         </Link>
       </div>
       <Slider

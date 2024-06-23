@@ -9,15 +9,16 @@ import PageTitle from '@app/components/Common/PageTitle';
 import RadarrModal from '@app/components/Settings/RadarrModal';
 import SonarrModal from '@app/components/Settings/SonarrModal';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 import type { RadarrSettings, SonarrSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Fragment, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Settings', {
   services: 'Services',
   radarrsettings: 'Radarr Settings',
   sonarrsettings: 'Sonarr Settings',

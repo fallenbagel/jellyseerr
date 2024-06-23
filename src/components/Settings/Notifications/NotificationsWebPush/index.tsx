@@ -2,24 +2,28 @@ import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR, { mutate } from 'swr';
 
-const messages = defineMessages({
-  agentenabled: 'Enable Agent',
-  webpushsettingssaved: 'Web push notification settings saved successfully!',
-  webpushsettingsfailed: 'Web push notification settings failed to save.',
-  toastWebPushTestSending: 'Sending web push test notification…',
-  toastWebPushTestSuccess: 'Web push test notification sent!',
-  toastWebPushTestFailed: 'Web push test notification failed to send.',
-  httpsRequirement:
-    'In order to receive web push notifications, Jellyseerr must be served over HTTPS.',
-});
+const messages = defineMessages(
+  'components.Settings.Notifications.NotificationsWebPush',
+  {
+    agentenabled: 'Enable Agent',
+    webpushsettingssaved: 'Web push notification settings saved successfully!',
+    webpushsettingsfailed: 'Web push notification settings failed to save.',
+    toastWebPushTestSending: 'Sending web push test notification…',
+    toastWebPushTestSuccess: 'Web push test notification sent!',
+    toastWebPushTestFailed: 'Web push test notification failed to send.',
+    httpsRequirement:
+      'In order to receive web push notifications, Jellyseerr must be served over HTTPS.',
+  }
+);
 
 const NotificationsWebPush = () => {
   const intl = useIntl();

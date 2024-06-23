@@ -9,15 +9,17 @@ import SettingsPlex from '@app/components/Settings/SettingsPlex';
 import SettingsServices from '@app/components/Settings/SettingsServices';
 import SetupSteps from '@app/components/Setup/SetupSteps';
 import useLocale from '@app/hooks/useLocale';
+import defineMessages from '@app/utils/defineMessages';
 import { MediaServerType } from '@server/constants/server';
 import axios from 'axios';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
 import SetupLogin from './SetupLogin';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Setup', {
   setup: 'Setup',
   finish: 'Finish Setup',
   finishing: 'Finishing…',
@@ -77,11 +79,9 @@ const Setup = () => {
         <LanguagePicker />
       </div>
       <div className="relative z-40 px-4 sm:mx-auto sm:w-full sm:max-w-4xl">
-        <img
-          src="/logo_stacked.svg"
-          className="mb-10 max-w-full sm:mx-auto sm:max-w-md"
-          alt="Logo"
-        />
+        <div className="relative mb-10 h-48 max-w-full sm:mx-auto sm:h-64 sm:max-w-md">
+          <Image src="/logo_stacked.svg" alt="Logo" fill />
+        </div>
         <AppDataWarning />
         <nav className="relative z-50">
           <ul

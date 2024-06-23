@@ -93,13 +93,12 @@ const Badge = (
     );
   } else if (href) {
     return (
-      <Link href={href}>
-        <a
-          className={badgeStyle.join(' ')}
-          ref={ref as React.Ref<HTMLAnchorElement>}
-        >
-          {children}
-        </a>
+      <Link
+        href={href}
+        className={badgeStyle.join(' ')}
+        ref={ref as React.Ref<HTMLAnchorElement>}
+      >
+        {children}
       </Link>
     );
   } else {

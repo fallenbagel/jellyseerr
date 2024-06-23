@@ -3,13 +3,14 @@ import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
 import PersonCard from '@app/components/PersonCard';
 import Error from '@app/pages/_error';
+import defineMessages from '@app/utils/defineMessages';
 import type { MovieDetails } from '@server/models/Movie';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.MovieDetails.MovieCrew', {
   fullcrew: 'Full Crew',
 });
 
@@ -34,8 +35,8 @@ const MovieCrew = () => {
       <div className="mt-1 mb-5">
         <Header
           subtext={
-            <Link href={`/movie/${data.id}`}>
-              <a className="hover:underline">{data.title}</a>
+            <Link href={`/movie/${data.id}`} className="hover:underline">
+              {data.title}
             </Link>
           }
         >

@@ -7,6 +7,7 @@ import AdvancedRequester from '@app/components/RequestModal/AdvancedRequester';
 import QuotaDisplay from '@app/components/RequestModal/QuotaDisplay';
 import { useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { MediaRequestStatus, MediaStatus } from '@server/constants/media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
 import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
@@ -14,11 +15,11 @@ import { Permission } from '@server/lib/permissions';
 import type { Collection } from '@server/models/Collection';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.RequestModal', {
   requestadmin: 'This request will be approved automatically.',
   requestSuccess: '<strong>{title}</strong> requested successfully!',
   requestcollectiontitle: 'Request Collection',
@@ -402,10 +403,14 @@ const CollectionRequestModal = ({
                                   : '/images/overseerr_poster_not_found.png'
                               }
                               alt=""
-                              layout="responsive"
+                              sizes="100vw"
+                              style={{
+                                width: '100%',
+                                height: 'auto',
+                                objectFit: 'cover',
+                              }}
                               width={600}
                               height={900}
-                              objectFit="cover"
                             />
                           </div>
                           <div className="flex flex-col justify-center pl-2">

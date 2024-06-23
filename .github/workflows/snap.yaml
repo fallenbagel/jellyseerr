@@ -30,7 +30,6 @@ jobs:
         architecture:
           - amd64
           - arm64
-          - armhf
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

@@ -21,6 +21,8 @@ _The original Overseerr team have been busy and Jellyfin/Emby support aren't on 
 
 ## Current Features
 
+<!--  -->
+
 - Full Jellyfin/Emby/Plex integration including authentication with user import & management
 - Supports Movies, Shows and Mixed Libraries
 - Ability to change email addresses for smtp purposes
@@ -38,10 +40,6 @@ With more features on the way! Check out our [issue tracker](https://github.com/
 
 ## Getting Started
 
-#### Pre-requisite (Important)
-
-_*On Jellyfin/Emby, ensure the `Settings > Home > Automatically group content from the following folders into views such as 'Movies', 'Music' and 'TV'` is turned off*_
-
 ### Launching Jellyseerr using Docker (Recommended)
 
 Check out our docker hub for instructions on how to install and run Jellyseerr:
@@ -53,19 +51,21 @@ https://hub.docker.com/r/fallenbagel/jellyseerr
 
 Pre-requisites:
 
-- Nodejs [v18](https://nodejs.org/download/release/v18.18.2)
-- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install)
+- Nodejs [v20](https://nodejs.org/en/download)
+- Pnpm [v9](https://pnpm.io/installation)
 - Download/git clone the source code from the github (Either develop branch or main for stable)
 
 ```cmd
 npm i -g win-node-env
 set CYPRESS_INSTALL_BINARY=0
-yarn install --frozen-lockfile --network-timeout 1000000
-yarn run build
-yarn start
+pnpm install --frozen-lockfile
+pnpm add typeorm@0.13.11
+pnpm run build
+pnpm start
 ```
 
-(You can use task scheduler to run a bat script with `@echo off` and `yarn start` to run jellyseerr in the background)
+(You can use task scheduler to run a bat script with `@echo off` and `pnpm start` to run jellyseerr in the background)
+(You can also use nssm to run jellyseerr as a service, see [nssm](https://nssm.cc/usage) for more information)
 
 _To set env variables such as `JELLYFIN_TYPE=emby` create a file called `.env` in the root directory of jellyseerr_
 
@@ -73,8 +73,8 @@ _To set env variables such as `JELLYFIN_TYPE=emby` create a file called `.env` i
 
 **Pre-requisites:**
 
-- Nodejs [v18](https://nodejs.org/en/download/package-manager)
-- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install) (on Debian based distros, the package manager provided `yarn` is different and is a package called cmdlet. You can remove that using `apt-remove cmdlet` then install yarn using `npm install -g yarn`)
+- Nodejs [v20](https://nodejs.org/en/download)
+- Pnpm [v9](https://pnpm.io/installation)
 - Git
 
 **Steps:**
@@ -95,11 +95,11 @@ git checkout main
 3. Then install the dependencies and build the dist
 
 ```bash
-CYPRESS_INSTALL_BINARY=0 yarn install --frozen-lockfile --network-timeout 1000000
-yarn run build
+CYPRESS_INSTALL_BINARY=0 pnpm install --frozen-lockfile
+pnpm build
 ```
 
-4. Now you can start jellyseerr using `yarn start` and opening http://localhost:5055 in your browser.
+4. Now you can start jellyseerr using `pnpm start` and opening http://localhost:5055 in your browser.
 
 5. If you want to run jellyseerr as a _Systemd-service:_
 
@@ -147,7 +147,7 @@ WantedBy=multi-user.target
 
 Archlinux: [AUR](https://aur.archlinux.org/packages/jellyseerr)
 Nixpkg: [Nixpkg](https://search.nixos.org/packages?channel=unstable&show=jellyseerr)
-Snap: [Snap](https://snapcraft.io/jellyseerr)
+~Snap: [Snap](https://snapcraft.io/jellyseerr)~(Deprecated)
 
 ## Preview
 

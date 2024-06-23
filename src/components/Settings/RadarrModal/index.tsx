@@ -1,12 +1,13 @@
 import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import type { RadarrSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import Select from 'react-select';
 import { useToasts } from 'react-toast-notifications';
 import * as Yup from 'yup';
@@ -16,7 +17,7 @@ type OptionType = {
   label: string;
 };
 
-const messages = defineMessages({
+const messages = defineMessages('components.Settings.RadarrModal', {
   createradarr: 'Add New Radarr Server',
   create4kradarr: 'Add New 4K Radarr Server',
   editradarr: 'Edit Radarr Server',

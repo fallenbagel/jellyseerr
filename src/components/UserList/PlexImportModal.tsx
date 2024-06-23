@@ -2,9 +2,11 @@ import Alert from '@app/components/Common/Alert';
 import Modal from '@app/components/Common/Modal';
 import useSettings from '@app/hooks/useSettings';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import axios from 'axios';
+import Image from 'next/image';
 import { useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 
@@ -13,7 +15,7 @@ interface PlexImportProps {
   onComplete?: () => void;
 }
 
-const messages = defineMessages({
+const messages = defineMessages('components.UserList', {
   importfromplex: 'Import Plex Users',
   importfromplexerror: 'Something went wrong while importing Plex users.',
   importedfromplex:
@@ -200,10 +202,12 @@ const PlexImportModal = ({ onCancel, onComplete }: PlexImportProps) => {
                           </td>
                           <td className="whitespace-nowrap px-1 py-4 text-sm font-medium leading-5 text-gray-100 md:px-6">
                             <div className="flex items-center">
-                              <img
+                              <Image
                                 className="h-10 w-10 flex-shrink-0 rounded-full"
                                 src={user.thumb}
                                 alt=""
+                                width={40}
+                                height={40}
                               />
                               <div className="ml-4">
                                 <div className="text-base font-bold leading-5">

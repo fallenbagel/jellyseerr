@@ -2,14 +2,14 @@ import Accordion from '@app/components/Common/Accordion';
 import JellyfinLogin from '@app/components/Login/JellyfinLogin';
 import PlexLoginButton from '@app/components/PlexLoginButton';
 import { useUser } from '@app/hooks/useUser';
+import defineMessages from '@app/utils/defineMessages';
 import { MediaServerType } from '@server/constants/server';
 import axios from 'axios';
 import getConfig from 'next/config';
-import type React from 'react';
 import { useEffect, useState } from 'react';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Setup', {
   welcome: 'Welcome to Jellyseerr',
   signinMessage: 'Get started by signing in',
   signinWithJellyfin: 'Use your {mediaServerName} account',

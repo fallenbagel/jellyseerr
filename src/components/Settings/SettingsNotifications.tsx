@@ -9,10 +9,11 @@ import PageTitle from '@app/components/Common/PageTitle';
 import type { SettingsRoute } from '@app/components/Common/SettingsTabs';
 import SettingsTabs from '@app/components/Common/SettingsTabs';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { BoltIcon, CloudIcon, EnvelopeIcon } from '@heroicons/react/24/solid';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Settings', {
   notifications: 'Notifications',
   notificationsettings: 'Notification Settings',
   notificationAgentSettingsDescription:

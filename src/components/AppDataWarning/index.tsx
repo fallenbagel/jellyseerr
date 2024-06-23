@@ -1,8 +1,9 @@
 import Alert from '@app/components/Common/Alert';
-import { defineMessages, useIntl } from 'react-intl';
+import defineMessages from '@app/utils/defineMessages';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.AppDataWarning', {
   dockerVolumeMissingDescription:
     'The <code>{appDataPath}</code> volume mount was not configured properly. All data will be cleared when the container is stopped or restarted.',
 });

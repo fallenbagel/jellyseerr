@@ -8,6 +8,7 @@ import Placeholder from '@app/components/TitleCard/Placeholder';
 import { useIsTouch } from '@app/hooks/useIsTouch';
 import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { withProperties } from '@app/utils/typeHelpers';
 import { Transition } from '@headlessui/react';
 import {
@@ -20,9 +21,8 @@ import type { Watchlist } from '@server/entity/Watchlist';
 import type { MediaType } from '@server/models/Search';
 import axios from 'axios';
 import Link from 'next/link';
-import type React from 'react';
 import { Fragment, useCallback, useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import { mutate } from 'swr';
 
@@ -41,7 +41,7 @@ interface TitleCardProps {
   mutateParent?: () => void;
 }
 
-const messages = defineMessages({
+const messages = defineMessages('components.TitleCard', {
   addToWatchList: 'Add to watchlist',
   watchlistSuccess:
     '<strong>{title}</strong> added to watchlist  successfully!',
@@ -221,8 +221,8 @@ const TitleCard = ({
                 ? `https://image.tmdb.org/t/p/w300_and_h450_face${image}`
                 : `/images/overseerr_poster_not_found_logo_top.png`
             }
-            layout="fill"
-            objectFit="cover"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            fill
           />
           <div className="absolute left-0 right-0 flex items-center justify-between p-2">
             <div
@@ -306,60 +306,55 @@ const TitleCard = ({
                     ? `/collection/${id}`
                     : `/tv/${id}`
                 }
+                className="absolute inset-0 h-full w-full cursor-pointer overflow-hidden text-left"
+                style={{
+                  background:
+                    'linear-gradient(180deg, rgba(45, 55, 72, 0.4) 0%, rgba(45, 55, 72, 0.9) 100%)',
+                }}
               >
-                <a
-                  className="absolute inset-0 h-full w-full cursor-pointer overflow-hidden text-left"
-                  style={{
-                    background:
-                      'linear-gradient(180deg, rgba(45, 55, 72, 0.4) 0%, rgba(45, 55, 72, 0.9) 100%)',
-                  }}
-                >
-                  <div className="flex h-full w-full items-end">
-                    <div
-                      className={`px-2 text-white ${
-                        !showRequestButton ||
-                        (currentStatus && currentStatus !== MediaStatus.UNKNOWN)
-                          ? 'pb-2'
-                          : 'pb-11'
-                      }`}
-                    >
-                      {year && (
-                        <div className="text-sm font-medium">{year}</div>
-                      )}
+                <div className="flex h-full w-full items-end">
+                  <div
+                    className={`px-2 text-white ${
+                      !showRequestButton ||
+                      (currentStatus && currentStatus !== MediaStatus.UNKNOWN)
+                        ? 'pb-2'
+                        : 'pb-11'
+                    }`}
+                  >
+                    {year && <div className="text-sm font-medium">{year}</div>}
 
-                      <h1
-                        className="whitespace-normal text-xl font-bold leading-tight"
-                        style={{
-                          WebkitLineClamp: 3,
-                          display: '-webkit-box',
-                          overflow: 'hidden',
-                          WebkitBoxOrient: 'vertical',
-                          wordBreak: 'break-word',
-                        }}
-                        data-testid="title-card-title"
-                      >
-                        {title}
-                      </h1>
-                      <div
-                        className="whitespace-normal text-xs"
-                        style={{
-                          WebkitLineClamp:
-                            !showRequestButton ||
-                            (currentStatus &&
-                              currentStatus !== MediaStatus.UNKNOWN)
-                              ? 5
-                              : 3,
-                          display: '-webkit-box',
-                          overflow: 'hidden',
-                          WebkitBoxOrient: 'vertical',
-                          wordBreak: 'break-word',
-                        }}
-                      >
-                        {summary}
-                      </div>
+                    <h1
+                      className="whitespace-normal text-xl font-bold leading-tight"
+                      style={{
+                        WebkitLineClamp: 3,
+                        display: '-webkit-box',
+                        overflow: 'hidden',
+                        WebkitBoxOrient: 'vertical',
+                        wordBreak: 'break-word',
+                      }}
+                      data-testid="title-card-title"
+                    >
+                      {title}
+                    </h1>
+                    <div
+                      className="whitespace-normal text-xs"
+                      style={{
+                        WebkitLineClamp:
+                          !showRequestButton ||
+                          (currentStatus &&
+                            currentStatus !== MediaStatus.UNKNOWN)
+                            ? 5
+                            : 3,
+                        display: '-webkit-box',
+                        overflow: 'hidden',
+                        WebkitBoxOrient: 'vertical',
+                        wordBreak: 'break-word',
+                      }}
+                    >
+                      {summary}
                     </div>
                   </div>
-                </a>
+                </div>
               </Link>
 
               <div className="absolute bottom-0 left-0 right-0 flex justify-between px-2 py-2">

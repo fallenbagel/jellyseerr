@@ -1,17 +1,17 @@
 import Button from '@app/components/Common/Button';
 import Tooltip from '@app/components/Common/Tooltip';
 import useSettings from '@app/hooks/useSettings';
+import defineMessages from '@app/utils/defineMessages';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
 import { ApiErrorCode } from '@server/constants/error';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import getConfig from 'next/config';
-import type React from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import * as Yup from 'yup';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Login', {
   username: 'Username',
   password: 'Password',
   hostname: '{mediaServerName} URL',

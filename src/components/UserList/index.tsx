@@ -14,6 +14,7 @@ import { useUpdateQueryParams } from '@app/hooks/useUpdateQueryParams';
 import type { User } from '@app/hooks/useUser';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import {
   BarsArrowDownIcon,
@@ -29,16 +30,17 @@ import { hasPermission } from '@server/lib/permissions';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import getConfig from 'next/config';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 import JellyfinImportModal from './JellyfinImportModal';
 
-const messages = defineMessages({
+const messages = defineMessages('components.UserList', {
   users: 'Users',
   userlist: 'User List',
   importfrommediaserver: 'Import {mediaServerName} Users',
@@ -609,23 +611,25 @@ const UserList = () => {
               </Table.TD>
               <Table.TD>
                 <div className="flex items-center">
-                  <Link href={`/users/${user.id}`}>
-                    <a className="h-10 w-10 flex-shrink-0">
-                      <img
-                        className="h-10 w-10 rounded-full object-cover"
-                        src={user.avatar}
-                        alt=""
-                      />
-                    </a>
+                  <Link
+                    href={`/users/${user.id}`}
+                    className="h-10 w-10 flex-shrink-0"
+                  >
+                    <Image
+                      className="h-10 w-10 rounded-full object-cover"
+                      src={user.avatar}
+                      alt=""
+                      width={40}
+                      height={40}
+                    />
                   </Link>
                   <div className="ml-4">
-                    <Link href={`/users/${user.id}`}>
-                      <a
-                        className="text-base font-bold leading-5 transition duration-300 hover:underline"
-                        data-testid="user-list-username-link"
-                      >
-                        {user.displayName}
-                      </a>
+                    <Link
+                      href={`/users/${user.id}`}
+                      className="text-base font-bold leading-5 transition duration-300 hover:underline"
+                      data-testid="user-list-username-link"
+                    >
+                      {user.displayName}
                     </Link>
                     {user.displayName.toLowerCase() !== user.email && (
                       <div className="text-sm leading-5 text-gray-300">
@@ -641,10 +645,11 @@ const UserList = () => {
                   [Permission.MANAGE_REQUESTS, Permission.REQUEST_VIEW],
                   { type: 'or' }
                 ) ? (
-                  <Link href={`/users/${user.id}/requests`}>
-                    <a className="text-sm leading-5 transition duration-300 hover:underline">
-                      {user.requestCount}
-                    </a>
+                  <Link
+                    href={`/users/${user.id}/requests`}
+                    className="text-sm leading-5 transition duration-300 hover:underline"
+                  >
+                    {user.requestCount}
                   </Link>
                 ) : (
                   user.requestCount

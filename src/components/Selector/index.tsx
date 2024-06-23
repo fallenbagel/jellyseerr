@@ -4,6 +4,7 @@ import Tooltip from '@app/components/Common/Tooltip';
 import RegionSelector from '@app/components/RegionSelector';
 import { encodeURIExtraParams } from '@app/hooks/useDiscover';
 import useSettings from '@app/hooks/useSettings';
+import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import type {
@@ -20,12 +21,12 @@ import type {
 import axios from 'axios';
 import { orderBy } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import type { MultiValue, SingleValue } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Selector', {
   searchKeywords: 'Search keywords…',
   searchGenres: 'Select genres…',
   searchStudios: 'Search studios…',
@@ -376,9 +377,12 @@ export const WatchProviderSelector = ({
                     <CachedImage
                       src={`https://image.tmdb.org/t/p/original${provider.logoPath}`}
                       alt=""
-                      layout="responsive"
-                      width="100%"
-                      height="100%"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                      }}
+                      fill
                       className="rounded-lg"
                     />
                     {isActive && (
@@ -418,9 +422,12 @@ export const WatchProviderSelector = ({
                       <CachedImage
                         src={`https://image.tmdb.org/t/p/original${provider.logoPath}`}
                         alt=""
-                        layout="responsive"
-                        width="100%"
-                        height="100%"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                        }}
+                        fill
                         className="rounded-lg"
                       />
                       {isActive && (

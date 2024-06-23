@@ -109,10 +109,6 @@ interface ExtendedAppProps extends AppProps {
   currentSettings: PublicSettingsResponse;
 }
 
-if (typeof window === 'undefined') {
-  global.Intl = require('intl');
-}
-
 const CoreApp: Omit<NextAppComponentType, 'origGetInitialProps'> = ({
   Component,
   pageProps,

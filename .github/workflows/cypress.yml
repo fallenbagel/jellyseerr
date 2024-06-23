@@ -14,11 +14,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Pnpm Setup
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          build: yarn cypress:build
-          start: yarn start
+          build: pnpm cypress:build
+          start: pnpm start
           wait-on: 'http://localhost:5055'
           record: true
         env:

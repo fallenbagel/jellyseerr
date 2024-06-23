@@ -3,15 +3,16 @@ import ListView from '@app/components/Common/ListView';
 import PageTitle from '@app/components/Common/PageTitle';
 import useDiscover from '@app/hooks/useDiscover';
 import Error from '@app/pages/_error';
+import defineMessages from '@app/utils/defineMessages';
 import type {
   MovieResult,
   PersonResult,
   TvResult,
 } from '@server/models/Search';
 import { useRouter } from 'next/router';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Search', {
   search: 'Search',
   searchresults: 'Search Results',
 });

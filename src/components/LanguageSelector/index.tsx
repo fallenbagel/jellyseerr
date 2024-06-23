@@ -1,13 +1,14 @@
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import type { Language } from '@server/lib/settings';
 import { sortBy } from 'lodash';
 import { useMemo } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import type { CSSObjectWithLabel } from 'react-select';
 import Select from 'react-select';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.LanguageSelector', {
   originalLanguageDefault: 'All Languages',
   languageServerDefault: 'Default ({language})',
 });

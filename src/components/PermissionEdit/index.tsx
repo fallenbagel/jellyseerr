@@ -3,10 +3,11 @@ import PermissionOption from '@app/components/PermissionOption';
 import useSettings from '@app/hooks/useSettings';
 import type { User } from '@app/hooks/useUser';
 import { Permission } from '@app/hooks/useUser';
+import defineMessages from '@app/utils/defineMessages';
 import { MediaServerType } from '@server/constants/server';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-export const messages = defineMessages({
+export const messages = defineMessages('components.PermissionEdit', {
   admin: 'Admin',
   adminDescription:
     'Full administrator access. Bypasses all other permission checks.',

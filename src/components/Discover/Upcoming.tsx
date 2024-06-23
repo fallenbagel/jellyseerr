@@ -3,10 +3,11 @@ import ListView from '@app/components/Common/ListView';
 import PageTitle from '@app/components/Common/PageTitle';
 import useDiscover from '@app/hooks/useDiscover';
 import Error from '@app/pages/_error';
+import defineMessages from '@app/utils/defineMessages';
 import type { MovieResult } from '@server/models/Search';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Discover', {
   upcomingmovies: 'Upcoming Movies',
 });
 

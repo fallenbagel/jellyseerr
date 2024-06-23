@@ -2,6 +2,7 @@ import UserWarnings from '@app/components/Layout/UserWarnings';
 import VersionStatus from '@app/components/Layout/VersionStatus';
 import useClickOutside from '@app/hooks/useClickOutside';
 import { Permission, useUser } from '@app/hooks/useUser';
+import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import {
   ClockIcon,
@@ -13,12 +14,13 @@ import {
   UsersIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Fragment, useRef } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-export const menuMessages = defineMessages({
+export const menuMessages = defineMessages('components.Layout.Sidebar', {
   dashboard: 'Discover',
   browsemovies: 'Movies',
   browsetv: 'Series',
@@ -146,16 +148,16 @@ const Sidebar = ({ open, setClosed }: SidebarProps) => {
                   </div>
                   <div
                     ref={navRef}
-                    className="flex flex-1 flex-col overflow-y-auto pt-8 pb-8 sm:pb-4"
+                    className="flex flex-1 flex-col overflow-y-auto pt-4 pb-8 sm:pb-4"
                   >
                     <div className="flex flex-shrink-0 items-center px-2">
-                      <span className="px-4 text-xl text-gray-50">
-                        <a href="/">
-                          <img src="/logo_full.svg" alt="Logo" />
-                        </a>
+                      <span className="w-full px-4 text-xl text-gray-50">
+                        <Link href="/" className="relative block h-24 w-64">
+                          <Image src="/logo_full.svg" alt="Logo" fill />
+                        </Link>
                       </span>
                     </div>
-                    <nav className="mt-16 flex-1 space-y-4 px-4">
+                    <nav className="mt-10 flex-1 space-y-4 px-4">
                       {SidebarLinks.filter((link) =>
                         link.requiredPermission
                           ? hasPermission(link.requiredPermission, {
@@ -168,32 +170,27 @@ const Sidebar = ({ open, setClosed }: SidebarProps) => {
                             key={`mobile-${sidebarLink.messagesKey}`}
                             href={sidebarLink.href}
                             as={sidebarLink.as}
+                            onClick={() => setClosed()}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                setClosed();
+                              }
+                            }}
+                            role="button"
+                            tabIndex={0}
+                            className={`flex items-center rounded-md px-2 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out focus:outline-none
+                            ${
+                              router.pathname.match(sidebarLink.activeRegExp)
+                                ? 'bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500'
+                                : 'hover:bg-gray-700 focus:bg-gray-700'
+                            }
+                          `}
+                            data-testid={`${sidebarLink.dataTestId}-mobile`}
                           >
-                            <a
-                              onClick={() => setClosed()}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  setClosed();
-                                }
-                              }}
-                              role="button"
-                              tabIndex={0}
-                              className={`flex items-center rounded-md px-2 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out focus:outline-none
-                                ${
-                                  router.pathname.match(
-                                    sidebarLink.activeRegExp
-                                  )
-                                    ? 'bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500'
-                                    : 'hover:bg-gray-700 focus:bg-gray-700'
-                                }
-                              `}
-                              data-testid={`${sidebarLink.dataTestId}-mobile`}
-                            >
-                              {sidebarLink.svgIcon}
-                              {intl.formatMessage(
-                                menuMessages[sidebarLink.messagesKey]
-                              )}
-                            </a>
+                            {sidebarLink.svgIcon}
+                            {intl.formatMessage(
+                              menuMessages[sidebarLink.messagesKey]
+                            )}
                           </Link>
                         );
                       })}
@@ -221,15 +218,15 @@ const Sidebar = ({ open, setClosed }: SidebarProps) => {
       <div className="fixed top-0 bottom-0 left-0 z-30 hidden lg:flex lg:flex-shrink-0">
         <div className="sidebar flex w-64 flex-col">
           <div className="flex h-0 flex-1 flex-col">
-            <div className="flex flex-1 flex-col overflow-y-auto pt-8 pb-4">
+            <div className="flex flex-1 flex-col overflow-y-auto pb-4">
               <div className="flex flex-shrink-0 items-center">
-                <span className="px-4 text-2xl text-gray-50">
-                  <a href="/">
-                    <img src="/logo_full.svg" alt="Logo" />
-                  </a>
+                <span className="w-full px-4 py-2 text-2xl text-gray-50">
+                  <Link href="/" className="relative block h-24">
+                    <Image src="/logo_full.svg" alt="Logo" fill />
+                  </Link>
                 </span>
               </div>
-              <nav className="mt-16 flex-1 space-y-4 px-4">
+              <nav className="mt-8 flex-1 space-y-4 px-4">
                 {SidebarLinks.filter((link) =>
                   link.requiredPermission
                     ? hasPermission(link.requiredPermission, {
@@ -242,24 +239,19 @@ const Sidebar = ({ open, setClosed }: SidebarProps) => {
                       key={`desktop-${sidebarLink.messagesKey}`}
                       href={sidebarLink.href}
                       as={sidebarLink.as}
+                      className={`group flex items-center rounded-md px-2 py-2 text-lg font-medium leading-6 text-white transition duration-150 ease-in-out focus:outline-none
+                            ${
+                              router.pathname.match(sidebarLink.activeRegExp)
+                                ? 'bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500'
+                                : 'hover:bg-gray-700 focus:bg-gray-700'
+                            }
+                          `}
+                      data-testid={sidebarLink.dataTestId}
                     >
-                      <a
-                        className={`group flex items-center rounded-md px-2 py-2 text-lg font-medium leading-6 text-white transition duration-150 ease-in-out focus:outline-none
-                                ${
-                                  router.pathname.match(
-                                    sidebarLink.activeRegExp
-                                  )
-                                    ? 'bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500'
-                                    : 'hover:bg-gray-700 focus:bg-gray-700'
-                                }
-                              `}
-                        data-testid={sidebarLink.dataTestId}
-                      >
-                        {sidebarLink.svgIcon}
-                        {intl.formatMessage(
-                          menuMessages[sidebarLink.messagesKey]
-                        )}
-                      </a>
+                      {sidebarLink.svgIcon}
+                      {intl.formatMessage(
+                        menuMessages[sidebarLink.messagesKey]
+                      )}
                     </Link>
                   );
                 })}

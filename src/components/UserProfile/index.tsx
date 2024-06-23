@@ -8,6 +8,7 @@ import TmdbTitleCard from '@app/components/TitleCard/TmdbTitleCard';
 import ProfileHeader from '@app/components/UserProfile/ProfileHeader';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import Error from '@app/pages/_error';
+import defineMessages from '@app/utils/defineMessages';
 import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
 import type { WatchlistResponse } from '@server/interfaces/api/discoverInterfaces';
 import type {
@@ -20,10 +21,10 @@ import type { TvDetails } from '@server/models/Tv';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.UserProfile', {
   recentrequests: 'Recent Requests',
   limit: '{remaining} of {limit}',
   requestsperdays: '{limit} remaining',
@@ -164,7 +165,7 @@ const UserProfile = () => {
                         : `/users/${user?.id}/requests?filter=all`
                     }
                   >
-                    <a>{intl.formatNumber(user.requestCount)}</a>
+                    {intl.formatNumber(user.requestCount)}
                   </Link>
                 </dd>
               </div>
@@ -296,11 +297,10 @@ const UserProfile = () => {
                     ? '/profile/requests?filter=all'
                     : `/users/${user?.id}/requests?filter=all`
                 }
+                className="slider-title"
               >
-                <a className="slider-title">
-                  <span>{intl.formatMessage(messages.recentrequests)}</span>
-                  <ArrowRightCircleIcon />
-                </a>
+                <span>{intl.formatMessage(messages.recentrequests)}</span>
+                <ArrowRightCircleIcon />
               </Link>
             </div>
             <Slider
@@ -336,11 +336,10 @@ const UserProfile = () => {
                     ? '/profile/watchlist'
                     : `/users/${user.id}/watchlist`
                 }
+                className="slider-title"
               >
-                <a className="slider-title">
-                  <span>{watchlistSliderTitle}</span>
-                  <ArrowRightCircleIcon />
-                </a>
+                <span>{watchlistSliderTitle}</span>
+                <ArrowRightCircleIcon />
               </Link>
             </div>
             <Slider

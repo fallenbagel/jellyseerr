@@ -1,13 +1,13 @@
 import Modal from '@app/components/Common/Modal';
 import useSettings from '@app/hooks/useSettings';
+import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
-import type React from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import * as Yup from 'yup';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Login', {
   title: 'Add Email',
   description:
     'Since this is your first time logging into {applicationName}, you are required to add a valid email address.',

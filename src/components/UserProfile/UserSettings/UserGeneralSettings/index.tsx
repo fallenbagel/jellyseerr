@@ -12,6 +12,7 @@ import useSettings from '@app/hooks/useSettings';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import Error from '@app/pages/_error';
+import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
@@ -19,50 +20,53 @@ import { Field, Form, Formik } from 'formik';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 
-const messages = defineMessages({
-  general: 'General',
-  generalsettings: 'General Settings',
-  displayName: 'Display Name',
-  email: 'Email',
-  save: 'Save Changes',
-  saving: 'Saving…',
-  mediaServerUser: '{mediaServerName} User',
-  accounttype: 'Account Type',
-  plexuser: 'Plex User',
-  localuser: 'Local User',
-  role: 'Role',
-  owner: 'Owner',
-  admin: 'Admin',
-  user: 'User',
-  toastSettingsSuccess: 'Settings saved successfully!',
-  toastSettingsFailure: 'Something went wrong while saving settings.',
-  region: 'Discover Region',
-  regionTip: 'Filter content by regional availability',
-  originallanguage: 'Discover Language',
-  originallanguageTip: 'Filter content by original language',
-  movierequestlimit: 'Movie Request Limit',
-  seriesrequestlimit: 'Series Request Limit',
-  enableOverride: 'Override Global Limit',
-  applanguage: 'Display Language',
-  languageDefault: 'Default ({language})',
-  discordId: 'Discord User ID',
-  discordIdTip:
-    'The <FindDiscordIdLink>multi-digit ID number</FindDiscordIdLink> associated with your Discord user account',
-  validationemailrequired: 'Email required',
-  validationemailformat: 'Valid email required',
-  validationDiscordId: 'You must provide a valid Discord user ID',
-  plexwatchlistsyncmovies: 'Auto-Request Movies',
-  plexwatchlistsyncmoviestip:
-    'Automatically request movies on your <PlexWatchlistSupportLink>Plex Watchlist</PlexWatchlistSupportLink>',
-  plexwatchlistsyncseries: 'Auto-Request Series',
-  plexwatchlistsyncseriestip:
-    'Automatically request series on your <PlexWatchlistSupportLink>Plex Watchlist</PlexWatchlistSupportLink>',
-});
+const messages = defineMessages(
+  'components.UserProfile.UserSettings.UserGeneralSettings',
+  {
+    general: 'General',
+    generalsettings: 'General Settings',
+    displayName: 'Display Name',
+    email: 'Email',
+    save: 'Save Changes',
+    saving: 'Saving…',
+    mediaServerUser: '{mediaServerName} User',
+    accounttype: 'Account Type',
+    plexuser: 'Plex User',
+    localuser: 'Local User',
+    role: 'Role',
+    owner: 'Owner',
+    admin: 'Admin',
+    user: 'User',
+    toastSettingsSuccess: 'Settings saved successfully!',
+    toastSettingsFailure: 'Something went wrong while saving settings.',
+    region: 'Discover Region',
+    regionTip: 'Filter content by regional availability',
+    originallanguage: 'Discover Language',
+    originallanguageTip: 'Filter content by original language',
+    movierequestlimit: 'Movie Request Limit',
+    seriesrequestlimit: 'Series Request Limit',
+    enableOverride: 'Override Global Limit',
+    applanguage: 'Display Language',
+    languageDefault: 'Default ({language})',
+    discordId: 'Discord User ID',
+    discordIdTip:
+      'The <FindDiscordIdLink>multi-digit ID number</FindDiscordIdLink> associated with your Discord user account',
+    validationemailrequired: 'Email required',
+    validationemailformat: 'Valid email required',
+    validationDiscordId: 'You must provide a valid Discord user ID',
+    plexwatchlistsyncmovies: 'Auto-Request Movies',
+    plexwatchlistsyncmoviestip:
+      'Automatically request movies on your <PlexWatchlistSupportLink>Plex Watchlist</PlexWatchlistSupportLink>',
+    plexwatchlistsyncseries: 'Auto-Request Series',
+    plexwatchlistsyncseriestip:
+      'Automatically request series on your <PlexWatchlistSupportLink>Plex Watchlist</PlexWatchlistSupportLink>',
+  }
+);
 
 const UserGeneralSettings = () => {
   const intl = useIntl();

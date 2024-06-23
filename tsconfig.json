@@ -19,6 +19,7 @@
     "useUnknownInCatchVariables": false,
     "incremental": true,
     "baseUrl": "src",
+    "downlevelIteration": true,
     "paths": {
       "@server/*": ["../server/*"],
       "@app/*": ["*"]

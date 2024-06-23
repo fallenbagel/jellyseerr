@@ -3,11 +3,12 @@ import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import Modal from '@app/components/Common/Modal';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import dynamic from 'next/dynamic';
 import { Fragment, useState } from 'react';
-import { defineMessages, FormattedRelativeTime, useIntl } from 'react-intl';
+import { FormattedRelativeTime, useIntl } from 'react-intl';
 import useSWR from 'swr';
 
 // dyanmic is having trouble extracting the props for react-markdown here so we are just ignoring it since its really
@@ -17,7 +18,7 @@ const ReactMarkdown = dynamic<any>(() => import('react-markdown'), {
   ssr: false,
 });
 
-const messages = defineMessages({
+const messages = defineMessages('components.Settings.SettingsAbout.Releases', {
   releases: 'Releases',
   releasedataMissing: 'Release data is currently unavailable.',
   versionChangelog: '{version} Changelog',

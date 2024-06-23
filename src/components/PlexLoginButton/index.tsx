@@ -1,10 +1,11 @@
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import PlexOAuth from '@app/utils/plex';
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.PlexLoginButton', {
   signinwithplex: 'Sign In',
   signingin: 'Signing In…',
 });

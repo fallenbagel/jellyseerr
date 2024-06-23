@@ -1,8 +1,9 @@
 import CompanyCard from '@app/components/CompanyCard';
 import Slider from '@app/components/Slider';
-import { defineMessages, useIntl } from 'react-intl';
+import defineMessages from '@app/utils/defineMessages';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.Discover.NetworkSlider', {
   networks: 'Networks',
 });
 

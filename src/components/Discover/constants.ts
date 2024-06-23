@@ -1,5 +1,5 @@
+import defineMessages from '@app/utils/defineMessages';
 import type { ParsedUrlQuery } from 'querystring';
-import { defineMessages } from 'react-intl';
 import { z } from 'zod';
 
 type AvailableColors =
@@ -66,7 +66,7 @@ export const genreColorMap: Record<number, [string, string]> = {
   10768: colorTones.darkred, // War & Politics
 };
 
-export const sliderTitles = defineMessages({
+export const sliderTitles = defineMessages('components.Discover', {
   recentrequests: 'Recent Requests',
   popularmovies: 'Popular Movies',
   populartv: 'Popular Series',

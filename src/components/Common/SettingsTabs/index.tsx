@@ -55,15 +55,14 @@ const SettingsLink = ({
   }
 
   return (
-    <Link href={route}>
-      <a
-        className={`${linkClasses} ${
-          currentPath.match(regex) ? activeLinkColor : inactiveLinkColor
-        }`}
-        aria-current="page"
-      >
-        {children}
-      </a>
+    <Link
+      href={route}
+      className={`${linkClasses} ${
+        currentPath.match(regex) ? activeLinkColor : inactiveLinkColor
+      }`}
+      aria-current="page"
+    >
+      {children}
     </Link>
   );
 };

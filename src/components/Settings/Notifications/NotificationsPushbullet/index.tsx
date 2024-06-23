@@ -3,30 +3,35 @@ import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import NotificationTypeSelector from '@app/components/NotificationTypeSelector';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 
-const messages = defineMessages({
-  agentEnabled: 'Enable Agent',
-  accessToken: 'Access Token',
-  accessTokenTip:
-    'Create a token from your <PushbulletSettingsLink>Account Settings</PushbulletSettingsLink>',
-  validationAccessTokenRequired: 'You must provide an access token',
-  channelTag: 'Channel Tag',
-  pushbulletSettingsSaved:
-    'Pushbullet notification settings saved successfully!',
-  pushbulletSettingsFailed: 'Pushbullet notification settings failed to save.',
-  toastPushbulletTestSending: 'Sending Pushbullet test notification…',
-  toastPushbulletTestSuccess: 'Pushbullet test notification sent!',
-  toastPushbulletTestFailed: 'Pushbullet test notification failed to send.',
-  validationTypes: 'You must select at least one notification type',
-});
+const messages = defineMessages(
+  'components.Settings.Notifications.NotificationsPushbullet',
+  {
+    agentEnabled: 'Enable Agent',
+    accessToken: 'Access Token',
+    accessTokenTip:
+      'Create a token from your <PushbulletSettingsLink>Account Settings</PushbulletSettingsLink>',
+    validationAccessTokenRequired: 'You must provide an access token',
+    channelTag: 'Channel Tag',
+    pushbulletSettingsSaved:
+      'Pushbullet notification settings saved successfully!',
+    pushbulletSettingsFailed:
+      'Pushbullet notification settings failed to save.',
+    toastPushbulletTestSending: 'Sending Pushbullet test notification…',
+    toastPushbulletTestSuccess: 'Pushbullet test notification sent!',
+    toastPushbulletTestFailed: 'Pushbullet test notification failed to send.',
+    validationTypes: 'You must select at least one notification type',
+  }
+);
 
 const NotificationsPushbullet = () => {
   const intl = useIntl();

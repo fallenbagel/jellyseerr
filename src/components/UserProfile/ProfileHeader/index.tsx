@@ -1,11 +1,13 @@
 import Button from '@app/components/Common/Button';
 import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
+import defineMessages from '@app/utils/defineMessages';
 import { CogIcon, UserIcon } from '@heroicons/react/24/solid';
+import Image from 'next/image';
 import Link from 'next/link';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.UserProfile.ProfileHeader', {
   settings: 'Edit Settings',
   profile: 'View Profile',
   joindate: 'Joined {joindate}',
@@ -40,10 +42,12 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
       <div className="flex items-end justify-items-end space-x-5">
         <div className="flex-shrink-0">
           <div className="relative">
-            <img
+            <Image
               className="h-24 w-24 rounded-full bg-gray-600 object-cover ring-1 ring-gray-700"
               src={user.avatar}
               alt=""
+              width={96}
+              height={96}
             />
             <span
               className="absolute inset-0 rounded-full shadow-inner"
@@ -57,10 +61,9 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
               href={
                 user.id === loggedInUser?.id ? '/profile' : `/users/${user.id}`
               }
+              className="text-overseerr text-lg font-bold hover:to-purple-200 sm:text-2xl"
             >
-              <a className="text-overseerr text-lg font-bold hover:to-purple-200 sm:text-2xl">
-                {user.displayName}
-              </a>
+              {user.displayName}
             </Link>
             {user.email && user.displayName.toLowerCase() !== user.email && (
               <span className="text-sm text-gray-400 sm:ml-2 sm:text-lg">
@@ -88,6 +91,7 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
                 : `/users/${user.id}/settings`
             }
             passHref
+            legacyBehavior
           >
             <Button as="a">
               <CogIcon />
@@ -101,6 +105,7 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
                 loggedInUser?.id === user.id ? `/profile` : `/users/${user.id}`
               }
               passHref
+              legacyBehavior
             >
               <Button as="a">
                 <UserIcon />

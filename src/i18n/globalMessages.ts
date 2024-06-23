@@ -1,6 +1,6 @@
-import { defineMessages } from 'react-intl';
+import defineMessages from '@app/utils/defineMessages';
 
-const globalMessages = defineMessages({
+const globalMessages = defineMessages('i18n', {
   available: 'Available',
   partiallyavailable: 'Partially Available',
   processing: 'Processing',

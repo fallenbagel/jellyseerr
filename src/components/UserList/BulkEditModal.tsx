@@ -3,9 +3,10 @@ import PermissionEdit from '@app/components/PermissionEdit';
 import type { User } from '@app/hooks/useUser';
 import { useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 
 interface BulkEditProps {
@@ -16,7 +17,7 @@ interface BulkEditProps {
   onSaving?: (isSaving: boolean) => void;
 }
 
-const messages = defineMessages({
+const messages = defineMessages('components.UserList', {
   userssaved: 'User permissions saved successfully!',
   userfail: 'Something went wrong while saving user permissions.',
   edituser: 'Edit User Permissions',

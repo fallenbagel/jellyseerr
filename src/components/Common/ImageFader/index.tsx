@@ -64,8 +64,8 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
             className="absolute inset-0 h-full w-full"
             alt=""
             src={imageUrl}
-            layout="fill"
-            objectFit="cover"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            fill
             {...overrides}
           />
           <div

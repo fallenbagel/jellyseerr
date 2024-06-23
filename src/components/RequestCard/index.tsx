@@ -7,6 +7,7 @@ import StatusBadge from '@app/components/StatusBadge';
 import useDeepLinks from '@app/hooks/useDeepLinks';
 import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
+import defineMessages from '@app/utils/defineMessages';
 import { refreshIntervalHelper } from '@app/utils/refreshIntervalHelper';
 import { withProperties } from '@app/utils/typeHelpers';
 import {
@@ -21,14 +22,15 @@ import type { MediaRequest } from '@server/entity/MediaRequest';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
 import axios from 'axios';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR, { mutate } from 'swr';
 
-const messages = defineMessages({
+const messages = defineMessages('components.RequestCard', {
   seasons: '{seasonCount, plural, one {Season} other {Seasons}}',
   failedretry: 'Something went wrong while retrying the request.',
   mediaerror: '{mediaType} Not Found',
@@ -106,17 +108,22 @@ const RequestCardError = ({ requestData }: RequestCardErrorProps) => {
                   { type: 'or' }
                 ) && (
                   <div className="card-field !hidden sm:!block">
-                    <Link href={`/users/${requestData.requestedBy.id}`}>
-                      <a className="group flex items-center">
-                        <img
+                    <Link
+                      href={`/users/${requestData.requestedBy.id}`}
+                      className="group flex items-center"
+                    >
+                      <span className="avatar-sm">
+                        <Image
                           src={requestData.requestedBy.avatar}
                           alt=""
-                          className="avatar-sm"
+                          className="avatar-sm object-cover"
+                          width={20}
+                          height={20}
                         />
-                        <span className="truncate group-hover:underline">
-                          {requestData.requestedBy.displayName}
-                        </span>
-                      </a>
+                      </span>
+                      <span className="truncate group-hover:underline">
+                        {requestData.requestedBy.displayName}
+                      </span>
                     </Link>
                   </div>
                 )}
@@ -324,8 +331,8 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
             <CachedImage
               alt=""
               src={`https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${title.backdropPath}`}
-              layout="fill"
-              objectFit="cover"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              fill
             />
             <div
               className="absolute inset-0"
@@ -352,27 +359,31 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
                 ? `/movie/${requestData.media.tmdbId}`
                 : `/tv/${requestData.media.tmdbId}`
             }
+            className="overflow-hidden overflow-ellipsis whitespace-nowrap text-base font-bold text-white hover:underline sm:text-lg"
           >
-            <a className="overflow-hidden overflow-ellipsis whitespace-nowrap text-base font-bold text-white hover:underline sm:text-lg">
-              {isMovie(title) ? title.title : title.name}
-            </a>
+            {isMovie(title) ? title.title : title.name}
           </Link>
           {hasPermission(
             [Permission.MANAGE_REQUESTS, Permission.REQUEST_VIEW],
             { type: 'or' }
           ) && (
             <div className="card-field">
-              <Link href={`/users/${requestData.requestedBy.id}`}>
-                <a className="group flex items-center">
-                  <img
+              <Link
+                href={`/users/${requestData.requestedBy.id}`}
+                className="group flex items-center"
+              >
+                <span className="avatar-sm">
+                  <Image
                     src={requestData.requestedBy.avatar}
                     alt=""
                     className="avatar-sm object-cover"
+                    width={20}
+                    height={20}
                   />
-                  <span className="truncate font-semibold group-hover:text-white group-hover:underline">
-                    {requestData.requestedBy.displayName}
-                  </span>
-                </a>
+                </span>
+                <span className="truncate font-semibold group-hover:text-white group-hover:underline">
+                  {requestData.requestedBy.displayName}
+                </span>
               </Link>
             </div>
           )}
@@ -572,20 +583,20 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
               ? `/movie/${requestData.media.tmdbId}`
               : `/tv/${requestData.media.tmdbId}`
           }
+          className="w-20 flex-shrink-0 scale-100 transform-gpu cursor-pointer overflow-hidden rounded-md shadow-sm transition duration-300 hover:scale-105 hover:shadow-md sm:w-28"
         >
-          <a className="w-20 flex-shrink-0 scale-100 transform-gpu cursor-pointer overflow-hidden rounded-md shadow-sm transition duration-300 hover:scale-105 hover:shadow-md sm:w-28">
-            <CachedImage
-              src={
-                title.posterPath
-                  ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${title.posterPath}`
-                  : '/images/overseerr_poster_not_found.png'
-              }
-              alt=""
-              layout="responsive"
-              width={600}
-              height={900}
-            />
-          </a>
+          <CachedImage
+            src={
+              title.posterPath
+                ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${title.posterPath}`
+                : '/images/overseerr_poster_not_found.png'
+            }
+            alt=""
+            sizes="100vw"
+            style={{ width: '100%', height: 'auto' }}
+            width={600}
+            height={900}
+          />
         </Link>
       </div>
     </>

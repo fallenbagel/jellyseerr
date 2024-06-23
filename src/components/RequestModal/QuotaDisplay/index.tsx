@@ -1,11 +1,12 @@
 import ProgressCircle from '@app/components/Common/ProgressCircle';
+import defineMessages from '@app/utils/defineMessages';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import type { QuotaStatus } from '@server/interfaces/api/userInterfaces';
 import Link from 'next/link';
 import { useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const messages = defineMessages({
+const messages = defineMessages('components.RequestModal.QuotaDisplay', {
   requestsremaining:
     '{remaining, plural, =0 {No} other {<strong>#</strong>}} {type} {remaining, plural, one {request} other {requests}} remaining',
   movielimit: '{limit, plural, one {movie} other {movies}}',
@@ -131,10 +132,9 @@ const QuotaDisplay = ({
                 ProfileLink: (msg: React.ReactNode) => (
                   <Link
                     href={userOverride ? `/users/${userOverride}` : '/profile'}
+                    className="text-white transition duration-300 hover:underline"
                   >
-                    <a className="text-white transition duration-300 hover:underline">
-                      {msg}
-                    </a>
+                    {msg}
                   </Link>
                 ),
               }
