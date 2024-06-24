@@ -59,7 +59,6 @@ Pre-requisites:
 npm i -g win-node-env
 set CYPRESS_INSTALL_BINARY=0
 pnpm install --frozen-lockfile
-pnpm add typeorm@0.13.11
 pnpm run build
 pnpm start
 ```
