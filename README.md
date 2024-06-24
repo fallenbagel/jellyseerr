@@ -45,7 +45,104 @@ With more features on the way! Check out our [issue tracker](https://github.com/
 Check out our docker hub for instructions on how to install and run Jellyseerr:
 https://hub.docker.com/r/fallenbagel/jellyseerr
 
-### Building from source (ADVANCED):
+### Building latest version from source (ADVANCED):
+
+#### Windows
+
+Pre-requisites:
+
+- Nodejs [v18](https://nodejs.org/download/release/v18.18.2)
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install)
+- Download/git clone the source code from the github (Either develop branch or main for stable)
+
+```cmd
+npm i -g win-node-env
+set CYPRESS_INSTALL_BINARY=0
+yarn install --frozen-lockfile --network-timeout 1000000
+yarn run build
+yarn start
+```
+
+(You can use task scheduler to run a bat script with `@echo off` and `yarn start` to run jellyseerr in the background)
+(You can also use nssm to run jellyseerr as a service, see [nssm](https://nssm.cc/usage) for more information)
+
+_To set env variables such as `JELLYFIN_TYPE=emby` create a file called `.env` in the root directory of jellyseerr_
+
+#### Linux
+
+**Pre-requisites:**
+
+- Nodejs [v18](https://nodejs.org/en/download/package-manager)
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install) (on Debian based distros, the package manager provided `yarn` is different and is a package called cmdlet. You can remove that using `apt-remove cmdlet` then install yarn using `npm install -g yarn`)
+- Git
+
+**Steps:**
+
+1. Assuming you want the root folder for the jellyseerr source code to be cloned to `/opt`
+
+```bash
+cd /opt
+```
+
+2. Then execute the following commands to clone and checkout to the stable version
+
+```bash
+git clone https://github.com/Fallenbagel/jellyseerr.git && cd jellyseerr
+git checkout main
+```
+
+3. Then install the dependencies and build the dist
+
+```bash
+CYPRESS_INSTALL_BINARY=0 yarn install --frozen-lockfile --network-timeout 1000000
+yarn run build
+```
+
+4. Now you can start jellyseerr using `yarn start` and opening http://localhost:5055 in your browser.
+
+5. If you want to run jellyseerr as a _Systemd-service:_
+
+- assuming jellyseerr was cloned to `/opt/`
+- first create the environment file at `/etc/jellyseerr/jellyseerr.conf`
+
+Environment file:
+
+```
+# Jellyseerr's default port is 5055, if you want to use both, change this.
+# specify on which port to listen
+PORT=5055
+
+# specify on which interface to listen, by default jellyseerr listens on all interfaces
+#HOST=127.0.0.1
+
+# Uncomment if your media server is emby instead of jellyfin.
+# JELLYFIN_TYPE=emby
+```
+
+- Then run the command `which node` to find your node path (assuming it's at `/usr/bin/node`)
+- Then create the service file using `sudo systemctl edit jellyseerr.service` or creating and editing a file at `/etc/systemd/system/jellyseerr.service`
+
+Service file contents:
+
+```
+[Unit]
+Description=Jellyseerr Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+EnvironmentFile=/etc/jellyseerr/jellyseerr.conf
+Environment=NODE_ENV=production
+Type=exec
+Restart=on-failure
+WorkingDirectory=/opt/jellyseerr
+ExecStart=/usr/bin/node dist/index.js
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Building develop branch from source (ADVANCED):
 
 #### Windows
 
