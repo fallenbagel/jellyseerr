@@ -16,7 +16,7 @@ RUN \
 
 RUN npm install --global pnpm
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml postinstall-win.js ./
 RUN CYPRESS_INSTALL_BINARY=0 pnpm install --frozen-lockfile
 
 COPY . ./
