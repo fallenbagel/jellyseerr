@@ -71,11 +71,11 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: docusaurus-build
-          path: gen-docs/build
+      # - name: Download Build Artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: docusaurus-build
+      #     path: gen-docs/build
 
       - name: Deploy to GitHub Pages
         id: deployment
