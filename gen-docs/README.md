@@ -2,6 +2,8 @@
 
 Jellyseerr docs is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
 
+Jellyseerr docs will be available at [docs.jellyseerr.com](https://docs.jellyseerr.dev).
+
 ### Installation
 
 ```
