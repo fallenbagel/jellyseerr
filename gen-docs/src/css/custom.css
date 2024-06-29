@@ -1,0 +1,106 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+/* :root {
+  --ifm-color-scheme: dark;
+  --ifm-background-color: #151d2c;
+  --ifm-navbar-background-color: #151d2c;
+  --ifm-color-content: #fff;
+  --ifm-color-content-secondary: #888f9b;
+  --ifm-color-primary: var(--ifm-color-content);
+  --ifm-hover-overlay: #374151;
+  --ifm-menu-color-background-active: #793ae8;
+  --ifm-color-primary-dark: #1f2b7f;
+  --ifm-color-primary-darker: #16206b;
+  --ifm-color-primary-darkest: #0d1456;
+  --ifm-color-primary-light: #9066e3;
+  --ifm-color-primary-lighter: #a37ff0;
+  --ifm-color-primary-lightest: #b8a3f9;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+} */
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-scheme: dark;
+  --ifm-background-color: #151d2c !important;
+  --ifm-navbar-background-color: #151d2c;
+  --ifm-color-content: #fff;
+  --ifm-color-content-secondary: #888f9b;
+  --ifm-color-primary: var(--ifm-color-content);
+  --ifm-hover-overlay: #374151;
+  /* --ifm-menu-color-background-active: #793ae8; */
+  /* --ifm-menu-color-background-active: linear-gradient(
+    90deg,
+    #793ae8 0%,
+    #ff8c00 100%
+  ); */
+  --ifm-color-primary-dark: #1f2b7f;
+  --ifm-color-primary-darker: #16206b;
+  --ifm-color-primary-darkest: #0d1456;
+  --ifm-color-primary-light: #9066e3;
+  --ifm-color-primary-lighter: #a37ff0;
+  --ifm-color-primary-lightest: #b8a3f9;
+  --ifm-code-font-size: 95%;
+  --search-local-modal-background: #121a29;
+  /* --search-local-highlight-color: var(--ifm-hover-overlay); */
+  --search-local-highlight-color: #6366f1;
+  --search-local-hit-color: #fff;
+  --search-local-hit-background: #2d3748;
+  --search-local-hit-active-color: var(--ifm-color-primary);
+  --ifm-input-border-color: #ccc; /* Default border color */
+  --ifm-input-border-focus-color: red; /* Border color when focused */
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-navbar-search-input-icon: url('data:image/svg+xml;utf8,<svg fill="%23fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" height="16px" width="16px"><path d="M6.02945,10.20327a4.17382,4.17382,0,1,1,4.17382-4.17382A4.15609,4.15609,0,0,1,6.02945,10.20327Zm9.69195,4.2199L10.8989,9.59979A5.88021,5.88021,0,0,0,12.058,6.02856,6.00467,6.00467,0,1,0,9.59979,10.8989l4.82338,4.82338a.89729.89729,0,0,0,1.29912,0,.89749.89749,0,0,0-.00087-1.29909Z" /></svg>');
+}
+
+.table-of-contents__link--active,
+a:not(
+    .card,
+    .menu__link,
+    .menu__link--sublist,
+    .menu__link--sublist-item,
+    .table-of-contents__link
+  ) {
+  /* color: #793ae8; */
+  color: #6366f1;
+}
+
+.card {
+  background-color: rgb(31 41 55/0.9);
+}
+
+.theme-admonition a {
+  color: #fff;
+}
+
+.menu__link--active,
+.menu__list-item-collapsible--active {
+  background: linear-gradient(0deg, #8238e9 0%, #5d42e6 100%);
+}
+
+/* .tabs__item--active {
+  background: linear-gradient(0deg, #8238e9 0%, #5d42e6 100%);
+} */
+
+.tabs__item {
+  border-bottom: 1px solid #fff;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  padding: 0.5rem 1rem;
+}
+
+.tabs__item--active {
+  /* background: rgba(255, 255, 255, 0.1); */
+  color: #a37ff0;
+  border-bottom: 3px solid #a37ff0;
+}
+
+.footer {
+  background: var(--ifm-navbar-background-color);
+  border-top: 1px solid #2d3748;
+}

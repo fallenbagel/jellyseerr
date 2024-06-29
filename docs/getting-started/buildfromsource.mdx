@@ -1,0 +1,381 @@
+---
+title: Build From Source (Advanced)
+description: Install Jellyseerr by building from source
+sidebar_position: 2
+---
+# Build from Source (Advanced)
+:::warning
+This method is not recommended for most users. It is intended for advanced users who are familiar with managing their own server infrastructure.
+:::
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+### Prerequisites
+<Tabs groupId="versions">
+  <TabItem value="latest" label="Latest">
+    - [Node.js 18.x](https://nodejs.org/en/download/)
+    - [Yarn 1.x](https://classic.yarnpkg.com/lang/en/docs/install)
+    - [Git](https://git-scm.com/downloads)
+  </TabItem>
+
+  <TabItem value="develop" label="Develop">
+    - [Node.js 20.x](https://nodejs.org/en/download/)
+    - [Pnpm 9.x](https://pnpm.io/installation)
+    - [Git](https://git-scm.com/downloads)
+  </TabItem>
+</Tabs>
+
+
+## Unix (Linux, macOS)
+### Installation
+<Tabs groupId="versions">
+  <TabItem value="latest" label="latest">
+1. Assuming you want the working directory to be `/opt/jellyseerr`, create the directory and navigate to it:
+```bash
+sudo mkdir -p /opt/jellyseerr && cd /opt/jellyseerr
+```
+2. Clone the Jellyseerr repository and checkout the latest release:
+```bash
+git clone https://github.com/Fallenbagel/jellyseerr.git
+cd jellyseerr
+git checkout main
+```
+3. Install the dependencies:
+```bash
+CYPRESS_INSTALL_BINARY=0 yarn install --frozen-lockfile --network-timeout 1000000
+```
+4. Build the project:
+```bash
+yarn build
+```
+5. Start Jellyseerr:
+```bash
+yarn start
+```
+  </TabItem>
+  <TabItem value="develop" label="develop">
+1. Assuming you want the working directory to be `/opt/jellyseerr`, create the directory and navigate to it:
+```bash
+sudo mkdir -p /opt/jellyseerr && cd /opt/jellyseerr
+```
+2. Clone the Jellyseerr repository and checkout the develop branch:
+```bash
+git clone https://github.com/Fallenbagel/jellyseerr.git
+cd jellyseerr
+git checkout develop # by default, you are on the develop branch so this step is not necessary
+```
+3. Install the dependencies:
+```bash
+CYPRESS_INSTALL_BINARY=0 pnpm install --frozen-lockfile
+```
+4. Build the project:
+```bash
+pnpm build
+```
+5. Start Jellyseerr:
+```bash
+pnpm start
+```
+  </TabItem>
+</Tabs>
+  
+:::info
+You can now access Jellyseerr by visiting `http://localhost:5055` in your web browser.
+:::
+
+#### Extending the installation
+<Tabs groupId="unix-extensions">
+  <TabItem value="linux" label="Linux">
+To run jellyseerr as a systemd service:
+1. create the environment file at `/etc/jellyseerr/jellyseerr.conf`:
+```bash
+## Jellyseerr's default port is 5055, if you want to use both, change this.
+## specify on which port to listen
+PORT=5055
+
+## specify on which interface to listen, by default jellyseerr listens on all interfaces
+#HOST=127.0.0.1
+
+## Uncomment if your media server is emby instead of jellyfin.
+# JELLYFIN_TYPE=emby
+```
+2. Then run the following commands:
+```bash
+which node
+```
+Copy the path to node, it should be something like `/usr/bin/node`.
+
+3. Create the systemd service file at `/etc/systemd/system/jellyseerr.service`, using either `sudo systemctl edit jellyseerr` or `sudo nano /etc/systemd/system/jellyseerr.service`:
+```bash
+[Unit]
+Description=Jellyseerr Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+EnvironmentFile=/etc/jellyseerr/jellyseerr.conf
+Environment=NODE_ENV=production
+Type=exec
+Restart=on-failure
+WorkingDirectory=/opt/jellyseerr
+ExecStart=/usr/bin/node dist/index.js
+
+[Install]
+WantedBy=multi-user.target
+```
+:::note
+If you are using a different path to node, replace `/usr/bin/node` with the path to node.
+:::
+
+4. Enable and start the service:
+```bash
+sudo systemctl enable jellyseerr
+sudo systemctl start jellyseerr
+```
+  </TabItem>
+  <TabItem value="macos" label="macOS">
+To run jellyseerr as a launchd service:
+1. Find the path to node:
+```bash
+which node
+```
+Copy the path to node, it should be something like `/usr/local/bin/node`.
+
+2. Create a launchd plist file at `~/Library/LaunchAgents/com.jellyseerr.plist`:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.jellyseerr</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/node</string>
+    <string>/opt/jellyseerr/dist/index.js</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/opt/jellyseerr</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>NODE_ENV</key>
+    <string>production</string>
+    <key>PORT</key>
+    <string>5055</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+</dict>
+</plist>
+```
+:::note
+If you are using a different path to node, replace `/usr/local/bin/node` with the path to node.
+:::
+3. Load the service:
+```bash
+sudo launchctl load ~/Library/LaunchAgents/com.jellyseerr.plist
+```
+3. Start the service:
+```bash
+sudo launchctl start com.jellyseerr
+```
+4. To ensure the service starts on boot, run the following command:
+```bash
+sudo lauchctl load
+```
+  </TabItem>
+  <TabItem value="pm2" label="PM2">
+To run jellyseerr as a PM2 service:
+1. Install PM2:
+```bash
+npm install -g pm2
+```
+2. Start jellyseerr with PM2:
+```bash
+pm2 start dist/index.js --name jellyseerr --node-args="--NODE_ENV=production"
+```
+3. Save the process list:
+```bash
+pm2 save
+```
+4. Ensure PM2 starts on boot:
+```bash
+pm2 startup
+```
+**Managing the service**
+- To start the service:
+```powershell
+pm2 start jellyseerr
+```
+- To stop the service:
+```powershell
+pm2 stop jellyseerr
+```
+- To restart the service:
+```powershell
+pm2 restart jellyseerr
+```
+- To view the logs:
+```powershell
+pm2 logs jellyseerr
+```
+- To view the status:
+```powershell
+pm2 status jellyseerr
+```
+  </TabItem>
+</Tabs>
+
+## Windows
+### Installation
+<Tabs groupId="versions">
+  <TabItem value="latest" label="latest">
+1. Assuming you want the working directory to be `C:\jellyseerr`, create the directory and navigate to it:
+```powershell
+mkdir C:\jellyseerr
+cd C:\jellyseerr
+```
+2. Clone the Jellyseerr repository and checkout the latest release:
+```powershell
+git clone https://github.com/Fallenbagel/jellyseerr.git .
+git checkout main
+```
+3. Install the dependencies:
+```powershell
+set CYPRESS_INSTALL_BINARY=0 && yarn install --frozen-lockfile --network-timeout 1000000
+```
+4. Build the project:
+```powershell
+yarn build
+```
+5. Start Jellyseerr:
+```powershell
+yarn start
+```
+  </TabItem>
+  <TabItem value="develop" label="develop">
+1. Assuming you want the working directory to be `C:\jellyseerr`, create the directory and navigate to it:
+```powershell
+mkdir C:\jellyseerr
+cd C:\jellyseerr
+```
+2. Clone the Jellyseerr repository and checkout the develop branch:
+```powershell
+git clone https://github.com/Fallenbagel/jellyseerr.git .
+git checkout develop # by default, you are on the develop branch so this step is not necessary
+```
+3. Install the dependencies:
+```powershell
+set CYPRESS_INSTALL_BINARY=0 && pnpm install --frozen-lockfile
+```
+4. Build the project:
+```powershell
+pnpm build
+```
+5. Start Jellyseerr:
+```powershell
+pnpm start
+```
+  </TabItem>
+</Tabs>
+
+:::tip
+You can add the environment variables to a `.env` file in the Jellyseerr directory.
+:::
+
+:::info
+You can now access Jellyseerr by visiting `http://localhost:5055` in your web browser.
+:::
+
+#### Extending the installation
+<Tabs groupId="windows-extensions">
+  <TabItem value="task-scheduler" label="Task Scheduler">
+To run jellyseerr as a bat script:
+1. Create a file named `start-jellyseerr.bat` in the jellyseerr directory:
+```bat
+@echo off
+set PORT=5055
+set NODE_ENV=production
+node dist/index.js
+```
+2. Create a task in Task Scheduler:
+- Open Task Scheduler
+- Click on "Create Basic Task"
+- Name the task "Jellyseerr"
+- Set the trigger to "When the computer starts"
+- Set the action to "Start a program"
+- Set the program/script to the path of the `start-jellyseerr.bat` file
+- Click "Finish"
+
+Now, Jellyseerr will start when the computer boots up in the background.
+  </TabItem>
+  
+  <TabItem value="nssm" label="NSSM">
+To run jellyseerr as a service:
+1. Download the [Non-Sucking Service Manager](https://nssm.cc/download)
+2. Install NSSM:
+```powershell
+nssm install Jellyseerr "C:\Program Files\nodejs\node.exe" ["C:\jellyseerr\dist\index.js"]
+nssm set Jellyseerr AppEnvironmentExtra NODE_ENV=production
+```
+3. Start the service:
+```powershell
+nssm start Jellyseerr
+```
+4. To ensure the service starts on boot, run the following command:
+```powershell
+nssm set Jellyseerr Start SERVICE_AUTO_START
+```
+  </TabItem>
+  <TabItem value="pm2" label="PM2">
+To run jellyseerr as a PM2 service:
+1. Install PM2:
+```powershell
+npm install -g pm2
+```
+2. Start jellyseerr with PM2:
+```powershell
+pm2 start dist/index.js --name jellyseerr  --node-args="--NODE_ENV=production"
+```
+3. Save the process list:
+```powershell
+pm2 save
+```
+4. Ensure PM2 starts on boot:
+```powershell
+pm2 startup
+```
+##### Managing the service
+- To start the service:
+```powershell
+pm2 start jellyseerr
+```
+- To stop the service:
+```powershell
+pm2 stop jellyseerr
+```
+- To restart the service:
+```powershell
+pm2 restart jellyseerr
+```
+- To view the logs:
+```powershell
+pm2 logs jellyseerr
+```
+- To view the status:
+```powershell
+pm2 status jellyseerr
+```
+  </TabItem>
+</Tabs>
+
+### Updating
+To update Jellyseerr, navigate to the Jellyseerr directory and run the following commands:
+```bash
+git pull
+```
+Then, follow the steps in the installation section to rebuild and restart Jellyseerr.
+
