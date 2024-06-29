@@ -13,6 +13,7 @@ const config: Config = {
 
   organizationName: 'Fallenbagel',
   projectName: 'Jellyseerr',
+  deploymentBranch: 'gh-pages',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
