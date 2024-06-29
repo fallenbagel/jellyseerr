@@ -9,10 +9,10 @@ const config: Config = {
 
   url: 'https://docs.jellyseerr.dev',
   baseUrl: '/',
+  trailingSlash: false,
 
   organizationName: 'Fallenbagel',
   projectName: 'Jellyseerr',
-  deploymentBranch: 'docs',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',

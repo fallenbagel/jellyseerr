@@ -26,7 +26,7 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 9
-      
+
       - name: Get pnpm store directory
         shell: sh
         run: |
@@ -42,7 +42,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd gen-docs 
+          cd gen-docs
           pnpm install --frozen-lockfile
 
       - name: Build website
@@ -72,10 +72,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Build Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: docusaurus-build
-          path: gen-docs/build 
+          path: gen-docs/build
 
       - name: Deploy to GitHub Pages
         id: deployment
