@@ -37,6 +37,7 @@ With more features on the way! Check out our [issue tracker](https://github.com/
 ## Getting Started
 
 Check out our documentation for instructions on how to install and run Jellyseerr:
+
 https://docs.jellyseerr.dev/getting-started/
 
 ### Packages:

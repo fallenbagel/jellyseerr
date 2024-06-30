@@ -7,9 +7,9 @@ All help is welcome and greatly appreciated! If you would like to contribute to 
 ### Tools Required
 
 - HTML/Typescript/Javascript editor
-  - [VSCode](https://code.visualstudio.com/) is recommended. Upon opening the project, a few extensions will be automatically recommended for install.
-- [NodeJS](https://nodejs.org/en/download/) (Node 14.x or higher)
-- [Yarn](https://yarnpkg.com/)
+- [VSCode](https://code.visualstudio.com/) is recommended. Upon opening the project, a few extensions will be automatically recommended for install.
+- [NodeJS](https://nodejs.org/en/download/) (Node 20.x)
+- [Pnpm](https://pnpm.io/cli/install)
 - [Git](https://git-scm.com/downloads)
 
 ### Getting Started
@@ -18,7 +18,7 @@ All help is welcome and greatly appreciated! If you would like to contribute to 
 
    ```bash
    git clone https://github.com/YOUR_USERNAME/jellyseerr.git
-   cd overseerr/
+   cd jellyseerr/
    ```
 
 2. Add the remote `upstream`:
@@ -48,8 +48,8 @@ All help is welcome and greatly appreciated! If you would like to contribute to 
 4. Run the development environment:
 
    ```bash
-   yarn
-   yarn dev
+   pnpm
+   pnpm dev
    ```
 
    - Alternatively, you can use [Docker](https://www.docker.com/) with `docker-compose up -d`. This method does not require installing NodeJS or Yarn on your machine directly.
@@ -93,7 +93,7 @@ When adding new UI text, please try to adhere to the following guidelines:
 8. If an additional description or "tip" is required for a form field, it should be styled using the global CSS class `label-tip`.
 9. In full sentences, abbreviations like "info" or "auto" should not be used in place of full words, unless referencing the name/label of a specific setting or option which has an abbreviation in its name.
 10. Do your best to check for spelling errors and grammatical mistakes.
-11. Do not misspell "Overseerr."
+11. Do not misspell "Jellyseerr."
 
 ## Translation
 
@@ -103,4 +103,4 @@ We use [Weblate](https://jellyseerr.borgcube.de/projects/jellyseerr/jellyseerr-f
 
 ## Attribution
 
-This contribution guide was inspired by the [Next.js](https://github.com/vercel/next.js) and [Radarr](https://github.com/Radarr/Radarr) contribution guides.
+This contribution guide was inspired by the [Next.js](https://github.com/vercel/next.js), [Radarr](https://github.com/Radarr/Radarr), and [Overseerr](https://github.com/sct/Overseerr) contribution guides.
