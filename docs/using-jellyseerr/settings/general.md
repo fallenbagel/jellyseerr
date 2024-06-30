@@ -18,13 +18,13 @@ If you aren't a huge fan of the name "Jellyseerr" and would like to display some
 
 ## Application URL
 
-Set this to the externally-accessible URL of your Overseerr instance.
+Set this to the externally-accessible URL of your Jellyseerr instance.
 
 You must configure this setting in order to enable password reset and generation emails.
 
 ## Enable Proxy Support
 
-If you have Overseerr behind a reverse proxy, enable this setting to allow Overseerr to correctly register client IP addresses. For details, please see the [Express Documentation](https://expressjs.com/en/guide/behind-proxies.html).
+If you have Jellyseerr behind a reverse proxy, enable this setting to allow Jellyseerr to correctly register client IP addresses. For details, please see the [Express Documentation](https://expressjs.com/en/guide/behind-proxies.html).
 
 This setting is **disabled** by default.
 
@@ -40,7 +40,7 @@ If you do not use Jellyseerr integrations with third-party applications to add/m
 
 One caveat, however, is that HTTPS is required, meaning that once this setting is enabled, you will no longer be able to access your Jellyseerr instance over _HTTP_ (including using an IP address and port number).
 
-If you enable this setting and find yourself unable to access Overseerr, you can disable the setting by modifying `settings.json` in `/app/config`.
+If you enable this setting and find yourself unable to access Jellyseerr, you can disable the setting by modifying `settings.json` in `/app/config`.
 
 This setting is **disabled** by default.
 

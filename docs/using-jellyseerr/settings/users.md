@@ -16,7 +16,7 @@ This setting is **enabled** by default.
 
 ## Enable New Jellyfin/Emby/Plex Sign-In
 
-When enabled, users with access to your media server will be able to sign in to Overseerr even if they have not yet been imported. Users will be automatically assigned the permissions configured in the [Default Permissions](#default-permissions) setting upon first sign-in.
+When enabled, users with access to your media server will be able to sign in to Jellyseerr even if they have not yet been imported. Users will be automatically assigned the permissions configured in the [Default Permissions](#default-permissions) setting upon first sign-in.
 
 This setting is **enabled** by default.
 
