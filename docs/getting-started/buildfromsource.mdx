@@ -12,7 +12,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 ### Prerequisites
-<Tabs groupId="versions">
+<Tabs groupId="versions" queryString>
   <TabItem value="latest" label="Latest">
     - [Node.js 18.x](https://nodejs.org/en/download/)
     - [Yarn 1.x](https://classic.yarnpkg.com/lang/en/docs/install)
@@ -29,7 +29,7 @@ import TabItem from '@theme/TabItem';
 
 ## Unix (Linux, macOS)
 ### Installation
-<Tabs groupId="versions">
+<Tabs groupId="versions" queryString>
   <TabItem value="latest" label="latest">
 1. Assuming you want the working directory to be `/opt/jellyseerr`, create the directory and navigate to it:
 ```bash
@@ -85,7 +85,7 @@ You can now access Jellyseerr by visiting `http://localhost:5055` in your web br
 :::
 
 #### Extending the installation
-<Tabs groupId="unix-extensions">
+<Tabs groupId="unix-extensions" queryString>
   <TabItem value="linux" label="Linux">
 To run jellyseerr as a systemd service:
 1. create the environment file at `/etc/jellyseerr/jellyseerr.conf`:
@@ -231,7 +231,7 @@ pm2 status jellyseerr
 
 ## Windows
 ### Installation
-<Tabs groupId="versions">
+<Tabs groupId="versions" queryString>
   <TabItem value="latest" label="latest">
 1. Assuming you want the working directory to be `C:\jellyseerr`, create the directory and navigate to it:
 ```powershell
@@ -291,7 +291,7 @@ You can now access Jellyseerr by visiting `http://localhost:5055` in your web br
 :::
 
 #### Extending the installation
-<Tabs groupId="windows-extensions">
+<Tabs groupId="windows-extensions" queryString>
   <TabItem value="task-scheduler" label="Task Scheduler">
 To run jellyseerr as a bat script:
 1. Create a file named `start-jellyseerr.bat` in the jellyseerr directory:
