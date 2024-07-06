@@ -167,22 +167,6 @@ volumes:
     external: true
 ```
   </TabItem>
-
-  <TabItem value="docker-desktop" label="Docker Desktop">
-1. Open the Docker Desktop app
-2. Head to the Containers/Apps tab
-3. Click on the "Add Container/App" button near the top right
-4. Fill in the container details:
-   - **Name**: `jellyseerr`
-   - **Image**: `fallenbagel/jellyseerr:latest`
-   - **Port**: `5055:5055`
-   - **Volume**: `jellyseerr-data:/app/config`
-   - **Environment Variables**:
-     - **LOG_LEVEL**: `debug`
-     - **TZ**: `Asia/Tashkent`
-   - **Restart Policy**: `unless-stopped`
-5. Click on the "Run" button
-  </TabItem>
 </Tabs>
 
 :::tip
