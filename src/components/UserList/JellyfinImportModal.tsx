@@ -4,7 +4,6 @@ import useSettings from '@app/hooks/useSettings';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import type { UserResultsResponse } from '@server/interfaces/api/userInterfaces';
-import axios from 'axios';
 import getConfig from 'next/config';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -69,10 +68,17 @@ const JellyfinImportModal: React.FC<JellyfinImportProps> = ({
     setImporting(true);
 
     try {
-      const { data: createdUsers } = await axios.post(
-        '/api/v1/user/import-from-jellyfin',
-        { jellyfinUserIds: selectedUsers }
-      );
+      const res = await fetch('/api/v1/user/import-from-jellyfin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          jellyfinUserIds: selectedUsers,
+        }),
+      });
+      if (!res.ok) throw new Error();
+      const { data: createdUsers } = await res.json();
 
       if (!createdUsers.length) {
         throw new Error('No users were imported from Jellyfin.');

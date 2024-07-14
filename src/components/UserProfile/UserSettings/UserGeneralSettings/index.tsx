@@ -11,11 +11,10 @@ import useLocale from '@app/hooks/useLocale';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
-import Error from '@app/pages/_error';
+import ErrorPage from '@app/pages/_error';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
-import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
@@ -116,7 +115,7 @@ const UserGeneralSettings = () => {
   }
 
   if (!data) {
-    return <Error statusCode={500} />;
+    return <ErrorPage statusCode={500} />;
   }
 
   return (
@@ -151,22 +150,31 @@ const UserGeneralSettings = () => {
         enableReinitialize
         onSubmit={async (values) => {
           try {
-            await axios.post(`/api/v1/user/${user?.id}/settings/main`, {
-              username: values.displayName,
-              email: values.email,
-              discordId: values.discordId,
-              locale: values.locale,
-              region: values.region,
-              originalLanguage: values.originalLanguage,
-              movieQuotaLimit: movieQuotaEnabled
-                ? values.movieQuotaLimit
-                : null,
-              movieQuotaDays: movieQuotaEnabled ? values.movieQuotaDays : null,
-              tvQuotaLimit: tvQuotaEnabled ? values.tvQuotaLimit : null,
-              tvQuotaDays: tvQuotaEnabled ? values.tvQuotaDays : null,
-              watchlistSyncMovies: values.watchlistSyncMovies,
-              watchlistSyncTv: values.watchlistSyncTv,
+            const res = await fetch(`/api/v1/user/${user?.id}/settings/main`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                username: values.displayName,
+                email: values.email,
+                discordId: values.discordId,
+                locale: values.locale,
+                region: values.region,
+                originalLanguage: values.originalLanguage,
+                movieQuotaLimit: movieQuotaEnabled
+                  ? values.movieQuotaLimit
+                  : null,
+                movieQuotaDays: movieQuotaEnabled
+                  ? values.movieQuotaDays
+                  : null,
+                tvQuotaLimit: tvQuotaEnabled ? values.tvQuotaLimit : null,
+                tvQuotaDays: tvQuotaEnabled ? values.tvQuotaDays : null,
+                watchlistSyncMovies: values.watchlistSyncMovies,
+                watchlistSyncTv: values.watchlistSyncTv,
+              }),
             });
+            if (!res.ok) throw new Error();
 
             if (currentUser?.id === user?.id && setLocale) {
               setLocale(

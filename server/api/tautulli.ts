@@ -1,8 +1,7 @@
+import ExternalAPI from '@server/api/externalapi';
 import type { User } from '@server/entity/User';
 import type { TautulliSettings } from '@server/lib/settings';
 import logger from '@server/logger';
-import type { AxiosInstance } from 'axios';
-import axios from 'axios';
 import { uniqWith } from 'lodash';
 
 export interface TautulliHistoryRecord {
@@ -113,25 +112,25 @@ interface TautulliInfoResponse {
   };
 }
 
-class TautulliAPI {
-  private axios: AxiosInstance;
-
+class TautulliAPI extends ExternalAPI {
   constructor(settings: TautulliSettings) {
-    this.axios = axios.create({
-      baseURL: `${settings.useSsl ? 'https' : 'http'}://${settings.hostname}:${
+    super(
+      `${settings.useSsl ? 'https' : 'http'}://${settings.hostname}:${
         settings.port
       }${settings.urlBase ?? ''}`,
-      params: { apikey: settings.apiKey },
-    });
+      {
+        apikey: settings.apiKey || '',
+      }
+    );
   }
 
   public async getInfo(): Promise<TautulliInfo> {
     try {
       return (
-        await this.axios.get<TautulliInfoResponse>('/api/v2', {
-          params: { cmd: 'get_tautulli_info' },
+        await this.get<TautulliInfoResponse>('/api/v2', {
+          cmd: 'get_tautulli_info',
         })
-      ).data.response.data;
+      ).response.data;
     } catch (e) {
       logger.error('Something went wrong fetching Tautulli server info', {
         label: 'Tautulli API',
@@ -148,14 +147,12 @@ class TautulliAPI {
   ): Promise<TautulliWatchStats[]> {
     try {
       return (
-        await this.axios.get<TautulliWatchStatsResponse>('/api/v2', {
-          params: {
-            cmd: 'get_item_watch_time_stats',
-            rating_key: ratingKey,
-            grouping: 1,
-          },
+        await this.get<TautulliWatchStatsResponse>('/api/v2', {
+          cmd: 'get_item_watch_time_stats',
+          rating_key: ratingKey,
+          grouping: '1',
         })
-      ).data.response.data;
+      ).response.data;
     } catch (e) {
       logger.error(
         'Something went wrong fetching media watch stats from Tautulli',
@@ -176,14 +173,12 @@ class TautulliAPI {
   ): Promise<TautulliWatchUser[]> {
     try {
       return (
-        await this.axios.get<TautulliWatchUsersResponse>('/api/v2', {
-          params: {
-            cmd: 'get_item_user_stats',
-            rating_key: ratingKey,
-            grouping: 1,
-          },
+        await this.get<TautulliWatchUsersResponse>('/api/v2', {
+          cmd: 'get_item_user_stats',
+          rating_key: ratingKey,
+          grouping: '1',
         })
-      ).data.response.data;
+      ).response.data;
     } catch (e) {
       logger.error(
         'Something went wrong fetching media watch users from Tautulli',
@@ -206,15 +201,13 @@ class TautulliAPI {
       }
 
       return (
-        await this.axios.get<TautulliWatchStatsResponse>('/api/v2', {
-          params: {
-            cmd: 'get_user_watch_time_stats',
-            user_id: user.plexId,
-            query_days: 0,
-            grouping: 1,
-          },
+        await this.get<TautulliWatchStatsResponse>('/api/v2', {
+          cmd: 'get_user_watch_time_stats',
+          user_id: user.plexId.toString(),
+          query_days: '0',
+          grouping: '1',
         })
-      ).data.response.data[0];
+      ).response.data[0];
     } catch (e) {
       logger.error(
         'Something went wrong fetching user watch stats from Tautulli',
@@ -245,19 +238,17 @@ class TautulliAPI {
 
       while (results.length < 20) {
         const tautulliData = (
-          await this.axios.get<TautulliHistoryResponse>('/api/v2', {
-            params: {
-              cmd: 'get_history',
-              grouping: 1,
-              order_column: 'date',
-              order_dir: 'desc',
-              user_id: user.plexId,
-              media_type: 'movie,episode',
-              length: take,
-              start,
-            },
+          await this.get<TautulliHistoryResponse>('/api/v2', {
+            cmd: 'get_history',
+            grouping: '1',
+            order_column: 'date',
+            order_dir: 'desc',
+            user_id: user.plexId.toString(),
+            media_type: 'movie,episode',
+            length: take.toString(),
+            start: start.toString(),
           })
-        ).data.response.data.data;
+        ).response.data.data;
 
         if (!tautulliData.length) {
           return results;

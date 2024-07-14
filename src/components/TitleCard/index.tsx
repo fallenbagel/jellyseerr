@@ -19,7 +19,6 @@ import {
 import { MediaStatus } from '@server/constants/media';
 import type { Watchlist } from '@server/entity/Watchlist';
 import type { MediaType } from '@server/models/Search';
-import axios from 'axios';
 import Link from 'next/link';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -98,13 +97,21 @@ const TitleCard = ({
   const onClickWatchlistBtn = async (): Promise<void> => {
     setIsUpdating(true);
     try {
-      const response = await axios.post<Watchlist>('/api/v1/watchlist', {
-        tmdbId: id,
-        mediaType,
-        title,
+      const res = await fetch('/api/v1/watchlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tmdbId: id,
+          mediaType,
+          title,
+        }),
       });
+      if (!res.ok) throw new Error();
+      const data: Watchlist = await res.json();
       mutate('/api/v1/discover/watchlist');
-      if (response.data) {
+      if (data) {
         addToast(
           <span>
             {intl.formatMessage(messages.watchlistSuccess, {
@@ -129,9 +136,11 @@ const TitleCard = ({
   const onClickDeleteWatchlistBtn = async (): Promise<void> => {
     setIsUpdating(true);
     try {
-      const response = await axios.delete<Watchlist>('/api/v1/watchlist/' + id);
-
-      if (response.status === 204) {
+      const res = await fetch('/api/v1/watchlist/' + id, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error();
+      if (res.status === 204) {
         addToast(
           <span>
             {intl.formatMessage(messages.watchlistDeleted, {

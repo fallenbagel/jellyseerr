@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Bowser from 'bowser';
 
 interface PlexHeaders extends Record<string, string> {
@@ -78,13 +77,14 @@ class PlexOAuth {
         'You must initialize the plex headers clientside to login'
       );
     }
-    const response = await axios.post(
-      'https://plex.tv/api/v2/pins?strong=true',
-      undefined,
-      { headers: this.plexHeaders }
-    );
+    const res = await fetch('https://plex.tv/api/v2/pins?strong=true', {
+      method: 'POST',
+      headers: this.plexHeaders,
+    });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
 
-    this.pin = { id: response.data.id, code: response.data.code };
+    this.pin = { id: data.id, code: data.code };
 
     return this.pin;
   }
@@ -136,16 +136,17 @@ class PlexOAuth {
           throw new Error('Unable to poll when pin is not initialized.');
         }
 
-        const response = await axios.get(
-          `https://plex.tv/api/v2/pins/${this.pin.id}`,
-          { headers: this.plexHeaders }
-        );
+        const res = await fetch(`https://plex.tv/api/v2/pins/${this.pin.id}`, {
+          headers: this.plexHeaders,
+        });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
 
-        if (response.data?.authToken) {
-          this.authToken = response.data.authToken as string;
+        if (data?.authToken) {
+          this.authToken = data.authToken as string;
           this.closePopup();
           resolve(this.authToken);
-        } else if (!response.data?.authToken && !this.popup?.closed) {
+        } else if (!data?.authToken && !this.popup?.closed) {
           setTimeout(executePoll, 1000, resolve, reject);
         } else {
           reject(new Error('Popup closed without completing login'));

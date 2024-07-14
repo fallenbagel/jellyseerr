@@ -6,7 +6,6 @@ import { useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
-import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import { useIntl } from 'react-intl';
@@ -65,18 +64,28 @@ const UserPushbulletSettings = () => {
       enableReinitialize
       onSubmit={async (values) => {
         try {
-          await axios.post(`/api/v1/user/${user?.id}/settings/notifications`, {
-            pgpKey: data?.pgpKey,
-            discordId: data?.discordId,
-            pushbulletAccessToken: values.pushbulletAccessToken,
-            pushoverApplicationToken: data?.pushoverApplicationToken,
-            pushoverUserKey: data?.pushoverUserKey,
-            telegramChatId: data?.telegramChatId,
-            telegramSendSilently: data?.telegramSendSilently,
-            notificationTypes: {
-              pushbullet: values.types,
-            },
-          });
+          const res = await fetch(
+            `/api/v1/user/${user?.id}/settings/notifications`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                pgpKey: data?.pgpKey,
+                discordId: data?.discordId,
+                pushbulletAccessToken: values.pushbulletAccessToken,
+                pushoverApplicationToken: data?.pushoverApplicationToken,
+                pushoverUserKey: data?.pushoverUserKey,
+                telegramChatId: data?.telegramChatId,
+                telegramSendSilently: data?.telegramSendSilently,
+                notificationTypes: {
+                  pushbullet: values.types,
+                },
+              }),
+            }
+          );
+          if (!res.ok) throw new Error();
           addToast(intl.formatMessage(messages.pushbulletsettingssaved), {
             appearance: 'success',
             autoDismiss: true,

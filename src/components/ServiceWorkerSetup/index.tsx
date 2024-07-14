@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
-import axios from 'axios';
 import { useEffect } from 'react';
 
 const ServiceWorkerSetup = () => {
@@ -26,11 +25,18 @@ const ServiceWorkerSetup = () => {
             const parsedSub = JSON.parse(JSON.stringify(sub));
 
             if (parsedSub.keys.p256dh && parsedSub.keys.auth) {
-              await axios.post('/api/v1/user/registerPushSubscription', {
-                endpoint: parsedSub.endpoint,
-                p256dh: parsedSub.keys.p256dh,
-                auth: parsedSub.keys.auth,
+              const res = await fetch('/api/v1/user/registerPushSubscription', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  endpoint: parsedSub.endpoint,
+                  p256dh: parsedSub.keys.p256dh,
+                  auth: parsedSub.keys.auth,
+                }),
               });
+              if (!res.ok) throw new Error();
             }
           }
         })

@@ -37,9 +37,9 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
 
   public getMovies = async (): Promise<RadarrMovie[]> => {
     try {
-      const response = await this.axios.get<RadarrMovie[]>('/movie');
+      const data = await this.get<RadarrMovie[]>('/movie');
 
-      return response.data;
+      return data;
     } catch (e) {
       throw new Error(`[Radarr] Failed to retrieve movies: ${e.message}`);
     }
@@ -47,9 +47,9 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
 
   public getMovie = async ({ id }: { id: number }): Promise<RadarrMovie> => {
     try {
-      const response = await this.axios.get<RadarrMovie>(`/movie/${id}`);
+      const data = await this.get<RadarrMovie>(`/movie/${id}`);
 
-      return response.data;
+      return data;
     } catch (e) {
       throw new Error(`[Radarr] Failed to retrieve movie: ${e.message}`);
     }
@@ -57,17 +57,15 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
 
   public async getMovieByTmdbId(id: number): Promise<RadarrMovie> {
     try {
-      const response = await this.axios.get<RadarrMovie[]>('/movie/lookup', {
-        params: {
-          term: `tmdb:${id}`,
-        },
+      const data = await this.get<RadarrMovie[]>('/movie/lookup', {
+        term: `tmdb:${id}`,
       });
 
-      if (!response.data[0]) {
+      if (!data[0]) {
         throw new Error('Movie not found');
       }
 
-      return response.data[0];
+      return data[0];
     } catch (e) {
       logger.error('Error retrieving movie by TMDB ID', {
         label: 'Radarr API',
@@ -97,7 +95,7 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
 
       // movie exists in Radarr but is neither downloaded nor monitored
       if (movie.id && !movie.monitored) {
-        const response = await this.axios.put<RadarrMovie>(`/movie`, {
+        const data = await this.put<RadarrMovie>(`/movie`, {
           ...movie,
           title: options.title,
           qualityProfileId: options.qualityProfileId,
@@ -114,25 +112,25 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
           },
         });
 
-        if (response.data.monitored) {
+        if (data.monitored) {
           logger.info(
             'Found existing title in Radarr and set it to monitored.',
             {
               label: 'Radarr',
-              movieId: response.data.id,
-              movieTitle: response.data.title,
+              movieId: data.id,
+              movieTitle: data.title,
             }
           );
           logger.debug('Radarr update details', {
             label: 'Radarr',
-            movie: response.data,
+            movie: data,
           });
 
           if (options.searchNow) {
-            this.searchMovie(response.data.id);
+            this.searchMovie(data.id);
           }
 
-          return response.data;
+          return data;
         } else {
           logger.error('Failed to update existing movie in Radarr.', {
             label: 'Radarr',
@@ -150,7 +148,7 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
         return movie;
       }
 
-      const response = await this.axios.post<RadarrMovie>(`/movie`, {
+      const data = await this.post<RadarrMovie>(`/movie`, {
         title: options.title,
         qualityProfileId: options.qualityProfileId,
         profileId: options.profileId,
@@ -166,11 +164,11 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
         },
       });
 
-      if (response.data.id) {
+      if (data.id) {
         logger.info('Radarr accepted request', { label: 'Radarr' });
         logger.debug('Radarr add details', {
           label: 'Radarr',
-          movie: response.data,
+          movie: data,
         });
       } else {
         logger.error('Failed to add movie to Radarr', {
@@ -179,7 +177,7 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
         });
         throw new Error('Failed to add movie to Radarr');
       }
-      return response.data;
+      return data;
     } catch (e) {
       logger.error(
         'Failed to add movie to Radarr. This might happen if the movie already exists, in which case you can safely ignore this error.',
@@ -216,11 +214,9 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
   public removeMovie = async (movieId: number): Promise<void> => {
     try {
       const { id, title } = await this.getMovieByTmdbId(movieId);
-      await this.axios.delete(`/movie/${id}`, {
-        params: {
-          deleteFiles: true,
-          addImportExclusion: false,
-        },
+      await this.delete(`/movie/${id}`, {
+        deleteFiles: 'true',
+        addImportExclusion: 'false',
       });
       logger.info(`[Radarr] Removed movie ${title}`);
     } catch (e) {

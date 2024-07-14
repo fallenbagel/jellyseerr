@@ -15,7 +15,6 @@ import '@app/styles/globals.css';
 import { polyfillIntl } from '@app/utils/polyfillIntl';
 import { MediaServerType } from '@server/constants/server';
 import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
-import axios from 'axios';
 import type { AppInitialProps, AppProps } from 'next/app';
 import App from 'next/app';
 import Head from 'next/head';
@@ -139,7 +138,11 @@ const CoreApp: Omit<NextAppComponentType, 'origGetInitialProps'> = ({
   return (
     <SWRConfig
       value={{
-        fetcher: (url) => axios.get(url).then((res) => res.data),
+        fetcher: async (resource, init) => {
+          const res = await fetch(resource, init);
+          if (!res.ok) throw new Error();
+          return await res.json();
+        },
         fallback: {
           '/api/v1/auth/me': user,
         },
@@ -202,13 +205,13 @@ CoreApp.getInitialProps = async (initialProps) => {
 
   if (ctx.res) {
     // Check if app is initialized and redirect if necessary
-    const response = await axios.get<PublicSettingsResponse>(
+    const res = await fetch(
       `http://localhost:${process.env.PORT || 5055}/api/v1/settings/public`
     );
+    if (!res.ok) throw new Error();
+    currentSettings = await res.json();
 
-    currentSettings = response.data;
-
-    const initialized = response.data.initialized;
+    const initialized = currentSettings.initialized;
 
     if (!initialized) {
       if (!router.pathname.match(/(setup|login\/plex)/)) {
@@ -220,7 +223,7 @@ CoreApp.getInitialProps = async (initialProps) => {
     } else {
       try {
         // Attempt to get the user by running a request to the local api
-        const response = await axios.get<User>(
+        const res = await fetch(
           `http://localhost:${process.env.PORT || 5055}/api/v1/auth/me`,
           {
             headers:
@@ -229,7 +232,8 @@ CoreApp.getInitialProps = async (initialProps) => {
                 : undefined,
           }
         );
-        user = response.data;
+        if (!res.ok) throw new Error();
+        user = await res.json();
 
         if (router.pathname.match(/(setup|login)/)) {
           ctx.res.writeHead(307, {

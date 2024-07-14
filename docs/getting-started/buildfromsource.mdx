@@ -79,7 +79,7 @@ pnpm start
 ```
   </TabItem>
 </Tabs>
-  
+
 :::info
 You can now access Jellyseerr by visiting `http://localhost:5055` in your web browser.
 :::
@@ -99,6 +99,9 @@ PORT=5055
 
 ## Uncomment if your media server is emby instead of jellyfin.
 # JELLYFIN_TYPE=emby
+
+## Uncomment if you want to force Node.js to resolve IPv4 before IPv6 (advanced users only)
+# FORCE_IPV4_FIRST=true
 ```
 2. Then run the following commands:
 ```bash
@@ -312,7 +315,7 @@ node dist/index.js
 
 Now, Jellyseerr will start when the computer boots up in the background.
   </TabItem>
-  
+
   <TabItem value="nssm" label="NSSM">
 To run jellyseerr as a service:
 1. Download the [Non-Sucking Service Manager](https://nssm.cc/download)

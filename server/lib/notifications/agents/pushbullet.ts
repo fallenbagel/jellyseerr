@@ -5,7 +5,6 @@ import { User } from '@server/entity/User';
 import type { NotificationAgentPushbullet } from '@server/lib/settings';
 import { getSettings, NotificationAgentKey } from '@server/lib/settings';
 import logger from '@server/logger';
-import axios from 'axios';
 import {
   hasNotificationType,
   Notification,
@@ -123,15 +122,17 @@ class PushbulletAgent
       });
 
       try {
-        await axios.post(
-          endpoint,
-          { ...notificationPayload, channel_tag: settings.options.channelTag },
-          {
-            headers: {
-              'Access-Token': settings.options.accessToken,
-            },
-          }
-        );
+        await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Token': settings.options.accessToken,
+          },
+          body: JSON.stringify({
+            ...notificationPayload,
+            channel_tag: settings.options.channelTag,
+          }),
+        });
       } catch (e) {
         logger.error('Error sending Pushbullet notification', {
           label: 'Notifications',
@@ -163,10 +164,13 @@ class PushbulletAgent
         });
 
         try {
-          await axios.post(endpoint, notificationPayload, {
+          await fetch(endpoint, {
+            method: 'POST',
             headers: {
+              'Content-Type': 'application/json',
               'Access-Token': payload.notifyUser.settings.pushbulletAccessToken,
             },
+            body: JSON.stringify(notificationPayload),
           });
         } catch (e) {
           logger.error('Error sending Pushbullet notification', {
@@ -211,10 +215,13 @@ class PushbulletAgent
               });
 
               try {
-                await axios.post(endpoint, notificationPayload, {
+                await fetch(endpoint, {
+                  method: 'POST',
                   headers: {
+                    'Content-Type': 'application/json',
                     'Access-Token': user.settings.pushbulletAccessToken,
                   },
+                  body: JSON.stringify(notificationPayload),
                 });
               } catch (e) {
                 logger.error('Error sending Pushbullet notification', {

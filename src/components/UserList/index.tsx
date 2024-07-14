@@ -27,7 +27,6 @@ import {
 import { MediaServerType } from '@server/constants/server';
 import type { UserResultsResponse } from '@server/interfaces/api/userInterfaces';
 import { hasPermission } from '@server/lib/permissions';
-import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import getConfig from 'next/config';
 import Image from 'next/image';
@@ -183,7 +182,10 @@ const UserList = () => {
     setDeleting(true);
 
     try {
-      await axios.delete(`/api/v1/user/${deleteModal.user?.id}`);
+      const res = await fetch(`/api/v1/user/${deleteModal.user?.id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error();
 
       addToast(intl.formatMessage(messages.userdeleted), {
         autoDismiss: true,
@@ -282,11 +284,18 @@ const UserList = () => {
           validationSchema={CreateUserSchema}
           onSubmit={async (values) => {
             try {
-              await axios.post('/api/v1/user', {
-                username: values.displayName,
-                email: values.email,
-                password: values.genpassword ? null : values.password,
+              const res = await fetch('/api/v1/user', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  username: values.displayName,
+                  email: values.email,
+                  password: values.genpassword ? null : values.password,
+                }),
               });
+              if (!res.ok) throw new Error();
               addToast(intl.formatMessage(messages.usercreatedsuccess), {
                 appearance: 'success',
                 autoDismiss: true,

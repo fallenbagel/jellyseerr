@@ -1,6 +1,6 @@
+import ExternalAPI from '@server/api/externalapi';
 import cacheManager from '@server/lib/cache';
 import logger from '@server/logger';
-import ExternalAPI from './externalapi';
 
 interface GitHubRelease {
   url: string;
@@ -67,10 +67,6 @@ class GithubAPI extends ExternalAPI {
       'https://api.github.com',
       {},
       {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
         nodeCache: cacheManager.getCache('github').data,
       }
     );
@@ -85,9 +81,7 @@ class GithubAPI extends ExternalAPI {
       const data = await this.get<GitHubRelease[]>(
         '/repos/fallenbagel/jellyseerr/releases',
         {
-          params: {
-            per_page: take,
-          },
+          per_page: take.toString(),
         }
       );
 
@@ -112,10 +106,8 @@ class GithubAPI extends ExternalAPI {
       const data = await this.get<GithubCommit[]>(
         '/repos/fallenbagel/jellyseerr/commits',
         {
-          params: {
-            per_page: take,
-            branch,
-          },
+          per_page: take.toString(),
+          branch,
         }
       );
 

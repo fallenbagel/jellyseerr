@@ -497,6 +497,7 @@ router.post(
         order: { id: 'ASC' },
       });
       const jellyfinClient = new JellyfinAPI(
+        getHostname(),
         admin.jellyfinAuthToken ?? '',
         admin.jellyfinDeviceId ?? ''
       );

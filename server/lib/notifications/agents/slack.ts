@@ -2,7 +2,6 @@ import { IssueStatus, IssueTypeName } from '@server/constants/issue';
 import type { NotificationAgentSlack } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
-import axios from 'axios';
 import { hasNotificationType, Notification } from '..';
 import type { NotificationAgent, NotificationPayload } from './agent';
 import { BaseAgent } from './agent';
@@ -238,10 +237,13 @@ class SlackAgent
       subject: payload.subject,
     });
     try {
-      await axios.post(
-        settings.options.webhookUrl,
-        this.buildEmbed(type, payload)
-      );
+      await fetch(settings.options.webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.buildEmbed(type, payload)),
+      });
 
       return true;
     } catch (e) {

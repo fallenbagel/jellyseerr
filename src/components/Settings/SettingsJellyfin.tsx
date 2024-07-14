@@ -7,7 +7,6 @@ import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import { ApiErrorCode } from '@server/constants/error';
 import type { JellyfinSettings } from '@server/lib/settings';
-import axios from 'axios';
 import { Field, Formik } from 'formik';
 import getConfig from 'next/config';
 import { useState } from 'react';
@@ -167,9 +166,14 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
     }
 
     try {
-      await axios.get('/api/v1/settings/jellyfin/library', {
-        params,
+      const searchParams = new URLSearchParams({
+        sync: params.sync ? 'true' : 'false',
+        ...(params.enable ? { enable: params.enable } : {}),
       });
+      const res = await fetch(
+        `/api/v1/settings/jellyfin/library?${searchParams.toString()}`
+      );
+      if (!res.ok) throw new Error();
       setIsSyncing(false);
       revalidate();
     } catch (e) {
@@ -206,16 +210,32 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
   };
 
   const startScan = async () => {
-    await axios.post('/api/v1/settings/jellyfin/sync', {
-      start: true,
+    const res = await fetch('/api/v1/settings/jellyfin/sync', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        start: true,
+      }),
     });
+    if (!res.ok) throw new Error();
+
     revalidateSync();
   };
 
   const cancelScan = async () => {
-    await axios.post('/api/v1/settings/jellyfin/sync', {
-      cancel: true,
+    const res = await fetch('/api/v1/settings/jellyfin/sync', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        cancel: true,
+      }),
     });
+    if (!res.ok) throw new Error();
+
     revalidateSync();
   };
 
@@ -230,15 +250,19 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
           .join(',');
       }
 
-      await axios.get('/api/v1/settings/jellyfin/library', {
-        params,
-      });
+      const searchParams = new URLSearchParams(params.enable ? params : {});
+      const res = await fetch(
+        `/api/v1/settings/jellyfin/library?${searchParams.toString}`
+      );
+      if (!res.ok) throw new Error();
     } else {
-      await axios.get('/api/v1/settings/jellyfin/library', {
-        params: {
-          enable: [...activeLibraries, libraryId].join(','),
-        },
+      const searchParams = new URLSearchParams({
+        enable: [...activeLibraries, libraryId].join(','),
       });
+      const res = await fetch(
+        `/api/v1/settings/jellyfin/library?${searchParams.toString()}`
+      );
+      if (!res.ok) throw new Error();
     }
     if (onComplete) {
       onComplete();
@@ -447,14 +471,21 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
             validationSchema={JellyfinSettingsSchema}
             onSubmit={async (values) => {
               try {
-                await axios.post('/api/v1/settings/jellyfin', {
-                  ip: values.hostname,
-                  port: Number(values.port),
-                  useSsl: values.useSsl,
-                  urlBase: values.urlBase,
-                  externalHostname: values.jellyfinExternalUrl,
-                  jellyfinForgotPasswordUrl: values.jellyfinForgotPasswordUrl,
-                } as JellyfinSettings);
+                const res = await fetch('/api/v1/settings/jellyfin', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    ip: values.hostname,
+                    port: Number(values.port),
+                    useSsl: values.useSsl,
+                    urlBase: values.urlBase,
+                    externalHostname: values.jellyfinExternalUrl,
+                    jellyfinForgotPasswordUrl: values.jellyfinForgotPasswordUrl,
+                  } as JellyfinSettings),
+                });
+                if (!res.ok) throw new Error();
 
                 addToast(
                   intl.formatMessage(messages.jellyfinSettingsSuccess, {

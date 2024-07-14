@@ -13,7 +13,6 @@ import {
 import { MediaRequestStatus, MediaStatus } from '@server/constants/media';
 import type Media from '@server/entity/Media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
-import axios from 'axios';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -94,9 +93,13 @@ const RequestButton = ({
     request: MediaRequest,
     type: 'approve' | 'decline'
   ) => {
-    const response = await axios.post(`/api/v1/request/${request.id}/${type}`);
+    const res = await fetch(`/api/v1/request/${request.id}/${type}`, {
+      method: 'POST',
+    });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
 
-    if (response) {
+    if (data) {
       onUpdate();
     }
   };
@@ -111,7 +114,11 @@ const RequestButton = ({
 
     await Promise.all(
       requests.map(async (request) => {
-        return axios.post(`/api/v1/request/${request.id}/${type}`);
+        const res = await fetch(`/api/v1/request/${request.id}/${type}`, {
+          method: 'POST',
+        });
+        if (!res.ok) throw new Error();
+        return res.json();
       })
     );
 

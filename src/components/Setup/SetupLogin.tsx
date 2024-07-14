@@ -4,7 +4,6 @@ import PlexLoginButton from '@app/components/PlexLoginButton';
 import { useUser } from '@app/hooks/useUser';
 import defineMessages from '@app/utils/defineMessages';
 import { MediaServerType } from '@server/constants/server';
-import axios from 'axios';
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -34,11 +33,19 @@ const SetupLogin: React.FC<LoginWithMediaServerProps> = ({ onComplete }) => {
 
   useEffect(() => {
     const login = async () => {
-      const response = await axios.post('/api/v1/auth/plex', {
-        authToken: authToken,
+      const res = await fetch('/api/v1/auth/plex', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          authToken: authToken,
+        }),
       });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
 
-      if (response.data?.email) {
+      if (data?.email) {
         revalidate();
       }
     };

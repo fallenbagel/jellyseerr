@@ -11,7 +11,6 @@ import SetupSteps from '@app/components/Setup/SetupSteps';
 import useLocale from '@app/hooks/useLocale';
 import defineMessages from '@app/utils/defineMessages';
 import { MediaServerType } from '@server/constants/server';
-import axios from 'axios';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -46,15 +45,27 @@ const Setup = () => {
 
   const finishSetup = async () => {
     setIsUpdating(true);
-    const response = await axios.post<{ initialized: boolean }>(
-      '/api/v1/settings/initialize'
-    );
+    const res = await fetch('/api/v1/settings/initialize', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) throw new Error();
+    const data: { initialized: boolean } = await res.json();
 
     setIsUpdating(false);
-    if (response.data.initialized) {
-      await axios.post('/api/v1/settings/main', { locale });
-      mutate('/api/v1/settings/public');
+    if (data.initialized) {
+      const mainRes = await fetch('/api/v1/settings/main', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ locale }),
+      });
+      if (!mainRes.ok) throw new Error();
 
+      mutate('/api/v1/settings/public');
       router.push('/');
     }
   };

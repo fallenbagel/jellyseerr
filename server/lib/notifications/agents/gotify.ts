@@ -2,7 +2,6 @@ import { IssueStatus, IssueTypeName } from '@server/constants/issue';
 import type { NotificationAgentGotify } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
-import axios from 'axios';
 import { hasNotificationType, Notification } from '..';
 import type { NotificationAgent, NotificationPayload } from './agent';
 import { BaseAgent } from './agent';
@@ -133,7 +132,13 @@ class GotifyAgent
       const endpoint = `${settings.options.url}/message?token=${settings.options.token}`;
       const notificationPayload = this.getNotificationPayload(type, payload);
 
-      await axios.post(endpoint, notificationPayload);
+      await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(notificationPayload),
+      });
 
       return true;
     } catch (e) {

@@ -4,7 +4,6 @@ import NotificationTypeSelector from '@app/components/NotificationTypeSelector';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
-import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -69,14 +68,21 @@ const NotificationsLunaSea = () => {
       validationSchema={NotificationsLunaSeaSchema}
       onSubmit={async (values) => {
         try {
-          await axios.post('/api/v1/settings/notifications/lunasea', {
-            enabled: values.enabled,
-            types: values.types,
-            options: {
-              webhookUrl: values.webhookUrl,
-              profileName: values.profileName,
+          const res = await fetch('/api/v1/settings/notifications/lunasea', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             },
+            body: JSON.stringify({
+              enabled: values.enabled,
+              types: values.types,
+              options: {
+                webhookUrl: values.webhookUrl,
+                profileName: values.profileName,
+              },
+            }),
           });
+          if (!res.ok) throw new Error();
           addToast(intl.formatMessage(messages.settingsSaved), {
             appearance: 'success',
             autoDismiss: true,
@@ -114,14 +120,24 @@ const NotificationsLunaSea = () => {
                 toastId = id;
               }
             );
-            await axios.post('/api/v1/settings/notifications/lunasea/test', {
-              enabled: true,
-              types: values.types,
-              options: {
-                webhookUrl: values.webhookUrl,
-                profileName: values.profileName,
-              },
-            });
+            const res = await fetch(
+              '/api/v1/settings/notifications/lunasea/test',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  enabled: true,
+                  types: values.types,
+                  options: {
+                    webhookUrl: values.webhookUrl,
+                    profileName: values.profileName,
+                  },
+                }),
+              }
+            );
+            if (!res.ok) throw new Error();
 
             if (toastId) {
               removeToast(toastId);

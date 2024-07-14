@@ -113,9 +113,9 @@ class ServarrBase<QueueItemAppendT> extends ExternalAPI {
 
   public getSystemStatus = async (): Promise<SystemStatus> => {
     try {
-      const response = await this.axios.get<SystemStatus>('/system/status');
+      const data = await this.get<SystemStatus>('/system/status');
 
-      return response.data;
+      return data;
     } catch (e) {
       throw new Error(
         `[${this.apiName}] Failed to retrieve system status: ${e.message}`
@@ -157,16 +157,11 @@ class ServarrBase<QueueItemAppendT> extends ExternalAPI {
 
   public getQueue = async (): Promise<(QueueItem & QueueItemAppendT)[]> => {
     try {
-      const response = await this.axios.get<QueueResponse<QueueItemAppendT>>(
-        `/queue`,
-        {
-          params: {
-            includeEpisode: true,
-          },
-        }
-      );
+      const data = await this.get<QueueResponse<QueueItemAppendT>>(`/queue`, {
+        includeEpisode: 'true',
+      });
 
-      return response.data.records;
+      return data.records;
     } catch (e) {
       throw new Error(
         `[${this.apiName}] Failed to retrieve queue: ${e.message}`
@@ -176,9 +171,9 @@ class ServarrBase<QueueItemAppendT> extends ExternalAPI {
 
   public getTags = async (): Promise<Tag[]> => {
     try {
-      const response = await this.axios.get<Tag[]>(`/tag`);
+      const data = await this.get<Tag[]>(`/tag`);
 
-      return response.data;
+      return data;
     } catch (e) {
       throw new Error(
         `[${this.apiName}] Failed to retrieve tags: ${e.message}`
@@ -188,11 +183,11 @@ class ServarrBase<QueueItemAppendT> extends ExternalAPI {
 
   public createTag = async ({ label }: { label: string }): Promise<Tag> => {
     try {
-      const response = await this.axios.post<Tag>(`/tag`, {
+      const data = await this.post<Tag>(`/tag`, {
         label,
       });
 
-      return response.data;
+      return data;
     } catch (e) {
       throw new Error(`[${this.apiName}] Failed to create tag: ${e.message}`);
     }
@@ -203,7 +198,7 @@ class ServarrBase<QueueItemAppendT> extends ExternalAPI {
     options: Record<string, unknown>
   ): Promise<void> {
     try {
-      await this.axios.post(`/command`, {
+      await this.post(`/command`, {
         name: commandName,
         ...options,
       });

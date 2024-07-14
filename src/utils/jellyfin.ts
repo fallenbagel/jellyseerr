@@ -1,6 +1,3 @@
-import type { AxiosError, AxiosResponse } from 'axios';
-import axios from 'axios';
-
 interface JellyfinAuthenticationResult {
   Id: string;
   AccessToken: string;
@@ -18,30 +15,34 @@ class JellyAPI {
         resolve: (result: JellyfinAuthenticationResult) => void,
         reject: (e: Error) => void
       ) => {
-        axios
-          .post(
-            Hostname + '/Users/AuthenticateByName',
-            {
-              Username: Username,
-              Pw: Password,
-            },
-            {
-              headers: {
-                'X-Emby-Authorization':
-                  'MediaBrowser Client="Jellyfin Web", Device="Firefox", DeviceId="TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NDsgcnY6ODUuMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC84NS4wfDE2MTI5MjcyMDM5NzM1", Version="10.8.0"',
-              },
+        fetch(Hostname + '/Users/AuthenticateByName', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Emby-Authorization':
+              'MediaBrowser Client="Jellyfin Web", Device="Firefox", DeviceId="TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NDsgcnY6ODUuMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC84NS4wfDE2MTI5MjcyMDM5NzM1", Version="10.8.0"',
+          },
+          body: JSON.stringify({
+            Username: Username,
+            Pw: Password,
+          }),
+        })
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error('Network response was not ok');
             }
-          )
-          .then((resp: AxiosResponse) => {
+            return res.json();
+          })
+          .then((data) => {
             const response: JellyfinAuthenticationResult = {
-              Id: resp.data.User.Id,
-              AccessToken: resp.data.AccessToken,
-              ServerId: resp.data.ServerId,
+              Id: data.User.Id,
+              AccessToken: data.AccessToken,
+              ServerId: data.ServerId,
             };
             resolve(response);
           })
-          .catch((e: AxiosError) => {
-            reject(e);
+          .catch((error) => {
+            reject(error);
           });
       }
     );

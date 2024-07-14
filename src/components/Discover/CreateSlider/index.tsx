@@ -14,7 +14,6 @@ import { DiscoverSliderType } from '@server/constants/discover';
 import type DiscoverSlider from '@server/entity/DiscoverSlider';
 import type { GenreSliderItem } from '@server/interfaces/api/discoverInterfaces';
 import type { Keyword, ProductionCompany } from '@server/models/common';
-import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -77,11 +76,9 @@ const CreateSlider = ({ onCreate, slider }: CreateSliderProps) => {
 
         const keywords = await Promise.all(
           slider.data.split(',').map(async (keywordId) => {
-            const keyword = await axios.get<Keyword>(
-              `/api/v1/keyword/${keywordId}`
-            );
-
-            return keyword.data;
+            const res = await fetch(`/api/v1/keyword/${keywordId}`);
+            const keyword: Keyword = await res.json();
+            return keyword;
           })
         );
 
@@ -98,15 +95,13 @@ const CreateSlider = ({ onCreate, slider }: CreateSliderProps) => {
           return;
         }
 
-        const response = await axios.get<TmdbGenre[]>(
+        const res = await fetch(
           `/api/v1/genres/${
             slider.type === DiscoverSliderType.TMDB_MOVIE_GENRE ? 'movie' : 'tv'
           }`
         );
-
-        const genre = response.data.find(
-          (genre) => genre.id === Number(slider.data)
-        );
+        const genres: TmdbGenre[] = await res.json();
+        const genre = genres.find((genre) => genre.id === Number(slider.data));
 
         setDefaultDataValue([
           {
@@ -121,11 +116,8 @@ const CreateSlider = ({ onCreate, slider }: CreateSliderProps) => {
           return;
         }
 
-        const response = await axios.get<ProductionCompany>(
-          `/api/v1/studio/${slider.data}`
-        );
-
-        const studio = response.data;
+        const res = await fetch(`/api/v1/studio/${slider.data}`);
+        const studio: ProductionCompany = await res.json();
 
         setDefaultDataValue([
           {
@@ -168,16 +160,17 @@ const CreateSlider = ({ onCreate, slider }: CreateSliderProps) => {
   );
 
   const loadKeywordOptions = async (inputValue: string) => {
-    const results = await axios.get<TmdbKeywordSearchResponse>(
-      '/api/v1/search/keyword',
+    const res = await fetch(
+      `/api/v1/search/keyword?query=${encodeURIExtraParams(inputValue)}`,
       {
-        params: {
-          query: encodeURIExtraParams(inputValue),
+        headers: {
+          'Content-Type': 'application/json',
         },
       }
     );
+    const results: TmdbKeywordSearchResponse = await res.json();
 
-    return results.data.results.map((result) => ({
+    return results.results.map((result) => ({
       label: result.name,
       value: result.id,
     }));
@@ -188,38 +181,37 @@ const CreateSlider = ({ onCreate, slider }: CreateSliderProps) => {
       return [];
     }
 
-    const results = await axios.get<TmdbCompanySearchResponse>(
-      '/api/v1/search/company',
+    const res = await fetch(
+      `/api/v1/search/company?query=${encodeURIExtraParams(inputValue)}`,
       {
-        params: {
-          query: encodeURIExtraParams(inputValue),
+        headers: {
+          'Content-Type': 'application/json',
         },
       }
     );
+    const results: TmdbCompanySearchResponse = await res.json();
 
-    return results.data.results.map((result) => ({
+    return results.results.map((result) => ({
       label: result.name,
       value: result.id,
     }));
   };
 
   const loadMovieGenreOptions = async () => {
-    const results = await axios.get<GenreSliderItem[]>(
-      '/api/v1/discover/genreslider/movie'
-    );
+    const res = await fetch('/api/v1/discover/genreslider/movie');
+    const results: GenreSliderItem[] = await res.json();
 
-    return results.data.map((result) => ({
+    return results.map((result) => ({
       label: result.name,
       value: result.id,
     }));
   };
 
   const loadTvGenreOptions = async () => {
-    const results = await axios.get<GenreSliderItem[]>(
-      '/api/v1/discover/genreslider/tv'
-    );
+    const res = await fetch('/api/v1/discover/genreslider/tv');
+    const results: GenreSliderItem[] = await res.json();
 
-    return results.data.map((result) => ({
+    return results.map((result) => ({
       label: result.name,
       value: result.id,
     }));
@@ -314,17 +306,31 @@ const CreateSlider = ({ onCreate, slider }: CreateSliderProps) => {
       onSubmit={async (values, { resetForm }) => {
         try {
           if (slider) {
-            await axios.put(`/api/v1/settings/discover/${slider.id}`, {
-              type: Number(values.sliderType),
-              title: values.title,
-              data: values.data,
+            const res = await fetch(`/api/v1/settings/discover/${slider.id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                type: Number(values.sliderType),
+                title: values.title,
+                data: values.data,
+              }),
             });
+            if (!res.ok) throw new Error();
           } else {
-            await axios.post('/api/v1/settings/discover/add', {
-              type: Number(values.sliderType),
-              title: values.title,
-              data: values.data,
+            const res = await fetch('/api/v1/settings/discover/add', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                type: Number(values.sliderType),
+                title: values.title,
+                data: values.data,
+              }),
             });
+            if (!res.ok) throw new Error();
           }
 
           addToast(

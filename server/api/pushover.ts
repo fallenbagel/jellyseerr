@@ -1,4 +1,4 @@
-import ExternalAPI from './externalapi';
+import ExternalAPI from '@server/api/externalapi';
 
 interface PushoverSoundsResponse {
   sounds: {
@@ -26,24 +26,13 @@ export const mapSounds = (sounds: {
 
 class PushoverAPI extends ExternalAPI {
   constructor() {
-    super(
-      'https://api.pushover.net/1',
-      {},
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-      }
-    );
+    super('https://api.pushover.net/1');
   }
 
   public async getSounds(appToken: string): Promise<PushoverSound[]> {
     try {
       const data = await this.get<PushoverSoundsResponse>('/sounds.json', {
-        params: {
-          token: appToken,
-        },
+        token: appToken,
       });
 
       return mapSounds(data.sounds);

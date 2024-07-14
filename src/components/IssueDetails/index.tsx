@@ -11,7 +11,7 @@ import useDeepLinks from '@app/hooks/useDeepLinks';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
-import Error from '@app/pages/_error';
+import ErrorPage from '@app/pages/_error';
 import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import {
@@ -27,7 +27,6 @@ import { MediaServerType } from '@server/constants/server';
 import type Issue from '@server/entity/Issue';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
-import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import getConfig from 'next/config';
 import Image from 'next/image';
@@ -116,7 +115,7 @@ const IssueDetails = () => {
   }
 
   if (!data || !issueData) {
-    return <Error statusCode={404} />;
+    return <ErrorPage statusCode={404} />;
   }
 
   const belongsToUser = issueData.createdBy.id === currentUser?.id;
@@ -125,9 +124,11 @@ const IssueDetails = () => {
 
   const editFirstComment = async (newMessage: string) => {
     try {
-      await axios.put(`/api/v1/issueComment/${firstComment.id}`, {
-        message: newMessage,
+      const res = await fetch(`/api/v1/issueComment/${firstComment.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ message: newMessage }),
       });
+      if (!res.ok) throw new Error();
 
       addToast(intl.formatMessage(messages.toasteditdescriptionsuccess), {
         appearance: 'success',
@@ -144,7 +145,10 @@ const IssueDetails = () => {
 
   const updateIssueStatus = async (newStatus: 'open' | 'resolved') => {
     try {
-      await axios.post(`/api/v1/issue/${issueData.id}/${newStatus}`);
+      const res = await fetch(`/api/v1/issue/${issueData.id}/${newStatus}`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error();
 
       addToast(intl.formatMessage(messages.toaststatusupdated), {
         appearance: 'success',
@@ -161,7 +165,10 @@ const IssueDetails = () => {
 
   const deleteIssue = async () => {
     try {
-      await axios.delete(`/api/v1/issue/${issueData.id}`);
+      const res = await fetch(`/api/v1/issue/${issueData.id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error();
 
       addToast(intl.formatMessage(messages.toastissuedeleted), {
         appearance: 'success',
@@ -490,9 +497,14 @@ const IssueDetails = () => {
                 }}
                 validationSchema={CommentSchema}
                 onSubmit={async (values, { resetForm }) => {
-                  await axios.post(`/api/v1/issue/${issueData?.id}/comment`, {
-                    message: values.message,
-                  });
+                  const res = await fetch(
+                    `/api/v1/issue/${issueData?.id}/comment`,
+                    {
+                      method: 'POST',
+                      body: JSON.stringify({ message: values.message }),
+                    }
+                  );
+                  if (!res.ok) throw new Error();
                   revalidateIssue();
                   resetForm();
                 }}

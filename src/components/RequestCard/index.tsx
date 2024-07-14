@@ -21,7 +21,6 @@ import { MediaRequestStatus } from '@server/constants/media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
-import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -74,7 +73,10 @@ const RequestCardError = ({ requestData }: RequestCardErrorProps) => {
   });
 
   const deleteRequest = async () => {
-    await axios.delete(`/api/v1/media/${requestData?.media.id}`);
+    const res = await fetch(`/api/v1/media/${requestData?.media.id}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error();
     mutate('/api/v1/media?filter=allavailable&take=20&sort=mediaAdded');
     mutate('/api/v1/request?filter=all&take=10&sort=modified&skip=0');
   };
@@ -255,15 +257,22 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
   });
 
   const modifyRequest = async (type: 'approve' | 'decline') => {
-    const response = await axios.post(`/api/v1/request/${request.id}/${type}`);
+    const res = await fetch(`/api/v1/request/${request.id}/${type}`, {
+      method: 'POST',
+    });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
 
-    if (response) {
+    if (data) {
       revalidate();
     }
   };
 
   const deleteRequest = async () => {
-    await axios.delete(`/api/v1/request/${request.id}`);
+    const res = await fetch(`/api/v1/request/${request.id}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error();
     mutate('/api/v1/request?filter=all&take=10&sort=modified&skip=0');
   };
 
@@ -271,9 +280,13 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
     setRetrying(true);
 
     try {
-      const response = await axios.post(`/api/v1/request/${request.id}/retry`);
+      const res = await fetch(`/api/v1/request/${request.id}/retry`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
 
-      if (response) {
+      if (data) {
         revalidate();
       }
     } catch (e) {

@@ -20,7 +20,6 @@ import {
 } from '@heroicons/react/24/solid';
 import { DiscoverSliderType } from '@server/constants/discover';
 import type DiscoverSlider from '@server/entity/DiscoverSlider';
-import axios from 'axios';
 import { useRef, useState } from 'react';
 import { useDrag, useDrop } from 'react-aria';
 import { useIntl } from 'react-intl';
@@ -78,7 +77,10 @@ const DiscoverSliderEdit = ({
 
   const deleteSlider = async () => {
     try {
-      await axios.delete(`/api/v1/settings/discover/${slider.id}`);
+      const res = await fetch(`/api/v1/settings/discover/${slider.id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error();
       addToast(intl.formatMessage(messages.deletesuccess), {
         appearance: 'success',
         autoDismiss: true,

@@ -1,6 +1,6 @@
 import logger from '@server/logger';
-import axios from 'axios';
-import rateLimit, { type rateLimitOptions } from 'axios-rate-limit';
+import type { RateLimitOptions } from '@server/utils/rateLimit';
+import rateLimit from '@server/utils/rateLimit';
 import { createHash } from 'crypto';
 import { promises } from 'fs';
 import path, { join } from 'path';
@@ -98,26 +98,29 @@ class ImageProxy {
     return files.length;
   }
 
-  private axios;
+  private fetch: typeof fetch;
   private cacheVersion;
   private key;
+  private baseUrl;
 
   constructor(
     key: string,
     baseUrl: string,
     options: {
       cacheVersion?: number;
-      rateLimitOptions?: rateLimitOptions;
+      rateLimitOptions?: RateLimitOptions;
     } = {}
   ) {
     this.cacheVersion = options.cacheVersion ?? 1;
+    this.baseUrl = baseUrl;
     this.key = key;
-    this.axios = axios.create({
-      baseURL: baseUrl,
-    });
 
     if (options.rateLimitOptions) {
-      this.axios = rateLimit(this.axios, options.rateLimitOptions);
+      this.fetch = rateLimit(fetch, {
+        ...options.rateLimitOptions,
+      });
+    } else {
+      this.fetch = fetch;
     }
   }
 
@@ -182,17 +185,20 @@ class ImageProxy {
   ): Promise<ImageResponse | null> {
     try {
       const directory = join(this.getCacheDirectory(), cacheKey);
-      const response = await this.axios.get(path, {
-        responseType: 'arraybuffer',
-      });
+      const href =
+        this.baseUrl +
+        (this.baseUrl.endsWith('/') ? '' : '/') +
+        (path.startsWith('/') ? path.slice(1) : path);
+      const response = await this.fetch(href);
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
 
-      const buffer = Buffer.from(response.data, 'binary');
       const extension = path.split('.').pop() ?? '';
       const maxAge = Number(
-        (response.headers['cache-control'] ?? '0').split('=')[1]
+        (response.headers.get('cache-control') ?? '0').split('=')[1]
       );
       const expireAt = Date.now() + maxAge * 1000;
-      const etag = (response.headers.etag ?? '').replace(/"/g, '');
+      const etag = (response.headers.get('etag') ?? '').replace(/"/g, '');
 
       await this.writeToCacheDir(
         directory,

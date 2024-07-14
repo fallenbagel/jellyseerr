@@ -17,7 +17,6 @@ import {
 } from '@heroicons/react/24/solid';
 import { MediaRequestStatus } from '@server/constants/media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
-import axios from 'axios';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -53,7 +52,10 @@ const RequestBlock = ({ request, onUpdate }: RequestBlockProps) => {
 
   const updateRequest = async (type: 'approve' | 'decline'): Promise<void> => {
     setIsUpdating(true);
-    await axios.post(`/api/v1/request/${request.id}/${type}`);
+    const res = await fetch(`/api/v1/request/${request.id}/${type}`, {
+      method: 'POST',
+    });
+    if (!res.ok) throw new Error();
 
     if (onUpdate) {
       onUpdate();
@@ -63,7 +65,10 @@ const RequestBlock = ({ request, onUpdate }: RequestBlockProps) => {
 
   const deleteRequest = async () => {
     setIsUpdating(true);
-    await axios.delete(`/api/v1/request/${request.id}`);
+    const res = await fetch(`/api/v1/request/${request.id}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error();
 
     if (onUpdate) {
       onUpdate();

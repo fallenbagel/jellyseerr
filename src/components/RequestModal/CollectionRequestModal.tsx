@@ -13,7 +13,6 @@ import type { MediaRequest } from '@server/entity/MediaRequest';
 import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
 import { Permission } from '@server/lib/permissions';
 import type { Collection } from '@server/models/Collection';
-import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -197,12 +196,19 @@ const CollectionRequestModal = ({
         (
           data?.parts.filter((part) => selectedParts.includes(part.id)) ?? []
         ).map(async (part) => {
-          await axios.post<MediaRequest>('/api/v1/request', {
-            mediaId: part.id,
-            mediaType: 'movie',
-            is4k,
-            ...overrideParams,
+          const res = await fetch('/api/v1/request', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              mediaId: part.id,
+              mediaType: 'movie',
+              is4k,
+              ...overrideParams,
+            }),
           });
+          if (!res.ok) throw new Error();
         })
       );
 

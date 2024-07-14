@@ -5,7 +5,6 @@ import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
 import type { PushoverSound } from '@server/api/pushover';
-import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -94,14 +93,21 @@ const NotificationsPushover = () => {
       validationSchema={NotificationsPushoverSchema}
       onSubmit={async (values) => {
         try {
-          await axios.post('/api/v1/settings/notifications/pushover', {
-            enabled: values.enabled,
-            types: values.types,
-            options: {
-              accessToken: values.accessToken,
-              userToken: values.userToken,
+          const res = await fetch('/api/v1/settings/notifications/pushover', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             },
+            body: JSON.stringify({
+              enabled: values.enabled,
+              types: values.types,
+              options: {
+                accessToken: values.accessToken,
+                userToken: values.userToken,
+              },
+            }),
           });
+          if (!res.ok) throw new Error();
           addToast(intl.formatMessage(messages.pushoversettingssaved), {
             appearance: 'success',
             autoDismiss: true,
@@ -139,16 +145,25 @@ const NotificationsPushover = () => {
                 toastId = id;
               }
             );
-            await axios.post('/api/v1/settings/notifications/pushover/test', {
-              enabled: true,
-              types: values.types,
-              options: {
-                accessToken: values.accessToken,
-                userToken: values.userToken,
-                sound: values.sound,
-              },
-            });
-
+            const res = await fetch(
+              '/api/v1/settings/notifications/pushover/test',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  enabled: true,
+                  types: values.types,
+                  options: {
+                    accessToken: values.accessToken,
+                    userToken: values.userToken,
+                    sound: values.sound,
+                  },
+                }),
+              }
+            );
+            if (!res.ok) throw new Error();
             if (toastId) {
               removeToast(toastId);
             }

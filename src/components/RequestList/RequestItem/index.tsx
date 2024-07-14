@@ -20,7 +20,6 @@ import { MediaRequestStatus } from '@server/constants/media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
-import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -62,7 +61,10 @@ const RequestItemError = ({
   const { hasPermission } = useUser();
 
   const deleteRequest = async () => {
-    await axios.delete(`/api/v1/media/${requestData?.media.id}`);
+    const res = await fetch(`/api/v1/media/${requestData?.media.id}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error();
     revalidateList();
   };
 
@@ -319,15 +321,22 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
   const [isRetrying, setRetrying] = useState(false);
 
   const modifyRequest = async (type: 'approve' | 'decline') => {
-    const response = await axios.post(`/api/v1/request/${request.id}/${type}`);
+    const res = await fetch(`/api/v1/request/${request.id}/${type}`, {
+      method: 'POST',
+    });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
 
-    if (response) {
+    if (data) {
       revalidate();
     }
   };
 
   const deleteRequest = async () => {
-    await axios.delete(`/api/v1/request/${request.id}`);
+    const res = await fetch(`/api/v1/request/${request.id}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error();
 
     revalidateList();
   };
@@ -336,7 +345,12 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
     setRetrying(true);
 
     try {
-      const result = await axios.post(`/api/v1/request/${request.id}/retry`);
+      const res = await fetch(`/api/v1/request/${request.id}/retry`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error();
+      const result = await res.json();
+
       revalidate(result.data);
     } catch (e) {
       addToast(intl.formatMessage(messages.failedretry), {

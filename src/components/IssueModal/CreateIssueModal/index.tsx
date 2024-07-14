@@ -11,7 +11,6 @@ import { MediaStatus } from '@server/constants/media';
 import type Issue from '@server/entity/Issue';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
-import axios from 'axios';
 import { Field, Formik } from 'formik';
 import Link from 'next/link';
 import { useIntl } from 'react-intl';
@@ -101,14 +100,19 @@ const CreateIssueModal = ({
       validationSchema={CreateIssueModalSchema}
       onSubmit={async (values) => {
         try {
-          const newIssue = await axios.post<Issue>('/api/v1/issue', {
-            issueType: values.selectedIssue.issueType,
-            message: values.message,
-            mediaId: data?.mediaInfo?.id,
-            problemSeason: values.problemSeason,
-            problemEpisode:
-              values.problemSeason > 0 ? values.problemEpisode : 0,
+          const res = await fetch('/api/v1/issue', {
+            method: 'POST',
+            body: JSON.stringify({
+              issueType: values.selectedIssue.issueType,
+              message: values.message,
+              mediaId: data?.mediaInfo?.id,
+              problemSeason: values.problemSeason,
+              problemEpisode:
+                values.problemSeason > 0 ? values.problemEpisode : 0,
+            }),
           });
+          if (!res.ok) throw new Error();
+          const newIssue: Issue = await res.json();
 
           if (data) {
             addToast(
@@ -119,7 +123,7 @@ const CreateIssueModal = ({
                     strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
                   })}
                 </div>
-                <Link href={`/issues/${newIssue.data.id}`} legacyBehavior>
+                <Link href={`/issues/${newIssue.id}`} legacyBehavior>
                   <Button as="a" className="mt-4">
                     <span>{intl.formatMessage(messages.toastviewissue)}</span>
                     <ArrowRightCircleIcon />

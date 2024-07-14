@@ -4,7 +4,6 @@ import useSettings from '@app/hooks/useSettings';
 import defineMessages from '@app/utils/defineMessages';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
 import { ApiErrorCode } from '@server/constants/error';
-import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import getConfig from 'next/config';
 import { useIntl } from 'react-intl';
@@ -105,15 +104,22 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
         validationSchema={LoginSchema}
         onSubmit={async (values) => {
           try {
-            await axios.post('/api/v1/auth/jellyfin', {
-              username: values.username,
-              password: values.password,
-              hostname: values.hostname,
-              port: values.port,
-              useSsl: values.useSsl,
-              urlBase: values.urlBase,
-              email: values.email,
+            const res = await fetch('/api/v1/auth/jellyfin', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                username: values.username,
+                password: values.password,
+                hostname: values.hostname,
+                port: values.port,
+                useSsl: values.useSsl,
+                urlBase: values.urlBase,
+                email: values.email,
+              }),
             });
+            if (!res.ok) throw new Error();
           } catch (e) {
             let errorMessage = null;
             switch (e.response?.data?.message) {
@@ -339,11 +345,18 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
           validationSchema={LoginSchema}
           onSubmit={async (values) => {
             try {
-              await axios.post('/api/v1/auth/jellyfin', {
-                username: values.username,
-                password: values.password,
-                email: values.username,
+              const res = await fetch('/api/v1/auth/jellyfin', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  username: values.username,
+                  password: values.password,
+                  email: values.username,
+                }),
               });
+              if (!res.ok) throw new Error();
             } catch (e) {
               toasts.addToast(
                 intl.formatMessage(

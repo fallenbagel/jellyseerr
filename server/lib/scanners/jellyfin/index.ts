@@ -595,10 +595,8 @@ class JellyfinScanner {
         return this.log('No admin configured. Jellyfin sync skipped.', 'warn');
       }
 
-      const hostname = getHostname();
-
       this.jfClient = new JellyfinAPI(
-        hostname,
+        getHostname(),
         admin.jellyfinAuthToken,
         admin.jellyfinDeviceId
       );
