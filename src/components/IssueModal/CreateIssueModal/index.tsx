@@ -102,6 +102,9 @@ const CreateIssueModal = ({
         try {
           const res = await fetch('/api/v1/issue', {
             method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
             body: JSON.stringify({
               issueType: values.selectedIssue.issueType,
               message: values.message,
