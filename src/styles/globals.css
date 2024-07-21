@@ -7,6 +7,29 @@
     min-height: calc(100% + env(safe-area-inset-top));
     padding: env(safe-area-inset-top) env(safe-area-inset-right)
       calc(4rem + env(safe-area-inset-bottom)) env(safe-area-inset-left);
+    scrollbar-width: thin;
+    scrollbar-color: #4b5563 #1f2937;
+  }
+
+  html:hover {
+    scrollbar-color: #6b7280 #1f2937;
+  }
+
+  /* WebKit scrollbar styles */
+  html::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  html::-webkit-scrollbar-track {
+    background: #1f2937;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
+  }
+
+  html:hover::-webkit-scrollbar-thumb {
+    background-color: #6b7280;
   }
 
   @media (min-width: 640px) {
