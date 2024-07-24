@@ -252,7 +252,7 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
 
       const searchParams = new URLSearchParams(params.enable ? params : {});
       const res = await fetch(
-        `/api/v1/settings/jellyfin/library?${searchParams.toString}`
+        `/api/v1/settings/jellyfin/library?${searchParams.toString()}`
       );
       if (!res.ok) throw new Error();
     } else {
