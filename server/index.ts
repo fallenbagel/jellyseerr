@@ -26,7 +26,6 @@ import { getClientIp } from '@supercharge/request-ip';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
-import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
@@ -180,6 +179,16 @@ app
     );
     const apiDocs = YAML.load(API_SPEC_PATH);
     server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
+    /**
+     * Workaround to avoid the error from the OpenAPI validator when an user send a
+     * request without any session cookie
+     */
+    server.use((req, res, next) => {
+      if (!req.cookies['connect.sid']) {
+        req.cookies['connect.sid'] = 'none';
+      }
+      next();
+    });
     server.use(
       OpenApiValidator.middleware({
         apiSpec: API_SPEC_PATH,
@@ -203,23 +212,7 @@ app
     // Do not set cookies so CDNs can cache them
     server.use('/imageproxy', clearCookies, imageproxy);
 
-    server.get('*', (req, res) => handle(req, res));
-    server.use(
-      (
-        err: { status: number; message: string; errors: string[] },
-        _req: Request,
-        res: Response,
-        // We must provide a next function for the function signature here even though its not used
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _next: NextFunction
-      ) => {
-        // format error
-        res.status(err.status || 500).json({
-          message: err.message,
-          errors: err.errors,
-        });
-      }
-    );
+    server.all('*', (req, res) => handle(req, res));
 
     const port = Number(process.env.PORT) || 5055;
     const host = process.env.HOST;
