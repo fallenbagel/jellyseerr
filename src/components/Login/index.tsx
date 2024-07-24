@@ -45,6 +45,9 @@ const Login = () => {
       try {
         const res = await fetch('/api/v1/auth/plex', {
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({ authToken }),
         });
         if (!res.ok) throw new Error();

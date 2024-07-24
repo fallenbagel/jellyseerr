@@ -126,6 +126,9 @@ const IssueDetails = () => {
     try {
       const res = await fetch(`/api/v1/issueComment/${firstComment.id}`, {
         method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ message: newMessage }),
       });
       if (!res.ok) throw new Error();
@@ -501,6 +504,9 @@ const IssueDetails = () => {
                     `/api/v1/issue/${issueData?.id}/comment`,
                     {
                       method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
                       body: JSON.stringify({ message: values.message }),
                     }
                   );

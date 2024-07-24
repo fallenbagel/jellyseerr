@@ -181,6 +181,9 @@ const IssueComment = ({
                     `/api/v1/issueComment/${comment.id}`,
                     {
                       method: 'PUT',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
                       body: JSON.stringify({ message: values.newMessage }),
                     }
                   );

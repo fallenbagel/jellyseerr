@@ -59,6 +59,9 @@ const AddEmailModal: React.FC<AddEmailModalProps> = ({
           try {
             const res = await fetch('/api/v1/auth/jellyfin', {
               method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
               body: JSON.stringify({
                 username: username,
                 password: password,
