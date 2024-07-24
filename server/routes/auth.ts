@@ -730,6 +730,7 @@ authRoutes.post('/reset-password/:guid', async (req, res, next) => {
     });
   }
   user.recoveryLinkExpirationDate = null;
+  await user.setPassword(req.body.password);
   userRepository.save(user);
   logger.info('Successfully reset password', {
     label: 'API',
