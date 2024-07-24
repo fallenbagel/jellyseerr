@@ -57,44 +57,48 @@ const ShowMoreCard = ({ url, posters }: ShowMoreCardProps) => {
       >
         <div style={{ paddingBottom: '150%' }}>
           <div className="absolute inset-0 flex h-full w-full flex-col items-center p-2">
-            <div className="relative z-10 flex h-full flex-wrap items-center justify-center opacity-30">
+            <div className="relative z-10 grid h-full w-full grid-cols-2 items-center justify-center gap-2 opacity-30">
               {posters[0] && (
-                <div className="w-1/2 p-1">
+                <div className="">
                   <Image
-                    src={`//image.tmdb.org/t/p/w300_and_h450_face${posters[0]}`}
+                    src={`https://image.tmdb.org/t/p/w300_and_h450_face${posters[0]}`}
                     alt=""
-                    className="w-full rounded-md"
-                    fill
+                    className="rounded-md"
+                    width={300}
+                    height={450}
                   />
                 </div>
               )}
               {posters[1] && (
-                <div className="w-1/2 p-1">
+                <div className="">
                   <Image
-                    src={`//image.tmdb.org/t/p/w300_and_h450_face${posters[1]}`}
+                    src={`https://image.tmdb.org/t/p/w300_and_h450_face${posters[1]}`}
                     alt=""
-                    className="w-full rounded-md"
-                    fill
+                    className="rounded-md"
+                    width={300}
+                    height={450}
                   />
                 </div>
               )}
               {posters[2] && (
-                <div className="w-1/2 p-1">
+                <div className="">
                   <Image
-                    src={`//image.tmdb.org/t/p/w300_and_h450_face${posters[2]}`}
+                    src={`https://image.tmdb.org/t/p/w300_and_h450_face${posters[2]}`}
                     alt=""
-                    className="w-full rounded-md"
-                    fill
+                    className="rounded-md"
+                    width={300}
+                    height={450}
                   />
                 </div>
               )}
               {posters[3] && (
-                <div className="w-1/2 p-1">
+                <div className="">
                   <Image
-                    src={`//image.tmdb.org/t/p/w300_and_h450_face${posters[3]}`}
+                    src={`https://image.tmdb.org/t/p/w300_and_h450_face${posters[3]}`}
                     alt=""
-                    className="w-full rounded-md"
-                    fill
+                    className="rounded-md"
+                    width={300}
+                    height={450}
                   />
                 </div>
               )}

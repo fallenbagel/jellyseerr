@@ -50,7 +50,7 @@ const DiscoverTvNetwork = () => {
           {firstResultData?.network.logoPath ? (
             <div className="mb-6 flex justify-center">
               <Image
-                src={`//image.tmdb.org/t/p/w780_filter(duotone,ffffff,bababa)${firstResultData.network.logoPath}`}
+                src={`https://image.tmdb.org/t/p/w780_filter(duotone,ffffff,bababa)${firstResultData.network.logoPath}`}
                 alt={firstResultData.network.name}
                 className="max-h-24 sm:max-h-32"
                 fill
