@@ -1,7 +1,7 @@
+import TheMovieDb from '@server/api/indexer/themoviedb';
+import type { TmdbTvDetails } from '@server/api/indexer/themoviedb/interfaces';
 import type { JellyfinLibraryItem } from '@server/api/jellyfin';
 import JellyfinAPI from '@server/api/jellyfin';
-import TheMovieDb from '@server/api/themoviedb';
-import type { TmdbTvDetails } from '@server/api/themoviedb/interfaces';
 import { MediaStatus, MediaType } from '@server/constants/media';
 import { MediaServerType } from '@server/constants/server';
 import { getRepository } from '@server/datasource';

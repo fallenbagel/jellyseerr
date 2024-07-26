@@ -1,6 +1,6 @@
-import TheMovieDb from '@server/api/themoviedb';
-import { ANIME_KEYWORD_ID } from '@server/api/themoviedb/constants';
-import type { TmdbKeyword } from '@server/api/themoviedb/interfaces';
+import TheMovieDb from '@server/api/indexer/themoviedb';
+import { ANIME_KEYWORD_ID } from '@server/api/indexer/themoviedb/constants';
+import type { TmdbKeyword } from '@server/api/indexer/themoviedb/interfaces';
 import {
   MediaRequestStatus,
   MediaStatus,

@@ -6,7 +6,7 @@ import type {
   TmdbPersonResult,
   TmdbTvDetails,
   TmdbTvResult,
-} from '@server/api/themoviedb/interfaces';
+} from '@server/api/indexer/themoviedb/interfaces';
 
 export const isMovie = (
   movie:

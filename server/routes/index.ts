@@ -1,10 +1,10 @@
 import GithubAPI from '@server/api/github';
-import PushoverAPI from '@server/api/pushover';
-import TheMovieDb from '@server/api/themoviedb';
+import TheMovieDb from '@server/api/indexer/themoviedb';
 import type {
   TmdbMovieResult,
   TmdbTvResult,
-} from '@server/api/themoviedb/interfaces';
+} from '@server/api/indexer/themoviedb/interfaces';
+import PushoverAPI from '@server/api/pushover';
 import { getRepository } from '@server/datasource';
 import DiscoverSlider from '@server/entity/DiscoverSlider';
 import type { StatusResponse } from '@server/interfaces/api/settingsInterfaces';
