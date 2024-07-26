@@ -7,9 +7,10 @@ type RateLimiteState<T extends (...args: Parameters<T>) => Promise<U>, U> = {
   queue: {
     args: Parameters<T>;
     resolve: (value: U) => void;
+    reject: (reason?: unknown) => void;
   }[];
-  activeRequests: number;
-  timer: NodeJS.Timeout | null;
+  lastTimestamps: number[];
+  timeout: ReturnType<typeof setTimeout>;
 };
 
 const rateLimitById: Record<string, unknown> = {};
@@ -27,46 +28,40 @@ export default function rateLimit<
 >(fn: T, options: RateLimitOptions): (...args: Parameters<T>) => Promise<U> {
   const state: RateLimiteState<T, U> = (rateLimitById[
     options.id || ''
-  ] as RateLimiteState<T, U>) || { queue: [], activeRequests: 0, timer: null };
+  ] as RateLimiteState<T, U>) || { queue: [], lastTimestamps: [] };
   if (options.id) {
     rateLimitById[options.id] = state;
   }
 
   const processQueue = () => {
-    if (state.queue.length === 0) {
-      if (state.timer) {
-        clearInterval(state.timer);
-        state.timer = null;
-      }
-      return;
-    }
+    // remove old timestamps
+    state.lastTimestamps = state.lastTimestamps.filter(
+      (timestamp) => Date.now() - timestamp < 1000
+    );
 
-    while (state.activeRequests < options.maxRPS) {
-      state.activeRequests++;
+    if (state.lastTimestamps.length < options.maxRPS) {
+      // process requests if RPS not exceeded
       const item = state.queue.shift();
-      if (!item) break;
-      const { args, resolve } = item;
+      if (!item) return;
+      state.lastTimestamps.push(Date.now());
+      const { args, resolve, reject } = item;
       fn(...args)
         .then(resolve)
-        .finally(() => {
-          state.activeRequests--;
-          if (state.queue.length > 0) {
-            if (!state.timer) {
-              state.timer = setInterval(processQueue, 1000);
-            }
-          } else {
-            if (state.timer) {
-              clearInterval(state.timer);
-              state.timer = null;
-            }
-          }
-        });
+        .catch(reject);
+      processQueue();
+    } else {
+      // rerun once the oldest item in queue is older than 1s
+      if (state.timeout) clearTimeout(state.timeout);
+      state.timeout = setTimeout(
+        processQueue,
+        1000 - (Date.now() - state.lastTimestamps[0])
+      );
     }
   };
 
   return (...args: Parameters<T>): Promise<U> => {
-    return new Promise<U>((resolve) => {
-      state.queue.push({ args, resolve });
+    return new Promise<U>((resolve, reject) => {
+      state.queue.push({ args, resolve, reject });
       processQueue();
     });
   };
