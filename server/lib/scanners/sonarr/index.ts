@@ -1,6 +1,6 @@
+import type { TmdbTvDetails } from '@server/api/indexer/themoviedb/interfaces';
 import type { SonarrSeries } from '@server/api/servarr/sonarr';
 import SonarrAPI from '@server/api/servarr/sonarr';
-import type { TmdbTvDetails } from '@server/api/themoviedb/interfaces';
 import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';
 import type {

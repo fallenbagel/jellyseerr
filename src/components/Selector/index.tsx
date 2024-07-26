@@ -11,7 +11,7 @@ import type {
   TmdbCompanySearchResponse,
   TmdbGenre,
   TmdbKeywordSearchResponse,
-} from '@server/api/themoviedb/interfaces';
+} from '@server/api/indexer/themoviedb/interfaces';
 import type { GenreSliderItem } from '@server/interfaces/api/discoverInterfaces';
 import type { UserResultsResponse } from '@server/interfaces/api/userInterfaces';
 import type {

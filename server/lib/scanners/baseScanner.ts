@@ -1,4 +1,4 @@
-import TheMovieDb from '@server/api/themoviedb';
+import TheMovieDb from '@server/api/indexer/themoviedb';
 import { MediaStatus, MediaType } from '@server/constants/media';
 import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';

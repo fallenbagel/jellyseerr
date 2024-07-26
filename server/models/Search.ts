@@ -6,7 +6,7 @@ import type {
   TmdbPersonResult,
   TmdbTvDetails,
   TmdbTvResult,
-} from '@server/api/themoviedb/interfaces';
+} from '@server/api/indexer/themoviedb/interfaces';
 import { MediaType as MainMediaType } from '@server/constants/media';
 import type Media from '@server/entity/Media';
 

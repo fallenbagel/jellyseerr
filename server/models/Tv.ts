@@ -5,7 +5,7 @@ import type {
   TmdbTvEpisodeResult,
   TmdbTvRatingResult,
   TmdbTvSeasonResult,
-} from '@server/api/themoviedb/interfaces';
+} from '@server/api/indexer/themoviedb/interfaces';
 import type Media from '@server/entity/Media';
 import type {
   Cast,

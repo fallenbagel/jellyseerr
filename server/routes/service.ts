@@ -1,6 +1,6 @@
+import TheMovieDb from '@server/api/indexer/themoviedb';
 import RadarrAPI from '@server/api/servarr/radarr';
 import SonarrAPI from '@server/api/servarr/sonarr';
-import TheMovieDb from '@server/api/themoviedb';
 import type {
   ServiceCommonServer,
   ServiceCommonServerWithDetails,

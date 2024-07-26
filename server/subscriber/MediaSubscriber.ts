@@ -1,4 +1,4 @@
-import TheMovieDb from '@server/api/themoviedb';
+import TheMovieDb from '@server/api/indexer/themoviedb';
 import {
   MediaRequestStatus,
   MediaStatus,

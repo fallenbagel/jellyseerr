@@ -1,9 +1,11 @@
+import TheMovieDb from '@server/api/indexer/themoviedb';
+import Tvdb from '@server/api/indexer/tvdb';
 import RottenTomatoes from '@server/api/rating/rottentomatoes';
-import TheMovieDb from '@server/api/themoviedb';
 import { MediaType } from '@server/constants/media';
 import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';
 import { Watchlist } from '@server/entity/Watchlist';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { mapTvResult } from '@server/models/Search';
 import { mapSeasonWithEpisodes, mapTvDetails } from '@server/models/Tv';
@@ -12,7 +14,13 @@ import { Router } from 'express';
 const tvRoutes = Router();
 
 tvRoutes.get('/:id', async (req, res, next) => {
-  const tmdb = new TheMovieDb();
+  const settings = getSettings();
+  let tmdb;
+  if (settings.tvdb.use) {
+    tmdb = await Tvdb.getInstance();
+  } else {
+    tmdb = new TheMovieDb();
+  }
   try {
     const tv = await tmdb.getTvShow({
       tvId: Number(req.params.id),
@@ -52,14 +60,22 @@ tvRoutes.get('/:id', async (req, res, next) => {
   }
 });
 
-tvRoutes.get('/:id/season/:seasonNumber', async (req, res, next) => {
-  const tmdb = new TheMovieDb();
-
+tvRoutes.get('/:id/season/:seasonNumber/:seasonId', async (req, res, next) => {
   try {
+    const settings = getSettings();
+    let tmdb;
+    let seasonIdentifier;
+    if (settings.tvdb.use) {
+      tmdb = await Tvdb.getInstance();
+      seasonIdentifier = req.params.seasonId;
+    } else {
+      tmdb = new TheMovieDb();
+      seasonIdentifier = req.params.seasonNumber;
+    }
+
     const season = await tmdb.getTvSeason({
       tvId: Number(req.params.id),
-      seasonNumber: Number(req.params.seasonNumber),
-      language: (req.query.language as string) ?? req.locale,
+      seasonNumber: Number(seasonIdentifier),
     });
 
     return res.status(200).json(mapSeasonWithEpisodes(season));
