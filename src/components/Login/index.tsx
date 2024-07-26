@@ -50,14 +50,21 @@ const Login = () => {
           },
           body: JSON.stringify({ authToken }),
         });
-        if (!res.ok) throw new Error();
+        if (!res.ok) throw new Error(res.statusText, { cause: res });
         const data = await res.json();
 
         if (data?.id) {
           revalidate();
         }
       } catch (e) {
-        setError(e.response.data.message);
+        let errorData;
+        try {
+          errorData = await e.cause?.text();
+          errorData = JSON.parse(errorData);
+        } catch {
+          /* empty */
+        }
+        setError(errorData?.message);
         setAuthToken(undefined);
         setProcessing(false);
       }

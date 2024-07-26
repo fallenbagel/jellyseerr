@@ -119,10 +119,17 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
                 email: values.email,
               }),
             });
-            if (!res.ok) throw new Error();
+            if (!res.ok) throw new Error(res.statusText, { cause: res });
           } catch (e) {
+            let errorData;
+            try {
+              errorData = await e.cause?.text();
+              errorData = JSON.parse(errorData);
+            } catch {
+              /* empty */
+            }
             let errorMessage = null;
-            switch (e.response?.data?.message) {
+            switch (errorData?.message) {
               case ApiErrorCode.InvalidUrl:
                 errorMessage = messages.invalidurlerror;
                 break;

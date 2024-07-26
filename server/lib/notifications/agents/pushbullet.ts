@@ -122,7 +122,7 @@ class PushbulletAgent
       });
 
       try {
-        await fetch(endpoint, {
+        const response = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -133,13 +133,23 @@ class PushbulletAgent
             channel_tag: settings.options.channelTag,
           }),
         });
+        if (!response.ok) {
+          throw new Error(response.statusText, { cause: response });
+        }
       } catch (e) {
+        let errorData;
+        try {
+          errorData = await e.cause?.text();
+          errorData = JSON.parse(errorData);
+        } catch {
+          /* empty */
+        }
         logger.error('Error sending Pushbullet notification', {
           label: 'Notifications',
           type: Notification[type],
           subject: payload.subject,
           errorMessage: e.message,
-          response: e.response?.data,
+          response: errorData,
         });
 
         return false;
@@ -164,7 +174,7 @@ class PushbulletAgent
         });
 
         try {
-          await fetch(endpoint, {
+          const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -172,14 +182,24 @@ class PushbulletAgent
             },
             body: JSON.stringify(notificationPayload),
           });
+          if (!response.ok) {
+            throw new Error(response.statusText, { cause: response });
+          }
         } catch (e) {
+          let errorData;
+          try {
+            errorData = await e.cause?.text();
+            errorData = JSON.parse(errorData);
+          } catch {
+            /* empty */
+          }
           logger.error('Error sending Pushbullet notification', {
             label: 'Notifications',
             recipient: payload.notifyUser.displayName,
             type: Notification[type],
             subject: payload.subject,
             errorMessage: e.message,
-            response: e.response?.data,
+            response: errorData,
           });
 
           return false;
@@ -215,7 +235,7 @@ class PushbulletAgent
               });
 
               try {
-                await fetch(endpoint, {
+                const response = await fetch(endpoint, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
@@ -223,14 +243,24 @@ class PushbulletAgent
                   },
                   body: JSON.stringify(notificationPayload),
                 });
+                if (!response.ok) {
+                  throw new Error(response.statusText, { cause: response });
+                }
               } catch (e) {
+                let errorData;
+                try {
+                  errorData = await e.cause?.text();
+                  errorData = JSON.parse(errorData);
+                } catch {
+                  /* empty */
+                }
                 logger.error('Error sending Pushbullet notification', {
                   label: 'Notifications',
                   recipient: user.displayName,
                   type: Notification[type],
                   subject: payload.subject,
                   errorMessage: e.message,
-                  response: e.response?.data,
+                  response: errorData,
                 });
 
                 return false;

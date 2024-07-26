@@ -68,7 +68,10 @@ class ExternalAPI {
     if (!response.ok) {
       const text = await response.text();
       throw new Error(
-        `${response.status} ${response.statusText}${text ? ': ' + text : ''}`
+        `${response.status} ${response.statusText}${text ? ': ' + text : ''}`,
+        {
+          cause: response,
+        }
       );
     }
     const data = await this.getDataFromResponse(response);
@@ -106,6 +109,15 @@ class ExternalAPI {
       },
       body: JSON.stringify(data),
     });
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(
+        `${response.status} ${response.statusText}${text ? ': ' + text : ''}`,
+        {
+          cause: response,
+        }
+      );
+    }
     const resData = await this.getDataFromResponse(response);
 
     if (this.cache) {
@@ -141,6 +153,15 @@ class ExternalAPI {
       },
       body: JSON.stringify(data),
     });
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(
+        `${response.status} ${response.statusText}${text ? ': ' + text : ''}`,
+        {
+          cause: response,
+        }
+      );
+    }
     const resData = await this.getDataFromResponse(response);
 
     if (this.cache) {
@@ -163,6 +184,15 @@ class ExternalAPI {
         ...config?.headers,
       },
     });
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(
+        `${response.status} ${response.statusText}${text ? ': ' + text : ''}`,
+        {
+          cause: response,
+        }
+      );
+    }
     const data = await this.getDataFromResponse(response);
 
     return data;
@@ -197,6 +227,17 @@ class ExternalAPI {
             ...config?.headers,
           },
         }).then(async (response) => {
+          if (!response.ok) {
+            const text = await response.text();
+            throw new Error(
+              `${response.status} ${response.statusText}${
+                text ? ': ' + text : ''
+              }`,
+              {
+                cause: response,
+              }
+            );
+          }
           const data = await this.getDataFromResponse(response);
           this.cache?.set(cacheKey, data, ttl ?? DEFAULT_TTL);
         });
@@ -212,6 +253,15 @@ class ExternalAPI {
         ...config?.headers,
       },
     });
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(
+        `${response.status} ${response.statusText}${text ? ': ' + text : ''}`,
+        {
+          cause: response,
+        }
+      );
+    }
     const data = await this.getDataFromResponse(response);
 
     if (this.cache) {
@@ -250,13 +300,13 @@ class ExternalAPI {
   }
 
   private async getDataFromResponse(response: Response) {
-    const contentType = response.headers.get('Content-Type')?.split(';')[0];
-    if (contentType === 'application/json') {
+    const contentType = response.headers.get('Content-Type');
+    if (contentType?.includes('application/json')) {
       return await response.json();
     } else if (
-      contentType === 'application/xml' ||
-      contentType === 'text/html' ||
-      contentType === 'text/plain'
+      contentType?.includes('application/xml') ||
+      contentType?.includes('text/html') ||
+      contentType?.includes('text/plain')
     ) {
       return await response.text();
     } else {

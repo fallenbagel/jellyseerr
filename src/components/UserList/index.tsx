@@ -295,16 +295,23 @@ const UserList = () => {
                   password: values.genpassword ? null : values.password,
                 }),
               });
-              if (!res.ok) throw new Error();
+              if (!res.ok) throw new Error(res.statusText, { cause: res });
               addToast(intl.formatMessage(messages.usercreatedsuccess), {
                 appearance: 'success',
                 autoDismiss: true,
               });
               setCreateModal({ isOpen: false });
             } catch (e) {
+              let errorData;
+              try {
+                errorData = await e.cause?.text();
+                errorData = JSON.parse(errorData);
+              } catch {
+                /* empty */
+              }
               addToast(
                 intl.formatMessage(
-                  e.response.data.errors?.includes('USER_EXISTS')
+                  errorData.errors?.includes('USER_EXISTS')
                     ? messages.usercreatedfailedexisting
                     : messages.usercreatedfailed
                 ),

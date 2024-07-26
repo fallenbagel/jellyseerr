@@ -52,6 +52,9 @@ class PushoverAgent
   ): Promise<Partial<PushoverImagePayload>> {
     try {
       const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error(response.statusText, { cause: response });
+      }
       const arrayBuffer = await response.arrayBuffer();
       const base64 = Buffer.from(arrayBuffer).toString('base64');
       const contentType = (
@@ -64,10 +67,17 @@ class PushoverAgent
         attachment_type: contentType,
       };
     } catch (e) {
+      let errorData;
+      try {
+        errorData = await e.cause?.text();
+        errorData = JSON.parse(errorData);
+      } catch {
+        /* empty */
+      }
       logger.error('Error getting image payload', {
         label: 'Notifications',
         errorMessage: e.message,
-        response: e.response?.data,
+        response: errorData,
       });
       return {};
     }
@@ -200,7 +210,7 @@ class PushoverAgent
       });
 
       try {
-        await fetch(endpoint, {
+        const response = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -212,13 +222,23 @@ class PushoverAgent
             sound: settings.options.sound,
           } as PushoverPayload),
         });
+        if (!response.ok) {
+          throw new Error(response.statusText, { cause: response });
+        }
       } catch (e) {
+        let errorData;
+        try {
+          errorData = await e.cause?.text();
+          errorData = JSON.parse(errorData);
+        } catch {
+          /* empty */
+        }
         logger.error('Error sending Pushover notification', {
           label: 'Notifications',
           type: Notification[type],
           subject: payload.subject,
           errorMessage: e.message,
-          response: e.response?.data,
+          response: errorData,
         });
 
         return false;
@@ -246,7 +266,7 @@ class PushoverAgent
         });
 
         try {
-          await fetch(endpoint, {
+          const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -258,14 +278,24 @@ class PushoverAgent
               sound: payload.notifyUser.settings.pushoverSound,
             } as PushoverPayload),
           });
+          if (!response.ok) {
+            throw new Error(response.statusText, { cause: response });
+          }
         } catch (e) {
+          let errorData;
+          try {
+            errorData = await e.cause?.text();
+            errorData = JSON.parse(errorData);
+          } catch {
+            /* empty */
+          }
           logger.error('Error sending Pushover notification', {
             label: 'Notifications',
             recipient: payload.notifyUser.displayName,
             type: Notification[type],
             subject: payload.subject,
             errorMessage: e.message,
-            response: e.response?.data,
+            response: errorData,
           });
 
           return false;
@@ -302,7 +332,7 @@ class PushoverAgent
               });
 
               try {
-                await fetch(endpoint, {
+                const response = await fetch(endpoint, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
@@ -313,14 +343,24 @@ class PushoverAgent
                     user: user.settings.pushoverUserKey,
                   } as PushoverPayload),
                 });
+                if (!response.ok) {
+                  throw new Error(response.statusText, { cause: response });
+                }
               } catch (e) {
+                let errorData;
+                try {
+                  errorData = await e.cause?.text();
+                  errorData = JSON.parse(errorData);
+                } catch {
+                  /* empty */
+                }
                 logger.error('Error sending Pushover notification', {
                   label: 'Notifications',
                   recipient: user.displayName,
                   type: Notification[type],
                   subject: payload.subject,
                   errorMessage: e.message,
-                  response: e.response?.data,
+                  response: errorData,
                 });
 
                 return false;

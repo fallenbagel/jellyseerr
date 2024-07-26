@@ -237,22 +237,32 @@ class SlackAgent
       subject: payload.subject,
     });
     try {
-      await fetch(settings.options.webhookUrl, {
+      const response = await fetch(settings.options.webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(this.buildEmbed(type, payload)),
       });
+      if (!response.ok) {
+        throw new Error(response.statusText, { cause: response });
+      }
 
       return true;
     } catch (e) {
+      let errorData;
+      try {
+        errorData = await e.cause?.text();
+        errorData = JSON.parse(errorData);
+      } catch {
+        /* empty */
+      }
       logger.error('Error sending Slack notification', {
         label: 'Notifications',
         type: Notification[type],
         subject: payload.subject,
         errorMessage: e.message,
-        response: e.response?.data,
+        response: errorData,
       });
 
       return false;
