@@ -42,6 +42,7 @@ import { URL } from 'url';
 import notificationRoutes from './notifications';
 import radarrRoutes from './radarr';
 import sonarrRoutes from './sonarr';
+import tvdbRoutes from './tvdb';
 
 const settingsRoutes = Router();
 
@@ -49,6 +50,7 @@ settingsRoutes.use('/notifications', notificationRoutes);
 settingsRoutes.use('/radarr', radarrRoutes);
 settingsRoutes.use('/sonarr', sonarrRoutes);
 settingsRoutes.use('/discover', discoverSettingRoutes);
+settingsRoutes.use('/tvdb', tvdbRoutes);
 
 const filteredMainSettings = (
   user: User,

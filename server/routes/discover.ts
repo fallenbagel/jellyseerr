@@ -1,7 +1,7 @@
+import type { SortOptions } from '@server/api/indexer/themoviedb';
+import TheMovieDb from '@server/api/indexer/themoviedb';
+import type { TmdbKeyword } from '@server/api/indexer/themoviedb/interfaces';
 import PlexTvAPI from '@server/api/plextv';
-import type { SortOptions } from '@server/api/themoviedb';
-import TheMovieDb from '@server/api/themoviedb';
-import type { TmdbKeyword } from '@server/api/themoviedb/interfaces';
 import { MediaType } from '@server/constants/media';
 import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';

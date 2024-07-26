@@ -519,6 +519,18 @@ components:
         serverID:
           type: string
           readOnly: true
+    TvdbSettings:
+      type: object
+      properties:
+        apiKey:
+          type: string
+          example: 'apikey'
+        pin:
+          type: string
+          example: 'ABCDEFGH'
+        use:
+          type: boolean
+          example: true
     TautulliSettings:
       type: object
       properties:
@@ -2568,6 +2580,75 @@ paths:
                       type: string
                     thumb:
                       type: string
+  /settings/tvdb:
+    get:
+      summary: Get TVDB settings
+      description: Retrieves current TVDB settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TvdbSettings'
+    put:
+      summary: Update TVDB settings
+      description: Updates TVDB settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TvdbSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TvdbSettings'
+  /settings/tvdb/test:
+    post:
+      summary: Test TVDB configuration
+      description: Tests if the TVDB configuration is valid. Returns a list of available languages on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                apiKey:
+                  type: string
+                  example: yourapikey
+                pin:
+                  type: string
+                  example: yourpin
+              required:
+                - apiKey
+      responses:
+        '200':
+          description: Succesfully connected to TVDB
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  languages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
   /settings/tautulli:
     get:
       summary: Get Tautulli settings
@@ -6472,7 +6553,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TvDetails'
-  /tv/{tvId}/season/{seasonId}:
+  /tv/{tvId}/season/{seasonNumber}/{seasonId}:
     get:
       summary: Get season details and episode list
       description: Returns season details with a list of episodes in a JSON object.
@@ -6491,6 +6572,12 @@ paths:
           schema:
             type: number
             example: 1
+        - in: path
+          name: seasonNumber
+          required: true
+          schema:
+            type: number
+            example: 123456
         - in: query
           name: language
           schema:
