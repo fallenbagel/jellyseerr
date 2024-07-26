@@ -30,7 +30,7 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
         nodeCache: cacheManager.getCache('tvdb').data,
         rateLimit: {
           maxRPS: 50,
-          id: 'tmdb',
+          id: 'tvdb',
         },
       }
     );
