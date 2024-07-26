@@ -38,6 +38,11 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       route: '/settings/users',
       regex: /^\/settings\/users/,
     },
+    {
+      text: 'Tvdb',
+      route: '/settings/tvdb',
+      regex: /^\/settings\/tvdb/,
+    },
     settings.currentSettings.mediaServerType === MediaServerType.PLEX
       ? {
           text: intl.formatMessage(messages.menuPlexSettings),

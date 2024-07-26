@@ -1,4 +1,5 @@
 import ExternalAPI from '@server/api/externalapi';
+import type { TvShowIndexer } from '@server/api/indexer';
 import cacheManager from '@server/lib/cache';
 import { sortBy } from 'lodash';
 import type {
@@ -95,16 +96,15 @@ interface DiscoverTvOptions {
   sortBy?: SortOptions;
   watchRegion?: string;
   watchProviders?: string;
-  withStatus?: string; // Returning Series: 0 Planned: 1 In Production: 2 Ended: 3 Cancelled: 4 Pilot: 5
 }
 
-class TheMovieDb extends ExternalAPI {
-  private discoverRegion?: string;
+class TheMovieDb extends ExternalAPI implements TvShowIndexer {
+  private region?: string;
   private originalLanguage?: string;
   constructor({
-    discoverRegion,
+    region,
     originalLanguage,
-  }: { discoverRegion?: string; originalLanguage?: string } = {}) {
+  }: { region?: string; originalLanguage?: string } = {}) {
     super(
       'https://api.themoviedb.org/3',
       {
@@ -118,7 +118,7 @@ class TheMovieDb extends ExternalAPI {
         },
       }
     );
-    this.discoverRegion = discoverRegion;
+    this.region = region;
     this.originalLanguage = originalLanguage;
   }
 
@@ -471,7 +471,7 @@ class TheMovieDb extends ExternalAPI {
         page: page.toString(),
         include_adult: includeAdult ? 'true' : 'false',
         language,
-        region: this.discoverRegion || '',
+        region: this.region || '',
         with_original_language:
           originalLanguage && originalLanguage !== 'all'
             ? originalLanguage
@@ -526,7 +526,6 @@ class TheMovieDb extends ExternalAPI {
     voteCountLte,
     watchProviders,
     watchRegion,
-    withStatus,
   }: DiscoverTvOptions = {}): Promise<TmdbSearchTvResponse> => {
     try {
       const defaultFutureDate = new Date(
@@ -543,7 +542,7 @@ class TheMovieDb extends ExternalAPI {
         sort_by: sortBy,
         page: page.toString(),
         language,
-        region: this.discoverRegion || '',
+        region: this.region || '',
         // Set our release date values, but check if one is set and not the other,
         // so we can force a past date or a future date. TMDB Requires both values if one is set!
         'first_air_date.gte':
@@ -574,7 +573,6 @@ class TheMovieDb extends ExternalAPI {
         'vote_count.lte': voteCountLte || '',
         with_watch_providers: watchProviders || '',
         watch_region: watchRegion || '',
-        with_status: withStatus || '',
       });
 
       return data;
@@ -596,7 +594,7 @@ class TheMovieDb extends ExternalAPI {
         {
           page: page.toString(),
           language,
-          region: this.discoverRegion || '',
+          region: this.region || '',
           originalLanguage: this.originalLanguage || '',
         }
       );
@@ -622,7 +620,7 @@ class TheMovieDb extends ExternalAPI {
         {
           page: page.toString(),
           language,
-          region: this.discoverRegion || '',
+          region: this.region || '',
         }
       );
 

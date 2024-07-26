@@ -9,7 +9,7 @@ import type {
   TmdbCompanySearchResponse,
   TmdbGenre,
   TmdbKeywordSearchResponse,
-} from '@server/api/themoviedb/interfaces';
+} from '@server/api/indexer/themoviedb/interfaces';
 import { DiscoverSliderType } from '@server/constants/discover';
 import type DiscoverSlider from '@server/entity/DiscoverSlider';
 import type { GenreSliderItem } from '@server/interfaces/api/discoverInterfaces';

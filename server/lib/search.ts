@@ -1,4 +1,4 @@
-import TheMovieDb from '@server/api/themoviedb';
+import TheMovieDb from '@server/api/indexer/themoviedb';
 import type {
   TmdbMovieDetails,
   TmdbMovieResult,
@@ -9,7 +9,7 @@ import type {
   TmdbSearchTvResponse,
   TmdbTvDetails,
   TmdbTvResult,
-} from '@server/api/themoviedb/interfaces';
+} from '@server/api/indexer/themoviedb/interfaces';
 import {
   mapMovieDetailsToResult,
   mapPersonDetailsToResult,
