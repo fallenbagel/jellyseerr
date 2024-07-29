@@ -48,11 +48,11 @@ const DiscoverMovieStudio = () => {
       <div className="mt-1 mb-5">
         <Header>
           {firstResultData?.studio.logoPath ? (
-            <div className="mb-6 flex justify-center">
+            <div className="relative mb-6 flex h-24 justify-center sm:h-32">
               <Image
                 src={`https://image.tmdb.org/t/p/w780_filter(duotone,ffffff,bababa)${firstResultData.studio.logoPath}`}
                 alt={firstResultData.studio.name}
-                className="max-h-24 sm:max-h-32"
+                className="object-contain"
                 fill
               />
             </div>
