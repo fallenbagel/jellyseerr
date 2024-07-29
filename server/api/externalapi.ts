@@ -178,6 +178,7 @@ class ExternalAPI {
   ): Promise<T> {
     const url = this.formatUrl(endpoint, params);
     const response = await this.fetch(url, {
+      method: 'DELETE',
       ...config,
       headers: {
         ...this.defaultHeaders,
@@ -313,7 +314,11 @@ class ExternalAPI {
       try {
         return await response.json();
       } catch {
-        return await response.blob();
+        try {
+          return await response.blob();
+        } catch {
+          return null;
+        }
       }
     }
   }
