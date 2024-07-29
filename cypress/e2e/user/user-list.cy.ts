@@ -1,5 +1,5 @@
 const testUser = {
-  displayName: 'Test User',
+  username: 'Test User',
   emailAddress: 'test@seeerr.dev',
   password: 'test1234',
 };
@@ -32,7 +32,7 @@ describe('User List', () => {
 
     cy.get('[data-testid=modal-title]').should('contain', 'Create Local User');
 
-    cy.get('#displayName').type(testUser.displayName);
+    cy.get('#username').type(testUser.username);
     cy.get('#email').type(testUser.emailAddress);
     cy.get('#password').type(testUser.password);
 

@@ -12,6 +12,7 @@ export interface User {
   id: number;
   warnings: string[];
   plexUsername?: string;
+  jellyfinUsername?: string;
   username?: string;
   displayName: string;
   email: string;

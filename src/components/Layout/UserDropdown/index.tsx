@@ -90,9 +90,11 @@ const UserDropdown = () => {
                   <span className="truncate text-xl font-semibold text-gray-200">
                     {user?.displayName}
                   </span>
-                  <span className="truncate text-sm text-gray-400">
-                    {user?.email}
-                  </span>
+                  {user?.displayName?.toLowerCase() !== user?.email && (
+                    <span className="truncate text-sm text-gray-400">
+                      {user?.email}
+                    </span>
+                  )}
                 </div>
               </div>
               {user && <MiniQuotaDisplay userId={user?.id} />}

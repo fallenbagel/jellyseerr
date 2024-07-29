@@ -41,7 +41,19 @@ router.get('/', async (req, res, next) => {
         break;
       case 'displayname':
         query = query.orderBy(
-          "(CASE WHEN (user.username IS NULL OR user.username = '') THEN (CASE WHEN (user.plexUsername IS NULL OR user.plexUsername = '') THEN user.email ELSE LOWER(user.plexUsername) END) ELSE LOWER(user.username) END)",
+          `CASE WHEN (user.username IS NULL OR user.username = '') THEN (
+             CASE WHEN (user.plexUsername IS NULL OR user.plexUsername = '') THEN (
+               CASE WHEN (user.jellyfinUsername IS NULL OR user.jellyfinUsername = '') THEN
+                 user.email
+               ELSE
+                 LOWER(user.jellyfinUsername)
+               END)
+             ELSE
+               LOWER(user.jellyfinUsername)
+             END)
+           ELSE
+             LOWER(user.username)
+           END`,
           'ASC'
         );
         break;
@@ -90,12 +102,13 @@ router.post(
       const settings = getSettings();
 
       const body = req.body;
+      const email = body.email || body.username;
       const userRepository = getRepository(User);
 
       const existingUser = await userRepository
         .createQueryBuilder('user')
         .where('user.email = :email', {
-          email: body.email.toLowerCase(),
+          email: email.toLowerCase(),
         })
         .getOne();
 
@@ -108,7 +121,7 @@ router.post(
       }
 
       const passedExplicitPassword = body.password && body.password.length > 0;
-      const avatar = gravatarUrl(body.email, { default: 'mm', size: 200 });
+      const avatar = gravatarUrl(email, { default: 'mm', size: 200 });
 
       if (
         !passedExplicitPassword &&
@@ -118,9 +131,9 @@ router.post(
       }
 
       const user = new User({
+        email,
         avatar: body.avatar ?? avatar,
         username: body.username,
-        email: body.email,
         password: body.password,
         permissions: settings.main.defaultPermissions,
         plexToken: '',

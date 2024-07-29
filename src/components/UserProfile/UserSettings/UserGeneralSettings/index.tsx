@@ -93,9 +93,14 @@ const UserGeneralSettings = () => {
   );
 
   const UserGeneralSettingsSchema = Yup.object().shape({
-    email: Yup.string()
-      .email(intl.formatMessage(messages.validationemailformat))
-      .required(intl.formatMessage(messages.validationemailrequired)),
+    email:
+      user?.id === 1
+        ? Yup.string()
+            .email(intl.formatMessage(messages.validationemailformat))
+            .required(intl.formatMessage(messages.validationemailrequired))
+        : Yup.string().email(
+            intl.formatMessage(messages.validationemailformat)
+          ),
     discordId: Yup.string()
       .nullable()
       .matches(/^\d{17,19}$/, intl.formatMessage(messages.validationDiscordId)),
@@ -134,7 +139,7 @@ const UserGeneralSettings = () => {
       <Formik
         initialValues={{
           displayName: data?.username ?? '',
-          email: data?.email ?? '',
+          email: data?.email?.includes('@') ? data.email : '',
           discordId: data?.discordId ?? '',
           locale: data?.locale,
           region: data?.region,
@@ -157,7 +162,8 @@ const UserGeneralSettings = () => {
               },
               body: JSON.stringify({
                 username: values.displayName,
-                email: values.email,
+                email:
+                  values.email || user?.jellyfinUsername || user?.plexUsername,
                 discordId: values.discordId,
                 locale: values.locale,
                 region: values.region,
@@ -264,7 +270,9 @@ const UserGeneralSettings = () => {
                       name="displayName"
                       type="text"
                       placeholder={
-                        user?.plexUsername ? user.plexUsername : user?.email
+                        user?.username ||
+                        user?.jellyfinUsername ||
+                        user?.plexUsername
                       }
                     />
                   </div>
@@ -289,6 +297,7 @@ const UserGeneralSettings = () => {
                       name="email"
                       type="text"
                       placeholder="example@domain.com"
+                      disabled={user?.plexUsername}
                       className={
                         user?.warnings.find((w) => w === 'userEmailRequired')
                           ? 'border-2 border-red-400 focus:border-blue-600'
