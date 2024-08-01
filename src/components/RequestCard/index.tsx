@@ -19,6 +19,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { MediaRequestStatus } from '@server/constants/media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
+import type { NonFunctionProperties } from '@server/interfaces/api/common';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
 import Image from 'next/image';
@@ -58,7 +59,7 @@ const RequestCardPlaceholder = () => {
 };
 
 interface RequestCardErrorProps {
-  requestData?: MediaRequest;
+  requestData?: NonFunctionProperties<MediaRequest>;
 }
 
 const RequestCardError = ({ requestData }: RequestCardErrorProps) => {
@@ -213,7 +214,7 @@ const RequestCardError = ({ requestData }: RequestCardErrorProps) => {
 };
 
 interface RequestCardProps {
-  request: MediaRequest;
+  request: NonFunctionProperties<MediaRequest>;
   onTitleData?: (requestId: number, title: MovieDetails | TvDetails) => void;
 }
 
@@ -238,16 +239,19 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
     data: requestData,
     error: requestError,
     mutate: revalidate,
-  } = useSWR<MediaRequest>(`/api/v1/request/${request.id}`, {
-    fallbackData: request,
-    refreshInterval: refreshIntervalHelper(
-      {
-        downloadStatus: request.media.downloadStatus,
-        downloadStatus4k: request.media.downloadStatus4k,
-      },
-      15000
-    ),
-  });
+  } = useSWR<NonFunctionProperties<MediaRequest>>(
+    `/api/v1/request/${request.id}`,
+    {
+      fallbackData: request,
+      refreshInterval: refreshIntervalHelper(
+        {
+          downloadStatus: request.media.downloadStatus,
+          downloadStatus4k: request.media.downloadStatus4k,
+        },
+        15000
+      ),
+    }
+  );
 
   const { mediaUrl: plexUrl, mediaUrl4k: plexUrl4k } = useDeepLinks({
     mediaUrl: requestData?.media?.mediaUrl,

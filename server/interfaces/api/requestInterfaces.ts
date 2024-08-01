@@ -1,9 +1,9 @@
 import type { MediaType } from '@server/constants/media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
-import type { PaginatedResponse } from './common';
+import type { NonFunctionProperties, PaginatedResponse } from './common';
 
 export interface RequestResultsResponse extends PaginatedResponse {
-  results: MediaRequest[];
+  results: NonFunctionProperties<MediaRequest>[];
 }
 
 export type MediaRequestBody = {
@@ -14,6 +14,7 @@ export type MediaRequestBody = {
   is4k?: boolean;
   serverId?: number;
   profileId?: number;
+  profileName?: string;
   rootFolder?: string;
   languageProfileId?: number;
   userId?: number;

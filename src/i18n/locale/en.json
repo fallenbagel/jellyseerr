@@ -465,6 +465,7 @@
   "components.RequestList.RequestItem.mediaerror": "{mediaType} Not Found",
   "components.RequestList.RequestItem.modified": "Modified",
   "components.RequestList.RequestItem.modifieduserdate": "{date} by {user}",
+  "components.RequestList.RequestItem.profileName": "Profile",
   "components.RequestList.RequestItem.requested": "Requested",
   "components.RequestList.RequestItem.requesteddate": "Requested",
   "components.RequestList.RequestItem.seasons": "{seasonCount, plural, one {Season} other {Seasons}}",

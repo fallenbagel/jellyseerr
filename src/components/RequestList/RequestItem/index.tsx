@@ -18,6 +18,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { MediaRequestStatus } from '@server/constants/media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
+import type { NonFunctionProperties } from '@server/interfaces/api/common';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
 import Image from 'next/image';
@@ -42,6 +43,7 @@ const messages = defineMessages('components.RequestList.RequestItem', {
   tmdbid: 'TMDB ID',
   tvdbid: 'TheTVDB ID',
   unknowntitle: 'Unknown Title',
+  profileName: 'Profile',
 });
 
 const isMovie = (movie: MovieDetails | TvDetails): movie is MovieDetails => {
@@ -49,7 +51,7 @@ const isMovie = (movie: MovieDetails | TvDetails): movie is MovieDetails => {
 };
 
 interface RequestItemErrorProps {
-  requestData?: MediaRequest;
+  requestData?: NonFunctionProperties<MediaRequest>;
   revalidateList: () => void;
 }
 
@@ -285,7 +287,7 @@ const RequestItemError = ({
 };
 
 interface RequestItemProps {
-  request: MediaRequest;
+  request: NonFunctionProperties<MediaRequest> & { profileName?: string };
   revalidateList: () => void;
 }
 
@@ -304,19 +306,18 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
   const { data: title, error } = useSWR<MovieDetails | TvDetails>(
     inView ? url : null
   );
-  const { data: requestData, mutate: revalidate } = useSWR<MediaRequest>(
-    `/api/v1/request/${request.id}`,
-    {
-      fallbackData: request,
-      refreshInterval: refreshIntervalHelper(
-        {
-          downloadStatus: request.media.downloadStatus,
-          downloadStatus4k: request.media.downloadStatus4k,
-        },
-        15000
-      ),
-    }
-  );
+  const { data: requestData, mutate: revalidate } = useSWR<
+    NonFunctionProperties<MediaRequest>
+  >(`/api/v1/request/${request.id}`, {
+    fallbackData: request,
+    refreshInterval: refreshIntervalHelper(
+      {
+        downloadStatus: request.media.downloadStatus,
+        downloadStatus4k: request.media.downloadStatus4k,
+      },
+      15000
+    ),
+  });
 
   const [isRetrying, setRetrying] = useState(false);
 
@@ -401,7 +402,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
           setShowEditModal(false);
         }}
       />
-      <div className="relative flex w-full flex-col justify-between overflow-hidden rounded-xl bg-gray-800 py-4 text-gray-400 shadow-md ring-1 ring-gray-700 xl:h-28 xl:flex-row">
+      <div className="relative flex w-full flex-col justify-between overflow-hidden rounded-xl bg-gray-800 py-2 text-gray-400 shadow-md ring-1 ring-gray-700 xl:h-28 xl:flex-row">
         {title.backdropPath && (
           <div className="absolute inset-0 z-0 w-full bg-cover bg-center xl:w-2/3">
             <CachedImage
@@ -482,7 +483,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
               )}
             </div>
           </div>
-          <div className="z-10 mt-4 ml-4 flex w-full flex-col justify-center overflow-hidden pr-4 text-sm sm:ml-2 sm:mt-0 xl:flex-1 xl:pr-0">
+          <div className="z-10 mt-4 ml-4 flex w-full flex-col justify-center gap-1 overflow-hidden pr-4 text-sm sm:ml-2 sm:mt-0 xl:flex-1 xl:pr-0">
             <div className="card-field">
               <span className="card-field-name">
                 {intl.formatMessage(globalMessages.status)}
@@ -629,6 +630,16 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
                       </Link>
                     ),
                   })}
+                </span>
+              </div>
+            )}
+            {request.profileName && (
+              <div className="card-field">
+                <span className="card-field-name">
+                  {intl.formatMessage(messages.profileName)}
+                </span>
+                <span className="flex truncate text-sm text-gray-300">
+                  {request.profileName}
                 </span>
               </div>
             )}
