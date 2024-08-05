@@ -403,6 +403,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "mobihen",
+      "name": "Nir Israel Hen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35529491?v=4",
+      "profile": "https://mobihen.com",
+      "contributions": [
+        "translation"
+      ]
     }
   ]
 }
