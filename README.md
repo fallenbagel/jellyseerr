@@ -11,7 +11,7 @@
 <a href="http://jellyseerr.borgcube.de/engage/jellyseerr/"><img src="http://jellyseerr.borgcube.de/widget/jellyseerr/jellyseerr-frontend/svg-badge.svg" alt="Translation status" /></a>
 <a href="https://github.com/fallenbagel/jellyseerr/blob/develop/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/fallenbagel/jellyseerr"></a>
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-45-orange.svg"/></a>
+<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-46-orange.svg"/></a>
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Jellyseerr** is a free and open source software application for managing requests for your media library.
@@ -144,6 +144,7 @@ Thanks goes to these wonderful people from Overseerr ([emoji key](https://allcon
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Fuochi"><img src="https://avatars.githubusercontent.com/u/4720478?v=4?s=100" width="100px;" alt="Fuochi"/><br /><sub><b>Fuochi</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=Fuochi" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://mobihen.com"><img src="https://avatars.githubusercontent.com/u/35529491?v=4?s=100" width="100px;" alt="Nir Israel Hen"/><br /><sub><b>Nir Israel Hen</b></sub></a><br /><a href="#translation-mobihen" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/XDark187"><img src="https://avatars.githubusercontent.com/u/39034192?v=4?s=100" width="100px;" alt="Baraa"/><br /><sub><b>Baraa</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=XDark187" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/franciscofsales"><img src="https://avatars.githubusercontent.com/u/7977645?v=4?s=100" width="100px;" alt="Francisco Sales"/><br /><sub><b>Francisco Sales</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=franciscofsales" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
