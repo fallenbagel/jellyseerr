@@ -175,7 +175,11 @@ class IMDBRadarrProxy extends ExternalAPI {
         `/movie/imdb/${IMDBid}`
       );
 
-      if (!data?.length || data[0].ImdbId !== IMDBid) {
+      if (
+        !data?.length ||
+        data[0].ImdbId !== IMDBid ||
+        !data[0].MovieRatings.Imdb
+      ) {
         return null;
       }
 
