@@ -2,6 +2,7 @@ import RTAudFresh from '@app/assets/rt_aud_fresh.svg';
 import RTAudRotten from '@app/assets/rt_aud_rotten.svg';
 import RTFresh from '@app/assets/rt_fresh.svg';
 import RTRotten from '@app/assets/rt_rotten.svg';
+import Spinner from '@app/assets/spinner.svg';
 import TmdbLogo from '@app/assets/tmdb_logo.svg';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
@@ -40,11 +41,19 @@ import {
   FilmIcon,
   PlayIcon,
 } from '@heroicons/react/24/outline';
-import { ChevronDownIcon } from '@heroicons/react/24/solid';
+import {
+  ChevronDownIcon,
+  MinusCircleIcon,
+  StarIcon,
+} from '@heroicons/react/24/solid';
 import type { RTRating } from '@server/api/rating/rottentomatoes';
 import { ANIME_KEYWORD_ID } from '@server/api/themoviedb/constants';
 import { IssueStatus } from '@server/constants/issue';
-import { MediaRequestStatus, MediaStatus } from '@server/constants/media';
+import {
+  MediaRequestStatus,
+  MediaStatus,
+  MediaType,
+} from '@server/constants/media';
 import { MediaServerType } from '@server/constants/server';
 import type { Crew } from '@server/models/common';
 import type { TvDetails as TvDetailsType } from '@server/models/Tv';
@@ -55,6 +64,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 
 const messages = defineMessages('components.TvDetails', {
@@ -89,6 +99,12 @@ const messages = defineMessages('components.TvDetails', {
   rtcriticsscore: 'Rotten Tomatoes Tomatometer',
   rtaudiencescore: 'Rotten Tomatoes Audience Score',
   tmdbuserscore: 'TMDB User Score',
+  watchlistSuccess: '<strong>{title}</strong> added to watchlist successfully!',
+  watchlistDeleted:
+    '<strong>{title}</strong> Removed from watchlist successfully!',
+  watchlistError: 'Something went wrong try again.',
+  removefromwatchlist: 'Remove From Watchlist',
+  addtowatchlist: 'Add To Watchlist',
 });
 
 interface TvDetailsProps {
@@ -106,7 +122,12 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
     router.query.manage == '1' ? true : false
   );
   const [showIssueModal, setShowIssueModal] = useState(false);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [toggleWatchlist, setToggleWatchlist] = useState<boolean>(
+    !tv?.onUserWatchlist
+  );
   const { publicRuntimeConfig } = getConfig();
+  const { addToast } = useToasts();
 
   const {
     data,
@@ -302,6 +323,82 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
     return intl.formatMessage(messages.play4k, { mediaServerName: 'Jellyfin' });
   }
 
+  const onClickWatchlistBtn = async (): Promise<void> => {
+    setIsUpdating(true);
+
+    const res = await fetch('/api/v1/watchlist', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        tmdbId: tv?.id,
+        mediaType: MediaType.TV,
+        title: tv?.name,
+      }),
+    });
+
+    if (!res.ok) {
+      addToast(intl.formatMessage(messages.watchlistError), {
+        appearance: 'error',
+        autoDismiss: true,
+      });
+
+      setIsUpdating(false);
+      return;
+    }
+
+    const data = await res.json();
+
+    if (data) {
+      addToast(
+        <span>
+          {intl.formatMessage(messages.watchlistSuccess, {
+            title: tv?.name,
+            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+          })}
+        </span>,
+        { appearance: 'success', autoDismiss: true }
+      );
+    }
+
+    setIsUpdating(false);
+    setToggleWatchlist((prevState) => !prevState);
+  };
+
+  const onClickDeleteWatchlistBtn = async (): Promise<void> => {
+    setIsUpdating(true);
+
+    const res = await fetch('/api/v1/watchlist/' + tv?.id, {
+      method: 'DELETE',
+    });
+
+    if (!res.ok) {
+      addToast(intl.formatMessage(messages.watchlistError), {
+        appearance: 'error',
+        autoDismiss: true,
+      });
+
+      setIsUpdating(false);
+      return;
+    }
+
+    if (res.status === 204) {
+      addToast(
+        <span>
+          {intl.formatMessage(messages.watchlistDeleted, {
+            title: tv?.name,
+            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+          })}
+        </span>,
+        { appearance: 'info', autoDismiss: true }
+      );
+      setIsUpdating(false);
+      setToggleWatchlist((prevState) => !prevState);
+    }
+  };
+
   return (
     <div
       className="media-page"
@@ -433,6 +530,40 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
           </span>
         </div>
         <div className="media-actions">
+          <>
+            {toggleWatchlist ? (
+              <Tooltip content={intl.formatMessage(messages.addtowatchlist)}>
+                <Button
+                  buttonType={'ghost'}
+                  className="z-40 mr-2"
+                  buttonSize={'md'}
+                  onClick={onClickWatchlistBtn}
+                >
+                  {isUpdating ? (
+                    <Spinner className="h-3" />
+                  ) : (
+                    <StarIcon className={'h-3 text-amber-300'} />
+                  )}
+                </Button>
+              </Tooltip>
+            ) : (
+              <Tooltip
+                content={intl.formatMessage(messages.removefromwatchlist)}
+              >
+                <Button
+                  className="z-40 mr-2"
+                  buttonSize={'md'}
+                  onClick={onClickDeleteWatchlistBtn}
+                >
+                  {isUpdating ? (
+                    <Spinner className="h-3" />
+                  ) : (
+                    <MinusCircleIcon className={'h-3'} />
+                  )}
+                </Button>
+              </Tooltip>
+            )}
+          </>
           <PlayButton links={mediaLinks} />
           <RequestButton
             mediaType="tv"

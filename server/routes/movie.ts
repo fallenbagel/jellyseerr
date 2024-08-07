@@ -3,7 +3,9 @@ import RottenTomatoes from '@server/api/rating/rottentomatoes';
 import { type RatingResponse } from '@server/api/ratings';
 import TheMovieDb from '@server/api/themoviedb';
 import { MediaType } from '@server/constants/media';
+import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';
+import { Watchlist } from '@server/entity/Watchlist';
 import logger from '@server/logger';
 import { mapMovieDetails } from '@server/models/Movie';
 import { mapMovieResult } from '@server/models/Search';
@@ -22,7 +24,18 @@ movieRoutes.get('/:id', async (req, res, next) => {
 
     const media = await Media.getMedia(tmdbMovie.id, MediaType.MOVIE);
 
-    return res.status(200).json(mapMovieDetails(tmdbMovie, media));
+    const onUserWatchlist = await getRepository(Watchlist).exist({
+      where: {
+        tmdbId: Number(req.params.id),
+        requestedBy: {
+          id: req.user?.id,
+        },
+      },
+    });
+
+    return res
+      .status(200)
+      .json(mapMovieDetails(tmdbMovie, media, onUserWatchlist));
   } catch (e) {
     logger.debug('Something went wrong retrieving movie', {
       label: 'API',

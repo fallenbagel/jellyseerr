@@ -3,6 +3,7 @@ import RTAudRotten from '@app/assets/rt_aud_rotten.svg';
 import RTFresh from '@app/assets/rt_fresh.svg';
 import RTRotten from '@app/assets/rt_rotten.svg';
 import ImdbLogo from '@app/assets/services/imdb.svg';
+import Spinner from '@app/assets/spinner.svg';
 import TmdbLogo from '@app/assets/tmdb_logo.svg';
 import Button from '@app/components/Common/Button';
 import CachedImage from '@app/components/Common/CachedImage';
@@ -41,12 +42,16 @@ import {
 import {
   ChevronDoubleDownIcon,
   ChevronDoubleUpIcon,
+  MinusCircleIcon,
+  StarIcon,
 } from '@heroicons/react/24/solid';
 import { type RatingResponse } from '@server/api/ratings';
 import { IssueStatus } from '@server/constants/issue';
-import { MediaStatus } from '@server/constants/media';
+import { MediaStatus, MediaType } from '@server/constants/media';
 import { MediaServerType } from '@server/constants/server';
+import type { Watchlist } from '@server/entity/Watchlist';
 import type { MovieDetails as MovieDetailsType } from '@server/models/Movie';
+import axios from 'axios';
 import { countries } from 'country-flag-icons';
 import 'country-flag-icons/3x2/flags.css';
 import { uniqBy } from 'lodash';
@@ -55,6 +60,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 
 const messages = defineMessages('components.MovieDetails', {
@@ -94,6 +100,12 @@ const messages = defineMessages('components.MovieDetails', {
   rtaudiencescore: 'Rotten Tomatoes Audience Score',
   tmdbuserscore: 'TMDB User Score',
   imdbuserscore: 'IMDB User Score',
+  watchlistSuccess: '<strong>{title}</strong> added to watchlist successfully!',
+  watchlistDeleted:
+    '<strong>{title}</strong> Removed from watchlist successfully!',
+  watchlistError: 'Something went wrong try again.',
+  removefromwatchlist: 'Remove From Watchlist',
+  addtowatchlist: 'Add To Watchlist',
 });
 
 interface MovieDetailsProps {
@@ -112,7 +124,12 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const minStudios = 3;
   const [showMoreStudios, setShowMoreStudios] = useState(false);
   const [showIssueModal, setShowIssueModal] = useState(false);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [toggleWatchlist, setToggleWatchlist] = useState<boolean>(
+    !movie?.onUserWatchlist
+  );
   const { publicRuntimeConfig } = getConfig();
+  const { addToast } = useToasts();
 
   const {
     data,
@@ -287,6 +304,79 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
     return intl.formatMessage(messages.play4k, { mediaServerName: 'Jellyfin' });
   }
 
+  const onClickWatchlistBtn = async (): Promise<void> => {
+    setIsUpdating(true);
+
+    const res = await fetch('/api/v1/watchlist', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        tmdbId: movie?.id,
+        mediaType: MediaType.MOVIE,
+        title: movie?.title,
+      }),
+    });
+
+    if (!res.ok) {
+      addToast(intl.formatMessage(messages.watchlistError), {
+        appearance: 'error',
+        autoDismiss: true,
+      });
+
+      setIsUpdating(false);
+      return;
+    }
+
+    const data = await res.json();
+
+    if (data) {
+      addToast(
+        <span>
+          {intl.formatMessage(messages.watchlistSuccess, {
+            title: movie?.title,
+            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+          })}
+        </span>,
+        { appearance: 'success', autoDismiss: true }
+      );
+    }
+
+    setIsUpdating(false);
+    setToggleWatchlist((prevState) => !prevState);
+  };
+
+  const onClickDeleteWatchlistBtn = async (): Promise<void> => {
+    setIsUpdating(true);
+    try {
+      const response = await axios.delete<Watchlist>(
+        '/api/v1/watchlist/' + movie?.id
+      );
+
+      if (response.status === 204) {
+        addToast(
+          <span>
+            {intl.formatMessage(messages.watchlistDeleted, {
+              title: movie?.title,
+              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+            })}
+          </span>,
+          { appearance: 'info', autoDismiss: true }
+        );
+      }
+    } catch (e) {
+      addToast(intl.formatMessage(messages.watchlistError), {
+        appearance: 'error',
+        autoDismiss: true,
+      });
+    } finally {
+      setIsUpdating(false);
+      setToggleWatchlist((prevState) => !prevState);
+    }
+  };
+
   return (
     <div
       className="media-page"
@@ -408,6 +498,40 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
           </span>
         </div>
         <div className="media-actions">
+          <>
+            {toggleWatchlist ? (
+              <Tooltip content={intl.formatMessage(messages.addtowatchlist)}>
+                <Button
+                  buttonType={'ghost'}
+                  className="z-40 mr-2"
+                  buttonSize={'md'}
+                  onClick={onClickWatchlistBtn}
+                >
+                  {isUpdating ? (
+                    <Spinner className="h-3" />
+                  ) : (
+                    <StarIcon className={'h-3 text-amber-300'} />
+                  )}
+                </Button>
+              </Tooltip>
+            ) : (
+              <Tooltip
+                content={intl.formatMessage(messages.removefromwatchlist)}
+              >
+                <Button
+                  className="z-40 mr-2"
+                  buttonSize={'md'}
+                  onClick={onClickDeleteWatchlistBtn}
+                >
+                  {isUpdating ? (
+                    <Spinner className="h-3" />
+                  ) : (
+                    <MinusCircleIcon className={'h-3'} />
+                  )}
+                </Button>
+              </Tooltip>
+            )}
+          </>
           <PlayButton links={mediaLinks} />
           <RequestButton
             mediaType="movie"

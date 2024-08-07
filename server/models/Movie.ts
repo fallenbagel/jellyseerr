@@ -85,6 +85,7 @@ export interface MovieDetails {
   mediaUrl?: string;
   watchProviders?: WatchProviders[];
   keywords: Keyword[];
+  onUserWatchlist?: boolean;
 }
 
 export const mapProductionCompany = (
@@ -101,7 +102,8 @@ export const mapProductionCompany = (
 
 export const mapMovieDetails = (
   movie: TmdbMovieDetails,
-  media?: Media
+  media?: Media,
+  userWatchlist?: boolean
 ): MovieDetails => ({
   id: movie.id,
   adult: movie.adult,
@@ -148,4 +150,5 @@ export const mapMovieDetails = (
     id: keyword.id,
     name: keyword.name,
   })),
+  onUserWatchlist: userWatchlist,
 });
