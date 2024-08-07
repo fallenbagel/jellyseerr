@@ -26,7 +26,7 @@ import useLocale from '@app/hooks/useLocale';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
-import Error from '@app/pages/_error';
+import ErrorPage from '@app/pages/_error';
 import { sortCrewPriority } from '@app/utils/creditHelpers';
 import defineMessages from '@app/utils/defineMessages';
 import { refreshIntervalHelper } from '@app/utils/refreshIntervalHelper';
@@ -49,9 +49,7 @@ import { type RatingResponse } from '@server/api/ratings';
 import { IssueStatus } from '@server/constants/issue';
 import { MediaStatus, MediaType } from '@server/constants/media';
 import { MediaServerType } from '@server/constants/server';
-import type { Watchlist } from '@server/entity/Watchlist';
 import type { MovieDetails as MovieDetailsType } from '@server/models/Movie';
-import axios from 'axios';
 import { countries } from 'country-flag-icons';
 import 'country-flag-icons/3x2/flags.css';
 import { uniqBy } from 'lodash';
@@ -171,7 +169,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   }
 
   if (!data) {
-    return <Error statusCode={404} />;
+    return <ErrorPage statusCode={404} />;
   }
 
   const showAllStudios = data.productionCompanies.length <= minStudios + 1;
@@ -351,11 +349,12 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const onClickDeleteWatchlistBtn = async (): Promise<void> => {
     setIsUpdating(true);
     try {
-      const response = await axios.delete<Watchlist>(
-        '/api/v1/watchlist/' + movie?.id
-      );
+      const res = await fetch(`/api/v1/watchlist/${movie?.id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error();
 
-      if (response.status === 204) {
+      if (res.status === 204) {
         addToast(
           <span>
             {intl.formatMessage(messages.watchlistDeleted, {
