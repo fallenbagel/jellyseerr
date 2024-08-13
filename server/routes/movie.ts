@@ -33,9 +33,15 @@ movieRoutes.get('/:id', async (req, res, next) => {
       },
     });
 
-    return res
-      .status(200)
-      .json(mapMovieDetails(tmdbMovie, media, onUserWatchlist));
+    const data = mapMovieDetails(tmdbMovie, media, onUserWatchlist);
+
+    // TMDB issue where it doesnt fallback to English when no overview is available in requested locale.
+    if (!data.overview) {
+      const tvEnglish = await tmdb.getMovie({ movieId: Number(req.params.id) });
+      data.overview = tvEnglish.overview;
+    }
+
+    return res.status(200).json(data);
   } catch (e) {
     logger.debug('Something went wrong retrieving movie', {
       label: 'API',
