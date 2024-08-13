@@ -63,12 +63,7 @@ class AvailabilitySync {
       ) {
         admin = await userRepository.findOne({
           where: { id: 1 },
-          select: [
-            'id',
-            'jellyfinAuthToken',
-            'jellyfinUserId',
-            'jellyfinDeviceId',
-          ],
+          select: ['id', 'jellyfinUserId', 'jellyfinDeviceId'],
           order: { id: 'ASC' },
         });
       }
@@ -86,7 +81,7 @@ class AvailabilitySync {
           if (admin) {
             this.jellyfinClient = new JellyfinAPI(
               getHostname(),
-              admin.jellyfinAuthToken,
+              settings.jellyfin.apiKey,
               admin.jellyfinDeviceId
             );
 

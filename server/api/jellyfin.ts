@@ -93,9 +93,7 @@ export interface JellyfinLibraryItemExtended extends JellyfinLibraryItem {
 }
 
 class JellyfinAPI extends ExternalAPI {
-  private authToken?: string;
   private userId?: string;
-  private jellyfinHost: string;
 
   constructor(jellyfinHost: string, authToken?: string, deviceId?: string) {
     let authHeaderVal: string;
@@ -114,9 +112,6 @@ class JellyfinAPI extends ExternalAPI {
         },
       }
     );
-
-    this.jellyfinHost = jellyfinHost;
-    this.authToken = authToken;
   }
 
   public async login(
@@ -403,6 +398,23 @@ class JellyfinAPI extends ExternalAPI {
       );
 
       throw new ApiError(e.cause?.status, ApiErrorCode.InvalidAuthToken);
+    }
+  }
+
+  public async createApiToken(appName: string): Promise<string> {
+    try {
+      await this.post(`/Auth/Keys?App=${appName}`);
+      const apiKeys = await this.get<any>(`/Auth/Keys`);
+      return apiKeys.Items.reverse().find(
+        (item: any) => item.AppName === appName
+      ).AccessToken;
+    } catch (e) {
+      logger.error(
+        `Something went wrong while creating an API key the Jellyfin server: ${e.message}`,
+        { label: 'Jellyfin API' }
+      );
+
+      throw new ApiError(e.response?.status, ApiErrorCode.InvalidAuthToken);
     }
   }
 }

@@ -85,7 +85,7 @@ class ExternalAPI {
 
   protected async post<T>(
     endpoint: string,
-    data: Record<string, unknown>,
+    data?: Record<string, unknown>,
     params?: Record<string, string>,
     ttl?: number,
     config?: RequestInit
@@ -107,7 +107,7 @@ class ExternalAPI {
         ...this.defaultHeaders,
         ...config?.headers,
       },
-      body: JSON.stringify(data),
+      body: data ? JSON.stringify(data) : undefined,
     });
     if (!response.ok) {
       const text = await response.text();
@@ -286,7 +286,12 @@ class ExternalAPI {
       ...this.params,
       ...params,
     });
-    return `${href}?${searchParams.toString()}`;
+    return (
+      href +
+      (searchParams.toString().length
+        ? '?' + searchParams.toString()
+        : searchParams.toString())
+    );
   }
 
   private serializeCacheKey(

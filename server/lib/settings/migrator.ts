@@ -1,10 +1,13 @@
 import type { AllSettings } from '@server/lib/settings';
+import logger from '@server/logger';
 import fs from 'fs';
 import path from 'path';
 
 const migrationsDir = path.join(__dirname, 'migrations');
 
-export const runMigrations = (settings: AllSettings): AllSettings => {
+export const runMigrations = async (
+  settings: AllSettings
+): Promise<AllSettings> => {
   const migrations = fs
     .readdirSync(migrationsDir)
     .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
@@ -13,8 +16,15 @@ export const runMigrations = (settings: AllSettings): AllSettings => {
 
   let migrated = settings;
 
-  for (const migration of migrations) {
-    migrated = migration(migrated);
+  try {
+    for (const migration of migrations) {
+      migrated = await migration(migrated);
+    }
+  } catch (e) {
+    logger.error(
+      `Something went wrong while running settings migrations: ${e.message}`,
+      { label: 'Settings Migrator' }
+    );
   }
 
   return migrated;

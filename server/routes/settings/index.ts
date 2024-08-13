@@ -262,7 +262,7 @@ settingsRoutes.post('/jellyfin', async (req, res, next) => {
   try {
     const admin = await userRepository.findOneOrFail({
       where: { id: 1 },
-      select: ['id', 'jellyfinAuthToken', 'jellyfinUserId', 'jellyfinDeviceId'],
+      select: ['id', 'jellyfinUserId', 'jellyfinDeviceId'],
       order: { id: 'ASC' },
     });
 
@@ -270,7 +270,7 @@ settingsRoutes.post('/jellyfin', async (req, res, next) => {
 
     const jellyfinClient = new JellyfinAPI(
       getHostname(tempJellyfinSettings),
-      admin.jellyfinAuthToken ?? '',
+      tempJellyfinSettings.apiKey,
       admin.jellyfinDeviceId ?? ''
     );
 
@@ -318,13 +318,13 @@ settingsRoutes.get('/jellyfin/library', async (req, res, next) => {
   if (req.query.sync) {
     const userRepository = getRepository(User);
     const admin = await userRepository.findOneOrFail({
-      select: ['id', 'jellyfinAuthToken', 'jellyfinDeviceId', 'jellyfinUserId'],
+      select: ['id', 'jellyfinDeviceId', 'jellyfinUserId'],
       where: { id: 1 },
       order: { id: 'ASC' },
     });
     const jellyfinClient = new JellyfinAPI(
       getHostname(),
-      admin.jellyfinAuthToken ?? '',
+      settings.jellyfin.apiKey,
       admin.jellyfinDeviceId ?? ''
     );
 
@@ -376,7 +376,8 @@ settingsRoutes.get('/jellyfin/library', async (req, res, next) => {
 });
 
 settingsRoutes.get('/jellyfin/users', async (req, res) => {
-  const { externalHostname } = getSettings().jellyfin;
+  const settings = getSettings();
+  const { externalHostname } = settings.jellyfin;
   const jellyfinHost =
     externalHostname && externalHostname.length > 0
       ? externalHostname
@@ -384,13 +385,13 @@ settingsRoutes.get('/jellyfin/users', async (req, res) => {
 
   const userRepository = getRepository(User);
   const admin = await userRepository.findOneOrFail({
-    select: ['id', 'jellyfinAuthToken', 'jellyfinDeviceId', 'jellyfinUserId'],
+    select: ['id', 'jellyfinDeviceId', 'jellyfinUserId'],
     where: { id: 1 },
     order: { id: 'ASC' },
   });
   const jellyfinClient = new JellyfinAPI(
     getHostname(),
-    admin.jellyfinAuthToken ?? '',
+    settings.jellyfin.apiKey,
     admin.jellyfinDeviceId ?? ''
   );
 
