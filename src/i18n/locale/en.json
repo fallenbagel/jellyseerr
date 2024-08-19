@@ -1056,6 +1056,7 @@
   "components.StatusBadge.openinarr": "Open in {arr}",
   "components.StatusBadge.playonplex": "Play on {mediaServerName}",
   "components.StatusBadge.seasonepisodenumber": "S{seasonNumber}E{episodeNumber}",
+  "components.StatusBadge.seasonnumber": "S{seasonNumber}",
   "components.StatusBadge.status": "{status}",
   "components.StatusBadge.status4k": "4K {status}",
   "components.StatusChecker.appUpdated": "{applicationTitle} Updated",

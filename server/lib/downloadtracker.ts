@@ -20,6 +20,7 @@ export interface DownloadingItem {
   timeLeft: string;
   estimatedCompletionTime: Date;
   title: string;
+  downloadId: string;
   episode?: EpisodeNumberResult;
 }
 
@@ -95,6 +96,7 @@ class DownloadTracker {
               status: item.status,
               timeLeft: item.timeleft,
               title: item.title,
+              downloadId: item.downloadId,
             }));
 
             if (queueItems.length > 0) {
@@ -172,6 +174,7 @@ class DownloadTracker {
               timeLeft: item.timeleft,
               title: item.title,
               episode: item.episode,
+              downloadId: item.downloadId,
             }));
 
             if (queueItems.length > 0) {
