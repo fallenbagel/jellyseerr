@@ -71,6 +71,7 @@ const QueryFilterOptions = z.object({
   network: z.coerce.string().optional(),
   watchProviders: z.coerce.string().optional(),
   watchRegion: z.coerce.string().optional(),
+  status: z.coerce.string().optional(),
 });
 
 export type FilterOptions = z.infer<typeof QueryFilterOptions>;
@@ -385,6 +386,7 @@ discoverRoutes.get('/tv', async (req, res, next) => {
       voteCountLte: query.voteCountLte,
       watchProviders: query.watchProviders,
       watchRegion: query.watchRegion,
+      withStatus: query.status,
     });
 
     const media = await Media.getRelatedMedia(

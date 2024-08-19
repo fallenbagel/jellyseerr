@@ -4862,6 +4862,11 @@ paths:
           schema:
             type: string
             example: 8|9
+        - in: query
+          name: status
+          schema:
+            type: string
+            example: 3|4
       responses:
         '200':
           description: Results
