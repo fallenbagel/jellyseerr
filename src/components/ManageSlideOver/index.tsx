@@ -26,7 +26,6 @@ import type { MediaWatchDataResponse } from '@server/interfaces/api/mediaInterfa
 import type { RadarrSettings, SonarrSettings } from '@server/lib/settings';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
-import getConfig from 'next/config';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useIntl } from 'react-intl';
@@ -95,7 +94,6 @@ const ManageSlideOver = ({
   const { user: currentUser, hasPermission } = useUser();
   const intl = useIntl();
   const settings = useSettings();
-  const { publicRuntimeConfig } = getConfig();
   const { data: watchData } = useSWR<MediaWatchDataResponse>(
     settings.currentSettings.mediaServerType === MediaServerType.PLEX &&
       data.mediaInfo &&
@@ -661,7 +659,8 @@ const ManageSlideOver = ({
                       mediaType === 'movie' ? messages.movie : messages.tvshow
                     ),
                     mediaServerName:
-                      publicRuntimeConfig.JELLYFIN_TYPE == 'emby'
+                      settings.currentSettings.mediaServerType ===
+                      MediaServerType.EMBY
                         ? 'Emby'
                         : settings.currentSettings.mediaServerType ===
                           MediaServerType.PLEX

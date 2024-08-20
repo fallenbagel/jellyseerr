@@ -16,7 +16,6 @@ import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { Field, Form, Formik } from 'formik';
-import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -69,7 +68,6 @@ const messages = defineMessages(
 
 const UserGeneralSettings = () => {
   const intl = useIntl();
-  const { publicRuntimeConfig } = getConfig();
   const { addToast } = useToasts();
   const { locale, setLocale } = useLocale();
   const [movieQuotaEnabled, setMovieQuotaEnabled] = useState(false);
@@ -229,7 +227,7 @@ const UserGeneralSettings = () => {
                       <Badge badgeType="default">
                         {intl.formatMessage(messages.localuser)}
                       </Badge>
-                    ) : publicRuntimeConfig.JELLYFIN_TYPE == 'emby' ? (
+                    ) : user?.userType === UserType.EMBY ? (
                       <Badge badgeType="success">
                         {intl.formatMessage(messages.mediaServerUser, {
                           mediaServerName: 'Emby',

@@ -567,7 +567,10 @@ class JellyfinScanner {
   public async run(): Promise<void> {
     const settings = getSettings();
 
-    if (settings.main.mediaServerType != MediaServerType.JELLYFIN) {
+    if (
+      settings.main.mediaServerType != MediaServerType.JELLYFIN &&
+      settings.main.mediaServerType != MediaServerType.EMBY
+    ) {
       return;
     }
 

@@ -3,13 +3,14 @@ import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import LibraryItem from '@app/components/Settings/LibraryItem';
+import useSettings from '@app/hooks/useSettings';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import { ApiErrorCode } from '@server/constants/error';
+import { MediaServerType } from '@server/constants/server';
 import type { JellyfinSettings } from '@server/lib/settings';
 import { Field, Formik } from 'formik';
-import getConfig from 'next/config';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -61,6 +62,9 @@ const messages = defineMessages('components.Settings', {
   validationUrlTrailingSlash: 'URL must not end in a trailing slash',
   validationUrlBaseLeadingSlash: 'URL base must have a leading slash',
   validationUrlBaseTrailingSlash: 'URL base must not end in a trailing slash',
+  tip: 'Tip',
+  scanbackground:
+    'Scanning will run in the background. You can continue the setup process in the meantime.',
 });
 
 interface Library {
@@ -78,13 +82,13 @@ interface SyncStatus {
 }
 
 interface SettingsJellyfinProps {
-  showAdvancedSettings?: boolean;
+  isSetupSettings?: boolean;
   onComplete?: () => void;
 }
 
 const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
   onComplete,
-  showAdvancedSettings,
+  isSetupSettings,
 }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const toasts = useToasts();
@@ -102,7 +106,7 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
   );
   const intl = useIntl();
   const { addToast } = useToasts();
-  const { publicRuntimeConfig } = getConfig();
+  const settings = useSettings();
 
   const JellyfinSettingsSchema = Yup.object().shape({
     hostname: Yup.string()
@@ -284,26 +288,29 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
     return <LoadingSpinner />;
   }
 
+  const mediaServerFormatValues = {
+    mediaServerName:
+      settings.currentSettings.mediaServerType === MediaServerType.JELLYFIN
+        ? 'Jellyfin'
+        : settings.currentSettings.mediaServerType === MediaServerType.EMBY
+        ? 'Emby'
+        : undefined,
+  };
+
   return (
     <>
       <div className="mb-6">
         <h3 className="heading">
-          {publicRuntimeConfig.JELLYFIN_TYPE == 'emby'
-            ? intl.formatMessage(messages.jellyfinlibraries, {
-                mediaServerName: 'Emby',
-              })
-            : intl.formatMessage(messages.jellyfinlibraries, {
-                mediaServerName: 'Jellyfin',
-              })}
+          {intl.formatMessage(
+            messages.jellyfinlibraries,
+            mediaServerFormatValues
+          )}
         </h3>
         <p className="description">
-          {publicRuntimeConfig.JELLYFIN_TYPE == 'emby'
-            ? intl.formatMessage(messages.jellyfinlibrariesDescription, {
-                mediaServerName: 'Emby',
-              })
-            : intl.formatMessage(messages.jellyfinlibrariesDescription, {
-                mediaServerName: 'Jellyfin',
-              })}
+          {intl.formatMessage(
+            messages.jellyfinlibrariesDescription,
+            mediaServerFormatValues
+          )}
         </p>
       </div>
       <div className="section">
@@ -340,13 +347,10 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
           <FormattedMessage {...messages.manualscanJellyfin} />
         </h3>
         <p className="description">
-          {publicRuntimeConfig.JELLYFIN_TYPE == 'emby'
-            ? intl.formatMessage(messages.manualscanDescriptionJellyfin, {
-                mediaServerName: 'Emby',
-              })
-            : intl.formatMessage(messages.manualscanDescriptionJellyfin, {
-                mediaServerName: 'Jellyfin',
-              })}
+          {intl.formatMessage(
+            messages.manualscanDescriptionJellyfin,
+            mediaServerFormatValues
+          )}
         </p>
       </div>
       <div className="section">
@@ -446,24 +450,26 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
           </div>
         </div>
       </div>
+      {isSetupSettings && (
+        <div className="text-sm text-gray-500">
+          <span className="mr-2">
+            <Badge>{intl.formatMessage(messages.tip)}</Badge>
+          </span>
+          {intl.formatMessage(messages.scanbackground)}
+        </div>
+      )}
       <div className="mt-10 mb-6">
         <h3 className="heading">
-          {publicRuntimeConfig.JELLYFIN_TYPE == 'emby'
-            ? intl.formatMessage(messages.jellyfinSettings, {
-                mediaServerName: 'Emby',
-              })
-            : intl.formatMessage(messages.jellyfinSettings, {
-                mediaServerName: 'Jellyfin',
-              })}
+          {intl.formatMessage(
+            messages.jellyfinSettings,
+            mediaServerFormatValues
+          )}
         </h3>
         <p className="description">
-          {publicRuntimeConfig.JELLYFIN_TYPE == 'emby'
-            ? intl.formatMessage(messages.jellyfinSettingsDescription, {
-                mediaServerName: 'Emby',
-              })
-            : intl.formatMessage(messages.jellyfinSettingsDescription, {
-                mediaServerName: 'Jellyfin',
-              })}
+          {intl.formatMessage(
+            messages.jellyfinSettingsDescription,
+            mediaServerFormatValues
+          )}
         </p>
       </div>
       <Formik
@@ -497,12 +503,10 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
             if (!res.ok) throw new Error(res.statusText, { cause: res });
 
             addToast(
-              intl.formatMessage(messages.jellyfinSettingsSuccess, {
-                mediaServerName:
-                  publicRuntimeConfig.JELLYFIN_TYPE == 'emby'
-                    ? 'Emby'
-                    : 'Jellyfin',
-              }),
+              intl.formatMessage(
+                messages.jellyfinSettingsSuccess,
+                mediaServerFormatValues
+              ),
               {
                 autoDismiss: true,
                 appearance: 'success',
@@ -518,12 +522,10 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
             }
             if (errorData?.message === ApiErrorCode.InvalidUrl) {
               addToast(
-                intl.formatMessage(messages.invalidurlerror, {
-                  mediaServerName:
-                    publicRuntimeConfig.JELLYFIN_TYPE == 'emby'
-                      ? 'Emby'
-                      : 'Jellyfin',
-                }),
+                intl.formatMessage(
+                  messages.invalidurlerror,
+                  mediaServerFormatValues
+                ),
                 {
                   autoDismiss: true,
                   appearance: 'error',
@@ -531,12 +533,10 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
               );
             } else {
               addToast(
-                intl.formatMessage(messages.jellyfinSettingsFailure, {
-                  mediaServerName:
-                    publicRuntimeConfig.JELLYFIN_TYPE == 'emby'
-                      ? 'Emby'
-                      : 'Jellyfin',
-                }),
+                intl.formatMessage(
+                  messages.jellyfinSettingsFailure,
+                  mediaServerFormatValues
+                ),
                 {
                   autoDismiss: true,
                   appearance: 'error',
@@ -559,7 +559,7 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
         }) => {
           return (
             <form className="section" onSubmit={handleSubmit}>
-              {showAdvancedSettings && (
+              {!isSetupSettings && (
                 <>
                   <div className="form-row">
                     <label htmlFor="hostname" className="text-label">
@@ -643,7 +643,7 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
                   )}
                 </div>
               </div>
-              {showAdvancedSettings && (
+              {!isSetupSettings && (
                 <>
                   <div className="form-row">
                     <label htmlFor="urlBase" className="text-label">
@@ -710,7 +710,9 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
                     )}
                 </div>
               </div>
-              <div className="actions">
+              <div
+                className={`actions ${isSetupSettings ? 'mt-0 border-0' : ''}`}
+              >
                 <div className="flex justify-end">
                   <span className="ml-3 inline-flex rounded-md shadow-sm">
                     <Button

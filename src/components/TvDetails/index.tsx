@@ -59,7 +59,6 @@ import type { Crew } from '@server/models/common';
 import type { TvDetails as TvDetailsType } from '@server/models/Tv';
 import { countries } from 'country-flag-icons';
 import 'country-flag-icons/3x2/flags.css';
-import getConfig from 'next/config';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
@@ -126,7 +125,6 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
   const [toggleWatchlist, setToggleWatchlist] = useState<boolean>(
     !tv?.onUserWatchlist
   );
-  const { publicRuntimeConfig } = getConfig();
   const { addToast } = useToasts();
 
   const {
@@ -300,7 +298,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
       ?.flatrate ?? [];
 
   function getAvalaibleMediaServerName() {
-    if (publicRuntimeConfig.JELLYFIN_TYPE === 'emby') {
+    if (settings.currentSettings.mediaServerType === MediaServerType.EMBY) {
       return intl.formatMessage(messages.play, { mediaServerName: 'Emby' });
     }
 
@@ -312,15 +310,15 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
   }
 
   function getAvalaible4kMediaServerName() {
-    if (publicRuntimeConfig.JELLYFIN_TYPE === 'emby') {
-      return intl.formatMessage(messages.play4k, { mediaServerName: 'Emby' });
+    if (settings.currentSettings.mediaServerType === MediaServerType.EMBY) {
+      return intl.formatMessage(messages.play, { mediaServerName: 'Emby' });
     }
 
     if (settings.currentSettings.mediaServerType === MediaServerType.PLEX) {
       return intl.formatMessage(messages.play4k, { mediaServerName: 'Plex' });
     }
 
-    return intl.formatMessage(messages.play4k, { mediaServerName: 'Jellyfin' });
+    return intl.formatMessage(messages.play, { mediaServerName: 'Jellyfin' });
   }
 
   const onClickWatchlistBtn = async (): Promise<void> => {

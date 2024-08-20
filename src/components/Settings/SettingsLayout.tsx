@@ -5,7 +5,6 @@ import useSettings from '@app/hooks/useSettings';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { MediaServerType } from '@server/constants/server';
-import getConfig from 'next/config';
 import { useIntl } from 'react-intl';
 
 const messages = defineMessages('components.Settings', {
@@ -26,7 +25,6 @@ type SettingsLayoutProps = {
 
 const SettingsLayout = ({ children }: SettingsLayoutProps) => {
   const intl = useIntl();
-  const { publicRuntimeConfig } = getConfig();
   const settings = useSettings();
   const settingsRoutes: SettingsRoute[] = [
     {
@@ -89,7 +87,11 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
   function getAvailableMediaServerName() {
     return intl.formatMessage(messages.menuJellyfinSettings, {
       mediaServerName:
-        publicRuntimeConfig.JELLYFIN_TYPE === 'emby' ? 'Emby' : 'Jellyfin',
+        settings.currentSettings.mediaServerType === MediaServerType.JELLYFIN
+          ? 'Jellyfin'
+          : settings.currentSettings.mediaServerType === MediaServerType.EMBY
+          ? 'Emby'
+          : undefined,
     });
   }
 };

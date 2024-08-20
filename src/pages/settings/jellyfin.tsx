@@ -8,7 +8,7 @@ const JellyfinSettingsPage: NextPage = () => {
   useRouteGuard(Permission.MANAGE_SETTINGS);
   return (
     <SettingsLayout>
-      <SettingsJellyfin showAdvancedSettings={true} />
+      <SettingsJellyfin />
     </SettingsLayout>
   );
 };

@@ -4,3 +4,8 @@ export enum MediaServerType {
   EMBY,
   NOT_CONFIGURED,
 }
+
+export enum ServerType {
+  JELLYFIN = 'Jellyfin',
+  EMBY = 'Emby',
+}

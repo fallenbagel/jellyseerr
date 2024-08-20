@@ -1,5 +1,7 @@
+import EmbyLogo from '@app/assets/services/emby.svg';
+import JellyfinLogo from '@app/assets/services/jellyfin.svg';
+import PlexLogo from '@app/assets/services/plex.svg';
 import AppDataWarning from '@app/components/AppDataWarning';
-import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import ImageFader from '@app/components/Common/ImageFader';
 import PageTitle from '@app/components/Common/PageTitle';
@@ -9,26 +11,30 @@ import SettingsPlex from '@app/components/Settings/SettingsPlex';
 import SettingsServices from '@app/components/Settings/SettingsServices';
 import SetupSteps from '@app/components/Setup/SetupSteps';
 import useLocale from '@app/hooks/useLocale';
+import useSettings from '@app/hooks/useSettings';
 import defineMessages from '@app/utils/defineMessages';
 import { MediaServerType } from '@server/constants/server';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
 import SetupLogin from './SetupLogin';
 
 const messages = defineMessages('components.Setup', {
+  welcome: 'Welcome to Jellyseerr',
+  subtitle: 'Get started by choosing your media server',
+  configjellyfin: 'Configure Jellyfin',
+  configplex: 'Configure Plex',
+  configemby: 'Configure Emby',
   setup: 'Setup',
   finish: 'Finish Setup',
   finishing: 'Finishing…',
   continue: 'Continue',
+  servertype: 'Choose Server Type',
   signin: 'Sign In',
   configuremediaserver: 'Configure Media Server',
   configureservices: 'Configure Services',
-  tip: 'Tip',
-  scanbackground:
-    'Scanning will run in the background. You can continue the setup process in the meantime.',
 });
 
 const Setup = () => {
@@ -42,6 +48,7 @@ const Setup = () => {
   );
   const router = useRouter();
   const { locale } = useLocale();
+  const settings = useSettings();
 
   const finishSetup = async () => {
     setIsUpdating(true);
@@ -76,6 +83,23 @@ const Setup = () => {
     revalidateOnFocus: false,
   });
 
+  useEffect(() => {
+    if (settings.currentSettings.initialized) {
+      router.push('/');
+    }
+    if (
+      settings.currentSettings.mediaServerType !==
+      MediaServerType.NOT_CONFIGURED
+    ) {
+      setCurrentStep(3);
+      setMediaServerType(settings.currentSettings.mediaServerType);
+    }
+  }, [
+    settings.currentSettings.mediaServerType,
+    settings.currentSettings.initialized,
+    router,
+  ]);
+
   return (
     <div className="relative flex min-h-screen flex-col justify-center bg-gray-900 py-12">
       <PageTitle title={intl.formatMessage(messages.setup)} />
@@ -101,58 +125,120 @@ const Setup = () => {
           >
             <SetupSteps
               stepNumber={1}
-              description={intl.formatMessage(messages.signin)}
+              description={intl.formatMessage(messages.servertype)}
               active={currentStep === 1}
               completed={currentStep > 1}
             />
             <SetupSteps
               stepNumber={2}
-              description={intl.formatMessage(messages.configuremediaserver)}
+              description={intl.formatMessage(messages.signin)}
               active={currentStep === 2}
               completed={currentStep > 2}
             />
             <SetupSteps
               stepNumber={3}
-              description={intl.formatMessage(messages.configureservices)}
+              description={intl.formatMessage(messages.configuremediaserver)}
               active={currentStep === 3}
+              completed={currentStep > 3}
+            />
+            <SetupSteps
+              stepNumber={4}
+              description={intl.formatMessage(messages.configureservices)}
+              active={currentStep === 4}
               isLastStep
             />
           </ul>
         </nav>
         <div className="mt-10 w-full rounded-md border border-gray-600 bg-gray-800 bg-opacity-50 p-4 text-white">
           {currentStep === 1 && (
-            <SetupLogin
-              onComplete={(mServerType) => {
-                setMediaServerType(mServerType);
-                setCurrentStep(2);
-              }}
-            />
+            <div className="flex flex-col items-center pb-6">
+              <div className="mb-2 flex justify-center text-xl font-bold">
+                {intl.formatMessage(messages.welcome)}
+              </div>
+              <div className="mb-2 flex justify-center pb-6 text-sm">
+                {intl.formatMessage(messages.subtitle)}
+              </div>
+              <div className="grid grid-cols-3">
+                <div className="flex flex-col divide-y divide-gray-600 rounded-l border border-gray-600 py-2">
+                  <div className="mb-2 flex flex-1 items-center justify-center py-2 px-2">
+                    <JellyfinLogo className="h-10" />
+                  </div>
+                  <div className="px-2 pt-2">
+                    <button
+                      onClick={() => {
+                        setMediaServerType(MediaServerType.JELLYFIN);
+                        setCurrentStep(2);
+                      }}
+                      className="button-md relative z-10 inline-flex h-full w-full items-center justify-center rounded-md border border-gray-600 bg-transparent px-4 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out hover:z-20 hover:border-gray-200 focus:z-20 focus:border-gray-100 focus:outline-none active:border-gray-100"
+                    >
+                      {intl.formatMessage(messages.configjellyfin)}
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-col divide-y divide-gray-600 border-y border-gray-600 py-2">
+                  <div className="mb-2 flex flex-1 items-center justify-center py-2 px-2">
+                    <PlexLogo className="h-8" />
+                  </div>
+                  <div className="px-2 pt-2">
+                    <button
+                      onClick={() => {
+                        setMediaServerType(MediaServerType.PLEX);
+                        setCurrentStep(2);
+                      }}
+                      className="button-md relative z-10 inline-flex h-full w-full items-center justify-center rounded-md border border-gray-600 bg-transparent px-4 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out hover:z-20 hover:border-gray-200 focus:z-20 focus:border-gray-100 focus:outline-none active:border-gray-100"
+                    >
+                      {intl.formatMessage(messages.configplex)}
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-col divide-y divide-gray-600 rounded-r border border-gray-600 py-2">
+                  <div className="mb-2 flex flex-1 items-center justify-center py-2 px-2">
+                    <EmbyLogo className="h-9" />
+                  </div>
+                  <div className="px-2 pt-2">
+                    <button
+                      onClick={() => {
+                        setMediaServerType(MediaServerType.EMBY);
+                        setCurrentStep(2);
+                      }}
+                      className="button-md relative z-10 inline-flex h-full w-full items-center justify-center rounded-md border border-gray-600 bg-transparent px-4 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out hover:z-20 hover:border-gray-200 focus:z-20 focus:border-gray-100 focus:outline-none active:border-gray-100"
+                    >
+                      {intl.formatMessage(messages.configemby)}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
           {currentStep === 2 && (
-            <div>
+            <SetupLogin
+              serverType={mediaServerType}
+              onCancel={() => {
+                setMediaServerType(MediaServerType.NOT_CONFIGURED);
+                setCurrentStep(1);
+              }}
+              onComplete={() => setCurrentStep(3)}
+            />
+          )}
+          {currentStep === 3 && (
+            <div className="p-2">
               {mediaServerType === MediaServerType.PLEX ? (
                 <SettingsPlex
                   onComplete={() => setMediaServerSettingsComplete(true)}
                 />
               ) : (
                 <SettingsJellyfin
-                  showAdvancedSettings={false}
+                  isSetupSettings
                   onComplete={() => setMediaServerSettingsComplete(true)}
                 />
               )}
-              <div className="mt-4 text-sm text-gray-500">
-                <span className="mr-2">
-                  <Badge>{intl.formatMessage(messages.tip)}</Badge>
-                </span>
-                {intl.formatMessage(messages.scanbackground)}
-              </div>
               <div className="actions">
                 <div className="flex justify-end">
                   <span className="ml-3 inline-flex rounded-md shadow-sm">
                     <Button
                       buttonType="primary"
                       disabled={!mediaServerSettingsComplete}
-                      onClick={() => setCurrentStep(3)}
+                      onClick={() => setCurrentStep(4)}
                     >
                       {intl.formatMessage(messages.continue)}
                     </Button>
@@ -161,7 +247,7 @@ const Setup = () => {
               </div>
             </div>
           )}
-          {currentStep === 3 && (
+          {currentStep === 4 && (
             <div>
               <SettingsServices />
               <div className="actions">

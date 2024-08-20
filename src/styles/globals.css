@@ -83,6 +83,16 @@
     background: #f19a30;
   }
 
+  .server-type-button {
+    @apply rounded-md border border-gray-500 bg-gray-700 px-4  py-2 text-white transition duration-150 ease-in-out hover:bg-gray-500;
+  }
+  .jellyfin-server svg {
+    @apply h-6 w-6;
+  }
+  .emby-server svg {
+    @apply h-7 w-7;
+  }
+
   ul.cards-vertical,
   ul.cards-horizontal {
     @apply grid gap-4;

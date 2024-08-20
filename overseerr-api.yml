@@ -3586,6 +3586,8 @@ paths:
                   type: string
                 email:
                   type: string
+                serverType:
+                  type: number
               required:
                 - username
                 - password

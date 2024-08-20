@@ -4,9 +4,9 @@ import useSettings from '@app/hooks/useSettings';
 import defineMessages from '@app/utils/defineMessages';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
 import { ApiErrorCode } from '@server/constants/error';
+import { MediaServerType, ServerType } from '@server/constants/server';
 import { Field, Form, Formik } from 'formik';
-import getConfig from 'next/config';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import * as Yup from 'yup';
 
@@ -26,6 +26,7 @@ const messages = defineMessages('components.Login', {
   validationemailformat: 'Valid email required',
   validationusernamerequired: 'Username required',
   validationpasswordrequired: 'Password required',
+  validationservertyperequired: 'Please select a server type',
   validationHostnameRequired: 'You must provide a valid hostname or IP address',
   validationPortRequired: 'You must provide a valid port number',
   validationUrlTrailingSlash: 'URL must not end in a trailing slash',
@@ -40,42 +41,51 @@ const messages = defineMessages('components.Login', {
   initialsigningin: 'Connecting…',
   initialsignin: 'Connect',
   forgotpassword: 'Forgot Password?',
+  servertype: 'Server Type',
+  back: 'Go back',
 });
 
 interface JellyfinLoginProps {
   revalidate: () => void;
   initial?: boolean;
+  serverType?: MediaServerType;
+  onCancel?: () => void;
 }
 
 const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
   revalidate,
   initial,
+  serverType,
+  onCancel,
 }) => {
   const toasts = useToasts();
   const intl = useIntl();
   const settings = useSettings();
-  const { publicRuntimeConfig } = getConfig();
+
+  const mediaServerFormatValues = {
+    mediaServerName:
+      serverType === MediaServerType.JELLYFIN
+        ? ServerType.JELLYFIN
+        : serverType === MediaServerType.EMBY
+        ? ServerType.EMBY
+        : 'Media Server',
+  };
 
   if (initial) {
     const LoginSchema = Yup.object().shape({
       hostname: Yup.string().required(
-        intl.formatMessage(messages.validationhostrequired, {
-          mediaServerName:
-            publicRuntimeConfig.JELLYFIN_TYPE == 'emby' ? 'Emby' : 'Jellyfin',
-        })
+        intl.formatMessage(
+          messages.validationhostrequired,
+          mediaServerFormatValues
+        )
       ),
       port: Yup.number().required(
         intl.formatMessage(messages.validationPortRequired)
       ),
-      urlBase: Yup.string()
-        .matches(
-          /^(\/[^/].*[^/]$)/,
-          intl.formatMessage(messages.validationUrlBaseLeadingSlash)
-        )
-        .matches(
-          /^(.*[^/])$/,
-          intl.formatMessage(messages.validationUrlBaseTrailingSlash)
-        ),
+      urlBase: Yup.string().matches(
+        /^(.*[^/])$/,
+        intl.formatMessage(messages.validationUrlBaseTrailingSlash)
+      ),
       email: Yup.string()
         .email(intl.formatMessage(messages.validationemailformat))
         .required(intl.formatMessage(messages.validationemailrequired)),
@@ -84,11 +94,6 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
       ),
       password: Yup.string(),
     });
-
-    const mediaServerFormatValues = {
-      mediaServerName:
-        publicRuntimeConfig.JELLYFIN_TYPE == 'emby' ? 'Emby' : 'Jellyfin',
-    };
 
     return (
       <Formik
@@ -104,6 +109,11 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
         validationSchema={LoginSchema}
         onSubmit={async (values) => {
           try {
+            // Check if serverType is either 'Jellyfin' or 'Emby'
+            // if (serverType !== 'Jellyfin' && serverType !== 'Emby') {
+            //   throw new Error('Invalid serverType'); // You can customize the error message
+            // }
+
             const res = await fetch('/api/v1/auth/jellyfin', {
               method: 'POST',
               headers: {
@@ -117,6 +127,7 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
                 useSsl: values.useSsl,
                 urlBase: values.urlBase,
                 email: values.email,
+                serverType: serverType,
               }),
             });
             if (!res.ok) throw new Error(res.statusText, { cause: res });
@@ -312,7 +323,7 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
               </div>
             </div>
             <div className="mt-8 border-t border-gray-700 pt-5">
-              <div className="flex justify-end">
+              <div className="flex flex-row-reverse justify-between">
                 <span className="inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType="primary"
@@ -324,6 +335,13 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
                       : intl.formatMessage(messages.signin)}
                   </Button>
                 </span>
+                {onCancel && (
+                  <span className="inline-flex rounded-md shadow-sm">
+                    <Button buttonType="default" onClick={() => onCancel()}>
+                      <FormattedMessage {...messages.back} />
+                    </Button>
+                  </span>
+                )}
               </div>
             </div>
           </Form>
@@ -429,7 +447,8 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
                             jellyfinForgotPasswordUrl
                               ? `${jellyfinForgotPasswordUrl}`
                               : `${baseUrl}/web/index.html#!/${
-                                  process.env.JELLYFIN_TYPE === 'emby'
+                                  settings.currentSettings.mediaServerType ===
+                                  MediaServerType.EMBY
                                     ? 'startup/'
                                     : ''
                                 }forgotpassword.html`
