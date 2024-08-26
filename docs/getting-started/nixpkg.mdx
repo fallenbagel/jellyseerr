@@ -22,7 +22,7 @@ export const VersionMismatchWarning = () => {
     <>
       {!isUpToDate ? (
         <Admonition type="warning">
-          The <a href="https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/servers/jellyseerr/default.nix#L14">upstream Jellyseerr Nix Package (v{nixpkgVersion})</a> is not <b>up-to-date</b>. If you want to use <b>Jellyseerr v{jellyseerrVersion}</b>, you will need to <a href="#overriding-the-package">override the package derivation</a>.
+          The <a href="https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/servers/jellyseerr/default.nix#L14">upstream Jellyseerr Nix Package (v{nixpkgVersion})</a> is not <b>up-to-date</b>. If you want to use <b>Jellyseerr v{jellyseerrVersion}</b>, you will need to <a href="#overriding-the-package-derivation">override the package derivation</a>.
         </Admonition>
       ) : (
         <Admonition type="success">
@@ -95,12 +95,12 @@ export const VersionMatch = () => {
       };
 
       offlineCache = pkgs.fetchYarnDeps {
-        sha256 = pkgs.lib.fakeSha256; 
+        sha256 = pkgs.lib.fakeSha256;
       };
-    }); 
+    });
   };
 }`;
- 
+
   const module = `{ config, pkgs, lib, ... }:
 
 with lib;
