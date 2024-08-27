@@ -1,3 +1,4 @@
+import { ApiErrorCode } from '@server/constants/error';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { UserSettings } from '@server/entity/UserSettings';
@@ -9,6 +10,7 @@ import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
+import { ApiError } from '@server/types/error';
 import { Router } from 'express';
 import { canMakePermissionsChange } from '.';
 
@@ -98,8 +100,16 @@ userSettingsRoutes.post<
     }
 
     user.username = req.body.username;
+    const oldEmail = user.email;
     if (user.jellyfinUsername) {
       user.email = req.body.email || user.jellyfinUsername || user.email;
+    }
+
+    const existingUser = await userRepository.findOne({
+      where: { email: user.email },
+    });
+    if (oldEmail !== user.email && existingUser) {
+      throw new ApiError(400, ApiErrorCode.InvalidEmail);
     }
 
     // Update quota values only if the user has the correct permissions
@@ -145,7 +155,14 @@ userSettingsRoutes.post<
       email: savedUser.email,
     });
   } catch (e) {
-    next({ status: 500, message: e.message });
+    if (e.errorCode) {
+      return next({
+        status: e.statusCode,
+        message: e.errorCode,
+      });
+    } else {
+      return next({ status: 500, message: e.message });
+    }
   }
 });
 
