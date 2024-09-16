@@ -12,6 +12,8 @@ This is your Jellyseerr API key, which can be used to integrate Jellyseerr with 
 
 If you need to generate a new API key for any reason, simply click the button to the right of the text box.
 
+If you want to set the API key, rather than letting it be randomly generated, you can use the API_KEY environment variable. Whatever that variable is set to will be your API key.
+
 ## Application Title
 
 If you aren't a huge fan of the name "Jellyseerr" and would like to display something different to your users, you can customize the application title!

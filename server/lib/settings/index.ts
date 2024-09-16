@@ -611,7 +611,11 @@ class Settings {
   }
 
   private generateApiKey(): string {
-    return Buffer.from(`${Date.now()}${randomUUID()}`).toString('base64');
+    if (process.env.API_KEY) {
+      return process.env.API_KEY;
+    } else {
+      return Buffer.from(`${Date.now()}${randomUUID()}`).toString('base64');
+    }
   }
 
   private generateVapidKeys(force = false): void {
@@ -647,6 +651,12 @@ class Settings {
       this.data = await runMigrations(parsedJson);
 
       this.data = merge(this.data, parsedJson);
+
+      if (process.env.API_KEY) {
+        if (this.main.apiKey != process.env.API_KEY) {
+          this.main.apiKey = process.env.API_KEY;
+        }
+      }
 
       this.save();
     }
