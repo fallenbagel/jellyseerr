@@ -303,10 +303,10 @@ class SonarrAPI extends ServarrBase<{
     });
 
     try {
-      await this.runCommand('SeriesSearch', { seriesId });
+      await this.runCommand('MissingEpisodeSearch', { seriesId });
     } catch (e) {
       logger.error(
-        'Something went wrong while executing Sonarr series search.',
+        'Something went wrong while executing Sonarr missing episode search.',
         {
           label: 'Sonarr API',
           errorMessage: e.message,
