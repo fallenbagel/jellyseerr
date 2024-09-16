@@ -300,6 +300,7 @@ const RequestButton = ({
     }) &&
     media &&
     media.status !== MediaStatus.AVAILABLE &&
+    media.status !== MediaStatus.BLACKLISTED &&
     !isShowComplete
   ) {
     buttons.push({
@@ -345,6 +346,7 @@ const RequestButton = ({
     }) &&
     media &&
     media.status4k !== MediaStatus.AVAILABLE &&
+    media.status !== MediaStatus.BLACKLISTED &&
     !is4kShowComplete &&
     settings.currentSettings.series4kEnabled
   ) {

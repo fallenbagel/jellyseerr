@@ -1,6 +1,11 @@
 import Spinner from '@app/assets/spinner.svg';
 import { CheckCircleIcon } from '@heroicons/react/20/solid';
-import { BellIcon, ClockIcon, MinusSmallIcon } from '@heroicons/react/24/solid';
+import {
+  BellIcon,
+  ClockIcon,
+  EyeSlashIcon,
+  MinusSmallIcon,
+} from '@heroicons/react/24/solid';
 import { MediaStatus } from '@server/constants/media';
 
 interface StatusBadgeMiniProps {
@@ -43,6 +48,10 @@ const StatusBadgeMini = ({
         'bg-yellow-500 border-yellow-400 ring-yellow-400 text-yellow-100'
       );
       indicatorIcon = <BellIcon />;
+      break;
+    case MediaStatus.BLACKLISTED:
+      badgeStyle.push('bg-red-500 border-white-400 ring-white-400 text-white');
+      indicatorIcon = <EyeSlashIcon />;
       break;
     case MediaStatus.PARTIALLY_AVAILABLE:
       badgeStyle.push(

@@ -3,8 +3,10 @@ import PersonCard from '@app/components/PersonCard';
 import Slider from '@app/components/Slider';
 import TitleCard from '@app/components/TitleCard';
 import useSettings from '@app/hooks/useSettings';
+import { useUser } from '@app/hooks/useUser';
 import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
 import { MediaStatus } from '@server/constants/media';
+import { Permission } from '@server/lib/permissions';
 import type {
   MovieResult,
   PersonResult,
@@ -41,6 +43,7 @@ const MediaSlider = ({
   onNewTitles,
 }: MediaSliderProps) => {
   const settings = useSettings();
+  const { hasPermission } = useUser();
   const { data, error, setSize, size } = useSWRInfinite<MixedResult>(
     (pageIndex: number, previousPageData: MixedResult | null) => {
       if (previousPageData && pageIndex + 1 > previousPageData.totalPages) {
@@ -90,50 +93,65 @@ const MediaSlider = ({
     return null;
   }
 
-  const finalTitles = titles.slice(0, 20).map((title) => {
-    switch (title.mediaType) {
-      case 'movie':
+  const blacklistVisibility = hasPermission(
+    [Permission.MANAGE_BLACKLIST, Permission.VIEW_BLACKLIST],
+    { type: 'or' }
+  );
+
+  const finalTitles = titles
+    .slice(0, 20)
+    .filter((title) => {
+      if (!blacklistVisibility)
         return (
-          <TitleCard
-            key={title.id}
-            id={title.id}
-            isAddedToWatchlist={title.mediaInfo?.watchlists?.length ?? 0}
-            image={title.posterPath}
-            status={title.mediaInfo?.status}
-            summary={title.overview}
-            title={title.title}
-            userScore={title.voteAverage}
-            year={title.releaseDate}
-            mediaType={title.mediaType}
-            inProgress={(title.mediaInfo?.downloadStatus ?? []).length > 0}
-          />
+          (title as TvResult | MovieResult).mediaInfo?.status !==
+          MediaStatus.BLACKLISTED
         );
-      case 'tv':
-        return (
-          <TitleCard
-            key={title.id}
-            id={title.id}
-            isAddedToWatchlist={title.mediaInfo?.watchlists?.length ?? 0}
-            image={title.posterPath}
-            status={title.mediaInfo?.status}
-            summary={title.overview}
-            title={title.name}
-            userScore={title.voteAverage}
-            year={title.firstAirDate}
-            mediaType={title.mediaType}
-            inProgress={(title.mediaInfo?.downloadStatus ?? []).length > 0}
-          />
-        );
-      case 'person':
-        return (
-          <PersonCard
-            personId={title.id}
-            name={title.name}
-            profilePath={title.profilePath}
-          />
-        );
-    }
-  });
+      return title;
+    })
+    .map((title) => {
+      switch (title.mediaType) {
+        case 'movie':
+          return (
+            <TitleCard
+              key={title.id}
+              id={title.id}
+              isAddedToWatchlist={title.mediaInfo?.watchlists?.length ?? 0}
+              image={title.posterPath}
+              status={title.mediaInfo?.status}
+              summary={title.overview}
+              title={title.title}
+              userScore={title.voteAverage}
+              year={title.releaseDate}
+              mediaType={title.mediaType}
+              inProgress={(title.mediaInfo?.downloadStatus ?? []).length > 0}
+            />
+          );
+        case 'tv':
+          return (
+            <TitleCard
+              key={title.id}
+              id={title.id}
+              isAddedToWatchlist={title.mediaInfo?.watchlists?.length ?? 0}
+              image={title.posterPath}
+              status={title.mediaInfo?.status}
+              summary={title.overview}
+              title={title.name}
+              userScore={title.voteAverage}
+              year={title.firstAirDate}
+              mediaType={title.mediaType}
+              inProgress={(title.mediaInfo?.downloadStatus ?? []).length > 0}
+            />
+          );
+        case 'person':
+          return (
+            <PersonCard
+              personId={title.id}
+              name={title.name}
+              profilePath={title.profilePath}
+            />
+          );
+      }
+    });
 
   if (linkUrl && titles.length > 20) {
     finalTitles.push(

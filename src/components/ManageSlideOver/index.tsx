@@ -1,3 +1,4 @@
+import BlacklistBlock from '@app/components/BlacklistBlock';
 import Button from '@app/components/Common/Button';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
 import SlideOver from '@app/components/Common/SlideOver';
@@ -281,6 +282,20 @@ const ManageSlideOver = ({
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+        )}
+        {data.mediaInfo?.status === MediaStatus.BLACKLISTED && (
+          <div>
+            <h3 className="mb-2 text-xl font-bold">
+              {intl.formatMessage(globalMessages.blacklist)}
+            </h3>
+            <div className="overflow-hidden rounded-md border border-gray-700 shadow">
+              <BlacklistBlock
+                blacklistItem={data.mediaInfo.blacklist}
+                onUpdate={() => revalidate()}
+                onDelete={() => onClose()}
+              />
             </div>
           </div>
         )}
@@ -603,32 +618,17 @@ const ManageSlideOver = ({
               </div>
             </div>
           )}
-        {hasPermission(Permission.ADMIN) && data?.mediaInfo && (
-          <div>
-            <h3 className="mb-2 text-xl font-bold">
-              {intl.formatMessage(messages.manageModalAdvanced)}
-            </h3>
-            <div className="space-y-2">
-              {data?.mediaInfo.status !== MediaStatus.AVAILABLE && (
-                <Button
-                  onClick={() => markAvailable()}
-                  className="w-full"
-                  buttonType="success"
-                >
-                  <CheckCircleIcon />
-                  <span>
-                    {intl.formatMessage(
-                      mediaType === 'movie'
-                        ? messages.markavailable
-                        : messages.markallseasonsavailable
-                    )}
-                  </span>
-                </Button>
-              )}
-              {data?.mediaInfo.status4k !== MediaStatus.AVAILABLE &&
-                settings.currentSettings.series4kEnabled && (
+        {hasPermission(Permission.ADMIN) &&
+          data?.mediaInfo &&
+          data.mediaInfo.status !== MediaStatus.BLACKLISTED && (
+            <div>
+              <h3 className="mb-2 text-xl font-bold">
+                {intl.formatMessage(messages.manageModalAdvanced)}
+              </h3>
+              <div className="space-y-2">
+                {data?.mediaInfo.status !== MediaStatus.AVAILABLE && (
                   <Button
-                    onClick={() => markAvailable(true)}
+                    onClick={() => markAvailable()}
                     className="w-full"
                     buttonType="success"
                   >
@@ -636,42 +636,59 @@ const ManageSlideOver = ({
                     <span>
                       {intl.formatMessage(
                         mediaType === 'movie'
-                          ? messages.mark4kavailable
-                          : messages.markallseasons4kavailable
+                          ? messages.markavailable
+                          : messages.markallseasonsavailable
                       )}
                     </span>
                   </Button>
                 )}
-              <div>
-                <ConfirmButton
-                  onClick={() => deleteMedia()}
-                  confirmText={intl.formatMessage(globalMessages.areyousure)}
-                  className="w-full"
-                >
-                  <DocumentMinusIcon />
-                  <span>
-                    {intl.formatMessage(messages.manageModalClearMedia)}
-                  </span>
-                </ConfirmButton>
-                <div className="mt-2 text-xs text-gray-400">
-                  {intl.formatMessage(messages.manageModalClearMediaWarning, {
-                    mediaType: intl.formatMessage(
-                      mediaType === 'movie' ? messages.movie : messages.tvshow
-                    ),
-                    mediaServerName:
-                      settings.currentSettings.mediaServerType ===
-                      MediaServerType.EMBY
-                        ? 'Emby'
-                        : settings.currentSettings.mediaServerType ===
-                          MediaServerType.PLEX
-                        ? 'Plex'
-                        : 'Jellyfin',
-                  })}
+                {data?.mediaInfo.status4k !== MediaStatus.AVAILABLE &&
+                  settings.currentSettings.series4kEnabled && (
+                    <Button
+                      onClick={() => markAvailable(true)}
+                      className="w-full"
+                      buttonType="success"
+                    >
+                      <CheckCircleIcon />
+                      <span>
+                        {intl.formatMessage(
+                          mediaType === 'movie'
+                            ? messages.mark4kavailable
+                            : messages.markallseasons4kavailable
+                        )}
+                      </span>
+                    </Button>
+                  )}
+                <div>
+                  <ConfirmButton
+                    onClick={() => deleteMedia()}
+                    confirmText={intl.formatMessage(globalMessages.areyousure)}
+                    className="w-full"
+                  >
+                    <DocumentMinusIcon />
+                    <span>
+                      {intl.formatMessage(messages.manageModalClearMedia)}
+                    </span>
+                  </ConfirmButton>
+                  <div className="mt-2 text-xs text-gray-400">
+                    {intl.formatMessage(messages.manageModalClearMediaWarning, {
+                      mediaType: intl.formatMessage(
+                        mediaType === 'movie' ? messages.movie : messages.tvshow
+                      ),
+                      mediaServerName:
+                        settings.currentSettings.mediaServerType ===
+                        MediaServerType.EMBY
+                          ? 'Emby'
+                          : settings.currentSettings.mediaServerType ===
+                            MediaServerType.PLEX
+                          ? 'Plex'
+                          : 'Jellyfin',
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </SlideOver>
   );

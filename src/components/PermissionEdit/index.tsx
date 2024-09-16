@@ -78,6 +78,13 @@ export const messages = defineMessages('components.PermissionEdit', {
   viewwatchlists: 'View {mediaServerName} Watchlists',
   viewwatchlistsDescription:
     "Grant permission to view other users' {mediaServerName} Watchlists.",
+  manageblacklist: 'Manage Blacklist',
+  manageblacklistDescription: 'Grant permission to manage blacklisted media.',
+  blacklistedItems: 'Blacklist media.',
+  blacklistedItemsDescription: 'Grant permission to blacklist media.',
+  viewblacklistedItems: 'View blacklisted media.',
+  viewblacklistedItemsDescription:
+    'Grant permission to view blacklisted media.',
 });
 
 interface PermissionEditProps {
@@ -329,6 +336,22 @@ export const PermissionEdit = ({
           name: intl.formatMessage(messages.viewissues),
           description: intl.formatMessage(messages.viewissuesDescription),
           permission: Permission.VIEW_ISSUES,
+        },
+      ],
+    },
+    {
+      id: 'manageblacklist',
+      name: intl.formatMessage(messages.manageblacklist),
+      description: intl.formatMessage(messages.manageblacklistDescription),
+      permission: Permission.MANAGE_BLACKLIST,
+      children: [
+        {
+          id: 'viewblacklisteditems',
+          name: intl.formatMessage(messages.viewblacklistedItems),
+          description: intl.formatMessage(
+            messages.viewblacklistedItemsDescription
+          ),
+          permission: Permission.VIEW_BLACKLIST,
         },
       ],
     },

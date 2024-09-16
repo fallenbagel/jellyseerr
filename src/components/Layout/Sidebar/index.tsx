@@ -8,6 +8,7 @@ import {
   ClockIcon,
   CogIcon,
   ExclamationTriangleIcon,
+  EyeSlashIcon,
   FilmIcon,
   SparklesIcon,
   TvIcon,
@@ -25,6 +26,7 @@ export const menuMessages = defineMessages('components.Layout.Sidebar', {
   browsemovies: 'Movies',
   browsetv: 'Series',
   requests: 'Requests',
+  blacklist: 'Blacklist',
   issues: 'Issues',
   users: 'Users',
   settings: 'Settings',
@@ -70,6 +72,17 @@ const SidebarLinks: SidebarLinkProps[] = [
     messagesKey: 'requests',
     svgIcon: <ClockIcon className="mr-3 h-6 w-6" />,
     activeRegExp: /^\/requests/,
+  },
+  {
+    href: '/blacklist',
+    messagesKey: 'blacklist',
+    svgIcon: <EyeSlashIcon className="mr-3 h-6 w-6" />,
+    activeRegExp: /^\/blacklist/,
+    requiredPermission: [
+      Permission.MANAGE_BLACKLIST,
+      Permission.VIEW_BLACKLIST,
+    ],
+    permissionType: 'or',
   },
   {
     href: '/issues',

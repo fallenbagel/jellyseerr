@@ -40,6 +40,7 @@ export class RequestPermissionError extends Error {}
 export class QuotaRestrictedError extends Error {}
 export class DuplicateMediaRequestError extends Error {}
 export class NoSeasonsAvailableError extends Error {}
+export class BlacklistedMediaError extends Error {}
 
 type MediaRequestOptions = {
   isAutoRequest?: boolean;
@@ -143,6 +144,16 @@ export class MediaRequest {
         mediaType: requestBody.mediaType,
       });
     } else {
+      if (media.status === MediaStatus.BLACKLISTED) {
+        logger.warn('Request for media blocked due to being blacklisted', {
+          tmdbId: tmdbMedia.id,
+          mediaType: requestBody.mediaType,
+          label: 'Media Request',
+        });
+
+        throw new BlacklistedMediaError('This media is blacklisted.');
+      }
+
       if (media.status === MediaStatus.UNKNOWN && !requestBody.is4k) {
         media.status = MediaStatus.PENDING;
       }

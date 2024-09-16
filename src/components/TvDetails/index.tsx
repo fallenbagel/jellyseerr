@@ -4,6 +4,7 @@ import RTFresh from '@app/assets/rt_fresh.svg';
 import RTRotten from '@app/assets/rt_rotten.svg';
 import Spinner from '@app/assets/spinner.svg';
 import TmdbLogo from '@app/assets/tmdb_logo.svg';
+import BlacklistModal from '@app/components/BlacklistModal';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import CachedImage from '@app/components/Common/CachedImage';
@@ -38,6 +39,7 @@ import {
   ArrowRightCircleIcon,
   CogIcon,
   ExclamationTriangleIcon,
+  EyeSlashIcon,
   FilmIcon,
   PlayIcon,
 } from '@heroicons/react/24/outline';
@@ -61,7 +63,7 @@ import { countries } from 'country-flag-icons';
 import 'country-flag-icons/3x2/flags.css';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
@@ -125,6 +127,9 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
   const [toggleWatchlist, setToggleWatchlist] = useState<boolean>(
     !tv?.onUserWatchlist
   );
+  const [isBlacklistUpdating, setIsBlacklistUpdating] =
+    useState<boolean>(false);
+  const [showBlacklistModal, setShowBlacklistModal] = useState(false);
   const { addToast } = useToasts();
 
   const {
@@ -154,6 +159,11 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
   useEffect(() => {
     setShowManager(router.query.manage == '1' ? true : false);
   }, [router.query.manage]);
+
+  const closeBlacklistModal = useCallback(
+    () => setShowBlacklistModal(false),
+    []
+  );
 
   const { mediaUrl: plexUrl, mediaUrl4k: plexUrl4k } = useDeepLinks({
     mediaUrl: data?.mediaInfo?.mediaUrl,
@@ -397,6 +407,60 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
     }
   };
 
+  const onClickHideItemBtn = async (): Promise<void> => {
+    setIsBlacklistUpdating(true);
+
+    const res = await fetch('/api/v1/blacklist', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        tmdbId: tv?.id,
+        mediaType: 'tv',
+        title: tv?.name,
+        user: user?.id,
+      }),
+    });
+
+    if (res.status === 201) {
+      addToast(
+        <span>
+          {intl.formatMessage(globalMessages.blacklistSuccess, {
+            title: tv?.name,
+            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+          })}
+        </span>,
+        { appearance: 'success', autoDismiss: true }
+      );
+
+      revalidate();
+    } else if (res.status === 412) {
+      addToast(
+        <span>
+          {intl.formatMessage(globalMessages.blacklistDuplicateError, {
+            title: tv?.name,
+            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+          })}
+        </span>,
+        { appearance: 'info', autoDismiss: true }
+      );
+    } else {
+      addToast(intl.formatMessage(globalMessages.blacklistError), {
+        appearance: 'error',
+        autoDismiss: true,
+      });
+    }
+
+    setIsBlacklistUpdating(false);
+    closeBlacklistModal();
+  };
+
+  const showHideButton = hasPermission([Permission.MANAGE_BLACKLIST], {
+    type: 'or',
+  });
+
   return (
     <div
       className="media-page"
@@ -423,6 +487,14 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
         </div>
       )}
       <PageTitle title={data.name} />
+      <BlacklistModal
+        tmdbId={data.id}
+        type="tv"
+        show={showBlacklistModal}
+        onCancel={closeBlacklistModal}
+        onComplete={onClickHideItemBtn}
+        isUpdating={isBlacklistUpdating}
+      />
       <IssueModal
         onCancel={() => setShowIssueModal(false)}
         show={showIssueModal}
@@ -528,40 +600,61 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
           </span>
         </div>
         <div className="media-actions">
-          <>
-            {toggleWatchlist ? (
-              <Tooltip content={intl.formatMessage(messages.addtowatchlist)}>
+          {showHideButton &&
+            data?.mediaInfo?.status !== MediaStatus.PROCESSING &&
+            data?.mediaInfo?.status !== MediaStatus.AVAILABLE &&
+            data?.mediaInfo?.status !== MediaStatus.PARTIALLY_AVAILABLE &&
+            data?.mediaInfo?.status !== MediaStatus.PENDING &&
+            data?.mediaInfo?.status !== MediaStatus.BLACKLISTED && (
+              <Tooltip
+                content={intl.formatMessage(globalMessages.addToBlacklist)}
+              >
                 <Button
                   buttonType={'ghost'}
                   className="z-40 mr-2"
                   buttonSize={'md'}
-                  onClick={onClickWatchlistBtn}
+                  onClick={() => setShowBlacklistModal(true)}
                 >
-                  {isUpdating ? (
-                    <Spinner className="h-3" />
-                  ) : (
-                    <StarIcon className={'h-3 text-amber-300'} />
-                  )}
-                </Button>
-              </Tooltip>
-            ) : (
-              <Tooltip
-                content={intl.formatMessage(messages.removefromwatchlist)}
-              >
-                <Button
-                  className="z-40 mr-2"
-                  buttonSize={'md'}
-                  onClick={onClickDeleteWatchlistBtn}
-                >
-                  {isUpdating ? (
-                    <Spinner className="h-3" />
-                  ) : (
-                    <MinusCircleIcon className={'h-3'} />
-                  )}
+                  <EyeSlashIcon className={'h-3'} />
                 </Button>
               </Tooltip>
             )}
-          </>
+          {data?.mediaInfo?.status !== MediaStatus.BLACKLISTED && (
+            <>
+              {toggleWatchlist ? (
+                <Tooltip content={intl.formatMessage(messages.addtowatchlist)}>
+                  <Button
+                    buttonType={'ghost'}
+                    className="z-40 mr-2"
+                    buttonSize={'md'}
+                    onClick={onClickWatchlistBtn}
+                  >
+                    {isUpdating ? (
+                      <Spinner className="h-3" />
+                    ) : (
+                      <StarIcon className={'h-3 text-amber-300'} />
+                    )}
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Tooltip
+                  content={intl.formatMessage(messages.removefromwatchlist)}
+                >
+                  <Button
+                    className="z-40 mr-2"
+                    buttonSize={'md'}
+                    onClick={onClickDeleteWatchlistBtn}
+                  >
+                    {isUpdating ? (
+                      <Spinner className="h-3" />
+                    ) : (
+                      <MinusCircleIcon className={'h-3'} />
+                    )}
+                  </Button>
+                </Tooltip>
+              )}
+            </>
+          )}
           <PlayButton links={mediaLinks} />
           <RequestButton
             mediaType="tv"

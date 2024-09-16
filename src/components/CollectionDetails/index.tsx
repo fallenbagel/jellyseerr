@@ -183,6 +183,11 @@ const CollectionDetails = ({ collection }: CollectionDetailsProps) => {
     );
   }
 
+  const blacklistVisibility = hasPermission(
+    [Permission.MANAGE_BLACKLIST, Permission.VIEW_BLACKLIST],
+    { type: 'or' }
+  );
+
   return (
     <div
       className="media-page"
@@ -335,20 +340,26 @@ const CollectionDetails = ({ collection }: CollectionDetailsProps) => {
         sliderKey="collection-movies"
         isLoading={false}
         isEmpty={data.parts.length === 0}
-        items={data.parts.map((title) => (
-          <TitleCard
-            key={`collection-movie-${title.id}`}
-            id={title.id}
-            isAddedToWatchlist={title.mediaInfo?.watchlists?.length ?? 0}
-            image={title.posterPath}
-            status={title.mediaInfo?.status}
-            summary={title.overview}
-            title={title.title}
-            userScore={title.voteAverage}
-            year={title.releaseDate}
-            mediaType={title.mediaType}
-          />
-        ))}
+        items={data.parts
+          .filter((title) => {
+            if (!blacklistVisibility)
+              return title.mediaInfo?.status !== MediaStatus.BLACKLISTED;
+            return title;
+          })
+          .map((title) => (
+            <TitleCard
+              key={`collection-movie-${title.id}`}
+              id={title.id}
+              isAddedToWatchlist={title.mediaInfo?.watchlists?.length ?? 0}
+              image={title.posterPath}
+              status={title.mediaInfo?.status}
+              summary={title.overview}
+              title={title.title}
+              userScore={title.voteAverage}
+              year={title.releaseDate}
+              mediaType={title.mediaType}
+            />
+          ))}
       />
       <div className="extra-bottom-space relative" />
     </div>

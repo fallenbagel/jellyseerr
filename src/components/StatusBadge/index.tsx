@@ -360,6 +360,17 @@ const StatusBadge = ({
         </Tooltip>
       );
 
+    case MediaStatus.BLACKLISTED:
+      return (
+        <Tooltip content={mediaLinkDescription}>
+          <Badge badgeType="danger" href={mediaLink}>
+            {intl.formatMessage(is4k ? messages.status4k : messages.status, {
+              status: intl.formatMessage(globalMessages.blacklisted),
+            })}
+          </Badge>
+        </Tooltip>
+      );
+
     default:
       return null;
   }
