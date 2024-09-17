@@ -1,6 +1,6 @@
 name: 🐛 Bug Report
 description: Report a problem
-labels: ['type:bug', 'awaiting-triage']
+labels: ['bug', 'awaiting triage']
 body:
   - type: markdown
     attributes:
