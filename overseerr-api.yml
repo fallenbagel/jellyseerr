@@ -2790,6 +2790,15 @@ paths:
                           imageCount:
                             type: number
                             example: 123
+                      avatar:
+                        type: object
+                        properties:
+                          size:
+                            type: number
+                            example: 123456
+                          imageCount:
+                            type: number
+                            example: 123
                   apiCaches:
                     type: array
                     items:

@@ -746,11 +746,13 @@ settingsRoutes.get('/cache', async (_req, res) => {
   }));
 
   const tmdbImageCache = await ImageProxy.getImageStats('tmdb');
+  const avatarImageCache = await ImageProxy.getImageStats('avatar');
 
   return res.status(200).json({
     apiCaches,
     imageCache: {
       tmdb: tmdbImageCache,
+      avatar: avatarImageCache,
     },
   });
 });

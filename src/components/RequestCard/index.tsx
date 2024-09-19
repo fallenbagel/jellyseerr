@@ -22,7 +22,6 @@ import type { MediaRequest } from '@server/entity/MediaRequest';
 import type { NonFunctionProperties } from '@server/interfaces/api/common';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -116,7 +115,7 @@ const RequestCardError = ({ requestData }: RequestCardErrorProps) => {
                       className="group flex items-center"
                     >
                       <span className="avatar-sm">
-                        <Image
+                        <CachedImage
                           src={requestData.requestedBy.avatar}
                           alt=""
                           className="avatar-sm object-cover"
@@ -390,7 +389,7 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
                 className="group flex items-center"
               >
                 <span className="avatar-sm">
-                  <Image
+                  <CachedImage
                     src={requestData.requestedBy.avatar}
                     alt=""
                     className="avatar-sm object-cover"

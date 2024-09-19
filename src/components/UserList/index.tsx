@@ -1,6 +1,7 @@
 import Alert from '@app/components/Common/Alert';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
+import CachedImage from '@app/components/Common/CachedImage';
 import Header from '@app/components/Common/Header';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import Modal from '@app/components/Common/Modal';
@@ -28,7 +29,6 @@ import { MediaServerType } from '@server/constants/server';
 import type { UserResultsResponse } from '@server/interfaces/api/userInterfaces';
 import { hasPermission } from '@server/lib/permissions';
 import { Field, Form, Formik } from 'formik';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -633,7 +633,7 @@ const UserList = () => {
                     href={`/users/${user.id}`}
                     className="h-10 w-10 flex-shrink-0"
                   >
-                    <Image
+                    <CachedImage
                       className="h-10 w-10 rounded-full object-cover"
                       src={user.avatar}
                       alt=""

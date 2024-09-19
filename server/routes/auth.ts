@@ -6,6 +6,7 @@ import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { startJobs } from '@server/job/schedule';
+import ImageProxy from '@server/lib/imageproxy';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
@@ -342,6 +343,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
                 }),
             userType: UserType.EMBY,
           });
+
           break;
         case MediaServerType.JELLYFIN:
           settings.main.mediaServerType = MediaServerType.JELLYFIN;
@@ -360,6 +362,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
                 }),
             userType: UserType.JELLYFIN,
           });
+
           break;
         default:
           throw new Error('select_server_type');
@@ -407,12 +410,24 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       );
       // Update the users avatar with their jellyfin profile pic (incase it changed)
       if (account.User.PrimaryImageTag) {
-        user.avatar = `${jellyfinHost}/Users/${account.User.Id}/Images/Primary/?tag=${account.User.PrimaryImageTag}&quality=90`;
+        const avatar = `${jellyfinHost}/Users/${account.User.Id}/Images/Primary/?tag=${account.User.PrimaryImageTag}&quality=90`;
+        if (avatar !== user.avatar) {
+          const avatarProxy = new ImageProxy('avatar', '');
+          avatarProxy.clearCachedImage(user.avatar);
+        }
+        user.avatar = avatar;
       } else {
-        user.avatar = gravatarUrl(user.email || account.User.Name, {
+        const avatar = gravatarUrl(user.email || account.User.Name, {
           default: 'mm',
           size: 200,
         });
+
+        if (avatar !== user.avatar) {
+          const avatarProxy = new ImageProxy('avatar', '');
+          avatarProxy.clearCachedImage(user.avatar);
+        }
+
+        user.avatar = avatar;
       }
       user.jellyfinUsername = account.User.Name;
 
@@ -462,6 +477,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
             ? UserType.JELLYFIN
             : UserType.EMBY,
       });
+
       //initialize Jellyfin/Emby users with local login
       const passedExplicitPassword = body.password && body.password.length > 0;
       if (passedExplicitPassword) {

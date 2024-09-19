@@ -28,7 +28,6 @@ import type Issue from '@server/entity/Issue';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
 import { Field, Form, Formik } from 'formik';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -287,10 +286,10 @@ const IssueDetails = () => {
                   }
                   className="group ml-1 inline-flex h-full items-center xl:ml-1.5"
                 >
-                  <Image
-                    className="mr-0.5 h-5 w-5 scale-100 transform-gpu rounded-full object-cover transition duration-300 group-hover:scale-105 xl:mr-1 xl:h-6 xl:w-6"
-                    src={issueData.createdBy.avatar}
+                  <CachedImage
+                    src={`${issueData.createdBy.avatar}`}
                     alt=""
+                    className="mr-0.5 h-5 w-5 scale-100 transform-gpu rounded-full object-cover transition duration-300 group-hover:scale-105 xl:mr-1 xl:h-6 xl:w-6"
                     width={20}
                     height={20}
                   />

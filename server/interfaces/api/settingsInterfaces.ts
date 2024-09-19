@@ -58,7 +58,7 @@ export interface CacheItem {
 
 export interface CacheResponse {
   apiCaches: CacheItem[];
-  imageCache: Record<'tmdb', { size: number; imageCount: number }>;
+  imageCache: Record<'tmdb' | 'avatar', { size: number; imageCount: number }>;
 }
 
 export interface StatusResponse {

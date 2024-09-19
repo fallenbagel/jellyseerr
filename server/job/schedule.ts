@@ -227,6 +227,9 @@ export const startJobs = (): void => {
       });
       // Clean TMDB image cache
       ImageProxy.clearCache('tmdb');
+
+      // Clean users avatar image cache
+      ImageProxy.clearCache('avatar');
     }),
   });
 

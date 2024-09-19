@@ -3,6 +3,7 @@ import type { RateLimitOptions } from '@server/utils/rateLimit';
 import rateLimit from '@server/utils/rateLimit';
 import { createHash } from 'crypto';
 import { promises } from 'fs';
+import mime from 'mime/lite';
 import path, { join } from 'path';
 
 type ImageResponse = {
@@ -11,7 +12,7 @@ type ImageResponse = {
     curRevalidate: number;
     isStale: boolean;
     etag: string;
-    extension: string;
+    extension: string | null;
     cacheKey: string;
     cacheMiss: boolean;
   };
@@ -27,29 +28,45 @@ class ImageProxy {
     let deletedImages = 0;
     const cacheDirectory = path.join(baseCacheDirectory, key);
 
-    const files = await promises.readdir(cacheDirectory);
+    try {
+      const files = await promises.readdir(cacheDirectory);
 
-    for (const file of files) {
-      const filePath = path.join(cacheDirectory, file);
-      const stat = await promises.lstat(filePath);
+      for (const file of files) {
+        const filePath = path.join(cacheDirectory, file);
+        const stat = await promises.lstat(filePath);
 
-      if (stat.isDirectory()) {
-        const imageFiles = await promises.readdir(filePath);
+        if (stat.isDirectory()) {
+          const imageFiles = await promises.readdir(filePath);
 
-        for (const imageFile of imageFiles) {
-          const [, expireAtSt] = imageFile.split('.');
-          const expireAt = Number(expireAtSt);
-          const now = Date.now();
+          for (const imageFile of imageFiles) {
+            const [, expireAtSt] = imageFile.split('.');
+            const expireAt = Number(expireAtSt);
+            const now = Date.now();
 
-          if (now > expireAt) {
-            await promises.rm(path.join(filePath, imageFile));
-            deletedImages += 1;
+            if (now > expireAt) {
+              await promises.rm(path.join(filePath), {
+                recursive: true,
+              });
+              deletedImages += 1;
+            }
           }
         }
       }
+    } catch (e) {
+      if (e.code === 'ENOENT') {
+        logger.error('Directory not found', {
+          label: 'Image Cache',
+          message: e.message,
+        });
+      } else {
+        logger.error('Failed to read directory', {
+          label: 'Image Cache',
+          message: e.message,
+        });
+      }
     }
 
-    logger.info(`Cleared ${deletedImages} stale image(s) from cache`, {
+    logger.info(`Cleared ${deletedImages} stale image(s) from cache '${key}'`, {
       label: 'Image Cache',
     });
   }
@@ -69,33 +86,49 @@ class ImageProxy {
   }
 
   private static async getDirectorySize(dir: string): Promise<number> {
-    const files = await promises.readdir(dir, {
-      withFileTypes: true,
-    });
+    try {
+      const files = await promises.readdir(dir, {
+        withFileTypes: true,
+      });
 
-    const paths = files.map(async (file) => {
-      const path = join(dir, file.name);
+      const paths = files.map(async (file) => {
+        const path = join(dir, file.name);
 
-      if (file.isDirectory()) return await ImageProxy.getDirectorySize(path);
+        if (file.isDirectory()) return await ImageProxy.getDirectorySize(path);
 
-      if (file.isFile()) {
-        const { size } = await promises.stat(path);
+        if (file.isFile()) {
+          const { size } = await promises.stat(path);
 
-        return size;
+          return size;
+        }
+
+        return 0;
+      });
+
+      return (await Promise.all(paths))
+        .flat(Infinity)
+        .reduce((i, size) => i + size, 0);
+    } catch (e) {
+      if (e.code === 'ENOENT') {
+        return 0;
       }
+    }
 
-      return 0;
-    });
-
-    return (await Promise.all(paths))
-      .flat(Infinity)
-      .reduce((i, size) => i + size, 0);
+    return 0;
   }
 
   private static async getImageCount(dir: string) {
-    const files = await promises.readdir(dir);
+    try {
+      const files = await promises.readdir(dir);
 
-    return files.length;
+      return files.length;
+    } catch (e) {
+      if (e.code === 'ENOENT') {
+        return 0;
+      }
+    }
+
+    return 0;
   }
 
   private fetch: typeof fetch;
@@ -147,6 +180,27 @@ class ImageProxy {
     return imageResponse;
   }
 
+  public async clearCachedImage(path: string) {
+    // find cacheKey
+    const cacheKey = this.getCacheKey(path);
+
+    try {
+      const directory = join(this.getCacheDirectory(), cacheKey);
+      const files = await promises.readdir(directory);
+
+      await promises.rm(directory, { recursive: true });
+
+      logger.info(`Cleared ${files[0]} from cache 'avatar'`, {
+        label: 'Image Cache',
+      });
+    } catch (e) {
+      logger.error('Failed to clear cached image', {
+        label: 'Image Cache',
+        message: e.message,
+      });
+    }
+  }
+
   private async get(cacheKey: string): Promise<ImageResponse | null> {
     try {
       const directory = join(this.getCacheDirectory(), cacheKey);
@@ -187,16 +241,25 @@ class ImageProxy {
       const directory = join(this.getCacheDirectory(), cacheKey);
       const href =
         this.baseUrl +
-        (this.baseUrl.endsWith('/') ? '' : '/') +
+        (this.baseUrl.length > 0
+          ? this.baseUrl.endsWith('/')
+            ? ''
+            : '/'
+          : '') +
         (path.startsWith('/') ? path.slice(1) : path);
       const response = await this.fetch(href);
       const arrayBuffer = await response.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      const extension = path.split('.').pop() ?? '';
-      const maxAge = Number(
+      const extension = mime.getExtension(
+        response.headers.get('content-type') ?? ''
+      );
+
+      let maxAge = Number(
         (response.headers.get('cache-control') ?? '0').split('=')[1]
       );
+
+      if (!maxAge) maxAge = 86400;
       const expireAt = Date.now() + maxAge * 1000;
       const etag = (response.headers.get('etag') ?? '').replace(/"/g, '');
 
@@ -232,7 +295,7 @@ class ImageProxy {
 
   private async writeToCacheDir(
     dir: string,
-    extension: string,
+    extension: string | null,
     maxAge: number,
     expireAt: number,
     buffer: Buffer,

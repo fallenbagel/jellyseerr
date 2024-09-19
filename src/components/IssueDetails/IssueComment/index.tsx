@@ -1,4 +1,5 @@
 import Button from '@app/components/Common/Button';
+import CachedImage from '@app/components/Common/CachedImage';
 import Modal from '@app/components/Common/Modal';
 import { Permission, useUser } from '@app/hooks/useUser';
 import defineMessages from '@app/utils/defineMessages';
@@ -6,7 +7,6 @@ import { Menu, Transition } from '@headlessui/react';
 import { EllipsisVerticalIcon } from '@heroicons/react/24/solid';
 import type { default as IssueCommentType } from '@server/entity/IssueComment';
 import { Field, Form, Formik } from 'formik';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Fragment, useState } from 'react';
 import { FormattedRelativeTime, useIntl } from 'react-intl';
@@ -88,8 +88,8 @@ const IssueComment = ({
         </Modal>
       </Transition>
       <Link href={isActiveUser ? '/profile' : `/users/${comment.user.id}`}>
-        <Image
-          src={comment.user.avatar}
+        <CachedImage
+          src={`${comment.user.avatar}`}
           alt=""
           className="h-10 w-10 scale-100 transform-gpu rounded-full object-cover ring-1 ring-gray-500 transition duration-300 hover:scale-105"
           width={40}
