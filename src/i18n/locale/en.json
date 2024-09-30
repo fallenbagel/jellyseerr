@@ -298,6 +298,7 @@
   "components.ManageSlideOver.plays": "<strong>{playCount, number}</strong> {playCount, plural, one {play} other {plays}}",
   "components.ManageSlideOver.removearr": "Remove from {arr}",
   "components.ManageSlideOver.removearr4k": "Remove from 4K {arr}",
+  "components.RequestList.RequestItem.removearr": "Remove from {arr}",
   "components.ManageSlideOver.tvshow": "series",
   "components.MediaSlider.ShowMoreCard.seemore": "See More",
   "components.MovieDetails.MovieCast.fullcast": "Full Cast",
