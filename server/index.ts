@@ -175,7 +175,7 @@ app
         },
         store: new TypeormStore({
           cleanupLimit: 2,
-          ttl: 1000 * 60 * 60 * 24 * 30,
+          ttl: 60 * 60 * 24 * 30,
         }).connect(sessionRespository) as Store,
       })
     );
