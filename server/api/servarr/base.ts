@@ -157,9 +157,13 @@ class ServarrBase<QueueItemAppendT> extends ExternalAPI {
 
   public getQueue = async (): Promise<(QueueItem & QueueItemAppendT)[]> => {
     try {
-      const data = await this.get<QueueResponse<QueueItemAppendT>>(`/queue`, {
-        includeEpisode: 'true',
-      });
+      const data = await this.get<QueueResponse<QueueItemAppendT>>(
+        `/queue`,
+        {
+          includeEpisode: 'true',
+        },
+        0
+      );
 
       return data.records;
     } catch (e) {
@@ -193,15 +197,24 @@ class ServarrBase<QueueItemAppendT> extends ExternalAPI {
     }
   };
 
+  async refreshMonitoredDownloads(): Promise<void> {
+    await this.runCommand('RefreshMonitoredDownloads', {});
+  }
+
   protected async runCommand(
     commandName: string,
     options: Record<string, unknown>
   ): Promise<void> {
     try {
-      await this.post(`/command`, {
-        name: commandName,
-        ...options,
-      });
+      await this.post(
+        `/command`,
+        {
+          name: commandName,
+          ...options,
+        },
+        {},
+        0
+      );
     } catch (e) {
       throw new Error(`[${this.apiName}] Failed to run command: ${e.message}`);
     }

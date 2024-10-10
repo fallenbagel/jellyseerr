@@ -85,6 +85,7 @@ class DownloadTracker {
           });
 
           try {
+            await radarr.refreshMonitoredDownloads();
             const queueItems = await radarr.getQueue();
 
             this.radarrServers[server.id] = queueItems.map((item) => ({
@@ -162,6 +163,7 @@ class DownloadTracker {
           });
 
           try {
+            await sonarr.refreshMonitoredDownloads();
             const queueItems = await sonarr.getQueue();
 
             this.sonarrServers[server.id] = queueItems.map((item) => ({

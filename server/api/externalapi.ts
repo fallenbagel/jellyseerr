@@ -76,7 +76,7 @@ class ExternalAPI {
     }
     const data = await this.getDataFromResponse(response);
 
-    if (this.cache) {
+    if (this.cache && ttl !== 0) {
       this.cache.set(cacheKey, data, ttl ?? DEFAULT_TTL);
     }
 
@@ -120,7 +120,7 @@ class ExternalAPI {
     }
     const resData = await this.getDataFromResponse(response);
 
-    if (this.cache) {
+    if (this.cache && ttl !== 0) {
       this.cache.set(cacheKey, resData, ttl ?? DEFAULT_TTL);
     }
 
@@ -164,7 +164,7 @@ class ExternalAPI {
     }
     const resData = await this.getDataFromResponse(response);
 
-    if (this.cache) {
+    if (this.cache && ttl !== 0) {
       this.cache.set(cacheKey, resData, ttl ?? DEFAULT_TTL);
     }
 
