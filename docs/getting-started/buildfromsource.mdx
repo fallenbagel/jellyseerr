@@ -12,49 +12,12 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 ### Prerequisites
-<Tabs groupId="versions" queryString>
-  <TabItem value="latest" label="Latest">
-    - [Node.js 18.x](https://nodejs.org/en/download/)
-    - [Yarn 1.x](https://classic.yarnpkg.com/lang/en/docs/install)
-    - [Git](https://git-scm.com/downloads)
-  </TabItem>
-
-  <TabItem value="develop" label="Develop">
     - [Node.js 20.x](https://nodejs.org/en/download/)
     - [Pnpm 9.x](https://pnpm.io/installation)
     - [Git](https://git-scm.com/downloads)
-  </TabItem>
-</Tabs>
-
 
 ## Unix (Linux, macOS)
 ### Installation
-<Tabs groupId="versions" queryString>
-  <TabItem value="latest" label="latest">
-1. Assuming you want the working directory to be `/opt/jellyseerr`, create the directory and navigate to it:
-```bash
-sudo mkdir -p /opt/jellyseerr && cd /opt/jellyseerr
-```
-2. Clone the Jellyseerr repository and checkout the latest release:
-```bash
-git clone https://github.com/Fallenbagel/jellyseerr.git
-cd jellyseerr
-git checkout main
-```
-3. Install the dependencies:
-```bash
-CYPRESS_INSTALL_BINARY=0 yarn install --frozen-lockfile --network-timeout 1000000
-```
-4. Build the project:
-```bash
-yarn build
-```
-5. Start Jellyseerr:
-```bash
-yarn start
-```
-  </TabItem>
-  <TabItem value="develop" label="develop">
 1. Assuming you want the working directory to be `/opt/jellyseerr`, create the directory and navigate to it:
 ```bash
 sudo mkdir -p /opt/jellyseerr && cd /opt/jellyseerr
@@ -77,8 +40,6 @@ pnpm build
 ```bash
 pnpm start
 ```
-  </TabItem>
-</Tabs>
 
 :::info
 You can now access Jellyseerr by visiting `http://localhost:5055` in your web browser.
@@ -234,33 +195,6 @@ pm2 status jellyseerr
 
 ## Windows
 ### Installation
-<Tabs groupId="versions" queryString>
-  <TabItem value="latest" label="latest">
-1. Assuming you want the working directory to be `C:\jellyseerr`, create the directory and navigate to it:
-```powershell
-mkdir C:\jellyseerr
-cd C:\jellyseerr
-```
-2. Clone the Jellyseerr repository and checkout the latest release:
-```powershell
-git clone https://github.com/Fallenbagel/jellyseerr.git .
-git checkout main
-```
-3. Install the dependencies:
-```powershell
-npm install -g win-node-env
-set CYPRESS_INSTALL_BINARY=0 && yarn install --frozen-lockfile --network-timeout 1000000
-```
-4. Build the project:
-```powershell
-yarn build
-```
-5. Start Jellyseerr:
-```powershell
-yarn start
-```
-  </TabItem>
-  <TabItem value="develop" label="develop">
 1. Assuming you want the working directory to be `C:\jellyseerr`, create the directory and navigate to it:
 ```powershell
 mkdir C:\jellyseerr
@@ -284,8 +218,6 @@ pnpm build
 ```powershell
 pnpm start
 ```
-  </TabItem>
-</Tabs>
 
 :::tip
 You can add the environment variables to a `.env` file in the Jellyseerr directory.
@@ -313,6 +245,7 @@ node dist/index.js
 - Set the trigger to "When the computer starts"
 - Set the action to "Start a program"
 - Set the program/script to the path of the `start-jellyseerr.bat` file
+- Set the "Start in" to the jellyseerr directory.
 - Click "Finish"
 
 Now, Jellyseerr will start when the computer boots up in the background.
