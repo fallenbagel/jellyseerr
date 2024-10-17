@@ -635,7 +635,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
                         <span className="avatar-sm ml-1.5">
                           <CachedImage
                             type="avatar"
-                            src={requestData.requestedBy.avatar}
+                            src={requestData.modifiedBy.avatar}
                             alt=""
                             className="avatar-sm object-cover"
                             width={20}
