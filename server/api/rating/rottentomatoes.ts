@@ -182,7 +182,7 @@ class RottenTomatoes extends ExternalAPI {
         );
       }
 
-      if (!tvshow) {
+      if (!tvshow || !tvshow.rottenTomatoes) {
         return null;
       }
 
