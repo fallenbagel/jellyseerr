@@ -448,6 +448,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
       {data.backdropPath && (
         <div className="media-page-bg-image">
           <CachedImage
+            type="tmdb"
             alt=""
             src={`https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${data.backdropPath}`}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -494,6 +495,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
       <div className="media-header">
         <div className="media-poster">
           <CachedImage
+            type="tmdb"
             src={
               data.posterPath
                 ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${data.posterPath}`
@@ -741,6 +743,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                 <div className="group relative z-0 scale-100 transform-gpu cursor-pointer overflow-hidden rounded-lg bg-gray-800 bg-cover bg-center shadow-md ring-1 ring-gray-700 transition duration-300 hover:scale-105 hover:ring-gray-500">
                   <div className="absolute inset-0 z-0">
                     <CachedImage
+                      type="tmdb"
                       src={`https://image.tmdb.org/t/p/w1440_and_h320_multi_faces/${data.collection.backdropPath}`}
                       alt=""
                       style={{

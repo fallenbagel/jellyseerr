@@ -36,6 +36,7 @@ const GenreCard = ({ image, url, name, canExpand = false }: GenreCardProps) => {
       tabIndex={0}
     >
       <CachedImage
+        type="tmdb"
         src={image}
         alt=""
         style={{ width: '100%', height: '100%', objectFit: 'cover' }}

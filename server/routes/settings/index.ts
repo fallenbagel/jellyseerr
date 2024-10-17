@@ -377,11 +377,6 @@ settingsRoutes.get('/jellyfin/library', async (req, res, next) => {
 
 settingsRoutes.get('/jellyfin/users', async (req, res) => {
   const settings = getSettings();
-  const { externalHostname } = settings.jellyfin;
-  const jellyfinHost =
-    externalHostname && externalHostname.length > 0
-      ? externalHostname
-      : getHostname();
 
   const userRepository = getRepository(User);
   const admin = await userRepository.findOneOrFail({
@@ -401,7 +396,7 @@ settingsRoutes.get('/jellyfin/users', async (req, res) => {
     username: user.Name,
     id: user.Id,
     thumb: user.PrimaryImageTag
-      ? `${jellyfinHost}/Users/${user.Id}/Images/Primary/?tag=${user.PrimaryImageTag}&quality=90`
+      ? `/Users/${user.Id}/Images/Primary/?tag=${user.PrimaryImageTag}&quality=90`
       : gravatarUrl(user.Name, { default: 'mm', size: 200 }),
     email: user.Name,
   }));

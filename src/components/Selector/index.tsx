@@ -452,6 +452,7 @@ export const WatchProviderSelector = ({
                     tabIndex={0}
                   >
                     <CachedImage
+                      type="tmdb"
                       src={`https://image.tmdb.org/t/p/original${provider.logoPath}`}
                       alt=""
                       style={{
@@ -497,6 +498,7 @@ export const WatchProviderSelector = ({
                       tabIndex={0}
                     >
                       <CachedImage
+                        type="tmdb"
                         src={`https://image.tmdb.org/t/p/original${provider.logoPath}`}
                         alt=""
                         style={{

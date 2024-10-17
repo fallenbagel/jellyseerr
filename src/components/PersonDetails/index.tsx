@@ -227,6 +227,7 @@ const PersonDetails = () => {
         {data.profilePath && (
           <div className="relative mb-6 mr-0 h-36 w-36 flex-shrink-0 overflow-hidden rounded-full ring-1 ring-gray-700 lg:mb-0 lg:mr-6 lg:h-44 lg:w-44">
             <CachedImage
+              type="tmdb"
               src={`https://image.tmdb.org/t/p/w600_and_h900_bestv2${data.profilePath}`}
               alt=""
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}

@@ -346,6 +346,7 @@ const TitleCard = ({
       >
         <div className="absolute inset-0 h-full w-full overflow-hidden">
           <CachedImage
+            type="tmdb"
             className="absolute inset-0 h-full w-full"
             alt=""
             src={

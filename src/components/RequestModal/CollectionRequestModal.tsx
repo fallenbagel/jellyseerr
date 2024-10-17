@@ -437,6 +437,7 @@ const CollectionRequestModal = ({
                           >
                             <div className="relative h-auto w-10 flex-shrink-0 overflow-hidden rounded-md">
                               <CachedImage
+                                type="tmdb"
                                 src={
                                   part.posterPath
                                     ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${part.posterPath}`

@@ -250,6 +250,7 @@ const JellyfinImportModal: React.FC<JellyfinImportProps> = ({
                             <td className="whitespace-nowrap px-1 py-4 text-sm font-medium leading-5 text-gray-100 md:px-6">
                               <div className="flex items-center">
                                 <CachedImage
+                                  type="avatar"
                                   className="h-10 w-10 flex-shrink-0 rounded-full"
                                   src={user.thumb}
                                   alt=""

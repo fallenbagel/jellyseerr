@@ -217,6 +217,7 @@ const IssueDetails = () => {
       {data.backdropPath && (
         <div className="media-page-bg-image">
           <CachedImage
+            type="tmdb"
             alt=""
             src={`https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${data.backdropPath}`}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -235,6 +236,7 @@ const IssueDetails = () => {
       <div className="media-header">
         <div className="media-poster">
           <CachedImage
+            type="tmdb"
             src={
               data.posterPath
                 ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${data.posterPath}`
@@ -287,7 +289,8 @@ const IssueDetails = () => {
                   className="group ml-1 inline-flex h-full items-center xl:ml-1.5"
                 >
                   <CachedImage
-                    src={`${issueData.createdBy.avatar}`}
+                    type="avatar"
+                    src={issueData.createdBy.avatar}
                     alt=""
                     className="mr-0.5 h-5 w-5 scale-100 transform-gpu rounded-full object-cover transition duration-300 group-hover:scale-105 xl:mr-1 xl:h-6 xl:w-6"
                     width={20}

@@ -57,6 +57,7 @@ const UserDropdown = () => {
           data-testid="user-menu"
         >
           <CachedImage
+            type="avatar"
             className="h-8 w-8 rounded-full object-cover sm:h-10 sm:w-10"
             src={user ? user.avatar : ''}
             alt=""
@@ -80,6 +81,7 @@ const UserDropdown = () => {
             <div className="flex flex-col space-y-4 px-4 py-4">
               <div className="flex items-center space-x-2">
                 <CachedImage
+                  type="avatar"
                   className="h-8 w-8 rounded-full object-cover sm:h-10 sm:w-10"
                   src={user ? user.avatar : ''}
                   alt=""

@@ -61,6 +61,7 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
           {...props}
         >
           <CachedImage
+            type="tmdb"
             className="absolute inset-0 h-full w-full"
             alt=""
             src={imageUrl}

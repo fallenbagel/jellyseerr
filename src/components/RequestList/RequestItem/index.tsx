@@ -191,6 +191,7 @@ const RequestItemError = ({
                           >
                             <span className="avatar-sm ml-1.5">
                               <CachedImage
+                                type="avatar"
                                 src={requestData.requestedBy.avatar}
                                 alt=""
                                 className="avatar-sm object-cover"
@@ -250,6 +251,7 @@ const RequestItemError = ({
                         >
                           <span className="avatar-sm ml-1.5">
                             <CachedImage
+                              type="avatar"
                               src={requestData.modifiedBy.avatar}
                               alt=""
                               className="avatar-sm object-cover"
@@ -418,6 +420,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
         {title.backdropPath && (
           <div className="absolute inset-0 z-0 w-full bg-cover bg-center xl:w-2/3">
             <CachedImage
+              type="tmdb"
               src={`https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${title.backdropPath}`}
               alt=""
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -443,6 +446,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
               className="relative h-auto w-12 flex-shrink-0 scale-100 transform-gpu overflow-hidden rounded-md transition duration-300 hover:scale-105"
             >
               <CachedImage
+                type="tmdb"
                 src={
                   title.posterPath
                     ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${title.posterPath}`
@@ -570,6 +574,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
                         >
                           <span className="avatar-sm ml-1.5">
                             <CachedImage
+                              type="avatar"
                               src={requestData.requestedBy.avatar}
                               alt=""
                               className="avatar-sm object-cover"
@@ -629,6 +634,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
                       >
                         <span className="avatar-sm ml-1.5">
                           <CachedImage
+                            type="avatar"
                             src={requestData.requestedBy.avatar}
                             alt=""
                             className="avatar-sm object-cover"

@@ -634,6 +634,7 @@ const UserList = () => {
                     className="h-10 w-10 flex-shrink-0"
                   >
                     <CachedImage
+                      type="avatar"
                       className="h-10 w-10 rounded-full object-cover"
                       src={user.avatar}
                       alt=""

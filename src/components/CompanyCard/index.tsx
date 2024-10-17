@@ -33,6 +33,7 @@ const CompanyCard = ({ image, url, name }: CompanyCardProps) => {
     >
       <div className="relative h-full w-full">
         <CachedImage
+          type="tmdb"
           src={image}
           alt={name}
           className="relative z-40 h-full w-full"

@@ -116,6 +116,7 @@ const RequestCardError = ({ requestData }: RequestCardErrorProps) => {
                     >
                       <span className="avatar-sm">
                         <CachedImage
+                          type="avatar"
                           src={requestData.requestedBy.avatar}
                           alt=""
                           className="avatar-sm object-cover"
@@ -345,6 +346,7 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
         {title.backdropPath && (
           <div className="absolute inset-0 z-0">
             <CachedImage
+              type="tmdb"
               alt=""
               src={`https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${title.backdropPath}`}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -390,6 +392,7 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
               >
                 <span className="avatar-sm">
                   <CachedImage
+                    type="avatar"
                     src={requestData.requestedBy.avatar}
                     alt=""
                     className="avatar-sm object-cover"
@@ -602,6 +605,7 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
           className="w-20 flex-shrink-0 scale-100 transform-gpu cursor-pointer overflow-hidden rounded-md shadow-sm transition duration-300 hover:scale-105 hover:shadow-md sm:w-28"
         >
           <CachedImage
+            type="tmdb"
             src={
               title.posterPath
                 ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${title.posterPath}`

@@ -4,24 +4,34 @@ import Image from 'next/image';
 
 const imageLoader: ImageLoader = ({ src }) => src;
 
+export type CachedImageProps = ImageProps & {
+  src: string;
+  type: 'tmdb' | 'avatar';
+};
+
 /**
  * The CachedImage component should be used wherever
  * we want to offer the option to locally cache images.
  **/
-const CachedImage = ({ src, ...props }: ImageProps) => {
+const CachedImage = ({ src, type, ...props }: CachedImageProps) => {
   const { currentSettings } = useSettings();
 
-  let imageUrl = src;
+  let imageUrl: string;
 
-  if (typeof imageUrl === 'string' && imageUrl.startsWith('http')) {
-    const parsedUrl = new URL(imageUrl);
-
-    if (parsedUrl.host === 'image.tmdb.org') {
-      if (currentSettings.cacheImages)
-        imageUrl = imageUrl.replace('https://image.tmdb.org', '/imageproxy');
-    } else if (parsedUrl.host !== 'gravatar.com') {
-      imageUrl = '/avatarproxy/' + imageUrl;
-    }
+  if (type === 'tmdb') {
+    // tmdb stuff
+    imageUrl =
+      currentSettings.cacheImages && !src.startsWith('/')
+        ? src.replace(/^https:\/\/image\.tmdb\.org\//, '/imageproxy/')
+        : src;
+  } else if (type === 'avatar') {
+    // jellyfin avatar (in any)
+    const jellyfinAvatar = src.match(
+      /(\/Users\/\w+\/Images\/Primary\/?\?tag=\w+&quality=90)$/
+    )?.[1];
+    imageUrl = jellyfinAvatar ? `/avatarproxy` + jellyfinAvatar : src;
+  } else {
+    return null;
   }
 
   return <Image unoptimized loader={imageLoader} src={imageUrl} {...props} />;
