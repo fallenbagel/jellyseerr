@@ -648,7 +648,7 @@ class Settings {
 
     if (data) {
       const parsedJson = JSON.parse(data);
-      this.data = await runMigrations(parsedJson);
+      this.data = await runMigrations(parsedJson, SETTINGS_PATH);
 
       this.data = merge(this.data, parsedJson);
 
