@@ -522,12 +522,6 @@ components:
     TvdbSettings:
       type: object
       properties:
-        apiKey:
-          type: string
-          example: 'apikey'
-        pin:
-          type: string
-          example: 'ABCDEFGH'
         use:
           type: boolean
           example: true
@@ -2617,21 +2611,6 @@ paths:
       description: Tests if the TVDB configuration is valid. Returns a list of available languages on success.
       tags:
         - settings
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                apiKey:
-                  type: string
-                  example: yourapikey
-                pin:
-                  type: string
-                  example: yourpin
-              required:
-                - apiKey
       responses:
         '200':
           description: Succesfully connected to TVDB

@@ -1,12 +1,9 @@
 import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
-import SensitiveInput from '@app/components/Common/SensitiveInput';
-import CopyButton from '@app/components/Settings/CopyButton';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
-import { ArrowPathIcon } from '@heroicons/react/24/solid';
 import type { TvdbSettings } from '@server/lib/settings';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
@@ -33,13 +30,12 @@ const SettingsTvdb = () => {
 
   const { addToast } = useToasts();
 
-  const testConnection = async (apiKey: string | undefined, pin?: string) => {
+  const testConnection = async () => {
     const response = await fetch('/api/v1/settings/tvdb/test', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ apiKey, pin }),
     });
 
     if (!response.ok) {
@@ -82,19 +78,12 @@ const SettingsTvdb = () => {
       <div className="section">
         <Formik
           initialValues={{
-            apiKey: data?.apiKey,
-            pin: data?.pin,
             enable: data?.use,
           }}
           onSubmit={async (values) => {
-            if (values.enable && values.apiKey === '') {
-              addToast('Please enter an API key', { appearance: 'error' });
-              return;
-            }
-
             try {
               setIsTesting(true);
-              await testConnection(values.apiKey, values.pin);
+              await testConnection();
               setIsTesting(false);
             } catch (e) {
               addToast('Tvdb connection error, check your credentials', {
@@ -105,8 +94,6 @@ const SettingsTvdb = () => {
 
             try {
               await saveSettings({
-                apiKey: values.apiKey,
-                pin: values.pin,
                 use: values.enable || false,
               });
             } catch (e) {
@@ -116,75 +103,9 @@ const SettingsTvdb = () => {
             addToast('Tvdb settings saved', { appearance: 'success' });
           }}
         >
-          {({
-            errors,
-            touched,
-            isSubmitting,
-            isValid,
-            values,
-            setFieldValue,
-          }) => {
+          {({ isSubmitting, isValid, values, setFieldValue }) => {
             return (
               <Form className="section" data-testid="settings-main-form">
-                <div className="form-row">
-                  <label htmlFor="apiKey" className="text-label">
-                    {intl.formatMessage(messages.apikey)}
-                  </label>
-                  <div className="form-input-area">
-                    <div className="form-input-field">
-                      <SensitiveInput
-                        type="text"
-                        id="apiKey"
-                        className="rounded-l-only"
-                        value={values.apiKey}
-                        onChange={(e) => {
-                          setFieldValue('apiKey', e.target.value);
-                        }}
-                      />
-                      <CopyButton
-                        textToCopy={values.apiKey ?? ''}
-                        key={'apikey'}
-                      />
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                        }}
-                        className="input-action"
-                      >
-                        <ArrowPathIcon />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <label htmlFor="pin" className="text-label">
-                    {intl.formatMessage(messages.pin)}
-                  </label>
-                  <div className="form-input-area">
-                    <div className="form-input-field">
-                      <SensitiveInput
-                        type="text"
-                        id="pin"
-                        className="rounded-l-only"
-                        value={values.pin}
-                        onChange={(e) => {
-                          values.pin = e.target.value;
-                        }}
-                      />
-                      <CopyButton textToCopy={values.pin ?? ''} key={'pin'} />
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                        }}
-                        className="input-action"
-                      >
-                        <ArrowPathIcon />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
                 <div className="form-row">
                   <label htmlFor="trustProxy" className="checkbox-label">
                     <span className="mr-2">
@@ -207,11 +128,7 @@ const SettingsTvdb = () => {
                       }}
                     />
                   </div>
-                  {errors.apiKey &&
-                    touched.apiKey &&
-                    typeof errors.apiKey === 'string' && (
-                      <div className="error">{errors.apiKey}</div>
-                    )}
+                  <div className="error"></div>
                 </div>
 
                 <div className="actions">
@@ -224,7 +141,7 @@ const SettingsTvdb = () => {
                         onClick={async () => {
                           setIsTesting(true);
                           try {
-                            await testConnection(values.apiKey, values.pin);
+                            await testConnection();
                             addToast('Tvdb connection successful', {
                               appearance: 'success',
                             });
