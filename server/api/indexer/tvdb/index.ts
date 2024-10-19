@@ -6,26 +6,19 @@ import type {
   TmdbTvDetails,
 } from '@server/api/indexer/themoviedb/interfaces';
 import type {
-  TvdbEpisodeTranslation,
   TvdbLoginResponse,
-  TvdbSeasonDetails,
-  TvdbTvDetails,
+  TvdbTvShowDetail,
 } from '@server/api/indexer/tvdb/interfaces';
 import cacheManager from '@server/lib/cache';
-import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 
 class Tvdb extends ExternalAPI implements TvShowIndexer {
   static instance: Tvdb;
-  private dateTokenExpires?: Date;
-  private pin?: string;
 
-  private constructor(apiKey: string, pin?: string) {
+  private constructor() {
     super(
-      'https://api4.thetvdb.com/v4',
-      {
-        apiKey: apiKey,
-      },
+      'https://skyhook.sonarr.tv/v1/tvdb/shows',
+      {},
       {
         nodeCache: cacheManager.getCache('tvdb').data,
         rateLimit: {
@@ -34,16 +27,11 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
         },
       }
     );
-    this.pin = pin;
   }
 
   public static async getInstance() {
     if (!this.instance) {
-      const settings = getSettings();
-      if (!settings.tvdb.apiKey) {
-        throw new Error('TVDB API key is not set');
-      }
-      this.instance = new Tvdb(settings.tvdb.apiKey, settings.tvdb.pin);
+      this.instance = new Tvdb();
       await this.instance.login();
       logger.info(
         'Tvdb instance created with token => ' +
@@ -55,14 +43,7 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
 
   async login() {
     try {
-      const res = await this.post<TvdbLoginResponse>('/login', {
-        apiKey: this.params.apiKey,
-        pin: this.pin,
-      });
-      this.defaultHeaders.Authorization = `Bearer ${res.data.token}`;
-      this.dateTokenExpires = new Date();
-      this.dateTokenExpires.setMonth(this.dateTokenExpires.getMonth() + 1);
-      return res;
+      return await this.get<TvdbLoginResponse>('/en/445009', {});
     } catch (error) {
       throw new Error(`[TVDB] Login failed: ${error.message}`);
     }
@@ -85,49 +66,43 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
         return tmdbTvShow;
       }
 
-      const data = await this.get<TvdbTvDetails>(
-        `/series/${tvdbId}/extended`,
-        {
-          short: 'true',
-        },
+      const data = await this.get<TvdbTvShowDetail>(
+        `/${language}/${tvdbId}`,
+        {},
         43200
       );
 
-      const correctSeasons = data.data.seasons.filter(
-        (season: TvdbSeasonDetails) =>
-          season.id && season.number > 0 && season.type.name === 'Aired Order'
-      );
+      const correctSeasons = data.seasons.filter((value) => {
+        return value.seasonNumber !== 0;
+      });
 
       tmdbTvShow.seasons = [];
 
       for (const season of correctSeasons) {
-        if (season.id) {
-          logger.info(`Fetching TV season ${season.id}`);
+        if (season.seasonNumber) {
+          logger.info(`Fetching TV season ${season.seasonNumber}`);
 
           try {
-            const tvdbSeason = await this.getTvSeason({
-              tvId: tvdbId,
-              seasonNumber: season.id,
-              language,
-            });
             const seasonData = {
-              id: season.id,
-              episode_count: tvdbSeason.episodes.length,
-              name: tvdbSeason.name,
-              overview: tvdbSeason.overview,
-              season_number: season.number,
+              id: tvdbId,
+              episode_count: data.episodes.filter((value) => {
+                return value.seasonNumber === season.seasonNumber;
+              }).length,
+              name: `${season.seasonNumber}`,
+              overview: '',
+              season_number: season.seasonNumber,
               poster_path: '',
               air_date: '',
-              image: tvdbSeason.poster_path,
+              image: '',
             };
 
             tmdbTvShow.seasons.push(seasonData);
           } catch (error) {
             logger.error(
-              `Failed to get season ${season.id} for TV show ${tvdbId}: ${error.message}`,
+              `Failed to get season ${season.seasonNumber} for TV show ${tvdbId}: ${error.message}`,
               {
                 label: 'Tvdb',
-                message: `Failed to get season ${season.id} for TV show ${tvdbId}`,
+                message: `Failed to get season ${season.seasonNumber} for TV show ${tvdbId}`,
               }
             );
           }
@@ -138,25 +113,6 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     } catch (error) {
       throw new Error(
         `[TVDB] Failed to fetch TV show details: ${error.message}`
-      );
-    }
-  };
-
-  getEpisode = async (
-    episodeId: number,
-    language: string
-  ): Promise<TvdbEpisodeTranslation> => {
-    try {
-      const tvdbEpisode = await this.get<TvdbEpisodeTranslation>(
-        `/episodes/${episodeId}/translations/${language}`,
-        {},
-        43200
-      );
-
-      return tvdbEpisode;
-    } catch (error) {
-      throw new Error(
-        `[TVDB] Failed to fetch TV episode details: ${error.message}`
       );
     }
   };
@@ -184,36 +140,40 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
       };
     }
     try {
-      const tvdbSeason = await this.get<TvdbSeasonDetails>(
-        `/seasons/${seasonNumber}/extended`,
+      const tvdbSeason = await this.get<TvdbTvShowDetail>(
+        `/en/${tvId}`,
         { lang: language },
         43200
       );
 
-      const episodes = tvdbSeason.data.episodes.map((episode) => ({
-        id: episode.id,
-        air_date: episode.aired,
-        episode_number: episode.number,
-        name: episode.name,
-        overview: episode.overview || '',
-        season_number: episode.seasonNumber,
-        production_code: '',
-        show_id: tvId,
-        still_path: episode.image,
-        vote_average: 1,
-        vote_cuont: 1,
-      }));
+      const episodes = tvdbSeason.episodes
+        .filter((value) => {
+          return value.seasonNumber === seasonNumber;
+        })
+        .map((episode) => ({
+          id: episode.tvdbId,
+          air_date: episode.airDate,
+          episode_number: episode.episodeNumber,
+          name: episode.title || '',
+          overview: episode.overview || '',
+          season_number: episode.seasonNumber,
+          production_code: '',
+          show_id: tvId,
+          still_path: episode.image || '',
+          vote_average: 1,
+          vote_count: 1,
+        }));
 
       return {
         episodes: episodes,
         external_ids: {
-          tvdb_id: tvdbSeason.seriesId,
+          tvdb_id: tvdbSeason.tvdbId,
         },
         name: '',
         overview: '',
-        id: tvdbSeason.id,
-        air_date: tvdbSeason.year,
-        season_number: tvdbSeason.number,
+        id: tvdbSeason.tvdbId,
+        air_date: tvdbSeason.firstAired,
+        season_number: episodes.length,
       };
     } catch (error) {
       throw new Error(

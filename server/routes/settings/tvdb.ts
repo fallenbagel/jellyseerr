@@ -18,8 +18,6 @@ tvdbRoutes.put('/', (req, res) => {
   const newTvdb = req.body as TvdbSettings;
   const tvdb = settings.tvdb;
 
-  tvdb.apiKey = newTvdb.apiKey;
-  tvdb.pin = newTvdb.pin;
   tvdb.use = newTvdb.use;
 
   settings.tvdb = tvdb;
