@@ -1,6 +1,7 @@
 import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
+import SettingsBadge from '@app/components/Settings/SettingsBadge';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
@@ -17,12 +18,10 @@ const messages = defineMessages('components.Settings', {
   apikey: 'API Key',
   pin: 'PIN',
   enable: 'Enable',
-  enableTip: 'Enable Tvdb (only for season and episode)',
+  enableTip:
+    'Enable Tvdb (only for season and episode).' +
+    ' Due to a limitation of the api used, only English is available.',
 });
-
-/*interface SettingsTvdbProps {
-  onEdit: () => void;
-}*/
 
 const SettingsTvdb = () => {
   const intl = useIntl();
@@ -111,6 +110,8 @@ const SettingsTvdb = () => {
                     <span className="mr-2">
                       {intl.formatMessage(messages.enable)}
                     </span>
+                    <SettingsBadge badgeType="experimental" />
+
                     <span className="label-tip">
                       {intl.formatMessage(messages.enableTip)}
                     </span>

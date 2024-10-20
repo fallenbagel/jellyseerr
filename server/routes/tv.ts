@@ -1,11 +1,10 @@
 import TheMovieDb from '@server/api/indexer/themoviedb';
-import Tvdb from '@server/api/indexer/tvdb';
 import RottenTomatoes from '@server/api/rating/rottentomatoes';
 import { MediaType } from '@server/constants/media';
 import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';
 import { Watchlist } from '@server/entity/Watchlist';
-import { getSettings } from '@server/lib/settings';
+import { getIndexer } from '@server/lib/settings';
 import logger from '@server/logger';
 import { mapTvResult } from '@server/models/Search';
 import { mapSeasonWithEpisodes, mapTvDetails } from '@server/models/Tv';
@@ -14,15 +13,10 @@ import { Router } from 'express';
 const tvRoutes = Router();
 
 tvRoutes.get('/:id', async (req, res, next) => {
-  const settings = getSettings();
-  let tmdb;
-  if (settings.tvdb.use) {
-    tmdb = await Tvdb.getInstance();
-  } else {
-    tmdb = new TheMovieDb();
-  }
+  const indexer = getIndexer();
+
   try {
-    const tv = await tmdb.getTvShow({
+    const tv = await indexer.getTvShow({
       tvId: Number(req.params.id),
       language: (req.query.language as string) ?? req.locale,
     });
@@ -42,7 +36,9 @@ tvRoutes.get('/:id', async (req, res, next) => {
 
     // TMDB issue where it doesnt fallback to English when no overview is available in requested locale.
     if (!data.overview) {
-      const tvEnglish = await tmdb.getTvShow({ tvId: Number(req.params.id) });
+      const tvEnglish = await indexer.getTvShow({
+        tvId: Number(req.params.id),
+      });
       data.overview = tvEnglish.overview;
     }
 
@@ -62,20 +58,13 @@ tvRoutes.get('/:id', async (req, res, next) => {
 
 tvRoutes.get('/:id/season/:seasonNumber/:seasonId', async (req, res, next) => {
   try {
-    const settings = getSettings();
-    let tmdb;
-    let seasonIdentifier;
-    if (settings.tvdb.use) {
-      tmdb = await Tvdb.getInstance();
-      seasonIdentifier = req.params.seasonId;
-    } else {
-      tmdb = new TheMovieDb();
-      seasonIdentifier = req.params.seasonNumber;
-    }
+    const indexer = getIndexer();
+    const seasonIdentifier = indexer.getSeasonIdentifier(req);
 
-    const season = await tmdb.getTvSeason({
+    const season = await indexer.getTvSeason({
       tvId: Number(req.params.id),
-      seasonNumber: Number(seasonIdentifier),
+      seasonId: seasonIdentifier,
+      seasonNumber: Number(req.params.seasonNumber),
     });
 
     return res.status(200).json(mapSeasonWithEpisodes(season));

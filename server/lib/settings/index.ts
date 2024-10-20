@@ -1,3 +1,6 @@
+import type { TvShowIndexer } from '@server/api/indexer';
+import TheMovieDb from '@server/api/indexer/themoviedb';
+import Tvdb from '@server/api/indexer/tvdb';
 import { MediaServerType } from '@server/constants/server';
 import { Permission } from '@server/lib/permissions';
 import { runMigrations } from '@server/lib/settings/migrator';
@@ -785,6 +788,15 @@ export const getSettings = (initialSettings?: AllSettings): Settings => {
   }
 
   return settings;
+};
+
+export const getIndexer = (): TvShowIndexer => {
+  const settings = getSettings();
+  if (settings.tvdb.use) {
+    return new Tvdb();
+  } else {
+    return new TheMovieDb();
+  }
 };
 
 export default Settings;
