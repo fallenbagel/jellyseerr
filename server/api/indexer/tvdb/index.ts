@@ -66,8 +66,6 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
 
         for (const season of correctSeasons) {
           if (season.seasonNumber) {
-            logger.info(`Fetching TV season ${season.seasonNumber}`);
-
             try {
               const seasonData = {
                 id: tvdbId,
