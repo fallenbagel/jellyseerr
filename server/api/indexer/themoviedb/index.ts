@@ -180,6 +180,10 @@ class TheMovieDb extends ExternalAPI implements TvShowIndexer {
     }
   };
 
+  getSeasonIdentifier(req: any): number {
+    return req.params.seasonNumber;
+  }
+
   public searchTvShows = async ({
     query,
     page = 1,
@@ -324,6 +328,12 @@ class TheMovieDb extends ExternalAPI implements TvShowIndexer {
         }
       );
 
+      data.episodes = data.episodes.map((episode) => {
+        if (episode.still_path !== '') {
+          episode.still_path = `https://image.tmdb.org/t/p/original/${episode.still_path}`;
+        }
+        return episode;
+      });
       return data;
     } catch (e) {
       throw new Error(`[TMDB] Failed to fetch TV show details: ${e.message}`);
