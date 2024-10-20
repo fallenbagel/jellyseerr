@@ -28,7 +28,7 @@ tvdbRoutes.put('/', (req, res) => {
 
 tvdbRoutes.post('/test', async (req, res, next) => {
   try {
-    const tvdb = await Tvdb.getInstance();
+    const tvdb = new Tvdb();
     await tvdb.login();
     return res.status(200).json({ message: 'Successfully connected to Tvdb' });
   } catch (e) {

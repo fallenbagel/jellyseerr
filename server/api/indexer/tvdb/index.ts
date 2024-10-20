@@ -13,9 +13,9 @@ import cacheManager from '@server/lib/cache';
 import logger from '@server/logger';
 
 class Tvdb extends ExternalAPI implements TvShowIndexer {
-  static instance: Tvdb;
+  private tmdb: TheMovieDb = new TheMovieDb();
 
-  private constructor() {
+  public constructor() {
     super(
       'https://skyhook.sonarr.tv/v1/tvdb/shows',
       {},
@@ -29,18 +29,6 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     );
   }
 
-  public static async getInstance() {
-    if (!this.instance) {
-      this.instance = new Tvdb();
-      await this.instance.login();
-      logger.info(
-        'Tvdb instance created with token => ' +
-          this.instance.defaultHeaders.Authorization
-      );
-    }
-    return this.instance;
-  }
-
   async login() {
     try {
       return await this.get<TvdbLoginResponse>('/en/445009', {});
@@ -51,71 +39,80 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
 
   public getTvShow = async ({
     tvId,
-    language = 'en',
   }: {
     tvId: number;
     language?: string;
   }): Promise<TmdbTvDetails> => {
     try {
-      const tmdb = new TheMovieDb();
-      const tmdbTvShow = await tmdb.getTvShow({ tvId: tvId });
+      const tmdbTvShow = await this.tmdb.getTvShow({ tvId: tvId });
+      const tvdbId = this.getTvdbIdFromTmdb(tmdbTvShow);
 
-      const tvdbId = tmdbTvShow.external_ids.tvdb_id;
-
-      if (!tvdbId) {
+      if (tvdbId === -1) {
         return tmdbTvShow;
       }
 
-      const data = await this.get<TvdbTvShowDetail>(
-        `/${language}/${tvdbId}`,
-        {},
-        43200
-      );
+      try {
+        const data = await this.get<TvdbTvShowDetail>(
+          `/en/${tvdbId}`,
+          {},
+          43200
+        );
 
-      const correctSeasons = data.seasons.filter((value) => {
-        return value.seasonNumber !== 0;
-      });
+        const correctSeasons = data.seasons.filter((value) => {
+          return value.seasonNumber !== 0;
+        });
 
-      tmdbTvShow.seasons = [];
+        tmdbTvShow.seasons = [];
 
-      for (const season of correctSeasons) {
-        if (season.seasonNumber) {
-          logger.info(`Fetching TV season ${season.seasonNumber}`);
+        for (const season of correctSeasons) {
+          if (season.seasonNumber) {
+            logger.info(`Fetching TV season ${season.seasonNumber}`);
 
-          try {
-            const seasonData = {
-              id: tvdbId,
-              episode_count: data.episodes.filter((value) => {
-                return value.seasonNumber === season.seasonNumber;
-              }).length,
-              name: `${season.seasonNumber}`,
-              overview: '',
-              season_number: season.seasonNumber,
-              poster_path: '',
-              air_date: '',
-              image: '',
-            };
+            try {
+              const seasonData = {
+                id: tvdbId,
+                episode_count: data.episodes.filter((value) => {
+                  return value.seasonNumber === season.seasonNumber;
+                }).length,
+                name: `${season.seasonNumber}`,
+                overview: '',
+                season_number: season.seasonNumber,
+                poster_path: '',
+                air_date: '',
+                image: '',
+              };
 
-            tmdbTvShow.seasons.push(seasonData);
-          } catch (error) {
-            logger.error(
-              `Failed to get season ${season.seasonNumber} for TV show ${tvdbId}: ${error.message}`,
-              {
-                label: 'Tvdb',
-                message: `Failed to get season ${season.seasonNumber} for TV show ${tvdbId}`,
-              }
-            );
+              tmdbTvShow.seasons.push(seasonData);
+            } catch (error) {
+              logger.error(
+                `Failed to get season ${season.seasonNumber} for TV show ${tvdbId}: ${error.message}`,
+                {
+                  label: 'Tvdb',
+                  message: `Failed to get season ${season.seasonNumber} for TV show ${tvdbId}`,
+                }
+              );
+            }
           }
         }
-      }
 
-      return tmdbTvShow;
+        return tmdbTvShow;
+      } catch (e) {
+        return tmdbTvShow;
+      }
     } catch (error) {
       throw new Error(
         `[TVDB] Failed to fetch TV show details: ${error.message}`
       );
     }
   };
+
+  private getTvdbIdFromTmdb(tmdbTvShow: TmdbTvDetails) {
+    try {
+      return tmdbTvShow.external_ids.tvdb_id || -1;
+    } catch (e) {
+      return -1;
+    }
+  }
 
   public getTvSeason = async ({
     tvId,
@@ -139,9 +136,16 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
         season_number: 0,
       };
     }
+
+    const tmdbTvShow = await this.tmdb.getTvShow({ tvId: tvId });
+    const tvdbId = this.getTvdbIdFromTmdb(tmdbTvShow);
+
+    if (tvdbId === -1) {
+      return await this.tmdb.getTvSeason({ tvId, seasonNumber, language });
+    }
     try {
       const tvdbSeason = await this.get<TvdbTvShowDetail>(
-        `/en/${tvId}`,
+        `/en/${tvdbId}`,
         { lang: language },
         43200
       );
@@ -150,11 +154,11 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
         .filter((value) => {
           return value.seasonNumber === seasonNumber;
         })
-        .map((episode) => ({
+        .map((episode, index) => ({
           id: episode.tvdbId,
           air_date: episode.airDate,
           episode_number: episode.episodeNumber,
-          name: episode.title || '',
+          name: episode.title || `Episode ${index + 1}`,
           overview: episode.overview || '',
           season_number: episode.seasonNumber,
           production_code: '',
@@ -176,11 +180,16 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
         season_number: episodes.length,
       };
     } catch (error) {
-      throw new Error(
+      logger.error(
         `[TVDB] Failed to fetch TV season details: ${error.message}`
       );
+      return await this.tmdb.getTvSeason({ tvId, seasonNumber, language });
     }
   };
+
+  getSeasonIdentifier(req: any): number {
+    return req.params.seasonId;
+  }
 }
 
 export default Tvdb;
