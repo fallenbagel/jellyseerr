@@ -72,15 +72,11 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     language?: string;
   }): Promise<TmdbTvDetails> {
     try {
-      const tmdbTvShow = await this.tmdb.getTvShow({ tvId });
+      const tmdbTvShow = await this.tmdb.getTvShow({ tvId, language });
       const tvdbId = this.getTvdbIdFromTmdb(tmdbTvShow);
 
       if (this.isValidTvdbId(tvdbId)) {
-        return await this.enrichTmdbShowWithTvdbData(
-          tmdbTvShow,
-          tvdbId,
-          language
-        );
+        return await this.enrichTmdbShowWithTvdbData(tmdbTvShow, tvdbId);
       }
 
       return tmdbTvShow;
@@ -104,14 +100,14 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     }
 
     try {
-      const tmdbTvShow = await this.tmdb.getTvShow({ tvId });
+      const tmdbTvShow = await this.tmdb.getTvShow({ tvId, language });
       const tvdbId = this.getTvdbIdFromTmdb(tmdbTvShow);
 
       if (!this.isValidTvdbId(tvdbId)) {
         return await this.tmdb.getTvSeason({ tvId, seasonNumber, language });
       }
 
-      return await this.getTvdbSeasonData(tvdbId, seasonNumber, tvId, language);
+      return await this.getTvdbSeasonData(tvdbId, seasonNumber, tvId);
     } catch (error) {
       logger.error(
         `[TVDB] Failed to fetch TV season details: ${error.message}`
@@ -126,11 +122,10 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
 
   private async enrichTmdbShowWithTvdbData(
     tmdbTvShow: TmdbTvDetails,
-    tvdbId: ValidTvdbId,
-    language: string
+    tvdbId: ValidTvdbId
   ): Promise<TmdbTvDetails> {
     try {
-      const tvdbData = await this.fetchTvdbShowData(tvdbId, language);
+      const tvdbData = await this.fetchTvdbShowData(tvdbId);
       const seasons = this.processSeasons(tvdbData);
       return { ...tmdbTvShow, seasons };
     } catch (error) {
@@ -141,12 +136,9 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     }
   }
 
-  private async fetchTvdbShowData(
-    tvdbId: number,
-    language: string
-  ): Promise<TvdbTvShowDetail> {
+  private async fetchTvdbShowData(tvdbId: number): Promise<TvdbTvShowDetail> {
     return await this.get<TvdbTvShowDetail>(
-      `/${language}/${tvdbId}`,
+      `/en/${tvdbId}`,
       {},
       Tvdb.DEFAULT_CACHE_TTL
     );
@@ -183,10 +175,9 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
   private async getTvdbSeasonData(
     tvdbId: number,
     seasonNumber: number,
-    tvId: number,
-    language: string
+    tvId: number
   ): Promise<TmdbSeasonWithEpisodes> {
-    const tvdbSeason = await this.fetchTvdbShowData(tvdbId, language);
+    const tvdbSeason = await this.fetchTvdbShowData(tvdbId);
 
     const episodes = this.processEpisodes(tvdbSeason, seasonNumber, tvId);
 
