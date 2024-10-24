@@ -1,4 +1,4 @@
-import { existsSync } from 'fs';
+import { accessSync, existsSync } from 'fs';
 import path from 'path';
 
 const CONFIG_PATH = process.env.CONFIG_DIRECTORY
@@ -13,4 +13,13 @@ export const appDataStatus = (): boolean => {
 
 export const appDataPath = (): string => {
   return CONFIG_PATH;
+};
+
+export const appDataPermissions = (): boolean => {
+  try {
+    accessSync(CONFIG_PATH);
+    return true;
+  } catch (err) {
+    return false;
+  }
 };

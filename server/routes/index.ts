@@ -17,7 +17,11 @@ import { mapProductionCompany } from '@server/models/Movie';
 import { mapNetwork } from '@server/models/Tv';
 import settingsRoutes from '@server/routes/settings';
 import watchlistRoutes from '@server/routes/watchlist';
-import { appDataPath, appDataStatus } from '@server/utils/appDataVolume';
+import {
+  appDataPath,
+  appDataPermissions,
+  appDataStatus,
+} from '@server/utils/appDataVolume';
 import { getAppVersion, getCommitTag } from '@server/utils/appVersion';
 import restartFlag from '@server/utils/restartFlag';
 import { isPerson } from '@server/utils/typeHelpers';
@@ -93,6 +97,7 @@ router.get('/status/appdata', (_req, res) => {
   return res.status(200).json({
     appData: appDataStatus(),
     appDataPath: appDataPath(),
+    appDataPermissions: appDataPermissions(),
   });
 });
 
