@@ -86,10 +86,12 @@ interface TestResponse {
     id: number;
     path: string;
   }[];
-  languageProfiles: {
-    id: number;
-    name: string;
-  }[];
+  languageProfiles:
+    | {
+        id: number;
+        name: string;
+      }[]
+    | null;
   tags: {
     id: number;
     label: string;
@@ -112,7 +114,7 @@ const SonarrModal = ({ onClose, sonarr, onSave }: SonarrModalProps) => {
   const [testResponse, setTestResponse] = useState<TestResponse>({
     profiles: [],
     rootFolders: [],
-    languageProfiles: [],
+    languageProfiles: null,
     tags: [],
   });
   const SonarrSettingsSchema = Yup.object().shape({
@@ -137,9 +139,11 @@ const SonarrModal = ({ onClose, sonarr, onSave }: SonarrModalProps) => {
     activeProfileId: Yup.string().required(
       intl.formatMessage(messages.validationProfileRequired)
     ),
-    activeLanguageProfileId: Yup.number().required(
-      intl.formatMessage(messages.validationLanguageProfileRequired)
-    ),
+    activeLanguageProfileId: testResponse.languageProfiles
+      ? Yup.number().required(
+          intl.formatMessage(messages.validationLanguageProfileRequired)
+        )
+      : Yup.number(),
     externalUrl: Yup.string()
       .url(intl.formatMessage(messages.validationApplicationUrl))
       .test(
@@ -658,54 +662,56 @@ const SonarrModal = ({ onClose, sonarr, onSave }: SonarrModalProps) => {
                       )}
                   </div>
                 </div>
-                <div className="form-row">
-                  <label
-                    htmlFor="activeLanguageProfileId"
-                    className="text-label"
-                  >
-                    {intl.formatMessage(messages.languageprofile)}
-                    <span className="label-required">*</span>
-                  </label>
-                  <div className="form-input-area">
-                    <div className="form-input-field">
-                      <Field
-                        as="select"
-                        id="activeLanguageProfileId"
-                        name="activeLanguageProfileId"
-                        disabled={!isValidated || isTesting}
-                      >
-                        <option value="">
-                          {isTesting
-                            ? intl.formatMessage(
-                                messages.loadinglanguageprofiles
-                              )
-                            : !isValidated
-                            ? intl.formatMessage(
-                                messages.testFirstLanguageProfiles
-                              )
-                            : intl.formatMessage(
-                                messages.selectLanguageProfile
-                              )}
-                        </option>
-                        {testResponse.languageProfiles.length > 0 &&
-                          testResponse.languageProfiles.map((language) => (
-                            <option
-                              key={`loaded-profile-${language.id}`}
-                              value={language.id}
-                            >
-                              {language.name}
-                            </option>
-                          ))}
-                      </Field>
+                {testResponse.languageProfiles && (
+                  <div className="form-row">
+                    <label
+                      htmlFor="activeLanguageProfileId"
+                      className="text-label"
+                    >
+                      {intl.formatMessage(messages.languageprofile)}
+                      <span className="label-required">*</span>
+                    </label>
+                    <div className="form-input-area">
+                      <div className="form-input-field">
+                        <Field
+                          as="select"
+                          id="activeLanguageProfileId"
+                          name="activeLanguageProfileId"
+                          disabled={!isValidated || isTesting}
+                        >
+                          <option value="">
+                            {isTesting
+                              ? intl.formatMessage(
+                                  messages.loadinglanguageprofiles
+                                )
+                              : !isValidated
+                              ? intl.formatMessage(
+                                  messages.testFirstLanguageProfiles
+                                )
+                              : intl.formatMessage(
+                                  messages.selectLanguageProfile
+                                )}
+                          </option>
+                          {testResponse.languageProfiles.length > 0 &&
+                            testResponse.languageProfiles.map((language) => (
+                              <option
+                                key={`loaded-profile-${language.id}`}
+                                value={language.id}
+                              >
+                                {language.name}
+                              </option>
+                            ))}
+                        </Field>
+                      </div>
+                      {errors.activeLanguageProfileId &&
+                        touched.activeLanguageProfileId && (
+                          <div className="error">
+                            {errors.activeLanguageProfileId}
+                          </div>
+                        )}
                     </div>
-                    {errors.activeLanguageProfileId &&
-                      touched.activeLanguageProfileId && (
-                        <div className="error">
-                          {errors.activeLanguageProfileId}
-                        </div>
-                      )}
                   </div>
-                </div>
+                )}
                 <div className="form-row">
                   <label htmlFor="tags" className="text-label">
                     {intl.formatMessage(messages.tags)}
@@ -863,53 +869,55 @@ const SonarrModal = ({ onClose, sonarr, onSave }: SonarrModalProps) => {
                       )}
                   </div>
                 </div>
-                <div className="form-row">
-                  <label
-                    htmlFor="activeAnimeLanguageProfileId"
-                    className="text-label"
-                  >
-                    {intl.formatMessage(messages.animelanguageprofile)}
-                  </label>
-                  <div className="form-input-area">
-                    <div className="form-input-field">
-                      <Field
-                        as="select"
-                        id="activeAnimeLanguageProfileId"
-                        name="activeAnimeLanguageProfileId"
-                        disabled={!isValidated || isTesting}
-                      >
-                        <option value="">
-                          {isTesting
-                            ? intl.formatMessage(
-                                messages.loadinglanguageprofiles
-                              )
-                            : !isValidated
-                            ? intl.formatMessage(
-                                messages.testFirstLanguageProfiles
-                              )
-                            : intl.formatMessage(
-                                messages.selectLanguageProfile
-                              )}
-                        </option>
-                        {testResponse.languageProfiles.length > 0 &&
-                          testResponse.languageProfiles.map((language) => (
-                            <option
-                              key={`loaded-profile-${language.id}`}
-                              value={language.id}
-                            >
-                              {language.name}
-                            </option>
-                          ))}
-                      </Field>
+                {testResponse.languageProfiles && (
+                  <div className="form-row">
+                    <label
+                      htmlFor="activeAnimeLanguageProfileId"
+                      className="text-label"
+                    >
+                      {intl.formatMessage(messages.animelanguageprofile)}
+                    </label>
+                    <div className="form-input-area">
+                      <div className="form-input-field">
+                        <Field
+                          as="select"
+                          id="activeAnimeLanguageProfileId"
+                          name="activeAnimeLanguageProfileId"
+                          disabled={!isValidated || isTesting}
+                        >
+                          <option value="">
+                            {isTesting
+                              ? intl.formatMessage(
+                                  messages.loadinglanguageprofiles
+                                )
+                              : !isValidated
+                              ? intl.formatMessage(
+                                  messages.testFirstLanguageProfiles
+                                )
+                              : intl.formatMessage(
+                                  messages.selectLanguageProfile
+                                )}
+                          </option>
+                          {testResponse.languageProfiles.length > 0 &&
+                            testResponse.languageProfiles.map((language) => (
+                              <option
+                                key={`loaded-profile-${language.id}`}
+                                value={language.id}
+                              >
+                                {language.name}
+                              </option>
+                            ))}
+                        </Field>
+                      </div>
+                      {errors.activeAnimeLanguageProfileId &&
+                        touched.activeAnimeLanguageProfileId && (
+                          <div className="error">
+                            {errors.activeAnimeLanguageProfileId}
+                          </div>
+                        )}
                     </div>
-                    {errors.activeAnimeLanguageProfileId &&
-                      touched.activeAnimeLanguageProfileId && (
-                        <div className="error">
-                          {errors.activeAnimeLanguageProfileId}
-                        </div>
-                      )}
                   </div>
-                </div>
+                )}
                 <div className="form-row">
                   <label htmlFor="tags" className="text-label">
                     {intl.formatMessage(messages.animeTags)}

@@ -123,9 +123,13 @@ serviceRoutes.get<{ sonarrId: string }>(
     });
 
     try {
+      const systemStatus = await sonarr.getSystemStatus();
+      const sonarrMajorVersion = Number(systemStatus.version.split('.')[0]);
+
       const profiles = await sonarr.getProfiles();
       const rootFolders = await sonarr.getRootFolders();
-      const languageProfiles = await sonarr.getLanguageProfiles();
+      const languageProfiles =
+        sonarrMajorVersion <= 3 ? await sonarr.getLanguageProfiles() : null;
       const tags = await sonarr.getTags();
 
       return res.status(200).json({

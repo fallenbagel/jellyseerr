@@ -43,13 +43,14 @@ sonarrRoutes.post('/test', async (req, res, next) => {
       url: SonarrAPI.buildUrl(req.body, '/api/v3'),
     });
 
-    const urlBase = await sonarr
-      .getSystemStatus()
-      .then((value) => value.urlBase)
-      .catch(() => req.body.baseUrl);
+    const systemStatus = await sonarr.getSystemStatus();
+    const sonarrMajorVersion = Number(systemStatus.version.split('.')[0]);
+
+    const urlBase = systemStatus.urlBase;
     const profiles = await sonarr.getProfiles();
     const folders = await sonarr.getRootFolders();
-    const languageProfiles = await sonarr.getLanguageProfiles();
+    const languageProfiles =
+      sonarrMajorVersion <= 3 ? await sonarr.getLanguageProfiles() : null;
     const tags = await sonarr.getTags();
 
     return res.status(200).json({
