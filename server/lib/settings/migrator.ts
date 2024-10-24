@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import type { AllSettings } from '@server/lib/settings';
 import logger from '@server/logger';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 
 const migrationsDir = path.join(__dirname, 'migrations');
@@ -10,19 +10,46 @@ export const runMigrations = async (
   settings: AllSettings,
   SETTINGS_PATH: string
 ): Promise<AllSettings> => {
-  const migrations = fs
-    .readdirSync(migrationsDir)
-    .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    .map((file) => require(path.join(migrationsDir, file)).default);
-
   let migrated = settings;
 
   try {
+    // we read old backup and create a backup of currents settings
+    const BACKUP_PATH = SETTINGS_PATH.replace('.json', '.old.json');
+    let oldBackup: Buffer | null = null;
+    try {
+      oldBackup = await fs.readFile(BACKUP_PATH);
+    } catch {
+      /* empty */
+    }
+    await fs.writeFile(BACKUP_PATH, JSON.stringify(settings, undefined, ' '));
+
+    const migrations = (await fs.readdir(migrationsDir)).filter(
+      (file) => file.endsWith('.js') || file.endsWith('.ts')
+    );
+
     const settingsBefore = JSON.stringify(migrated);
 
     for (const migration of migrations) {
-      migrated = await migration(migrated);
+      try {
+        logger.debug(`Checking migration '${migration}'...`, {
+          label: 'Settings Migrator',
+        });
+        const { default: migrationFn } = await import(
+          path.join(migrationsDir, migration)
+        );
+        const newSettings = await migrationFn(migrated);
+        if (JSON.stringify(migrated) !== JSON.stringify(newSettings)) {
+          logger.debug(`Migration '${migration}' has been applied.`, {
+            label: 'Settings Migrator',
+          });
+        }
+        migrated = newSettings;
+      } catch (e) {
+        logger.error(`Error while running migration '${migration}'`, {
+          label: 'Settings Migrator',
+        });
+        throw e;
+      }
     }
 
     const settingsAfter = JSON.stringify(migrated);
@@ -30,12 +57,19 @@ export const runMigrations = async (
     if (settingsBefore !== settingsAfter) {
       // a migration occured
       // we check that the new config will be saved
-      fs.writeFileSync(SETTINGS_PATH, JSON.stringify(migrated, undefined, ' '));
-      const fileSaved = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf-8'));
+      await fs.writeFile(
+        SETTINGS_PATH,
+        JSON.stringify(migrated, undefined, ' ')
+      );
+      const fileSaved = JSON.parse(await fs.readFile(SETTINGS_PATH, 'utf-8'));
       if (JSON.stringify(fileSaved) !== settingsAfter) {
         // something went wrong while saving file
         throw new Error('Unable to save settings after migration.');
       }
+    } else if (oldBackup) {
+      // no migration occured
+      // we save the old backup (to avoid settings.json and settings.old.json being the same)
+      await fs.writeFile(BACKUP_PATH, oldBackup.toString());
     }
   } catch (e) {
     logger.error(
