@@ -25,11 +25,8 @@ const CachedImage = ({ src, type, ...props }: CachedImageProps) => {
         ? src.replace(/^https:\/\/image\.tmdb\.org\//, '/imageproxy/')
         : src;
   } else if (type === 'avatar') {
-    // jellyfin avatar (in any)
-    const jellyfinAvatar = src.match(
-      /(\/Users\/\w+\/Images\/Primary\/?\?tag=\w+&quality=90)$/
-    )?.[1];
-    imageUrl = jellyfinAvatar ? `/avatarproxy` + jellyfinAvatar : src;
+    // jellyfin avatar (if any)
+    imageUrl = src;
   } else {
     return null;
   }

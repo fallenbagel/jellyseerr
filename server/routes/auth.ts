@@ -6,7 +6,6 @@ import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { startJobs } from '@server/job/schedule';
-import ImageProxy from '@server/lib/imageproxy';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
@@ -15,7 +14,6 @@ import { ApiError } from '@server/types/error';
 import { getHostname } from '@server/utils/getHostname';
 import * as EmailValidator from 'email-validator';
 import { Router } from 'express';
-import gravatarUrl from 'gravatar-url';
 import net from 'net';
 
 const authRoutes = Router();
@@ -328,12 +326,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
             jellyfinDeviceId: deviceId,
             jellyfinAuthToken: account.AccessToken,
             permissions: Permission.ADMIN,
-            avatar: account.User.PrimaryImageTag
-              ? `/Users/${account.User.Id}/Images/Primary/?tag=${account.User.PrimaryImageTag}&quality=90`
-              : gravatarUrl(body.email || account.User.Name, {
-                  default: 'mm',
-                  size: 200,
-                }),
+            avatar: `/avatarproxy/${account.User.Id}`,
             userType: UserType.EMBY,
           });
 
@@ -347,12 +340,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
             jellyfinDeviceId: deviceId,
             jellyfinAuthToken: account.AccessToken,
             permissions: Permission.ADMIN,
-            avatar: account.User.PrimaryImageTag
-              ? `/Users/${account.User.Id}/Images/Primary/?tag=${account.User.PrimaryImageTag}&quality=90`
-              : gravatarUrl(body.email || account.User.Name, {
-                  default: 'mm',
-                  size: 200,
-                }),
+            avatar: `/avatarproxy/${account.User.Id}`,
             userType: UserType.JELLYFIN,
           });
 
@@ -401,27 +389,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
           jellyfinUsername: account.User.Name,
         }
       );
-      // Update the users avatar with their jellyfin profile pic (incase it changed)
-      if (account.User.PrimaryImageTag) {
-        const avatar = `/Users/${account.User.Id}/Images/Primary/?tag=${account.User.PrimaryImageTag}&quality=90`;
-        if (avatar !== user.avatar) {
-          const avatarProxy = new ImageProxy('avatar', '');
-          avatarProxy.clearCachedImage(user.avatar);
-        }
-        user.avatar = avatar;
-      } else {
-        const avatar = gravatarUrl(user.email || account.User.Name, {
-          default: 'mm',
-          size: 200,
-        });
-
-        if (avatar !== user.avatar) {
-          const avatarProxy = new ImageProxy('avatar', '');
-          avatarProxy.clearCachedImage(user.avatar);
-        }
-
-        user.avatar = avatar;
-      }
+      user.avatar = `/avatarproxy/${account.User.Id}`;
       user.jellyfinUsername = account.User.Name;
 
       if (user.username === account.User.Name) {
@@ -459,12 +427,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
         jellyfinUserId: account.User.Id,
         jellyfinDeviceId: deviceId,
         permissions: settings.main.defaultPermissions,
-        avatar: account.User.PrimaryImageTag
-          ? `/Users/${account.User.Id}/Images/Primary/?tag=${account.User.PrimaryImageTag}&quality=90`
-          : gravatarUrl(body.email || account.User.Name, {
-              default: 'mm',
-              size: 200,
-            }),
+        avatar: `/avatarproxy/${account.User.Id}`,
         userType:
           settings.main.mediaServerType === MediaServerType.JELLYFIN
             ? UserType.JELLYFIN

@@ -539,12 +539,7 @@ router.post(
             ).toString('base64'),
             email: jellyfinUser?.Name,
             permissions: settings.main.defaultPermissions,
-            avatar: jellyfinUser?.PrimaryImageTag
-              ? `/Users/${jellyfinUser.Id}/Images/Primary/?tag=${jellyfinUser.PrimaryImageTag}&quality=90`
-              : gravatarUrl(jellyfinUser?.Name ?? '', {
-                  default: 'mm',
-                  size: 200,
-                }),
+            avatar: `/avatarproxy/${jellyfinUser?.Id}`,
             userType:
               settings.main.mediaServerType === MediaServerType.JELLYFIN
                 ? UserType.JELLYFIN

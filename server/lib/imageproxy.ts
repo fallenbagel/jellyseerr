@@ -135,6 +135,7 @@ class ImageProxy {
   private cacheVersion;
   private key;
   private baseUrl;
+  private headers: HeadersInit | null = null;
 
   constructor(
     key: string,
@@ -142,6 +143,7 @@ class ImageProxy {
     options: {
       cacheVersion?: number;
       rateLimitOptions?: RateLimitOptions;
+      headers?: HeadersInit;
     } = {}
   ) {
     this.cacheVersion = options.cacheVersion ?? 1;
@@ -155,9 +157,13 @@ class ImageProxy {
     } else {
       this.fetch = fetch;
     }
+    this.headers = options.headers || null;
   }
 
-  public async getImage(path: string): Promise<ImageResponse> {
+  public async getImage(
+    path: string,
+    fallbackPath?: string
+  ): Promise<ImageResponse> {
     const cacheKey = this.getCacheKey(path);
 
     const imageResponse = await this.get(cacheKey);
@@ -166,7 +172,11 @@ class ImageProxy {
       const newImage = await this.set(path, cacheKey);
 
       if (!newImage) {
-        throw new Error('Failed to load image');
+        if (fallbackPath) {
+          return await this.getImage(fallbackPath);
+        } else {
+          throw new Error('Failed to load image');
+        }
       }
 
       return newImage;
@@ -247,7 +257,12 @@ class ImageProxy {
             : '/'
           : '') +
         (path.startsWith('/') ? path.slice(1) : path);
-      const response = await this.fetch(href);
+      const response = await this.fetch(href, {
+        headers: this.headers || undefined,
+      });
+      if (!response.ok) {
+        return null;
+      }
       const arrayBuffer = await response.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
