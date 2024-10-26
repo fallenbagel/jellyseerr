@@ -792,7 +792,7 @@ export const getSettings = (initialSettings?: AllSettings): Settings => {
 
 export const getIndexer = (): TvShowIndexer => {
   const settings = getSettings();
-  if (settings.tvdb.use) {
+  if (settings.tvdb?.use) {
     return new Tvdb();
   } else {
     return new TheMovieDb();
