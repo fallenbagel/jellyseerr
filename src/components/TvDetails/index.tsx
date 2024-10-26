@@ -118,9 +118,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
   const intl = useIntl();
   const { locale } = useLocale();
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const [showManager, setShowManager] = useState(
-    router.query.manage == '1' ? true : false
-  );
+  const [showManager, setShowManager] = useState(router.query.manage == '1');
   const [showIssueModal, setShowIssueModal] = useState(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [toggleWatchlist, setToggleWatchlist] = useState<boolean>(
@@ -156,7 +154,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
   );
 
   useEffect(() => {
-    setShowManager(router.query.manage == '1' ? true : false);
+    setShowManager(router.query.manage == '1');
   }, [router.query.manage]);
 
   const closeBlacklistModal = useCallback(
