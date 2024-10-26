@@ -55,7 +55,7 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     this.tmdb = new TheMovieDb();
   }
 
-  public async login(): Promise<TvdbLoginResponse> {
+  public async test(): Promise<TvdbLoginResponse> {
     try {
       return await this.get<TvdbLoginResponse>('/en/445009', {});
     } catch (error) {
