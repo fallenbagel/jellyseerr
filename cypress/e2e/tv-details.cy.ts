@@ -17,7 +17,7 @@ describe('TV Details', () => {
     cy.visit('/tv/66732');
 
     // intercept request for season info
-    cy.intercept('/api/v1/tv/66732/season/4').as('season4');
+    cy.intercept('/api/v1/tv/66732/season/4/163313').as('season4');
 
     cy.contains('Season 4').should('be.visible').scrollIntoView().click();
 
