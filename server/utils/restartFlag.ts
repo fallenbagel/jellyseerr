@@ -13,7 +13,8 @@ class RestartFlag {
 
     return (
       this.settings.csrfProtection !== settings.csrfProtection ||
-      this.settings.trustProxy !== settings.trustProxy
+      this.settings.trustProxy !== settings.trustProxy ||
+      this.settings.httpProxy !== settings.httpProxy
     );
   }
 }

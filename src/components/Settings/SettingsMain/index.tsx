@@ -55,6 +55,8 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   validationApplicationUrlTrailingSlash: 'URL must not end in a trailing slash',
   partialRequestsEnabled: 'Allow Partial Series Requests',
   locale: 'Display Language',
+  httpProxy: 'HTTP Proxy',
+  httpProxyTip: 'Tooltip to write',
 });
 
 const SettingsMain = () => {
@@ -82,6 +84,9 @@ const SettingsMain = () => {
         intl.formatMessage(messages.validationApplicationUrlTrailingSlash),
         (value) => !value || !value.endsWith('/')
       ),
+    httpProxy: Yup.string().url(
+      intl.formatMessage(messages.validationApplicationUrl)
+    ),
   });
 
   const regenerate = async () => {
@@ -137,6 +142,7 @@ const SettingsMain = () => {
             partialRequestsEnabled: data?.partialRequestsEnabled,
             trustProxy: data?.trustProxy,
             cacheImages: data?.cacheImages,
+            httpProxy: data?.httpProxy,
           }}
           enableReinitialize
           validationSchema={MainSettingsSchema}
@@ -158,6 +164,7 @@ const SettingsMain = () => {
                   partialRequestsEnabled: values.partialRequestsEnabled,
                   trustProxy: values.trustProxy,
                   cacheImages: values.cacheImages,
+                  httpProxy: values.httpProxy,
                 }),
               });
               if (!res.ok) throw new Error();
@@ -435,6 +442,28 @@ const SettingsMain = () => {
                         );
                       }}
                     />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="httpProxy" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.httpProxy)}
+                    </span>
+                    <SettingsBadge badgeType="advanced" className="mr-2" />
+                    <SettingsBadge badgeType="restartRequired" />
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.httpProxyTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field">
+                      <Field id="httpProxy" name="httpProxy" type="text" />
+                    </div>
+                    {errors.httpProxy &&
+                      touched.httpProxy &&
+                      typeof errors.httpProxy === 'string' && (
+                        <div className="error">{errors.httpProxy}</div>
+                      )}
                   </div>
                 </div>
                 <div className="actions">

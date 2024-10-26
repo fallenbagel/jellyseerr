@@ -49,7 +49,7 @@ importers:
         version: 2.11.0
       connect-typeorm:
         specifier: 1.1.4
-        version: 1.1.4(typeorm@0.3.12(sqlite3@5.1.4(encoding@0.1.13))(ts-node@10.9.1(@swc/core@1.6.5(@swc/helpers@0.5.11))(@types/node@20.14.8)(typescript@4.9.5)))
+        version: 1.1.4(typeorm@0.3.11(sqlite3@5.1.4(encoding@0.1.13))(ts-node@10.9.1(@swc/core@1.6.5(@swc/helpers@0.5.11))(@types/node@20.14.8)(typescript@4.9.5)))
       cookie-parser:
         specifier: 1.4.6
         version: 1.4.6
@@ -192,8 +192,11 @@ importers:
         specifier: 2.2.5
         version: 2.2.5(react@18.3.1)
       typeorm:
-        specifier: 0.3.12
-        version: 0.3.12(sqlite3@5.1.4(encoding@0.1.13))(ts-node@10.9.1(@swc/core@1.6.5(@swc/helpers@0.5.11))(@types/node@20.14.8)(typescript@4.9.5))
+        specifier: 0.3.11
+        version: 0.3.11(sqlite3@5.1.4(encoding@0.1.13))(ts-node@10.9.1(@swc/core@1.6.5(@swc/helpers@0.5.11))(@types/node@20.14.8)(typescript@4.9.5))
+      undici:
+        specifier: ^6.20.1
+        version: 6.20.1
       web-push:
         specifier: 3.5.0
         version: 3.5.0
@@ -4264,10 +4267,6 @@ packages:
     resolution: {integrity: sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==}
     engines: {node: '>=0.11'}
 
-  date-fns@2.30.0:
-    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
-    engines: {node: '>=0.11'}
-
   dateformat@3.0.3:
     resolution: {integrity: sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==}
 
@@ -5389,8 +5388,8 @@ packages:
     resolution: {integrity: sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==}
     engines: {node: '>= 6'}
 
-  https-proxy-agent@7.0.4:
-    resolution: {integrity: sha512-wlwpilI7YdjSkWaQ/7omYBMTliDcmCN8OLihO6I9B86g06lMyAoqgoDpV0XqoaPOKj+0DIdAvnsWfyAAhmimcg==}
+  https-proxy-agent@7.0.5:
+    resolution: {integrity: sha512-1e4Wqeblerz+tMKPIq2EMGiiWW1dIjZOksyHWSUm1rmuvw/how9hBHZ38lAGj5ID4Ik6EdkOw7NmWPy6LAwalw==}
     engines: {node: '>= 14'}
 
   human-signals@1.1.1:
@@ -6551,11 +6550,6 @@ packages:
 
   mkdirp@1.0.4:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
-    engines: {node: '>=10'}
-    hasBin: true
-
-  mkdirp@2.1.6:
-    resolution: {integrity: sha512-+hEnITedc8LAtIP9u3HJDFIdcLV2vXP33sqLLIzkv1Db1zO/1OxbvYf0Y1OC/S/Qo5dxHXepofhmxL02PsKe+A==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -7730,9 +7724,6 @@ packages:
   reflect-metadata@0.1.13:
     resolution: {integrity: sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==}
 
-  reflect-metadata@0.1.14:
-    resolution: {integrity: sha512-ZhYeb6nRaXCfhnndflDK8qI6ZQ/YcWZCISRAWICW9XYqMUwjZM9Z0DveWX/ABN01oxSHwVxKQmxeYZSsm0jh5A==}
-
   reflect.getprototypeof@1.0.6:
     resolution: {integrity: sha512-fmfw4XgoDke3kdI6h4xcUz1dG8uaiv5q9gcEwLS4Pnth2kxT+GZ7YehS1JTMGBQmtV7Y4GFGbs2re2NqhdozUg==}
     engines: {node: '>= 0.4'}
@@ -8670,8 +8661,8 @@ packages:
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
-  typeorm@0.3.12:
-    resolution: {integrity: sha512-sYSxBmCf1nJLLTcYtwqZ+lQIRtLPyUoO93rHTOKk9vJCyT4UfRtU7oRsJvfvKP3nnZTD1hzz2SEy2zwPEN6OyA==}
+  typeorm@0.3.11:
+    resolution: {integrity: sha512-pzdOyWbVuz/z8Ww6gqvBW4nylsM0KLdUCDExr2gR20/x1khGSVxQkjNV/3YqliG90jrWzrknYbYscpk8yxFJVg==}
     engines: {node: '>= 12.9.0'}
     hasBin: true
     peerDependencies:
@@ -8682,7 +8673,7 @@ packages:
       ioredis: ^5.0.4
       mongodb: ^3.6.0
       mssql: ^7.3.0
-      mysql2: ^2.2.5 || ^3.0.1
+      mysql2: ^2.2.5
       oracledb: ^5.1.0
       pg: ^8.5.1
       pg-native: ^3.0.0
@@ -8767,6 +8758,10 @@ packages:
 
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
+  undici@6.20.1:
+    resolution: {integrity: sha512-AjQF1QsmqfJys+LXfGTNum+qw4S88CojRInG/6t31W/1fk6G59s92bnAvGz5Cmur+kQv2SURXEvvudLmbrE8QA==}
+    engines: {node: '>=18.17'}
 
   unicode-canonical-property-names-ecmascript@2.0.0:
     resolution: {integrity: sha512-yY5PpDlfVIU5+y/BSCxAJRBIS1Zc2dDG3Ujq+sR0U+JjUevW2JhocOF+soROYDSaAezOzOKuyyixhD6mBknSmQ==}
@@ -12310,7 +12305,7 @@ snapshots:
       fs-extra: 11.2.0
       globby: 11.1.0
       http-proxy-agent: 7.0.2
-      https-proxy-agent: 7.0.4
+      https-proxy-agent: 7.0.5
       issue-parser: 6.0.0
       lodash: 4.17.21
       mime: 3.0.0
@@ -13824,13 +13819,13 @@ snapshots:
       ini: 1.3.8
       proto-list: 1.2.4
 
-  connect-typeorm@1.1.4(typeorm@0.3.12(sqlite3@5.1.4(encoding@0.1.13))(ts-node@10.9.1(@swc/core@1.6.5(@swc/helpers@0.5.11))(@types/node@20.14.8)(typescript@4.9.5))):
+  connect-typeorm@1.1.4(typeorm@0.3.11(sqlite3@5.1.4(encoding@0.1.13))(ts-node@10.9.1(@swc/core@1.6.5(@swc/helpers@0.5.11))(@types/node@20.14.8)(typescript@4.9.5))):
     dependencies:
       '@types/debug': 0.0.31
       '@types/express-session': 1.17.6
       debug: 4.3.5(supports-color@8.1.1)
       express-session: 1.18.0
-      typeorm: 0.3.12(sqlite3@5.1.4(encoding@0.1.13))(ts-node@10.9.1(@swc/core@1.6.5(@swc/helpers@0.5.11))(@types/node@20.14.8)(typescript@4.9.5))
+      typeorm: 0.3.11(sqlite3@5.1.4(encoding@0.1.13))(ts-node@10.9.1(@swc/core@1.6.5(@swc/helpers@0.5.11))(@types/node@20.14.8)(typescript@4.9.5))
     transitivePeerDependencies:
       - supports-color
 
@@ -14180,10 +14175,6 @@ snapshots:
       is-data-view: 1.0.1
 
   date-fns@2.29.3: {}
-
-  date-fns@2.30.0:
-    dependencies:
-      '@babel/runtime': 7.24.7
 
   dateformat@3.0.3: {}
 
@@ -15739,7 +15730,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  https-proxy-agent@7.0.4:
+  https-proxy-agent@7.0.5:
     dependencies:
       agent-base: 7.1.1
       debug: 4.3.5(supports-color@8.1.1)
@@ -17149,8 +17140,6 @@ snapshots:
 
   mkdirp@1.0.4: {}
 
-  mkdirp@2.1.6: {}
-
   modify-values@1.0.1: {}
 
   moment@2.30.1: {}
@@ -18372,8 +18361,6 @@ snapshots:
 
   reflect-metadata@0.1.13: {}
 
-  reflect-metadata@0.1.14: {}
-
   reflect.getprototypeof@1.0.6:
     dependencies:
       call-bind: 1.0.7
@@ -19431,23 +19418,23 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typeorm@0.3.12(sqlite3@5.1.4(encoding@0.1.13))(ts-node@10.9.1(@swc/core@1.6.5(@swc/helpers@0.5.11))(@types/node@20.14.8)(typescript@4.9.5)):
+  typeorm@0.3.11(sqlite3@5.1.4(encoding@0.1.13))(ts-node@10.9.1(@swc/core@1.6.5(@swc/helpers@0.5.11))(@types/node@20.14.8)(typescript@4.9.5)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       app-root-path: 3.1.0
       buffer: 6.0.3
       chalk: 4.1.2
       cli-highlight: 2.1.11
-      date-fns: 2.30.0
+      date-fns: 2.29.3
       debug: 4.3.5(supports-color@8.1.1)
       dotenv: 16.4.5
-      glob: 8.1.0
+      glob: 7.2.3
       js-yaml: 4.1.0
-      mkdirp: 2.1.6
-      reflect-metadata: 0.1.14
+      mkdirp: 1.0.4
+      reflect-metadata: 0.1.13
       sha.js: 2.4.11
       tslib: 2.6.3
-      uuid: 9.0.1
+      uuid: 8.3.2
       xml2js: 0.4.23
       yargs: 17.7.2
     optionalDependencies:
@@ -19485,6 +19472,8 @@ snapshots:
   underscore@1.13.6: {}
 
   undici-types@5.26.5: {}
+
+  undici@6.20.1: {}
 
   unicode-canonical-property-names-ecmascript@2.0.0: {}
 

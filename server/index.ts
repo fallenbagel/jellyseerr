@@ -38,6 +38,7 @@ import dns from 'node:dns';
 import net from 'node:net';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
+import { ProxyAgent, setGlobalDispatcher } from 'undici';
 import YAML from 'yamljs';
 
 if (process.env.forceIpv4First === 'true') {
@@ -73,6 +74,11 @@ app
     // Load Settings
     const settings = await getSettings().load();
     restartFlag.initializeSettings(settings.main);
+
+    // Register HTTP proxy
+    if (settings.main.httpProxy) {
+      setGlobalDispatcher(new ProxyAgent(settings.main.httpProxy));
+    }
 
     // Migrate library types
     if (
