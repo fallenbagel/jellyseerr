@@ -56,14 +56,12 @@ tvRoutes.get('/:id', async (req, res, next) => {
   }
 });
 
-tvRoutes.get('/:id/season/:seasonNumber/:seasonId', async (req, res, next) => {
+tvRoutes.get('/:id/season/:seasonNumber', async (req, res, next) => {
   try {
     const indexer = getIndexer();
-    const seasonIdentifier = indexer.getSeasonIdentifier(req);
 
     const season = await indexer.getTvSeason({
       tvId: Number(req.params.id),
-      seasonId: seasonIdentifier,
       seasonNumber: Number(req.params.seasonNumber),
     });
 

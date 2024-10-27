@@ -1017,7 +1017,6 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
                             <Season
                               tvId={data.id}
                               seasonNumber={season.seasonNumber}
-                              seasonId={season.id}
                             />
                           </Disclosure.Panel>
                         </Transition>

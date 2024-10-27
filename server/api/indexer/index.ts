@@ -13,12 +13,10 @@ export interface TvShowIndexer {
   }): Promise<TmdbTvDetails>;
   getTvSeason({
     tvId,
-    seasonId,
     seasonNumber,
     language,
   }: {
     tvId: number;
-    seasonId: number;
     seasonNumber: number;
     language?: string;
   }): Promise<TmdbSeasonWithEpisodes>;
