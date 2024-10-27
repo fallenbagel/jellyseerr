@@ -3,7 +3,8 @@ describe('TVDB Integration', () => {
   const ROUTES = {
     home: '/',
     tvdbSettings: '/settings/tvdb',
-    pokemonShow: '/tv/72879',
+    tomorrowIsOursTvShow: '/tv/72879',
+    monsterTvShow: '/tv/225634',
   };
 
   const SELECTORS = {
@@ -70,7 +71,7 @@ describe('TVDB Integration', () => {
   });
 
   it('should display "Tomorrow is Ours" show information correctly (1 season on TMDB >1 seasons on TVDB)', () => {
-    cy.visit(ROUTES.pokemonShow);
+    cy.visit(ROUTES.tomorrowIsOursTvShow);
     cy.contains(SELECTORS.season2)
       .should('be.visible')
       .scrollIntoView()
@@ -78,7 +79,7 @@ describe('TVDB Integration', () => {
   });
 
   it('Should display "Monster" show information correctly (Not existing on TVDB)', () => {
-    cy.visit('/tv/225634');
+    cy.visit(ROUTES.monsterTvShow);
     cy.intercept('/api/v1/tv/225634/season/1').as('season1');
     cy.contains(SELECTORS.season1)
       .should('be.visible')
