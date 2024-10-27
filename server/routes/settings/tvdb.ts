@@ -15,6 +15,12 @@ tvdbRoutes.get('/', (_req, res) => {
 tvdbRoutes.put('/', (req, res) => {
   const settings = getSettings();
 
+  if (!settings.tvdb) {
+    settings.tvdb = {
+      use: false,
+    };
+  }
+
   const newTvdb = req.body as TvdbSettings;
   const tvdb = settings.tvdb;
 

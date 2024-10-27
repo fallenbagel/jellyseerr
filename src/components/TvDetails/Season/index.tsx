@@ -14,13 +14,12 @@ const messages = defineMessages('components.TvDetails.Season', {
 type SeasonProps = {
   seasonNumber: number;
   tvId: number;
-  seasonId: number;
 };
 
-const Season = ({ seasonNumber, tvId, seasonId }: SeasonProps) => {
+const Season = ({ seasonNumber, tvId }: SeasonProps) => {
   const intl = useIntl();
   const { data, error } = useSWR<SeasonWithEpisodes>(
-    `/api/v1/tv/${tvId}/season/${seasonNumber}/${seasonId}`
+    `/api/v1/tv/${tvId}/season/${seasonNumber}`
   );
 
   if (!data && !error) {

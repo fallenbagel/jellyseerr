@@ -118,6 +118,7 @@ const SettingsTvdb = () => {
                   </label>
                   <div className="form-input-area">
                     <Field
+                      data-testid="tvdb-enable"
                       type="checkbox"
                       id="enable"
                       name="enable"
@@ -165,6 +166,7 @@ const SettingsTvdb = () => {
                     </span>
                     <span className="ml-3 inline-flex rounded-md shadow-sm">
                       <Button
+                        data-testid="tvbd-save-button"
                         buttonType="primary"
                         type="submit"
                         disabled={isSubmitting || !isValid}

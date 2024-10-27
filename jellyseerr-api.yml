@@ -6532,7 +6532,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TvDetails'
-  /tv/{tvId}/season/{seasonNumber}/{seasonId}:
+  /tv/{tvId}/season/{seasonNumber}:
     get:
       summary: Get season details and episode list
       description: Returns season details with a list of episodes in a JSON object.
@@ -6545,12 +6545,6 @@ paths:
           schema:
             type: number
             example: 76479
-        - in: path
-          name: seasonId
-          required: true
-          schema:
-            type: number
-            example: 1
         - in: path
           name: seasonNumber
           required: true
