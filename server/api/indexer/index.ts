@@ -20,6 +20,4 @@ export interface TvShowIndexer {
     seasonNumber: number;
     language?: string;
   }): Promise<TmdbSeasonWithEpisodes>;
-
-  getSeasonIdentifier(req: any): number;
 }
