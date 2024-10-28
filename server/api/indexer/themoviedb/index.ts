@@ -198,10 +198,6 @@ class TheMovieDb extends ExternalAPI implements TvShowIndexer {
     }
   };
 
-  getSeasonIdentifier(req: any): number {
-    return req.params.seasonNumber;
-  }
-
   public searchTvShows = async ({
     query,
     page = 1,
