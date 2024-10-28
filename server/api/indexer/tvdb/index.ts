@@ -116,10 +116,6 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     }
   }
 
-  public getSeasonIdentifier(req: any): number {
-    return req.params.seasonId;
-  }
-
   private async enrichTmdbShowWithTvdbData(
     tmdbTvShow: TmdbTvDetails,
     tvdbId: ValidTvdbId
