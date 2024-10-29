@@ -1,35 +1,33 @@
 import Tvdb from '@server/api/indexer/tvdb';
-import type { TvdbSettings } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { Router } from 'express';
 
 const tvdbRoutes = Router();
 
+export interface TvdbSettings {
+  tvdb: boolean;
+}
+
 tvdbRoutes.get('/', (_req, res) => {
   const settings = getSettings();
 
-  res.status(200).json(settings.tvdb);
+  res.status(200).json({
+    tvdb: settings.tvdb,
+  });
 });
 
 tvdbRoutes.put('/', (req, res) => {
   const settings = getSettings();
 
-  if (!settings.tvdb) {
-    settings.tvdb = {
-      use: false,
-    };
-  }
+  const body = req.body as TvdbSettings;
 
-  const newTvdb = req.body as TvdbSettings;
-  const tvdb = settings.tvdb;
-
-  tvdb.use = newTvdb.use;
-
-  settings.tvdb = tvdb;
+  settings.tvdb = body.tvdb ?? settings.tvdb ?? false;
   settings.save();
 
-  return res.status(200).json(newTvdb);
+  return res.status(200).json({
+    tvdb: settings.tvdb,
+  });
 });
 
 tvdbRoutes.post('/test', async (req, res, next) => {

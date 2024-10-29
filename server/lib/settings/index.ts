@@ -82,10 +82,6 @@ export interface DVRSettings {
   overrideRule: number[];
 }
 
-export interface TvdbSettings {
-  use: boolean;
-}
-
 export interface RadarrSettings extends DVRSettings {
   minimumAvailability: string;
 }
@@ -319,13 +315,13 @@ export interface AllSettings {
   plex: PlexSettings;
   jellyfin: JellyfinSettings;
   tautulli: TautulliSettings;
-  tvdb: TvdbSettings;
   radarr: RadarrSettings[];
   sonarr: SonarrSettings[];
   public: PublicSettings;
   notifications: NotificationSettings;
   jobs: Record<JobId, JobSettings>;
   network: NetworkSettings;
+  tvdb: boolean;
 }
 
 const SETTINGS_PATH = process.env.CONFIG_DIRECTORY
@@ -382,7 +378,7 @@ class Settings {
         apiKey: '',
       },
       tautulli: {},
-      tvdb: { use: false },
+      tvdb: false,
       radarr: [],
       sonarr: [],
       public: {
@@ -567,11 +563,11 @@ class Settings {
     this.data.tautulli = data;
   }
 
-  get tvdb(): TvdbSettings {
+  get tvdb(): boolean {
     return this.data.tvdb;
   }
 
-  set tvdb(data: TvdbSettings) {
+  set tvdb(data: boolean) {
     this.data.tvdb = data;
   }
 
@@ -755,7 +751,7 @@ export const getSettings = (initialSettings?: AllSettings): Settings => {
 
 export const getIndexer = (): TvShowIndexer => {
   const settings = getSettings();
-  if (settings.tvdb?.use) {
+  if (settings.tvdb) {
     return new Tvdb();
   } else {
     return new TheMovieDb();
