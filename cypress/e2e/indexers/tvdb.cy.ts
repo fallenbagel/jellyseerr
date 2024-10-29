@@ -27,7 +27,7 @@ describe('TVDB Integration', () => {
 
   const verifyTVDBResponse = (response, expectedUseValue) => {
     expect(response.statusCode).to.equal(200);
-    expect(response.body.use).to.equal(expectedUseValue);
+    expect(response.body.tvdb).to.equal(expectedUseValue);
   };
 
   beforeEach(() => {
