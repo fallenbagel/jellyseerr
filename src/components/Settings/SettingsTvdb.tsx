@@ -5,7 +5,7 @@ import SettingsBadge from '@app/components/Settings/SettingsBadge';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
-import type { TvdbSettings } from '@server/lib/settings';
+import type { TvdbSettings } from '@server/routes/settings/tvdb';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -42,13 +42,15 @@ const SettingsTvdb = () => {
     }
   };
 
-  const saveSettings = async (values: TvdbSettings) => {
+  const saveSettings = async (value: TvdbSettings) => {
     const response = await fetch('/api/v1/settings/tvdb', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify({
+        tvdb: value.tvdb,
+      }),
     });
 
     if (!response.ok) {
@@ -77,7 +79,7 @@ const SettingsTvdb = () => {
       <div className="section">
         <Formik
           initialValues={{
-            enable: data?.use,
+            enable: data?.tvdb ?? false,
           }}
           onSubmit={async (values) => {
             try {
@@ -93,8 +95,11 @@ const SettingsTvdb = () => {
 
             try {
               await saveSettings({
-                use: values.enable || false,
+                tvdb: values.enable ?? false,
               });
+              if (data) {
+                data.tvdb = values.enable;
+              }
             } catch (e) {
               addToast('Failed to save Tvdb settings', { appearance: 'error' });
               return;
