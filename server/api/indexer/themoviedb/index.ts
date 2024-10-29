@@ -343,7 +343,7 @@ class TheMovieDb extends ExternalAPI implements TvShowIndexer {
       );
 
       data.episodes = data.episodes.map((episode) => {
-        if (episode.still_path != null && episode.still_path !== '') {
+        if (episode.still_path) {
           episode.still_path = `https://image.tmdb.org/t/p/original/${episode.still_path}`;
         }
         return episode;
