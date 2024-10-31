@@ -87,7 +87,7 @@ authRoutes.post('/plex', async (req, res, next) => {
       });
 
       settings.main.mediaServerType = MediaServerType.PLEX;
-      settings.save();
+      await settings.save();
       startJobs();
 
       await userRepository.save(user);
@@ -366,7 +366,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       settings.jellyfin.urlBase = body.urlBase ?? '';
       settings.jellyfin.useSsl = body.useSsl ?? false;
       settings.jellyfin.apiKey = apiKey;
-      settings.save();
+      await settings.save();
       startJobs();
 
       await userRepository.save(user);

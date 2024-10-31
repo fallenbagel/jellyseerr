@@ -129,7 +129,7 @@ class PlexScanner
           });
 
           settings.plex.libraries = newLibraries;
-          settings.save();
+          await settings.save();
         }
       } else {
         for (const library of this.libraries) {

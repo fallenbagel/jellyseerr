@@ -27,8 +27,14 @@ const migrateApiTokens = async (settings: any): Promise<AllSettings> => {
       admin.jellyfinDeviceId
     );
     jellyfinClient.setUserId(admin.jellyfinUserId ?? '');
-    const apiKey = await jellyfinClient.createApiToken('Jellyseerr');
-    settings.jellyfin.apiKey = apiKey;
+    try {
+      const apiKey = await jellyfinClient.createApiToken('Jellyseerr');
+      settings.jellyfin.apiKey = apiKey;
+    } catch {
+      throw new Error(
+        "Failed to create Jellyfin API token from admin account. Please check your network configuration or edit your settings.json by adding an 'apiKey' field inside of the 'jellyfin' section to fix this issue."
+      );
+    }
   }
   return settings;
 };

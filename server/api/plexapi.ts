@@ -180,7 +180,7 @@ class PlexAPI {
       settings.plex.libraries = [];
     }
 
-    settings.save();
+    await settings.save();
   }
 
   public async getLibraryContents(

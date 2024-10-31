@@ -410,7 +410,7 @@ class JellyfinAPI extends ExternalAPI {
       ).AccessToken;
     } catch (e) {
       logger.error(
-        `Something went wrong while creating an API key the Jellyfin server: ${e.message}`,
+        `Something went wrong while creating an API key from the Jellyfin server: ${e.message}`,
         { label: 'Jellyfin API' }
       );
 

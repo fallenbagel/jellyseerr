@@ -12,7 +12,7 @@ radarrRoutes.get('/', (_req, res) => {
   res.status(200).json(settings.radarr);
 });
 
-radarrRoutes.post('/', (req, res) => {
+radarrRoutes.post('/', async (req, res) => {
   const settings = getSettings();
 
   const newRadarr = req.body as RadarrSettings;
@@ -31,7 +31,7 @@ radarrRoutes.post('/', (req, res) => {
   }
 
   settings.radarr = [...settings.radarr, newRadarr];
-  settings.save();
+  await settings.save();
 
   return res.status(201).json(newRadarr);
 });
@@ -76,7 +76,7 @@ radarrRoutes.post<
 
 radarrRoutes.put<{ id: string }, RadarrSettings, RadarrSettings>(
   '/:id',
-  (req, res, next) => {
+  async (req, res, next) => {
     const settings = getSettings();
 
     const radarrIndex = settings.radarr.findIndex(
@@ -102,7 +102,7 @@ radarrRoutes.put<{ id: string }, RadarrSettings, RadarrSettings>(
       ...req.body,
       id: Number(req.params.id),
     } as RadarrSettings;
-    settings.save();
+    await settings.save();
 
     return res.status(200).json(settings.radarr[radarrIndex]);
   }
@@ -134,7 +134,7 @@ radarrRoutes.get<{ id: string }>('/:id/profiles', async (req, res, next) => {
   );
 });
 
-radarrRoutes.delete<{ id: string }>('/:id', (req, res, next) => {
+radarrRoutes.delete<{ id: string }>('/:id', async (req, res, next) => {
   const settings = getSettings();
 
   const radarrIndex = settings.radarr.findIndex(
@@ -146,7 +146,7 @@ radarrRoutes.delete<{ id: string }>('/:id', (req, res, next) => {
   }
 
   const removed = settings.radarr.splice(radarrIndex, 1);
-  settings.save();
+  await settings.save();
 
   return res.status(200).json(removed[0]);
 });

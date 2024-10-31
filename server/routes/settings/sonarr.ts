@@ -12,7 +12,7 @@ sonarrRoutes.get('/', (_req, res) => {
   res.status(200).json(settings.sonarr);
 });
 
-sonarrRoutes.post('/', (req, res) => {
+sonarrRoutes.post('/', async (req, res) => {
   const settings = getSettings();
 
   const newSonarr = req.body as SonarrSettings;
@@ -31,7 +31,7 @@ sonarrRoutes.post('/', (req, res) => {
   }
 
   settings.sonarr = [...settings.sonarr, newSonarr];
-  settings.save();
+  await settings.save();
 
   return res.status(201).json(newSonarr);
 });
@@ -73,7 +73,7 @@ sonarrRoutes.post('/test', async (req, res, next) => {
   }
 });
 
-sonarrRoutes.put<{ id: string }>('/:id', (req, res) => {
+sonarrRoutes.put<{ id: string }>('/:id', async (req, res) => {
   const settings = getSettings();
 
   const sonarrIndex = settings.sonarr.findIndex(
@@ -101,12 +101,12 @@ sonarrRoutes.put<{ id: string }>('/:id', (req, res) => {
     ...req.body,
     id: Number(req.params.id),
   } as SonarrSettings;
-  settings.save();
+  await settings.save();
 
   return res.status(200).json(settings.sonarr[sonarrIndex]);
 });
 
-sonarrRoutes.delete<{ id: string }>('/:id', (req, res) => {
+sonarrRoutes.delete<{ id: string }>('/:id', async (req, res) => {
   const settings = getSettings();
 
   const sonarrIndex = settings.sonarr.findIndex(
@@ -120,7 +120,7 @@ sonarrRoutes.delete<{ id: string }>('/:id', (req, res) => {
   }
 
   const removed = settings.sonarr.splice(sonarrIndex, 1);
-  settings.save();
+  await settings.save();
 
   return res.status(200).json(removed[0]);
 });

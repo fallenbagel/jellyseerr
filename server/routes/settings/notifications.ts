@@ -31,11 +31,11 @@ notificationRoutes.get('/discord', (_req, res) => {
   res.status(200).json(settings.notifications.agents.discord);
 });
 
-notificationRoutes.post('/discord', (req, res) => {
+notificationRoutes.post('/discord', async (req, res) => {
   const settings = getSettings();
 
   settings.notifications.agents.discord = req.body;
-  settings.save();
+  await settings.save();
 
   res.status(200).json(settings.notifications.agents.discord);
 });
@@ -65,11 +65,11 @@ notificationRoutes.get('/slack', (_req, res) => {
   res.status(200).json(settings.notifications.agents.slack);
 });
 
-notificationRoutes.post('/slack', (req, res) => {
+notificationRoutes.post('/slack', async (req, res) => {
   const settings = getSettings();
 
   settings.notifications.agents.slack = req.body;
-  settings.save();
+  await settings.save();
 
   res.status(200).json(settings.notifications.agents.slack);
 });
@@ -99,11 +99,11 @@ notificationRoutes.get('/telegram', (_req, res) => {
   res.status(200).json(settings.notifications.agents.telegram);
 });
 
-notificationRoutes.post('/telegram', (req, res) => {
+notificationRoutes.post('/telegram', async (req, res) => {
   const settings = getSettings();
 
   settings.notifications.agents.telegram = req.body;
-  settings.save();
+  await settings.save();
 
   res.status(200).json(settings.notifications.agents.telegram);
 });
@@ -133,11 +133,11 @@ notificationRoutes.get('/pushbullet', (_req, res) => {
   res.status(200).json(settings.notifications.agents.pushbullet);
 });
 
-notificationRoutes.post('/pushbullet', (req, res) => {
+notificationRoutes.post('/pushbullet', async (req, res) => {
   const settings = getSettings();
 
   settings.notifications.agents.pushbullet = req.body;
-  settings.save();
+  await settings.save();
 
   res.status(200).json(settings.notifications.agents.pushbullet);
 });
@@ -167,11 +167,11 @@ notificationRoutes.get('/pushover', (_req, res) => {
   res.status(200).json(settings.notifications.agents.pushover);
 });
 
-notificationRoutes.post('/pushover', (req, res) => {
+notificationRoutes.post('/pushover', async (req, res) => {
   const settings = getSettings();
 
   settings.notifications.agents.pushover = req.body;
-  settings.save();
+  await settings.save();
 
   res.status(200).json(settings.notifications.agents.pushover);
 });
@@ -201,11 +201,11 @@ notificationRoutes.get('/email', (_req, res) => {
   res.status(200).json(settings.notifications.agents.email);
 });
 
-notificationRoutes.post('/email', (req, res) => {
+notificationRoutes.post('/email', async (req, res) => {
   const settings = getSettings();
 
   settings.notifications.agents.email = req.body;
-  settings.save();
+  await settings.save();
 
   res.status(200).json(settings.notifications.agents.email);
 });
@@ -235,11 +235,11 @@ notificationRoutes.get('/webpush', (_req, res) => {
   res.status(200).json(settings.notifications.agents.webpush);
 });
 
-notificationRoutes.post('/webpush', (req, res) => {
+notificationRoutes.post('/webpush', async (req, res) => {
   const settings = getSettings();
 
   settings.notifications.agents.webpush = req.body;
-  settings.save();
+  await settings.save();
 
   res.status(200).json(settings.notifications.agents.webpush);
 });
@@ -284,7 +284,7 @@ notificationRoutes.get('/webhook', (_req, res) => {
   res.status(200).json(response);
 });
 
-notificationRoutes.post('/webhook', (req, res, next) => {
+notificationRoutes.post('/webhook', async (req, res, next) => {
   const settings = getSettings();
   try {
     JSON.parse(req.body.options.jsonPayload);
@@ -300,7 +300,7 @@ notificationRoutes.post('/webhook', (req, res, next) => {
         authHeader: req.body.options.authHeader,
       },
     };
-    settings.save();
+    await settings.save();
 
     res.status(200).json(settings.notifications.agents.webhook);
   } catch (e) {
@@ -351,11 +351,11 @@ notificationRoutes.get('/lunasea', (_req, res) => {
   res.status(200).json(settings.notifications.agents.lunasea);
 });
 
-notificationRoutes.post('/lunasea', (req, res) => {
+notificationRoutes.post('/lunasea', async (req, res) => {
   const settings = getSettings();
 
   settings.notifications.agents.lunasea = req.body;
-  settings.save();
+  await settings.save();
 
   res.status(200).json(settings.notifications.agents.lunasea);
 });
@@ -385,11 +385,11 @@ notificationRoutes.get('/gotify', (_req, res) => {
   res.status(200).json(settings.notifications.agents.gotify);
 });
 
-notificationRoutes.post('/gotify', (req, res) => {
+notificationRoutes.post('/gotify', async (req, res) => {
   const settings = getSettings();
 
   settings.notifications.agents.gotify = req.body;
-  settings.save();
+  await settings.save();
 
   res.status(200).json(settings.notifications.agents.gotify);
 });

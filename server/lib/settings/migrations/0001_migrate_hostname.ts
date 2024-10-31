@@ -1,15 +1,14 @@
 import type { AllSettings } from '@server/lib/settings';
 
 const migrateHostname = (settings: any): AllSettings => {
-  const oldJellyfinSettings = settings.jellyfin;
-  if (oldJellyfinSettings && oldJellyfinSettings.hostname) {
-    const { hostname } = oldJellyfinSettings;
+  if (settings.jellyfin?.hostname) {
+    const { hostname } = settings.jellyfin;
     const protocolMatch = hostname.match(/^(https?):\/\//i);
     const useSsl = protocolMatch && protocolMatch[1].toLowerCase() === 'https';
     const remainingUrl = hostname.replace(/^(https?):\/\//i, '');
     const urlMatch = remainingUrl.match(/^([^:]+)(:([0-9]+))?(\/.*)?$/);
 
-    delete oldJellyfinSettings.hostname;
+    delete settings.jellyfin.hostname;
     if (urlMatch) {
       const [, ip, , port, urlBase] = urlMatch;
       settings.jellyfin = {
@@ -21,9 +20,7 @@ const migrateHostname = (settings: any): AllSettings => {
       };
     }
   }
-  if (settings.jellyfin && settings.jellyfin.hostname) {
-    delete settings.jellyfin.hostname;
-  }
+
   return settings;
 };
 
