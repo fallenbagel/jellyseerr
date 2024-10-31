@@ -23,6 +23,7 @@ import avatarproxy from '@server/routes/avatarproxy';
 import imageproxy from '@server/routes/imageproxy';
 import { appDataPermissions } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
+import createCustomProxyAgent from '@server/utils/customProxyAgent';
 import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
 import { TypeormStore } from 'connect-typeorm/out';
@@ -38,7 +39,6 @@ import dns from 'node:dns';
 import net from 'node:net';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
-import { ProxyAgent, setGlobalDispatcher } from 'undici';
 import YAML from 'yamljs';
 
 if (process.env.forceIpv4First === 'true') {
@@ -76,8 +76,8 @@ app
     restartFlag.initializeSettings(settings.main);
 
     // Register HTTP proxy
-    if (settings.main.httpProxy) {
-      setGlobalDispatcher(new ProxyAgent(settings.main.httpProxy));
+    if (settings.main.proxy.enabled) {
+      await createCustomProxyAgent(settings.main.proxy);
     }
 
     // Migrate library types

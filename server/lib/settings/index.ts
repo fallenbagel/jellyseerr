@@ -99,6 +99,17 @@ interface Quota {
   quotaDays?: number;
 }
 
+export interface ProxySettings {
+  enabled: boolean;
+  hostname: string;
+  port: number;
+  useSsl: boolean;
+  user: string;
+  password: string;
+  bypassFilter: string;
+  bypassLocalAddresses: boolean;
+}
+
 export interface MainSettings {
   apiKey: string;
   applicationTitle: string;
@@ -119,7 +130,7 @@ export interface MainSettings {
   mediaServerType: number;
   partialRequestsEnabled: boolean;
   locale: string;
-  httpProxy: string;
+  proxy: ProxySettings;
 }
 
 interface PublicSettings {
@@ -326,7 +337,16 @@ class Settings {
         mediaServerType: MediaServerType.NOT_CONFIGURED,
         partialRequestsEnabled: true,
         locale: 'en',
-        httpProxy: '',
+        proxy: {
+          enabled: false,
+          hostname: '',
+          port: 8080,
+          useSsl: false,
+          user: '',
+          password: '',
+          bypassFilter: '',
+          bypassLocalAddresses: true,
+        },
       },
       plex: {
         name: '',

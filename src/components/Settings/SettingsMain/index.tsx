@@ -55,8 +55,17 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   validationApplicationUrlTrailingSlash: 'URL must not end in a trailing slash',
   partialRequestsEnabled: 'Allow Partial Series Requests',
   locale: 'Display Language',
-  httpProxy: 'HTTP Proxy',
-  httpProxyTip: 'Tooltip to write',
+  proxyEnabled: 'HTTP(S) Proxy',
+  proxyHostname: 'Proxy Hostname',
+  proxyPort: 'Proxy Port',
+  proxySsl: 'Use SSL For Proxy',
+  proxyUser: 'Proxy Username',
+  proxyPassword: 'Proxy Password',
+  proxyBypassFilter: 'Proxy Ignored Addresses',
+  proxyBypassFilterTip:
+    "Use ',' as a separator, and '*.' as a wildcard for subdomains",
+  proxyBypassLocalAddresses: 'Bypass Proxy for Local Addresses',
+  validationProxyPort: 'You must provide a valid port',
 });
 
 const SettingsMain = () => {
@@ -84,9 +93,12 @@ const SettingsMain = () => {
         intl.formatMessage(messages.validationApplicationUrlTrailingSlash),
         (value) => !value || !value.endsWith('/')
       ),
-    httpProxy: Yup.string().url(
-      intl.formatMessage(messages.validationApplicationUrl)
-    ),
+    proxyPort: Yup.number().when('proxyEnabled', {
+      is: (proxyEnabled: boolean) => proxyEnabled,
+      then: Yup.number().required(
+        intl.formatMessage(messages.validationProxyPort)
+      ),
+    }),
   });
 
   const regenerate = async () => {
@@ -142,7 +154,14 @@ const SettingsMain = () => {
             partialRequestsEnabled: data?.partialRequestsEnabled,
             trustProxy: data?.trustProxy,
             cacheImages: data?.cacheImages,
-            httpProxy: data?.httpProxy,
+            proxyEnabled: data?.proxy?.enabled,
+            proxyHostname: data?.proxy?.hostname,
+            proxyPort: data?.proxy?.port,
+            proxySsl: data?.proxy?.useSsl,
+            proxyUser: data?.proxy?.user,
+            proxyPassword: data?.proxy?.password,
+            proxyBypassFilter: data?.proxy?.bypassFilter,
+            proxyBypassLocalAddresses: data?.proxy?.bypassLocalAddresses,
           }}
           enableReinitialize
           validationSchema={MainSettingsSchema}
@@ -164,7 +183,16 @@ const SettingsMain = () => {
                   partialRequestsEnabled: values.partialRequestsEnabled,
                   trustProxy: values.trustProxy,
                   cacheImages: values.cacheImages,
-                  httpProxy: values.httpProxy,
+                  proxy: {
+                    enabled: values.proxyEnabled,
+                    hostname: values.proxyHostname,
+                    port: values.proxyPort,
+                    useSsl: values.proxySsl,
+                    user: values.proxyUser,
+                    password: values.proxyPassword,
+                    bypassFilter: values.proxyBypassFilter,
+                    bypassLocalAddresses: values.proxyBypassLocalAddresses,
+                  },
                 }),
               });
               if (!res.ok) throw new Error();
@@ -445,27 +473,175 @@ const SettingsMain = () => {
                   </div>
                 </div>
                 <div className="form-row">
-                  <label htmlFor="httpProxy" className="checkbox-label">
+                  <label htmlFor="proxyEnabled" className="checkbox-label">
                     <span className="mr-2">
-                      {intl.formatMessage(messages.httpProxy)}
+                      {intl.formatMessage(messages.proxyEnabled)}
                     </span>
                     <SettingsBadge badgeType="advanced" className="mr-2" />
                     <SettingsBadge badgeType="restartRequired" />
-                    <span className="label-tip">
-                      {intl.formatMessage(messages.httpProxyTip)}
-                    </span>
                   </label>
                   <div className="form-input-area">
-                    <div className="form-input-field">
-                      <Field id="httpProxy" name="httpProxy" type="text" />
-                    </div>
-                    {errors.httpProxy &&
-                      touched.httpProxy &&
-                      typeof errors.httpProxy === 'string' && (
-                        <div className="error">{errors.httpProxy}</div>
-                      )}
+                    <Field
+                      type="checkbox"
+                      id="proxyEnabled"
+                      name="proxyEnabled"
+                      onChange={() => {
+                        setFieldValue('proxyEnabled', !values.proxyEnabled);
+                      }}
+                    />
                   </div>
                 </div>
+                {values.proxyEnabled && (
+                  <>
+                    <div className="form-row">
+                      <label htmlFor="proxyHostname" className="checkbox-label">
+                        <span className="mr-2 ml-4">
+                          {intl.formatMessage(messages.proxyHostname)}
+                        </span>
+                      </label>
+                      <div className="form-input-area">
+                        <div className="form-input-field">
+                          <Field
+                            id="proxyHostname"
+                            name="proxyHostname"
+                            type="text"
+                          />
+                        </div>
+                        {errors.proxyHostname &&
+                          touched.proxyHostname &&
+                          typeof errors.proxyHostname === 'string' && (
+                            <div className="error">{errors.proxyHostname}</div>
+                          )}
+                      </div>
+                    </div>
+                    <div className="form-row">
+                      <label htmlFor="proxyPort" className="checkbox-label">
+                        <span className="mr-2 ml-4">
+                          {intl.formatMessage(messages.proxyPort)}
+                        </span>
+                      </label>
+                      <div className="form-input-area">
+                        <div className="form-input-field">
+                          <Field id="proxyPort" name="proxyPort" type="text" />
+                        </div>
+                        {errors.proxyPort &&
+                          touched.proxyPort &&
+                          typeof errors.proxyPort === 'string' && (
+                            <div className="error">{errors.proxyPort}</div>
+                          )}
+                      </div>
+                    </div>
+                    <div className="form-row">
+                      <label htmlFor="proxySsl" className="checkbox-label">
+                        <span className="mr-2 ml-4">
+                          {intl.formatMessage(messages.proxySsl)}
+                        </span>
+                      </label>
+                      <div className="form-input-area">
+                        <Field
+                          type="checkbox"
+                          id="proxySsl"
+                          name="proxySsl"
+                          onChange={() => {
+                            setFieldValue('proxySsl', !values.proxySsl);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="form-row">
+                      <label htmlFor="proxyUser" className="checkbox-label">
+                        <span className="mr-2 ml-4">
+                          {intl.formatMessage(messages.proxyUser)}
+                        </span>
+                      </label>
+                      <div className="form-input-area">
+                        <div className="form-input-field">
+                          <Field id="proxyUser" name="proxyUser" type="text" />
+                        </div>
+                        {errors.proxyUser &&
+                          touched.proxyUser &&
+                          typeof errors.proxyUser === 'string' && (
+                            <div className="error">{errors.proxyUser}</div>
+                          )}
+                      </div>
+                    </div>
+                    <div className="form-row">
+                      <label htmlFor="proxyPassword" className="checkbox-label">
+                        <span className="mr-2 ml-4">
+                          {intl.formatMessage(messages.proxyPassword)}
+                        </span>
+                      </label>
+                      <div className="form-input-area">
+                        <div className="form-input-field">
+                          <Field
+                            id="proxyPassword"
+                            name="proxyPassword"
+                            type="password"
+                          />
+                        </div>
+                        {errors.proxyPassword &&
+                          touched.proxyPassword &&
+                          typeof errors.proxyPassword === 'string' && (
+                            <div className="error">{errors.proxyPassword}</div>
+                          )}
+                      </div>
+                    </div>
+                    <div className="form-row">
+                      <label
+                        htmlFor="proxyBypassFilter"
+                        className="checkbox-label"
+                      >
+                        <span className="mr-2 ml-4">
+                          {intl.formatMessage(messages.proxyBypassFilter)}
+                        </span>
+                        <span className="label-tip ml-4">
+                          {intl.formatMessage(messages.proxyBypassFilterTip)}
+                        </span>
+                      </label>
+                      <div className="form-input-area">
+                        <div className="form-input-field">
+                          <Field
+                            id="proxyBypassFilter"
+                            name="proxyBypassFilter"
+                            type="text"
+                          />
+                        </div>
+                        {errors.proxyBypassFilter &&
+                          touched.proxyBypassFilter &&
+                          typeof errors.proxyBypassFilter === 'string' && (
+                            <div className="error">
+                              {errors.proxyBypassFilter}
+                            </div>
+                          )}
+                      </div>
+                    </div>
+                    <div className="form-row">
+                      <label
+                        htmlFor="proxyBypassLocalAddresses"
+                        className="checkbox-label"
+                      >
+                        <span className="mr-2 ml-4">
+                          {intl.formatMessage(
+                            messages.proxyBypassLocalAddresses
+                          )}
+                        </span>
+                      </label>
+                      <div className="form-input-area">
+                        <Field
+                          type="checkbox"
+                          id="proxyBypassLocalAddresses"
+                          name="proxyBypassLocalAddresses"
+                          onChange={() => {
+                            setFieldValue(
+                              'proxyBypassLocalAddresses',
+                              !values.proxyBypassLocalAddresses
+                            );
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
                 <div className="actions">
                   <div className="flex justify-end">
                     <span className="ml-3 inline-flex rounded-md shadow-sm">
