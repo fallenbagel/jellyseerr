@@ -32,13 +32,27 @@ class ExternalAPI {
       this.fetch = fetch;
     }
 
-    this.baseUrl = baseUrl;
-    this.params = params;
+    const url = new URL(baseUrl);
+
     this.defaultHeaders = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
+      ...((url.username || url.password) && {
+        Authorization: `Basic ${Buffer.from(
+          `${url.username}:${url.password}`
+        ).toString('base64')}`,
+      }),
       ...options.headers,
     };
+
+    if (url.username || url.password) {
+      url.username = '';
+      url.password = '';
+      baseUrl = url.toString();
+    }
+
+    this.baseUrl = baseUrl;
+    this.params = params;
     this.cache = options.nodeCache;
   }
 
