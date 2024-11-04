@@ -71,7 +71,7 @@ You could also use [diun](https://github.com/crazy-max/diun) to receive notifica
 For details on how to use Docker Compose, please [review the official Compose documentation](https://docs.docker.com/compose/reference/).
 
 #### Installation:
-Define the `jellyseerr` service in your `docker-compose.yml` as follows:
+Define the `jellyseerr` service in your `compose.yaml` as follows:
 ```yaml
 ---
 services:
@@ -94,17 +94,17 @@ If you are using emby, make sure to set the `JELLYFIN_TYPE` environment variable
 
 Then, start all services defined in the Compose file:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 #### Updating:
 Pull the latest image:
 ```bash
-docker-compose pull jellyseerr
+docker compose pull jellyseerr
 ```
 Then, restart all services defined in the Compose file:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 :::tip
 You may alternatively use a third-party mechanism like [dockge](https://github.com/louislam/dockge) to manage your docker compose files.

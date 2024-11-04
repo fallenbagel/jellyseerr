@@ -18,7 +18,7 @@ config/logs/*
 config/*.json
 dist
 Dockerfile*
-docker-compose.yml
+compose.yaml
 docs
 LICENSE
 node_modules

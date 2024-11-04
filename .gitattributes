@@ -40,7 +40,7 @@ docs export-ignore
 .all-contributorsrc export-ignore
 .editorconfig export-ignore
 Dockerfile.local export-ignore
-docker-compose.yml export-ignore
+compose.yaml export-ignore
 stylelint.config.js export-ignore
 
 public/os_logo_filled.png export-ignore

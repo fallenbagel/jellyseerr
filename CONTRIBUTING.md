@@ -52,7 +52,7 @@ All help is welcome and greatly appreciated! If you would like to contribute to 
    pnpm dev
    ```
 
-   - Alternatively, you can use [Docker](https://www.docker.com/) with `docker-compose up -d`. This method does not require installing NodeJS or Yarn on your machine directly.
+   - Alternatively, you can use [Docker](https://www.docker.com/) with `docker compose up -d`. This method does not require installing NodeJS or Yarn on your machine directly.
 
 5. Create your patch and test your changes.
 
