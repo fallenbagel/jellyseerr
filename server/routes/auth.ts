@@ -299,54 +299,84 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       where: { jellyfinUserId: account.User.Id },
     });
 
-    if (!user && !(await userRepository.count())) {
+    const missingAdminUser = !user && !(await userRepository.count());
+    if (
+      missingAdminUser ||
+      settings.main.mediaServerType === MediaServerType.NOT_CONFIGURED
+    ) {
       // Check if user is admin on jellyfin
       if (account.User.Policy.IsAdministrator === false) {
         throw new ApiError(403, ApiErrorCode.NotAdmin);
       }
 
-      logger.info(
-        'Sign-in attempt from Jellyfin user with access to the media server; creating initial admin user for Overseerr',
-        {
-          label: 'API',
-          ip: req.ip,
+      if (
+        body.serverType !== MediaServerType.JELLYFIN &&
+        body.serverType !== MediaServerType.EMBY
+      ) {
+        throw new Error('select_server_type');
+      }
+      settings.main.mediaServerType = body.serverType;
+
+      if (missingAdminUser) {
+        logger.info(
+          'Sign-in attempt from Jellyfin user with access to the media server; creating initial admin user for Jellyseerr',
+          {
+            label: 'API',
+            ip: req.ip,
+            jellyfinUsername: account.User.Name,
+          }
+        );
+
+        // User doesn't exist, and there are no users in the database, we'll create the user
+        // with admin permissions
+
+        user = new User({
+          id: 1,
+          email: body.email || account.User.Name,
           jellyfinUsername: account.User.Name,
+          jellyfinUserId: account.User.Id,
+          jellyfinDeviceId: deviceId,
+          jellyfinAuthToken: account.AccessToken,
+          permissions: Permission.ADMIN,
+          avatar: `/avatarproxy/${account.User.Id}`,
+          userType:
+            body.serverType === MediaServerType.JELLYFIN
+              ? UserType.JELLYFIN
+              : UserType.EMBY,
+        });
+
+        await userRepository.save(user);
+      } else {
+        logger.info(
+          'Sign-in attempt from Jellyfin user with access to the media server; editing admin user for Jellyseerr',
+          {
+            label: 'API',
+            ip: req.ip,
+            jellyfinUsername: account.User.Name,
+          }
+        );
+
+        // User alread exist but settings.json is not configured, we'll edit the admin user
+
+        user = await userRepository.findOne({
+          where: { id: 1 },
+        });
+        if (!user) {
+          throw new Error('Unable to find admin user to edit');
         }
-      );
+        user.email = body.email || account.User.Name;
+        user.jellyfinUsername = account.User.Name;
+        user.jellyfinUserId = account.User.Id;
+        user.jellyfinDeviceId = deviceId;
+        user.jellyfinAuthToken = account.AccessToken;
+        user.permissions = Permission.ADMIN;
+        user.avatar = `/avatarproxy/${account.User.Id}`;
+        user.userType =
+          body.serverType === MediaServerType.JELLYFIN
+            ? UserType.JELLYFIN
+            : UserType.EMBY;
 
-      // User doesn't exist, and there are no users in the database, we'll create the user
-      // with admin permissions
-      switch (body.serverType) {
-        case MediaServerType.EMBY:
-          settings.main.mediaServerType = MediaServerType.EMBY;
-          user = new User({
-            email: body.email || account.User.Name,
-            jellyfinUsername: account.User.Name,
-            jellyfinUserId: account.User.Id,
-            jellyfinDeviceId: deviceId,
-            jellyfinAuthToken: account.AccessToken,
-            permissions: Permission.ADMIN,
-            avatar: `/avatarproxy/${account.User.Id}`,
-            userType: UserType.EMBY,
-          });
-
-          break;
-        case MediaServerType.JELLYFIN:
-          settings.main.mediaServerType = MediaServerType.JELLYFIN;
-          user = new User({
-            email: body.email || account.User.Name,
-            jellyfinUsername: account.User.Name,
-            jellyfinUserId: account.User.Id,
-            jellyfinDeviceId: deviceId,
-            jellyfinAuthToken: account.AccessToken,
-            permissions: Permission.ADMIN,
-            avatar: `/avatarproxy/${account.User.Id}`,
-            userType: UserType.JELLYFIN,
-          });
-
-          break;
-        default:
-          throw new Error('select_server_type');
+        await userRepository.save(user);
       }
 
       // Create an API key on Jellyfin from this admin user
@@ -368,8 +398,6 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       settings.jellyfin.apiKey = apiKey;
       await settings.save();
       startJobs();
-
-      await userRepository.save(user);
     }
     // User already exists, let's update their information
     else if (account.User.Id === user?.jellyfinUserId) {
