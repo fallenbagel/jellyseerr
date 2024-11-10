@@ -82,10 +82,17 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
       port: Yup.number().required(
         intl.formatMessage(messages.validationPortRequired)
       ),
-      urlBase: Yup.string().matches(
-        /^(.*[^/])$/,
-        intl.formatMessage(messages.validationUrlBaseTrailingSlash)
-      ),
+      urlBase: Yup.string()
+        .test(
+          'leading-slash',
+          intl.formatMessage(messages.validationUrlBaseLeadingSlash),
+          (value) => !value || value.startsWith('/')
+        )
+        .test(
+          'trailing-slash',
+          intl.formatMessage(messages.validationUrlBaseTrailingSlash),
+          (value) => !value || !value.endsWith('/')
+        ),
       email: Yup.string()
         .email(intl.formatMessage(messages.validationemailformat))
         .required(intl.formatMessage(messages.validationemailrequired)),
