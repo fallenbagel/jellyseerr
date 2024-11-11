@@ -48,7 +48,7 @@ All help is welcome and greatly appreciated! If you would like to contribute to 
 4. Run the development environment:
 
    ```bash
-   pnpm
+   pnpm install
    pnpm dev
    ```
 
