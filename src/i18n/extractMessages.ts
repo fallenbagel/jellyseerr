@@ -25,15 +25,14 @@ async function extractMessages(
     try {
       const formattedMessages = messages
         .trim()
-        .replace(/^\s*(['"])?([a-zA-Z0-9_-]+)(['"])?:/gm, '"$2":')
-        .replace(
-          /'.*'/g,
-          (match) =>
-            `"${match
-              .match(/'(.*)'/)?.[1]
-              .replace(/\\/g, '\\\\')
-              .replace(/"/g, '\\"')}"`
-        )
+        .replace(/^\s*(['"])?([a-zA-Z0-9_-]+)(['"])?:[\s\n]*/gm, '"$2":')
+        .replace(/^"[a-zA-Z0-9_-]+":'.*',?$/gm, (match) => {
+          const parts = /^("[a-zA-Z0-9_-]+":)'(.*)',?$/.exec(match);
+          if (!parts) return match;
+          return `${parts[1]}"${parts[2]
+            .replace(/\\/g, '\\\\')
+            .replace(/"/g, '\\"')}",`;
+        })
         .replace(/,$/, '');
       const messagesJson = JSON.parse(`{${formattedMessages}}`);
       return { namespace: namespace.trim(), messages: messagesJson };
