@@ -292,7 +292,7 @@ const ManageSlideOver = ({
             </h3>
             <div className="overflow-hidden rounded-md border border-gray-700 shadow">
               <BlacklistBlock
-                blacklistItem={data.mediaInfo.blacklist}
+                tmdbId={data.mediaInfo.tmdbId}
                 onUpdate={() => revalidate()}
                 onDelete={() => onClose()}
               />

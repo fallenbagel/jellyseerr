@@ -118,10 +118,8 @@ class Media {
   @OneToMany(() => Issue, (issue) => issue.media, { cascade: true })
   public issues: Issue[];
 
-  @OneToOne(() => Blacklist, (blacklist) => blacklist.media, {
-    eager: true,
-  })
-  public blacklist: Blacklist;
+  @OneToOne(() => Blacklist, (blacklist) => blacklist.media)
+  public blacklist: Promise<Blacklist>;
 
   @CreateDateColumn()
   public createdAt: Date;

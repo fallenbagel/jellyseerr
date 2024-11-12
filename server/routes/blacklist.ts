@@ -2,14 +2,12 @@ import { MediaType } from '@server/constants/media';
 import { getRepository } from '@server/datasource';
 import { Blacklist } from '@server/entity/Blacklist';
 import Media from '@server/entity/Media';
-import { NotFoundError } from '@server/entity/Watchlist';
 import type { BlacklistResultsResponse } from '@server/interfaces/api/blacklistInterfaces';
 import { Permission } from '@server/lib/permissions';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
-import rateLimit from 'express-rate-limit';
-import { QueryFailedError } from 'typeorm';
+import { EntityNotFoundError, QueryFailedError } from 'typeorm';
 import { z } from 'zod';
 
 const blacklistRoutes = Router();
@@ -26,7 +24,6 @@ blacklistRoutes.get(
   isAuthenticated([Permission.MANAGE_BLACKLIST, Permission.VIEW_BLACKLIST], {
     type: 'or',
   }),
-  rateLimit({ windowMs: 60 * 1000, max: 50 }),
   async (req, res, next) => {
     const pageSize = req.query.take ? Number(req.query.take) : 25;
     const skip = req.query.skip ? Number(req.query.skip) : 0;
@@ -67,6 +64,32 @@ blacklistRoutes.get(
         status: 500,
         message: 'Unable to retrieve blacklisted items.',
       });
+    }
+  }
+);
+
+blacklistRoutes.get(
+  '/:id',
+  isAuthenticated([Permission.MANAGE_BLACKLIST], {
+    type: 'or',
+  }),
+  async (req, res, next) => {
+    try {
+      const blacklisteRepository = getRepository(Blacklist);
+
+      const blacklistItem = await blacklisteRepository.findOneOrFail({
+        where: { tmdbId: Number(req.params.id) },
+      });
+
+      return res.status(200).send(blacklistItem);
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+        return next({
+          status: 401,
+          message: e.message,
+        });
+      }
+      return next({ status: 500, message: e.message });
     }
   }
 );
@@ -134,7 +157,7 @@ blacklistRoutes.delete(
 
       return res.status(204).send();
     } catch (e) {
-      if (e instanceof NotFoundError) {
+      if (e instanceof EntityNotFoundError) {
         return next({
           status: 401,
           message: e.message,

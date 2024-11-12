@@ -80,12 +80,12 @@ export class Blacklist implements BlacklistItem {
         status: MediaStatus.BLACKLISTED,
         status4k: MediaStatus.BLACKLISTED,
         mediaType: blacklistRequest.mediaType,
-        blacklist: blacklist,
+        blacklist: Promise.resolve(blacklist),
       });
 
       await mediaRepository.save(media);
     } else {
-      media.blacklist = blacklist;
+      media.blacklist = Promise.resolve(blacklist);
       media.status = MediaStatus.BLACKLISTED;
       media.status4k = MediaStatus.BLACKLISTED;
 

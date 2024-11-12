@@ -4142,6 +4142,21 @@ paths:
         '412':
           description: Item has already been blacklisted
   /blacklist/{tmdbId}:
+    get:
+      summary: Get media from blacklist
+      tags:
+        - blacklist
+      parameters:
+        - in: path
+          name: tmdbId
+          description: tmdbId ID
+          required: true
+          example: '1'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Blacklist details in JSON
     delete:
       summary: Remove media from blacklist
       tags:

@@ -38,7 +38,7 @@ const BlacklistModal = ({
   const intl = useIntl();
 
   const { data, error } = useSWR<TvDetails | MovieDetails>(
-    `/api/v1/${type}/${tmdbId}`
+    show ? `/api/v1/${type}/${tmdbId}` : null
   );
 
   return (
