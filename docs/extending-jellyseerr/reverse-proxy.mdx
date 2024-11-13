@@ -95,6 +95,8 @@ location ^~ /jellyseerr {
     sub_filter '/api/v1' '/$app/api/v1';
     sub_filter '/login/plex/loading' '/$app/login/plex/loading';
     sub_filter '/images/' '/$app/images/';
+    sub_filter '/imageproxy/' '/$app/imageproxy/';
+    sub_filter '/avatarproxy/' '/$app/avatarproxy/';
     sub_filter '/android-' '/$app/android-';
     sub_filter '/apple-' '/$app/apple-';
     sub_filter '/favicon' '/$app/favicon';
