@@ -19,12 +19,16 @@ const messages = defineMessages('components.Settings.Notifications', {
   webhookUrl: 'Webhook URL',
   webhookUrlTip:
     'Create a <DiscordWebhookLink>webhook integration</DiscordWebhookLink> in your server',
+  webhookRoleId: 'Notification Role ID',
+  webhookRoleIdTip:
+    'The role ID to mention in the webhook message. Leave empty to disable mentions',
   discordsettingssaved: 'Discord notification settings saved successfully!',
   discordsettingsfailed: 'Discord notification settings failed to save.',
   toastDiscordTestSending: 'Sending Discord test notification…',
   toastDiscordTestSuccess: 'Discord test notification sent!',
   toastDiscordTestFailed: 'Discord test notification failed to send.',
   validationUrl: 'You must provide a valid URL',
+  validationWebhookRoleId: 'You must provide a valid Discord Role ID',
   validationTypes: 'You must select at least one notification type',
   enableMentions: 'Enable Mentions',
 });
@@ -53,6 +57,12 @@ const NotificationsDiscord = () => {
         otherwise: Yup.string().nullable(),
       })
       .url(intl.formatMessage(messages.validationUrl)),
+    webhookRoleId: Yup.string()
+      .nullable()
+      .matches(
+        /^\d{17,19}$/,
+        intl.formatMessage(messages.validationWebhookRoleId)
+      ),
   });
 
   if (!data && !error) {
@@ -67,6 +77,7 @@ const NotificationsDiscord = () => {
         botUsername: data?.options.botUsername,
         botAvatarUrl: data?.options.botAvatarUrl,
         webhookUrl: data.options.webhookUrl,
+        webhookRoleId: data?.options.webhookRoleId,
         enableMentions: data?.options.enableMentions,
       }}
       validationSchema={NotificationsDiscordSchema}
@@ -84,6 +95,7 @@ const NotificationsDiscord = () => {
                 botUsername: values.botUsername,
                 botAvatarUrl: values.botAvatarUrl,
                 webhookUrl: values.webhookUrl,
+                webhookRoleId: values.webhookRoleId,
                 enableMentions: values.enableMentions,
               },
             }),
@@ -141,6 +153,7 @@ const NotificationsDiscord = () => {
                     botUsername: values.botUsername,
                     botAvatarUrl: values.botAvatarUrl,
                     webhookUrl: values.webhookUrl,
+                    webhookRoleId: values.webhookRoleId,
                     enableMentions: values.enableMentions,
                   },
                 }),
@@ -251,6 +264,21 @@ const NotificationsDiscord = () => {
                   touched.botAvatarUrl &&
                   typeof errors.botAvatarUrl === 'string' && (
                     <div className="error">{errors.botAvatarUrl}</div>
+                  )}
+              </div>
+            </div>
+            <div className="form-row">
+              <label htmlFor="webhookRoleId" className="text-label">
+                {intl.formatMessage(messages.webhookRoleId)}
+              </label>
+              <div className="form-input-area">
+                <div className="form-input-field">
+                  <Field id="webhookRoleId" name="webhookRoleId" type="text" />
+                </div>
+                {errors.webhookRoleId &&
+                  touched.webhookRoleId &&
+                  typeof errors.webhookRoleId === 'string' && (
+                    <div className="error">{errors.webhookRoleId}</div>
                   )}
               </div>
             </div>

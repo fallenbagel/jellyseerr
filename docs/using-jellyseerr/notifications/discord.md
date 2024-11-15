@@ -18,6 +18,10 @@ Users can optionally opt-in to being mentioned in Discord notifications by confi
 
 You can find the webhook URL in the Discord application, at **Server Settings &rarr; Integrations &rarr; Webhooks**.
 
+### Notification Role ID (optional)
+
+If a role ID is specified, it will be included in the webhook message. See [Discord role ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID).
+
 ### Bot Username (optional)
 
 If you would like to override the name you configured for your bot in Discord, you may set this value to whatever you like!

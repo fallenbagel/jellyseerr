@@ -75,6 +75,7 @@
         "types": 0,
         "options": {
           "webhookUrl": "",
+          "webhookRoleId": "",
           "enableMentions": true
         }
       },

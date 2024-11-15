@@ -170,6 +170,7 @@ export interface NotificationAgentDiscord extends NotificationAgentConfig {
     botUsername?: string;
     botAvatarUrl?: string;
     webhookUrl: string;
+    webhookRoleId?: string;
     enableMentions: boolean;
   };
 }
@@ -394,6 +395,7 @@ class Settings {
             types: 0,
             options: {
               webhookUrl: '',
+              webhookRoleId: '',
               enableMentions: true,
             },
           },

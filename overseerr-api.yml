@@ -1273,6 +1273,8 @@ components:
               type: string
             webhookUrl:
               type: string
+            webhookRoleId:
+              type: string
             enableMentions:
               type: boolean
     SlackSettings:

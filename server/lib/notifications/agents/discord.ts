@@ -291,6 +291,10 @@ class DiscordAgent
         }
       }
 
+      if (settings.options.webhookRoleId) {
+        userMentions.push(`<@&${settings.options.webhookRoleId}>`);
+      }
+
       const response = await fetch(settings.options.webhookUrl, {
         method: 'POST',
         headers: {
