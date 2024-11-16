@@ -44,6 +44,8 @@ const messages = defineMessages(
     toastSettingsSuccess: 'Settings saved successfully!',
     toastSettingsFailure: 'Something went wrong while saving settings.',
     toastSettingsFailureEmail: 'This email is already taken!',
+    toastSettingsFailureEmailEmpty:
+      'Another user already has this username. You must set an email',
     region: 'Discover Region',
     regionTip: 'Filter content by regional availability',
     originallanguage: 'Discover Language',
@@ -138,7 +140,7 @@ const UserGeneralSettings = () => {
       </div>
       <Formik
         initialValues={{
-          displayName: data?.username ?? '',
+          displayName: data?.username !== user?.email ? data?.username : '',
           email: data?.email?.includes('@') ? data.email : '',
           discordId: data?.discordId ?? '',
           locale: data?.locale,
@@ -203,10 +205,23 @@ const UserGeneralSettings = () => {
               /* empty */
             }
             if (errorData?.message === ApiErrorCode.InvalidEmail) {
-              addToast(intl.formatMessage(messages.toastSettingsFailureEmail), {
-                autoDismiss: true,
-                appearance: 'error',
-              });
+              if (values.email) {
+                addToast(
+                  intl.formatMessage(messages.toastSettingsFailureEmail),
+                  {
+                    autoDismiss: true,
+                    appearance: 'error',
+                  }
+                );
+              } else {
+                addToast(
+                  intl.formatMessage(messages.toastSettingsFailureEmailEmpty),
+                  {
+                    autoDismiss: true,
+                    appearance: 'error',
+                  }
+                );
+              }
             } else {
               addToast(intl.formatMessage(messages.toastSettingsFailure), {
                 autoDismiss: true,
@@ -284,9 +299,9 @@ const UserGeneralSettings = () => {
                       name="displayName"
                       type="text"
                       placeholder={
-                        user?.username ||
                         user?.jellyfinUsername ||
-                        user?.plexUsername
+                        user?.plexUsername ||
+                        user?.email
                       }
                     />
                   </div>

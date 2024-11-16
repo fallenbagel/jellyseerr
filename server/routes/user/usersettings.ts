@@ -1,4 +1,5 @@
 import { ApiErrorCode } from '@server/constants/error';
+import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { UserSettings } from '@server/entity/UserSettings';
@@ -99,10 +100,28 @@ userSettingsRoutes.post<
       });
     }
 
-    user.username = req.body.username;
     const oldEmail = user.email;
+    const oldUsername = user.username;
+    user.username = req.body.username;
     if (user.jellyfinUsername) {
       user.email = req.body.email || user.jellyfinUsername || user.email;
+    }
+    // Edge case for local users, because they have no Jellyfin username to fall back on
+    // if the email is not provided
+    if (user.userType === UserType.LOCAL) {
+      if (req.body.email) {
+        user.email = req.body.email;
+        if (
+          !user.username &&
+          user.email !== oldEmail &&
+          !oldEmail.includes('@')
+        ) {
+          user.username = oldEmail;
+        }
+      } else if (req.body.username) {
+        user.email = oldUsername || user.email;
+        user.username = req.body.username;
+      }
     }
 
     const existingUser = await userRepository.findOne({
