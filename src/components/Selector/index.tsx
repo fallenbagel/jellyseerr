@@ -437,7 +437,7 @@ export const WatchProviderSelector = ({
                   key={`prodiver-${provider.id}`}
                 >
                   <div
-                    className={`provider-container relative w-full cursor-pointer rounded-lg p-2 ring-1 ${
+                    className={`provider-container w-full cursor-pointer rounded-lg ring-1 ${
                       isActive
                         ? 'bg-gray-600 ring-indigo-500 hover:bg-gray-500'
                         : 'bg-gray-700 ring-gray-500 hover:bg-gray-600'
@@ -451,18 +451,15 @@ export const WatchProviderSelector = ({
                     role="button"
                     tabIndex={0}
                   >
-                    <CachedImage
-                      type="tmdb"
-                      src={`https://image.tmdb.org/t/p/original${provider.logoPath}`}
-                      alt=""
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                      }}
-                      fill
-                      className="rounded-lg"
-                    />
+                    <div className="relative m-2 aspect-1">
+                      <CachedImage
+                        type="tmdb"
+                        src={`https://image.tmdb.org/t/p/original${provider.logoPath}`}
+                        alt=""
+                        fill
+                        className="rounded-lg object-contain"
+                      />
+                    </div>
                     {isActive && (
                       <div className="pointer-events-none absolute -top-1 -left-1 flex items-center justify-center text-indigo-100 opacity-90">
                         <CheckCircleIcon className="h-6 w-6" />
@@ -483,7 +480,7 @@ export const WatchProviderSelector = ({
                     key={`prodiver-${provider.id}`}
                   >
                     <div
-                      className={`provider-container relative w-full cursor-pointer rounded-lg p-2 ring-1 transition ${
+                      className={`provider-container w-full cursor-pointer rounded-lg ring-1 transition ${
                         isActive
                           ? 'bg-gray-600 ring-indigo-500 hover:bg-gray-500'
                           : 'bg-gray-700 ring-gray-500 hover:bg-gray-600'
@@ -497,18 +494,15 @@ export const WatchProviderSelector = ({
                       role="button"
                       tabIndex={0}
                     >
-                      <CachedImage
-                        type="tmdb"
-                        src={`https://image.tmdb.org/t/p/original${provider.logoPath}`}
-                        alt=""
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                        }}
-                        fill
-                        className="rounded-lg"
-                      />
+                      <div className="relative m-2 aspect-1">
+                        <CachedImage
+                          type="tmdb"
+                          src={`https://image.tmdb.org/t/p/original${provider.logoPath}`}
+                          alt=""
+                          fill
+                          className="rounded-lg object-contain"
+                        />
+                      </div>
                       {isActive && (
                         <div className="pointer-events-none absolute -top-1 -left-1 flex items-center justify-center text-indigo-100 opacity-90">
                           <CheckCircleIcon className="h-6 w-6" />
