@@ -88,14 +88,14 @@ const SearchByNameModal = ({
                 tvdbId === item.tvdbId ? 'ring ring-indigo-500' : ''
               } `}
             >
-              <div className="flex w-24 flex-none items-center space-x-4">
+              <div className="relative flex w-24 flex-none items-center space-x-4 self-stretch">
                 <Image
                   src={
                     item.remotePoster ??
                     '/images/overseerr_poster_not_found.png'
                   }
                   alt={item.title}
-                  className="h-100 w-auto rounded-md"
+                  className="w-100 h-auto rounded-md"
                   fill
                 />
               </div>
