@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 
 const PullToRefresh = () => {
   const router = useRouter();
-
   const [pullStartPoint, setPullStartPoint] = useState(0);
   const [pullChange, setPullChange] = useState(0);
   const refreshDiv = useRef<HTMLDivElement>(null);
@@ -19,6 +18,7 @@ const PullToRefresh = () => {
     // Reload function that is called when reload threshold has been hit
     // Add loading class to determine when to add spin animation
     const forceReload = () => {
+      setPullStartPoint(0);
       refreshDiv.current?.classList.add('loading');
       setTimeout(() => {
         router.reload();
@@ -32,6 +32,8 @@ const PullToRefresh = () => {
     const pullStart = (e: TouchEvent) => {
       setPullStartPoint(e.targetTouches[0].screenY);
 
+      const html = document.querySelector('html');
+
       if (window.scrollY === 0 && window.scrollX === 0) {
         refreshDiv.current?.classList.add('block');
         refreshDiv.current?.classList.remove('hidden');
@@ -41,6 +43,7 @@ const PullToRefresh = () => {
           html.style.overscrollBehaviorY = 'none';
         }
       } else {
+        setPullStartPoint(0);
         refreshDiv.current?.classList.remove('block');
         refreshDiv.current?.classList.add('hidden');
       }
@@ -49,7 +52,6 @@ const PullToRefresh = () => {
     // Tracks how far we have pulled down the refresh icon
     const pullDown = async (e: TouchEvent) => {
       const screenY = e.targetTouches[0].screenY;
-
       const pullLength =
         pullStartPoint < screenY ? Math.abs(screenY - pullStartPoint) : 0;
 
@@ -59,12 +61,11 @@ const PullToRefresh = () => {
     // Will reload the page if we are past the threshold
     // Otherwise, we reset the pull
     const pullFinish = () => {
-      setPullStartPoint(0);
-
-      if (pullDownReloadThreshold) {
+      if (pullDownReloadThreshold && pullStartPoint !== 0) {
         forceReload();
       } else {
         setPullChange(0);
+        setTimeout(() => setPullStartPoint(0), 200);
       }
 
       document.body.style.touchAction = 'auto';
@@ -83,7 +84,21 @@ const PullToRefresh = () => {
       window.removeEventListener('touchmove', pullDown);
       window.removeEventListener('touchend', pullFinish);
     };
-  }, [pullDownInitThreshold, pullDownReloadThreshold, pullStartPoint, router]);
+  }, [
+    pullDownInitThreshold,
+    pullDownReloadThreshold,
+    pullStartPoint,
+    refreshDiv,
+    router,
+    setPullStartPoint,
+  ]);
+
+  if (
+    pullStartPoint === 0 &&
+    !refreshDiv.current?.classList.contains('loading')
+  ) {
+    return null;
+  }
 
   return (
     <div
@@ -102,7 +117,7 @@ const PullToRefresh = () => {
       <div
         className={`${
           refreshDiv.current?.classList.contains('loading') && 'animate-spin'
-        } relative -top-24 h-9 w-9 rounded-full border-4 border-gray-800 bg-gray-800 shadow-md shadow-black ring-1 ring-gray-700`}
+        } relative -top-28 h-9 w-9 rounded-full border-4 border-gray-800 bg-gray-800 shadow-md shadow-black ring-1 ring-gray-700`}
         style={{ animationDirection: 'reverse' }}
       >
         <ArrowPathIcon

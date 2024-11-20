@@ -103,10 +103,8 @@ class SonarrScanner
 
       const tmdbId = tvShow.id;
 
-      const filteredSeasons = sonarrSeries.seasons.filter(
-        (sn) =>
-          sn.seasonNumber !== 0 &&
-          tvShow.seasons.find((s) => s.season_number === sn.seasonNumber)
+      const filteredSeasons = sonarrSeries.seasons.filter((sn) =>
+        tvShow.seasons.find((s) => s.season_number === sn.seasonNumber)
       );
 
       for (const season of filteredSeasons) {

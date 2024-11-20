@@ -8,7 +8,8 @@ export type AvailableCacheIds =
   | 'imdb'
   | 'github'
   | 'plexguid'
-  | 'plextv';
+  | 'plextv'
+  | 'plexwatchlist';
 
 const DEFAULT_TTL = 300;
 const DEFAULT_CHECK_PERIOD = 120;
@@ -68,6 +69,7 @@ class CacheManager {
       stdTtl: 86400 * 7, // 1 week cache
       checkPeriod: 60,
     }),
+    plexwatchlist: new Cache('plexwatchlist', 'Plex Watchlist'),
   };
 
   public getCache(id: AvailableCacheIds): Cache {

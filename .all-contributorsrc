@@ -448,6 +448,69 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "j0srisk",
+      "name": "Joseph Risk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18372584?v=4",
+      "profile": "http://josephrisk.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Loetwiek",
+      "name": "Loetwiek",
+      "avatar_url": "https://avatars.githubusercontent.com/u/79059734?v=4",
+      "profile": "https://github.com/Loetwiek",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Fuochi",
+      "name": "Fuochi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4720478?v=4",
+      "profile": "https://github.com/Fuochi",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "demrich",
+      "name": "David Emrich",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30092389?v=4",
+      "profile": "https://github.com/demrich",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "maxnatamo",
+      "name": "Max T. Kristiansen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5898152?v=4",
+      "profile": "https://maxtrier.dk",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "DamsDev1",
+      "name": "Damien Fajole",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60252259?v=4",
+      "profile": "https://damsdev.me",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "AhmedNSidd",
+      "name": "Ahmed Siddiqui",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36286128?v=4",
+      "profile": "https://github.com/AhmedNSidd",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }

@@ -62,7 +62,7 @@ class WatchlistSync {
 
     const plexTvApi = new PlexTvAPI(user.plexToken);
 
-    const response = await plexTvApi.getWatchlist({ size: 200 });
+    const response = await plexTvApi.getWatchlist({ size: 20 });
 
     const mediaItems = await Media.getRelatedMedia(
       user,

@@ -5486,7 +5486,7 @@ paths:
                     - type: array
                       items:
                         type: number
-                        minimum: 1
+                        minimum: 0
                     - type: string
                       enum: [all]
                 is4k:
@@ -5592,7 +5592,7 @@ paths:
                   type: array
                   items:
                     type: number
-                    minimum: 1
+                    minimum: 0
                 is4k:
                   type: boolean
                   example: false

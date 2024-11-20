@@ -257,9 +257,7 @@ export class MediaRequest {
       >;
       const requestedSeasons =
         requestBody.seasons === 'all'
-          ? tmdbMediaShow.seasons
-              .map((season) => season.season_number)
-              .filter((sn) => sn > 0)
+          ? tmdbMediaShow.seasons.map((season) => season.season_number)
           : (requestBody.seasons as number[]);
       let existingSeasons: number[] = [];
 

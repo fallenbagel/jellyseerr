@@ -23,7 +23,7 @@ const useDeepLinks = ({
     if (
       settings.currentSettings.mediaServerType === MediaServerType.PLEX &&
       (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.userAgent === 'MacIntel' && navigator.maxTouchPoints > 1))
+        (navigator.userAgent.includes('Mac') && navigator.maxTouchPoints > 1))
     ) {
       setReturnedMediaUrl(iOSPlexUrl);
       setReturnedMediaUrl4k(iOSPlexUrl4k);

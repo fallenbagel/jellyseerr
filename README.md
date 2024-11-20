@@ -291,6 +291,12 @@ Thanks goes to these wonderful people from Overseerr ([emoji key](https://allcon
       <td align="center" valign="top" width="14.28%"><a href="http://josephrisk.com"><img src="https://avatars.githubusercontent.com/u/18372584?v=4?s=100" width="100px;" alt="Joseph Risk"/><br /><sub><b>Joseph Risk</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=j0srisk" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Loetwiek"><img src="https://avatars.githubusercontent.com/u/79059734?v=4?s=100" width="100px;" alt="Loetwiek"/><br /><sub><b>Loetwiek</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=Loetwiek" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Fuochi"><img src="https://avatars.githubusercontent.com/u/4720478?v=4?s=100" width="100px;" alt="Fuochi"/><br /><sub><b>Fuochi</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=Fuochi" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/demrich"><img src="https://avatars.githubusercontent.com/u/30092389?v=4?s=100" width="100px;" alt="David Emrich"/><br /><sub><b>David Emrich</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=demrich" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://maxtrier.dk"><img src="https://avatars.githubusercontent.com/u/5898152?v=4?s=100" width="100px;" alt="Max T. Kristiansen"/><br /><sub><b>Max T. Kristiansen</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=maxnatamo" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://damsdev.me"><img src="https://avatars.githubusercontent.com/u/60252259?v=4?s=100" width="100px;" alt="Damien Fajole"/><br /><sub><b>Damien Fajole</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=DamsDev1" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/AhmedNSidd"><img src="https://avatars.githubusercontent.com/u/36286128?v=4?s=100" width="100px;" alt="Ahmed Siddiqui"/><br /><sub><b>Ahmed Siddiqui</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=AhmedNSidd" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

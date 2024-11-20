@@ -58,6 +58,7 @@ const messages: { [messageName: string]: MessageDescriptor } = defineMessages(
     'plex-recently-added-scan': 'Plex Recently Added Scan',
     'plex-full-scan': 'Plex Full Library Scan',
     'plex-watchlist-sync': 'Plex Watchlist Sync',
+    'plex-refresh-token': 'Plex Refresh Token',
     'jellyfin-full-scan': 'Jellyfin Full Library Scan',
     'jellyfin-recently-added-scan': 'Jellyfin Recently Added Scan',
     'availability-sync': 'Media Availability Sync',

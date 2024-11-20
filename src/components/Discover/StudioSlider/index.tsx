@@ -74,6 +74,12 @@ const studios: Studio[] = [
       'https://image.tmdb.org/t/p/w780_filter(duotone,ffffff,bababa)/2Tc1P3Ac8M479naPp1kYT3izLS5.png',
     url: '/discover/movies/studio/9993',
   },
+  {
+    name: 'A24',
+    image:
+      'https://image.tmdb.org/t/p/w780_filter(duotone,ffffff,bababa)/1ZXsGaFPgrgS6ZZGS37AqD5uU12.png',
+    url: '/discover/movies/studio/41077',
+  },
 ];
 
 const StudioSlider = () => {
