@@ -1,0 +1,13 @@
+apiVersion: v2
+kubeVersion: ">=1.23.0-0"
+name: Jellyseerr
+description: Jellyseerr helm chart for Kubernetes
+type: application
+version: 1.1.0
+appVersion: "2.1.0"
+maintainers:
+  - name: Jellyseerr
+    url: https://github.com/Fallenbagel/jellyseerr
+sources:
+  - https://github.com/Fallenbagel/jellyseerr/tree/main/charts/jellyseerr
+home: https://github.com/Fallenbagel/jellyseerr

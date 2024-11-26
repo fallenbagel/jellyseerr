@@ -9,3 +9,6 @@ pnpm-lock.yaml
 src/assets/
 public/
 docs/
+
+# helm charts
+**/charts

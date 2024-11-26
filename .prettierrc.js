@@ -15,5 +15,11 @@ module.exports = {
         rangeEnd: 0, // default: Infinity
       },
     },
+    {
+      files: 'charts/**',
+      options: {
+        rangeEnd: 0, // default: Infinity
+      },
+    },
   ],
 };
