@@ -688,10 +688,9 @@ class Settings {
   }
 
   public async save(): Promise<void> {
-    await fs.writeFile(
-      SETTINGS_PATH,
-      JSON.stringify(this.data, undefined, ' ')
-    );
+    const tmp = SETTINGS_PATH + '.tmp';
+    await fs.writeFile(tmp, JSON.stringify(this.data, undefined, ' '));
+    await fs.rename(tmp, SETTINGS_PATH);
   }
 }
 
