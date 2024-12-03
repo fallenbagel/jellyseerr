@@ -54,9 +54,15 @@ router.get('/:jellyfinUserId', async (req, res) => {
       default: 'mm',
       size: 200,
     });
-    const jellyfinAvatarUrl = `${getHostname()}/UserImage?UserId=${
-      req.params.jellyfinUserId
-    }`;
+
+    const setttings = getSettings();
+    const jellyfinAvatarUrl =
+      setttings.main.mediaServerType === MediaServerType.JELLYFIN
+        ? `${getHostname()}/UserImage?UserId=${req.params.jellyfinUserId}`
+        : `${getHostname()}/Users/${
+            req.params.jellyfinUserId
+          }/Images/Primary?quality=90`;
+
     let imageData = await avatarImageCache.getImage(
       jellyfinAvatarUrl,
       fallbackUrl
