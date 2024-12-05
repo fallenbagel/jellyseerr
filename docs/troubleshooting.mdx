@@ -1,0 +1,158 @@
+---
+title: Troubleshooting
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## [TMDB] failed to retrieve/fetch XXX
+
+### Option 1: Change your DNS servers
+
+This error often comes from your Internet Service Provider (ISP) blocking TMDB API. The ISP may block the DNS resolution to the TMDB API hostname.
+
+To fix this, you can change your DNS servers to a public DNS service like Google's DNS or Cloudflare's DNS:
+
+<Tabs groupId="methods" queryString>
+  <TabItem value="docker-cli" label="Docker CLI">
+
+Add the following to your `docker run` command to use Google's DNS:
+```bash
+--dns=8.8.8.8
+```
+or for Cloudflare's DNS:
+```bash
+--dns=1.1.1.1
+```
+
+  </TabItem>
+
+  <TabItem value="docker-compose" label="Docker Compose">
+
+Add the following to your `compose.yaml` to use Google's DNS:
+```yaml
+---
+services:
+  jellyseerr:
+    dns:
+      - 8.8.8.8
+```
+or for Cloudflare's DNS:
+```yaml
+---
+services:
+  jellyseerr:
+    dns:
+      - 1.1.1.1
+```
+
+  </TabItem>
+
+  <TabItem value="windows" label="Windows">
+
+1. Open the Control Panel.
+2. Click on Network and Internet.
+3. Click on Network and Sharing Center.
+4. Click on Change adapter settings.
+5. Right-click the network interface connected to the internet and select Properties.
+6. Select Internet Protocol Version 4 (TCP/IPv4) and click Properties.
+7. Select Use the following DNS server addresses and enter `8.8.8.8` for Google's DNS or `1.1.1.1` for Cloudflare's DNS.
+
+  </TabItem>
+
+  <TabItem value="linux" label="Linux">
+
+1. Open a terminal.
+2. Edit the `/etc/resolv.conf` file with your favorite text editor.
+3. Add the following line to use Google's DNS:
+    ```bash
+    nameserver 8.8.8.8
+    ```
+    or for Cloudflare's DNS:
+
+    ```bash
+    nameserver 1.1.1.1
+    ```
+
+  </TabItem>
+</Tabs>
+
+### Option 2: Force IPV4 resolution first
+
+Sometimes there are configuration issues with IPV6 that prevent the hostname resolution from working correctly.
+
+You can try to force the resolution to use IPV4 first by setting the `FORCE_IPV4_FIRST` environment variable to `true`:
+
+<Tabs groupId="methods" queryString>
+  <TabItem value="docker-cli" label="Docker CLI">
+
+Add the following to your `docker run` command:
+```bash
+-e "FORCE_IPV4_FIRST=true"
+```
+
+  </TabItem>
+
+  <TabItem value="docker-compose" label="Docker Compose">
+
+Add the following to your `compose.yaml`:
+```yaml
+---
+services:
+  jellyseerr:
+    environment:
+      - FORCE_IPV4_FIRST=true
+```
+
+  </TabItem>
+</Tabs>
+
+### Option 3: Use Jellyseerr through a proxy
+
+If you can't change your DNS servers or force IPV4 resolution, you can use Jellyseerr through a proxy.
+
+In some places (like China), the ISP blocks not only the DNS resolution but also the connection to the TMDB API.
+
+You can configure Jellyseerr to use a proxy with the [HTTP(S) Proxy](/using-jellyseerr/settings/general#https-proxy) setting.
+
+### Option 4: Check that your server can reach TMDB API
+
+Make sure that your server can reach the TMDB API by running the following command:
+
+<Tabs groupId="methods" queryString>
+  <TabItem value="docker-cli" label="Docker CLI">
+
+```bash
+docker exec -it jellyseerr sh -c "apk update && apk add curl && curl -L https://api.themoviedb.org"
+```
+
+  </TabItem>
+
+  <TabItem value="docker-compose" label="Docker Compose">
+
+```bash
+docker compose exec jellyseerr sh -c "apk update && apk add curl && curl -L https://api.themoviedb.org"
+```
+
+  </TabItem>
+  <TabItem value="linux" label="Linux">
+
+In a terminal:
+```bash
+curl -L https://api.themoviedb.org
+```
+
+  </TabItem>
+  <TabItem value="windows" label="Windows">
+
+In a PowerShell window:
+```powershell
+(Invoke-WebRequest -Uri "https://api.themoviedb.org" -Method Get).Content
+```
+
+  </TabItem>
+
+</Tabs>
+
+If you can't get a response, then your server can't reach the TMDB API.
+This is usually due to a network configuration issue or a firewall blocking the connection.
