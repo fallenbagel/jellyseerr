@@ -17,6 +17,7 @@ const PlayButton = ({ links }: PlayButtonProps) => {
 
   return (
     <ButtonWithDropdown
+      as="a"
       buttonType="ghost"
       text={
         <>
@@ -24,19 +25,17 @@ const PlayButton = ({ links }: PlayButtonProps) => {
           <span>{links[0].text}</span>
         </>
       }
-      onClick={() => {
-        window.open(links[0].url, '_blank');
-      }}
+      href={links[0].url}
+      target="_blank"
     >
       {links.length > 1 &&
         links.slice(1).map((link, i) => {
           return (
             <ButtonWithDropdown.Item
               key={`play-button-dropdown-item-${i}`}
-              onClick={() => {
-                window.open(link.url, '_blank');
-              }}
               buttonType="ghost"
+              href={link.url}
+              target="_blank"
             >
               {link.svg}
               <span>{link.text}</span>

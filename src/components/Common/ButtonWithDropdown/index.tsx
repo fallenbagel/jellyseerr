@@ -2,7 +2,11 @@ import useClickOutside from '@app/hooks/useClickOutside';
 import { withProperties } from '@app/utils/typeHelpers';
 import { Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react';
+import type {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  RefObject,
+} from 'react';
 import { Fragment, useRef, useState } from 'react';
 
 interface DropdownItemProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -35,23 +39,33 @@ const DropdownItem = ({
   );
 };
 
-interface ButtonWithDropdownProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonWithDropdownProps {
   text: React.ReactNode;
   dropdownIcon?: React.ReactNode;
   buttonType?: 'primary' | 'ghost';
 }
+interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    ButtonWithDropdownProps {
+  as?: 'button';
+}
+interface AnchorProps
+  extends AnchorHTMLAttributes<HTMLAnchorElement>,
+    ButtonWithDropdownProps {
+  as: 'a';
+}
 
 const ButtonWithDropdown = ({
+  as,
   text,
   children,
   dropdownIcon,
   className,
   buttonType = 'primary',
   ...props
-}: ButtonWithDropdownProps) => {
+}: ButtonProps | AnchorProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLButtonElement | HTMLAnchorElement>(null);
   useClickOutside(buttonRef, () => setIsOpen(false));
 
   const styleClasses = {
@@ -78,16 +92,28 @@ const ButtonWithDropdown = ({
 
   return (
     <span className="relative inline-flex h-full rounded-md shadow-sm">
-      <button
-        type="button"
-        className={`relative z-10 inline-flex h-full items-center px-4 py-2 text-sm font-medium leading-5 transition duration-150 ease-in-out hover:z-20 focus:z-20 focus:outline-none ${
-          styleClasses.mainButtonClasses
-        } ${children ? 'rounded-l-md' : 'rounded-md'} ${className}`}
-        ref={buttonRef}
-        {...props}
-      >
-        {text}
-      </button>
+      {as === 'a' ? (
+        <a
+          className={`relative z-10 inline-flex h-full items-center px-4 py-2 text-sm font-medium leading-5 transition duration-150 ease-in-out hover:z-20 focus:z-20 focus:outline-none ${
+            styleClasses.mainButtonClasses
+          } ${children ? 'rounded-l-md' : 'rounded-md'} ${className}`}
+          ref={buttonRef as RefObject<HTMLAnchorElement>}
+          {...(props as AnchorHTMLAttributes<HTMLAnchorElement>)}
+        >
+          {text}
+        </a>
+      ) : (
+        <button
+          type="button"
+          className={`relative z-10 inline-flex h-full items-center px-4 py-2 text-sm font-medium leading-5 transition duration-150 ease-in-out hover:z-20 focus:z-20 focus:outline-none ${
+            styleClasses.mainButtonClasses
+          } ${children ? 'rounded-l-md' : 'rounded-md'} ${className}`}
+          ref={buttonRef as RefObject<HTMLButtonElement>}
+          {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}
+        >
+          {text}
+        </button>
+      )}
       {children && (
         <span className="relative -ml-px block">
           <button
