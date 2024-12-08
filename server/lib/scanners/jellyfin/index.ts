@@ -210,14 +210,27 @@ class JellyfinScanner {
         return;
       }
 
-      if (metadata.ProviderIds.Tvdb) {
-        tvShow = await this.tmdb.getShowByTvdbId({
-          tvdbId: Number(metadata.ProviderIds.Tvdb),
-        });
-      } else if (metadata.ProviderIds.Tmdb) {
-        tvShow = await this.tmdb.getTvShow({
-          tvId: Number(metadata.ProviderIds.Tmdb),
-        });
+      if (metadata.ProviderIds.Tmdb) {
+        try {
+          tvShow = await this.tmdb.getTvShow({
+            tvId: Number(metadata.ProviderIds.Tmdb),
+          });
+        } catch {
+          this.log('Unable to find TMDb ID for this title.', 'debug', {
+            jellyfinitem,
+          });
+        }
+      }
+      if (!tvShow && metadata.ProviderIds.Tvdb) {
+        try {
+          tvShow = await this.tmdb.getShowByTvdbId({
+            tvdbId: Number(metadata.ProviderIds.Tvdb),
+          });
+        } catch {
+          this.log('Unable to find TVDb ID for this title.', 'debug', {
+            jellyfinitem,
+          });
+        }
       }
 
       if (tvShow) {
@@ -491,7 +504,13 @@ class JellyfinScanner {
           }
         });
       } else {
-        this.log(`failed show: ${metadata.Name}`);
+        this.log(
+          `No information found for the show: ${metadata.Name}`,
+          'debug',
+          {
+            jellyfinitem,
+          }
+        );
       }
     } catch (e) {
       this.log(
