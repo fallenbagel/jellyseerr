@@ -2,7 +2,7 @@ import type {
   TmdbPersonCreditCast,
   TmdbPersonCreditCrew,
   TmdbPersonDetails,
-} from '@server/api/indexer/themoviedb/interfaces';
+} from '@server/api/themoviedb/interfaces';
 import type Media from '@server/entity/Media';
 
 export interface PersonDetails {

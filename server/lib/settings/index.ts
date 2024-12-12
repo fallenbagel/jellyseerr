@@ -1,6 +1,6 @@
 import type { TvShowIndexer } from '@server/api/indexer';
-import TheMovieDb from '@server/api/indexer/themoviedb';
-import Tvdb from '@server/api/indexer/tvdb';
+import TheMovieDb from '@server/api/themoviedb';
+import Tvdb from '@server/api/tvdb';
 import { MediaServerType } from '@server/constants/server';
 import { Permission } from '@server/lib/permissions';
 import { runMigrations } from '@server/lib/settings/migrator';
