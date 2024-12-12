@@ -125,6 +125,11 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     try {
       const tvdbData = await this.fetchTvdbShowData(tvdbId);
       const seasons = this.processSeasons(tvdbData);
+
+      if (!seasons.length) {
+        return tmdbTvShow;
+      }
+
       return { ...tmdbTvShow, seasons };
     } catch (error) {
       logger.error(
@@ -143,6 +148,10 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
   }
 
   private processSeasons(tvdbData: TvdbTvShowDetail): TmdbTvSeasonResult[] {
+    if (!tvdbData || !tvdbData.seasons) {
+      return [];
+    }
+
     return tvdbData.seasons
       .filter((season) => season.seasonNumber !== 0)
       .map((season) => this.createSeasonData(season, tvdbData));
@@ -204,6 +213,10 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     seasonNumber: number,
     tvId: number
   ): TmdbTvEpisodeResult[] {
+    if (!tvdbSeason || !tvdbSeason.episodes) {
+      return [];
+    }
+
     return tvdbSeason.episodes
       .filter((episode) => episode.seasonNumber === seasonNumber)
       .map((episode, index) => this.createEpisodeData(episode, index, tvId));
