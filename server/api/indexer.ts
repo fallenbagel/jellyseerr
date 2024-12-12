@@ -1,7 +1,7 @@
 import type {
   TmdbSeasonWithEpisodes,
   TmdbTvDetails,
-} from '@server/api/indexer/themoviedb/interfaces';
+} from '@server/api/themoviedb/interfaces';
 
 export interface TvShowIndexer {
   getTvShow({

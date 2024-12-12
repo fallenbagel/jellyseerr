@@ -1,16 +1,18 @@
 import ExternalAPI from '@server/api/externalapi';
 import type { TvShowIndexer } from '@server/api/indexer';
-import TheMovieDb from '@server/api/indexer/themoviedb';
+import TheMovieDb from '@server/api/themoviedb';
 import type {
   TmdbSeasonWithEpisodes,
   TmdbTvDetails,
-} from '@server/api/indexer/themoviedb/interfaces';
+  TmdbTvEpisodeResult,
+  TmdbTvSeasonResult,
+} from '@server/api/themoviedb/interfaces';
 import type {
   TvdbEpisode,
   TvdbLoginResponse,
   TvdbSeason,
   TvdbTvShowDetail,
-} from '@server/api/indexer/tvdb/interfaces';
+} from '@server/api/tvdb/interfaces';
 import cacheManager, { type AvailableCacheIds } from '@server/lib/cache';
 import logger from '@server/logger';
 
@@ -140,7 +142,7 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     );
   }
 
-  private processSeasons(tvdbData: TvdbTvShowDetail): any[] {
+  private processSeasons(tvdbData: TvdbTvShowDetail): TmdbTvSeasonResult[] {
     return tvdbData.seasons
       .filter((season) => season.seasonNumber !== 0)
       .map((season) => this.createSeasonData(season, tvdbData));
@@ -149,8 +151,18 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
   private createSeasonData(
     season: TvdbSeason,
     tvdbData: TvdbTvShowDetail
-  ): any {
-    if (!season.seasonNumber) return null;
+  ): TmdbTvSeasonResult {
+    if (!season.seasonNumber) {
+      return {
+        id: 0,
+        episode_count: 0,
+        name: '',
+        overview: '',
+        season_number: 0,
+        poster_path: '',
+        air_date: '',
+      };
+    }
 
     const episodeCount = tvdbData.episodes.filter(
       (episode) => episode.seasonNumber === season.seasonNumber
@@ -164,7 +176,6 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
       season_number: season.seasonNumber,
       poster_path: '',
       air_date: '',
-      image: '',
     };
   }
 
@@ -192,7 +203,7 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     tvdbSeason: TvdbTvShowDetail,
     seasonNumber: number,
     tvId: number
-  ): any[] {
+  ): TmdbTvEpisodeResult[] {
     return tvdbSeason.episodes
       .filter((episode) => episode.seasonNumber === seasonNumber)
       .map((episode, index) => this.createEpisodeData(episode, index, tvId));
@@ -202,7 +213,7 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     episode: TvdbEpisode,
     index: number,
     tvId: number
-  ): any {
+  ): TmdbTvEpisodeResult {
     return {
       id: episode.tvdbId,
       air_date: episode.airDate,

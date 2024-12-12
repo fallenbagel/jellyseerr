@@ -1,5 +1,5 @@
-import TheMovieDb from '@server/api/indexer/themoviedb';
-import type { TmdbSearchMultiResponse } from '@server/api/indexer/themoviedb/interfaces';
+import TheMovieDb from '@server/api/themoviedb';
+import type { TmdbSearchMultiResponse } from '@server/api/themoviedb/interfaces';
 import Media from '@server/entity/Media';
 import { findSearchProvider } from '@server/lib/search';
 import logger from '@server/logger';
