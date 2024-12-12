@@ -7,7 +7,7 @@ import type {
   TmdbVideoResult,
   TmdbWatchProviderDetails,
   TmdbWatchProviders,
-} from '@server/api/indexer/themoviedb/interfaces';
+} from '@server/api/themoviedb/interfaces';
 import type { Video } from '@server/models/Movie';
 
 export interface ProductionCompany {

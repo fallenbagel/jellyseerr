@@ -1,4 +1,4 @@
-import Tvdb from '@server/api/indexer/tvdb';
+import Tvdb from '@server/api/tvdb';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { Router } from 'express';
