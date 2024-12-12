@@ -348,6 +348,7 @@ class TheMovieDb extends ExternalAPI implements TvShowIndexer {
         }
         return episode;
       });
+
       return data;
     } catch (e) {
       throw new Error(`[TMDB] Failed to fetch TV show details: ${e.message}`);

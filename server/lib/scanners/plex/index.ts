@@ -1,7 +1,7 @@
 import animeList from '@server/api/animelist';
-import type { TmdbTvDetails } from '@server/api/indexer/themoviedb/interfaces';
 import type { PlexLibraryItem, PlexMetadata } from '@server/api/plexapi';
 import PlexAPI from '@server/api/plexapi';
+import type { TmdbTvDetails } from '@server/api/themoviedb/interfaces';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import cacheManager from '@server/lib/cache';

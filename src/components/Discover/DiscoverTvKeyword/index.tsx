@@ -5,7 +5,7 @@ import useDiscover, { encodeURIExtraParams } from '@app/hooks/useDiscover';
 import globalMessages from '@app/i18n/globalMessages';
 import Error from '@app/pages/_error';
 import defineMessages from '@app/utils/defineMessages';
-import type { TmdbKeyword } from '@server/api/indexer/themoviedb/interfaces';
+import type { TmdbKeyword } from '@server/api/themoviedb/interfaces';
 import type { TvResult } from '@server/models/Search';
 import { useRouter } from 'next/router';
 import { useIntl } from 'react-intl';

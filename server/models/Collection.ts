@@ -1,4 +1,4 @@
-import type { TmdbCollection } from '@server/api/indexer/themoviedb/interfaces';
+import type { TmdbCollection } from '@server/api/themoviedb/interfaces';
 import { MediaType } from '@server/constants/media';
 import type Media from '@server/entity/Media';
 import { sortBy } from 'lodash';

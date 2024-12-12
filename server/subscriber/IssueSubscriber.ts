@@ -1,4 +1,4 @@
-import TheMovieDb from '@server/api/indexer/themoviedb';
+import TheMovieDb from '@server/api/themoviedb';
 import { IssueStatus, IssueType, IssueTypeName } from '@server/constants/issue';
 import { MediaType } from '@server/constants/media';
 import Issue from '@server/entity/Issue';
