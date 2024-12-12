@@ -2619,15 +2619,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  languages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: number
-                        name:
-                          type: string
+                  message:
+                    type: string
+                    example: 'Successfully connected to TVDB'
   /settings/tautulli:
     get:
       summary: Get Tautulli settings
