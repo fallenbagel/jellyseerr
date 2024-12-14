@@ -23,6 +23,7 @@
     "blacklistedTagsLimit": 50,
     "trustProxy": false,
     "mediaServerType": 1,
+    "removeUnmonitoredEnabled": false,
     "partialRequestsEnabled": true,
     "enableSpecialEpisodes": false,
     "locale": "en"
