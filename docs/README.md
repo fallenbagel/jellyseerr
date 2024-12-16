@@ -17,6 +17,7 @@ Welcome to the Jellyseerr Documentation.
 - **Mobile-friendly design**, for when you need to approve requests on the go.
 - Granular permission system.
 - Localization into other languages.
+- Support for PostgreSQL and SQLite databases.
 - More features to come!
 
 ## Motivation

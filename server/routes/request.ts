@@ -113,7 +113,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
           requestStatus: statusFilter,
         })
         .andWhere(
-          '((request.is4k = 0 AND media.status IN (:...mediaStatus)) OR (request.is4k = 1 AND media.status4k IN (:...mediaStatus)))',
+          '((request.is4k = false AND media.status IN (:...mediaStatus)) OR (request.is4k = true AND media.status4k IN (:...mediaStatus)))',
           {
             mediaStatus: mediaStatusFilter,
           }

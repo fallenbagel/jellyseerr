@@ -45,7 +45,7 @@ router.get('/', async (req, res, next) => {
           `CASE WHEN (user.username IS NULL OR user.username = '') THEN (
              CASE WHEN (user.plexUsername IS NULL OR user.plexUsername = '') THEN (
                CASE WHEN (user.jellyfinUsername IS NULL OR user.jellyfinUsername = '') THEN
-                 user.email
+                 "user"."email"
                ELSE
                  LOWER(user.jellyfinUsername)
                END)

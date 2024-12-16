@@ -10,6 +10,7 @@ import type { DownloadingItem } from '@server/lib/downloadtracker';
 import downloadTracker from '@server/lib/downloadtracker';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import { DbAwareColumn } from '@server/utils/DbColumnHelper';
 import { getHostname } from '@server/utils/getHostname';
 import {
   AfterLoad,
@@ -40,6 +41,10 @@ class Media {
         finalIds = [tmdbIds];
       } else {
         finalIds = tmdbIds;
+      }
+
+      if (finalIds.length === 0) {
+        return [];
       }
 
       const media = await mediaRepository
@@ -127,10 +132,23 @@ class Media {
   @UpdateDateColumn()
   public updatedAt: Date;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  /**
+   * The `lastSeasonChange` column stores the date and time when the media was added to the library.
+   * It needs to be database-aware because SQLite supports `datetime` while PostgreSQL supports `timestamp with timezone (timestampz)`.
+   */
+  @DbAwareColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   public lastSeasonChange: Date;
 
-  @Column({ type: 'datetime', nullable: true })
+  /**
+   * The `mediaAddedAt` column stores the date and time when the media was added to the library.
+   * It needs to be database-aware because SQLite supports `datetime` while PostgreSQL supports `timestamp with timezone (timestampz)`.
+   * This column is nullable because it can be null when the media is not yet synced to the library.
+   */
+  @DbAwareColumn({
+    type: 'datetime',
+    default: () => 'CURRENT_TIMESTAMP',
+    nullable: true,
+  })
   public mediaAddedAt: Date;
 
   @Column({ nullable: true, type: 'int' })

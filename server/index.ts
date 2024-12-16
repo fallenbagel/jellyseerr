@@ -1,5 +1,5 @@
 import PlexAPI from '@server/api/plexapi';
-import dataSource, { getRepository } from '@server/datasource';
+import dataSource, { getRepository, isPgsql } from '@server/datasource';
 import DiscoverSlider from '@server/entity/DiscoverSlider';
 import { Session } from '@server/entity/Session';
 import { User } from '@server/entity/User';
@@ -66,9 +66,13 @@ app
 
     // Run migrations in production
     if (process.env.NODE_ENV === 'production') {
-      await dbConnection.query('PRAGMA foreign_keys=OFF');
-      await dbConnection.runMigrations();
-      await dbConnection.query('PRAGMA foreign_keys=ON');
+      if (isPgsql) {
+        await dbConnection.runMigrations();
+      } else {
+        await dbConnection.query('PRAGMA foreign_keys=OFF');
+        await dbConnection.runMigrations();
+        await dbConnection.query('PRAGMA foreign_keys=ON');
+      }
     }
 
     // Load Settings
