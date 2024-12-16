@@ -520,6 +520,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "C4J3",
+      "name": "Joe",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13005453?v=4",
+      "profile": "https://github.com/C4J3",
+      "contributions": [
+        "doc"
+      ]
     }
   ]
 }

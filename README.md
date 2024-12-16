@@ -11,7 +11,7 @@
 <a href="http://translate.jellyseerr.dev/engage/jellyseerr/"><img src="http://translate.jellyseerr.dev/widget/jellyseerr/jellyseerr-frontend/svg-badge.svg" alt="Translation status" /></a>
 <a href="https://github.com/fallenbagel/jellyseerr/blob/develop/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/fallenbagel/jellyseerr"></a>
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-56-orange.svg"/></a>
+<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-57-orange.svg"/></a>
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Jellyseerr** is a free and open source software application for managing requests for your media library.
@@ -157,6 +157,9 @@ Thanks goes to these wonderful people from Overseerr ([emoji key](https://allcon
       <td align="center" valign="top" width="14.28%"><a href="https://damsdev.me"><img src="https://avatars.githubusercontent.com/u/60252259?v=4?s=100" width="100px;" alt="Damien Fajole"/><br /><sub><b>Damien Fajole</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=DamsDev1" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/AhmedNSidd"><img src="https://avatars.githubusercontent.com/u/36286128?v=4?s=100" width="100px;" alt="Ahmed Siddiqui"/><br /><sub><b>Ahmed Siddiqui</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=AhmedNSidd" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Zariel"><img src="https://avatars.githubusercontent.com/u/2213?v=4?s=100" width="100px;" alt="Chris Bannister"/><br /><sub><b>Chris Bannister</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=Zariel" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/C4J3"><img src="https://avatars.githubusercontent.com/u/13005453?v=4?s=100" width="100px;" alt="Joe"/><br /><sub><b>Joe</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=C4J3" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
