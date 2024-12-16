@@ -1,3 +1,5 @@
+import { MediaServerType } from '@server/constants/server';
+import { getSettings } from '@server/lib/settings';
 import type { RateLimitOptions } from '@server/utils/rateLimit';
 import rateLimit from '@server/utils/rateLimit';
 import type NodeCache from 'node-cache';
@@ -34,6 +36,8 @@ class ExternalAPI {
 
     const url = new URL(baseUrl);
 
+    const settings = getSettings();
+
     this.defaultHeaders = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -41,6 +45,9 @@ class ExternalAPI {
         Authorization: `Basic ${Buffer.from(
           `${url.username}:${url.password}`
         ).toString('base64')}`,
+      }),
+      ...(settings.main.mediaServerType === MediaServerType.EMBY && {
+        'Accept-Encoding': 'gzip',
       }),
       ...options.headers,
     };
