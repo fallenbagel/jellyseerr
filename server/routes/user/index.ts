@@ -764,6 +764,7 @@ router.get<{ id: string }, WatchlistResponse>(
       totalPages: Math.ceil(watchlist.totalSize / itemsPerPage),
       totalResults: watchlist.totalSize,
       results: watchlist.items.map((item) => ({
+        id: item.tmdbId,
         ratingKey: item.ratingKey,
         title: item.title,
         mediaType: item.type === 'show' ? 'tv' : 'movie',
