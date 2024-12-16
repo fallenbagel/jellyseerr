@@ -529,6 +529,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "guillaumearnx",
+      "name": "Guillaume ARNOUX",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37373941?v=4",
+      "profile": "https://me.garnx.fr",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
