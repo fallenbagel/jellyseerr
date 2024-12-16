@@ -4,8 +4,8 @@ import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import useSWR from 'swr';
 
 interface BlacklistModalProps {
   tmdbId: number;
@@ -21,7 +21,7 @@ const messages = defineMessages('component.BlacklistModal', {
 });
 
 const isMovie = (
-  movie: MovieDetails | TvDetails | undefined
+  movie: MovieDetails | TvDetails | null
 ): movie is MovieDetails => {
   if (!movie) return false;
   return (movie as MovieDetails).title !== undefined;
@@ -36,10 +36,25 @@ const BlacklistModal = ({
   isUpdating,
 }: BlacklistModalProps) => {
   const intl = useIntl();
+  const [data, setData] = useState<TvDetails | MovieDetails | null>(null);
+  const [error, setError] = useState(null);
 
-  const { data, error } = useSWR<TvDetails | MovieDetails>(
-    show ? `/api/v1/${type}/${tmdbId}` : null
-  );
+  useEffect(() => {
+    (async () => {
+      if (!show) return;
+      try {
+        setError(null);
+        const response = await fetch(`/api/v1/${type}/${tmdbId}`);
+        if (!response.ok) {
+          throw new Error();
+        }
+        const result = await response.json();
+        setData(result);
+      } catch (err) {
+        setError(err);
+      }
+    })();
+  }, [show, tmdbId, type]);
 
   return (
     <Transition
