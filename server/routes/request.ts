@@ -159,7 +159,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
 
           return {
             id: sonarrSetting.id,
-            profiles: await sonarr.getProfiles(),
+            profiles: await sonarr.getProfiles().catch(() => undefined),
           };
         })
       );
@@ -174,7 +174,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
 
           return {
             id: radarrSetting.id,
-            profiles: await radarr.getProfiles(),
+            profiles: await radarr.getProfiles().catch(() => undefined),
           };
         })
       );
@@ -185,7 +185,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
           case MediaType.MOVIE: {
             const profileName = radarrServers
               .find((serverr) => serverr.id === r.serverId)
-              ?.profiles.find((profile) => profile.id === r.profileId)?.name;
+              ?.profiles?.find((profile) => profile.id === r.profileId)?.name;
 
             return {
               ...r,
@@ -197,7 +197,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
               ...r,
               profileName: sonarrServers
                 .find((serverr) => serverr.id === r.serverId)
-                ?.profiles.find((profile) => profile.id === r.profileId)?.name,
+                ?.profiles?.find((profile) => profile.id === r.profileId)?.name,
             };
           }
         }
