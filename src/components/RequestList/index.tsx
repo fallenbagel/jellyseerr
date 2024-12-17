@@ -2,13 +2,16 @@ import Button from '@app/components/Common/Button';
 import Header from '@app/components/Common/Header';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
+import Tooltip from '@app/components/Common/Tooltip';
 import RequestItem from '@app/components/RequestList/RequestItem';
 import { useUpdateQueryParams } from '@app/hooks/useUpdateQueryParams';
 import { useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import {
-  BarsArrowDownIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+  Bars3BottomLeftIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   FunnelIcon,
@@ -25,6 +28,7 @@ const messages = defineMessages('components.RequestList', {
   showallrequests: 'Show All Requests',
   sortAdded: 'Most Recent',
   sortModified: 'Last Modified',
+  sortDirection: 'Toggle Sort Direction',
 });
 
 enum Filter {
@@ -39,6 +43,8 @@ enum Filter {
 
 type Sort = 'added' | 'modified';
 
+type SortDirection = 'asc' | 'desc';
+
 const RequestList = () => {
   const router = useRouter();
   const intl = useIntl();
@@ -48,6 +54,8 @@ const RequestList = () => {
   const { user: currentUser } = useUser();
   const [currentFilter, setCurrentFilter] = useState<Filter>(Filter.PENDING);
   const [currentSort, setCurrentSort] = useState<Sort>('added');
+  const [currentSortDirection, setCurrentSortDirection] =
+    useState<SortDirection>('desc');
   const [currentPageSize, setCurrentPageSize] = useState<number>(10);
 
   const page = router.query.page ? Number(router.query.page) : 1;
@@ -61,7 +69,7 @@ const RequestList = () => {
   } = useSWR<RequestResultsResponse>(
     `/api/v1/request?take=${currentPageSize}&skip=${
       pageIndex * currentPageSize
-    }&filter=${currentFilter}&sort=${currentSort}${
+    }&filter=${currentFilter}&sort=${currentSort}&sortDirection=${currentSortDirection}${
       router.pathname.startsWith('/profile')
         ? `&requestedBy=${currentUser?.id}`
         : router.query.userId
@@ -79,6 +87,7 @@ const RequestList = () => {
 
       setCurrentFilter(filterSettings.currentFilter);
       setCurrentSort(filterSettings.currentSort);
+      setCurrentSortDirection(filterSettings.currentSortDirection);
       setCurrentPageSize(filterSettings.currentPageSize);
     }
 
@@ -95,10 +104,11 @@ const RequestList = () => {
       JSON.stringify({
         currentFilter,
         currentSort,
+        currentSortDirection,
         currentPageSize,
       })
     );
-  }, [currentFilter, currentSort, currentPageSize]);
+  }, [currentFilter, currentSort, currentSortDirection, currentPageSize]);
 
   if (!data && !error) {
     return <LoadingSpinner />;
@@ -182,7 +192,7 @@ const RequestList = () => {
           </div>
           <div className="mb-2 flex flex-grow sm:mb-0 lg:flex-grow-0">
             <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-gray-500 bg-gray-800 px-3 text-gray-100 sm:text-sm">
-              <BarsArrowDownIcon className="h-6 w-6" />
+              <Bars3BottomLeftIcon className="h-6 w-6" />
             </span>
             <select
               id="sort"
@@ -197,7 +207,7 @@ const RequestList = () => {
                 });
               }}
               value={currentSort}
-              className="rounded-r-only"
+              className="rounded-none border-r-0"
             >
               <option value="added">
                 {intl.formatMessage(messages.sortAdded)}
@@ -206,6 +216,24 @@ const RequestList = () => {
                 {intl.formatMessage(messages.sortModified)}
               </option>
             </select>
+            <Tooltip content={intl.formatMessage(messages.sortDirection)}>
+              <Button
+                buttonType="ghost"
+                className="z-40 mr-2 rounded-l-none"
+                buttonSize="md"
+                onClick={() =>
+                  setCurrentSortDirection(
+                    currentSortDirection === 'asc' ? 'desc' : 'asc'
+                  )
+                }
+              >
+                {currentSortDirection === 'asc' ? (
+                  <ArrowUpIcon className="h-3" />
+                ) : (
+                  <ArrowDownIcon className="h-3" />
+                )}
+              </Button>
+            </Tooltip>
           </div>
         </div>
       </div>

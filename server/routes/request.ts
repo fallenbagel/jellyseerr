@@ -94,6 +94,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
       }
 
       let sortFilter: string;
+      let sortDirection: 'ASC' | 'DESC';
 
       switch (req.query.sort) {
         case 'modified':
@@ -101,6 +102,14 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
           break;
         default:
           sortFilter = 'request.id';
+      }
+
+      switch (req.query.sortDirection) {
+        case 'asc':
+          sortDirection = 'ASC';
+          break;
+        default:
+          sortDirection = 'DESC';
       }
 
       let query = getRepository(MediaRequest)
@@ -142,7 +151,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
       }
 
       const [requests, requestCount] = await query
-        .orderBy(sortFilter, 'DESC')
+        .orderBy(sortFilter, sortDirection)
         .take(pageSize)
         .skip(skip)
         .getManyAndCount();
