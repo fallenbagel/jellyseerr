@@ -31,6 +31,7 @@ export type AvailableLocale =
   | 'sq'
   | 'sr'
   | 'sv'
+  | 'tr'
   | 'uk'
   | 'zh-CN'
   | 'zh-TW';
@@ -148,6 +149,10 @@ export const availableLanguages: AvailableLanguageObject = {
   sr: {
     code: 'sr',
     display: 'српски језик',
+  },
+  tr: {
+    code: 'tr',
+    display: 'Türkçe',
   },
   ar: {
     code: 'ar',
