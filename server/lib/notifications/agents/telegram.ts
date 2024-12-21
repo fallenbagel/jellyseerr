@@ -17,6 +17,7 @@ interface TelegramMessagePayload {
   text: string;
   parse_mode: string;
   chat_id: string;
+  message_thread_id: string;
   disable_notification: boolean;
 }
 
@@ -25,6 +26,7 @@ interface TelegramPhotoPayload {
   caption: string;
   parse_mode: string;
   chat_id: string;
+  message_thread_id: string;
   disable_notification: boolean;
 }
 
@@ -182,6 +184,7 @@ class TelegramAgent
           body: JSON.stringify({
             ...notificationPayload,
             chat_id: settings.options.chatId,
+            message_thread_id: settings.options.messageThreadId,
             disable_notification: !!settings.options.sendSilently,
           } as TelegramMessagePayload | TelegramPhotoPayload),
         });
@@ -233,6 +236,8 @@ class TelegramAgent
             body: JSON.stringify({
               ...notificationPayload,
               chat_id: payload.notifyUser.settings.telegramChatId,
+              message_thread_id:
+                payload.notifyUser.settings.telegramMessageThreadId,
               disable_notification:
                 !!payload.notifyUser.settings.telegramSendSilently,
             } as TelegramMessagePayload | TelegramPhotoPayload),
@@ -296,6 +301,7 @@ class TelegramAgent
                   body: JSON.stringify({
                     ...notificationPayload,
                     chat_id: user.settings.telegramChatId,
+                    message_thread_id: user.settings.telegramMessageThreadId,
                     disable_notification: !!user.settings?.telegramSendSilently,
                   } as TelegramMessagePayload | TelegramPhotoPayload),
                 });

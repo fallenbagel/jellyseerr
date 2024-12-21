@@ -21,9 +21,14 @@ const messages = defineMessages(
     telegramChatId: 'Chat ID',
     telegramChatIdTipLong:
       '<TelegramBotLink>Start a chat</TelegramBotLink>, add <GetIdBotLink>@get_id_bot</GetIdBotLink>, and issue the <code>/my_id</code> command',
+    telegramMessageThreadId: 'Thread/Topic ID',
+    telegramMessageThreadIdTip:
+      "If your group-chat has topics enabled, you can specify a thread/topic's ID here",
     sendSilently: 'Send Silently',
     sendSilentlyDescription: 'Send notifications with no sound',
     validationTelegramChatId: 'You must provide a valid chat ID',
+    validationTelegramMessageThreadId:
+      'The thread/topic ID must be a positive whole number',
   }
 );
 
@@ -53,6 +58,20 @@ const UserTelegramSettings = () => {
         /^-?\d+$/,
         intl.formatMessage(messages.validationTelegramChatId)
       ),
+    telegramMessageThreadId: Yup.string()
+      .when(['types'], {
+        is: (enabled: boolean, types: number) => enabled && !!types,
+        then: Yup.string()
+          .nullable()
+          .required(
+            intl.formatMessage(messages.validationTelegramMessageThreadId)
+          ),
+        otherwise: Yup.string().nullable(),
+      })
+      .matches(
+        /^\d+$/,
+        intl.formatMessage(messages.validationTelegramMessageThreadId)
+      ),
   });
 
   if (!data && !error) {
@@ -63,6 +82,7 @@ const UserTelegramSettings = () => {
     <Formik
       initialValues={{
         telegramChatId: data?.telegramChatId,
+        telegramMessageThreadId: data?.telegramMessageThreadId,
         telegramSendSilently: data?.telegramSendSilently,
         types: data?.notificationTypes.telegram ?? 0,
       }}
@@ -84,6 +104,7 @@ const UserTelegramSettings = () => {
                 pushoverApplicationToken: data?.pushoverApplicationToken,
                 pushoverUserKey: data?.pushoverUserKey,
                 telegramChatId: values.telegramChatId,
+                telegramMessageThreadId: values.telegramMessageThreadId,
                 telegramSendSilently: values.telegramSendSilently,
                 notificationTypes: {
                   telegram: values.types,
@@ -159,6 +180,30 @@ const UserTelegramSettings = () => {
                   touched.telegramChatId &&
                   typeof errors.telegramChatId === 'string' && (
                     <div className="error">{errors.telegramChatId}</div>
+                  )}
+              </div>
+            </div>
+            <div className="form-row">
+              <label htmlFor="telegramMessageThreadId" className="text-label">
+                {intl.formatMessage(messages.telegramMessageThreadId)}
+                <span className="label-tip">
+                  {intl.formatMessage(messages.telegramMessageThreadIdTip)}
+                </span>
+              </label>
+              <div className="form-input-area">
+                <div className="form-input-field">
+                  <Field
+                    id="telegramMessageThreadId"
+                    name="telegramMessageThreadId"
+                    type="text"
+                  />
+                </div>
+                {errors.telegramMessageThreadId &&
+                  touched.telegramMessageThreadId &&
+                  typeof errors.telegramMessageThreadId === 'string' && (
+                    <div className="error">
+                      {errors.telegramMessageThreadId}
+                    </div>
                   )}
               </div>
             </div>

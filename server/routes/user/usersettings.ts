@@ -323,6 +323,7 @@ userSettingsRoutes.get<{ id: string }, UserSettingsNotificationsResponse>(
         telegramEnabled: settings.telegram.enabled,
         telegramBotUsername: settings.telegram.options.botUsername,
         telegramChatId: user.settings?.telegramChatId,
+        telegramMessageThreadId: user.settings?.telegramMessageThreadId,
         telegramSendSilently: user.settings?.telegramSendSilently,
         webPushEnabled: settings.webpush.enabled,
         notificationTypes: user.settings?.notificationTypes ?? {},
@@ -365,6 +366,7 @@ userSettingsRoutes.post<{ id: string }, UserSettingsNotificationsResponse>(
           pushoverApplicationToken: req.body.pushoverApplicationToken,
           pushoverUserKey: req.body.pushoverUserKey,
           telegramChatId: req.body.telegramChatId,
+          telegramMessageThreadId: req.body.telegramMessageThreadId,
           telegramSendSilently: req.body.telegramSendSilently,
           notificationTypes: req.body.notificationTypes,
         });
@@ -377,6 +379,8 @@ userSettingsRoutes.post<{ id: string }, UserSettingsNotificationsResponse>(
         user.settings.pushoverUserKey = req.body.pushoverUserKey;
         user.settings.pushoverSound = req.body.pushoverSound;
         user.settings.telegramChatId = req.body.telegramChatId;
+        user.settings.telegramMessageThreadId =
+          req.body.telegramMessageThreadId;
         user.settings.telegramSendSilently = req.body.telegramSendSilently;
         user.settings.notificationTypes = Object.assign(
           {},
@@ -395,6 +399,7 @@ userSettingsRoutes.post<{ id: string }, UserSettingsNotificationsResponse>(
         pushoverUserKey: user.settings.pushoverUserKey,
         pushoverSound: user.settings.pushoverSound,
         telegramChatId: user.settings.telegramChatId,
+        telegramMessageThreadId: user.settings.telegramMessageThreadId,
         telegramSendSilently: user.settings.telegramSendSilently,
         notificationTypes: user.settings.notificationTypes,
       });

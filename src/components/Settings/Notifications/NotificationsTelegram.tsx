@@ -23,8 +23,13 @@ const messages = defineMessages('components.Settings.Notifications', {
   chatId: 'Chat ID',
   chatIdTip:
     'Start a chat with your bot, add <GetIdBotLink>@get_id_bot</GetIdBotLink>, and issue the <code>/my_id</code> command',
+  messageThreadId: 'Thread/Topic ID',
+  messageThreadIdTip:
+    "If your group-chat has topics enabled, you can specify a thread/topic's ID here",
   validationBotAPIRequired: 'You must provide a bot authorization token',
   validationChatIdRequired: 'You must provide a valid chat ID',
+  validationMessageThreadId:
+    'The thread/topic ID must be a positive whole number',
   telegramsettingssaved: 'Telegram notification settings saved successfully!',
   telegramsettingsfailed: 'Telegram notification settings failed to save.',
   toastTelegramTestSending: 'Sending Telegram test notification…',
@@ -64,6 +69,15 @@ const NotificationsTelegram = () => {
         /^-?\d+$/,
         intl.formatMessage(messages.validationChatIdRequired)
       ),
+    messageThreadId: Yup.string()
+      .when(['types'], {
+        is: (enabled: boolean, types: number) => enabled && !!types,
+        then: Yup.string()
+          .nullable()
+          .required(intl.formatMessage(messages.validationMessageThreadId)),
+        otherwise: Yup.string().nullable(),
+      })
+      .matches(/^\d+$/, intl.formatMessage(messages.validationMessageThreadId)),
   });
 
   if (!data && !error) {
@@ -78,6 +92,7 @@ const NotificationsTelegram = () => {
         botUsername: data?.options.botUsername,
         botAPI: data?.options.botAPI,
         chatId: data?.options.chatId,
+        messageThreadId: data?.options.messageThreadId,
         sendSilently: data?.options.sendSilently,
       }}
       validationSchema={NotificationsTelegramSchema}
@@ -94,6 +109,7 @@ const NotificationsTelegram = () => {
               options: {
                 botAPI: values.botAPI,
                 chatId: values.chatId,
+                messageThreadId: values.messageThreadId,
                 sendSilently: values.sendSilently,
                 botUsername: values.botUsername,
               },
@@ -151,6 +167,7 @@ const NotificationsTelegram = () => {
                   options: {
                     botAPI: values.botAPI,
                     chatId: values.chatId,
+                    messageThreadId: values.messageThreadId,
                     sendSilently: values.sendSilently,
                     botUsername: values.botUsername,
                   },
@@ -283,6 +300,28 @@ const NotificationsTelegram = () => {
                   touched.chatId &&
                   typeof errors.chatId === 'string' && (
                     <div className="error">{errors.chatId}</div>
+                  )}
+              </div>
+            </div>
+            <div className="form-row">
+              <label htmlFor="messageThreadId" className="text-label">
+                {intl.formatMessage(messages.messageThreadId)}
+                <span className="label-tip">
+                  {intl.formatMessage(messages.messageThreadIdTip)}
+                </span>
+              </label>
+              <div className="form-input-area">
+                <div className="form-input-field">
+                  <Field
+                    id="messageThreadId"
+                    name="messageThreadId"
+                    type="text"
+                  />
+                </div>
+                {errors.messageThreadId &&
+                  touched.messageThreadId &&
+                  typeof errors.messageThreadId === 'string' && (
+                    <div className="error">{errors.messageThreadId}</div>
                   )}
               </div>
             </div>

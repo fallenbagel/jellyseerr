@@ -61,6 +61,9 @@ export class UserSettings {
   public telegramChatId?: string;
 
   @Column({ nullable: true })
+  public telegramMessageThreadId?: string;
+
+  @Column({ nullable: true })
   public telegramSendSilently?: boolean;
 
   @Column({ nullable: true })

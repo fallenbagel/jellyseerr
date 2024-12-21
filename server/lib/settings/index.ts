@@ -213,6 +213,7 @@ export interface NotificationAgentTelegram extends NotificationAgentConfig {
     botUsername?: string;
     botAPI: string;
     chatId: string;
+    messageThreadId: string;
     sendSilently: boolean;
   };
 }
@@ -423,6 +424,7 @@ class Settings {
             options: {
               botAPI: '',
               chatId: '',
+              messageThreadId: '',
               sendSilently: false,
             },
           },
