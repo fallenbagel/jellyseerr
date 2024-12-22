@@ -87,8 +87,10 @@ const RequestList = () => {
 
       setCurrentFilter(filterSettings.currentFilter);
       setCurrentSort(filterSettings.currentSort);
-      setCurrentSortDirection(filterSettings.currentSortDirection);
       setCurrentPageSize(filterSettings.currentPageSize);
+      if (['asc', 'desc'].includes(filterSettings.currentSortDirection)) {
+        setCurrentSortDirection(filterSettings.currentSortDirection);
+      }
     }
 
     // If filter value is provided in query, use that instead

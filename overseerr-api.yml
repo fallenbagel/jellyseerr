@@ -5448,6 +5448,7 @@ paths:
           schema:
             type: string
             enum: [asc, desc]
+            nullable: true
             default: desc
         - in: query
           name: requestedBy
