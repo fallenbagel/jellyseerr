@@ -53,7 +53,6 @@ export class Watchlist implements WatchlistItem {
   @ManyToOne(() => Media, (media) => media.watchlists, {
     eager: true,
     onDelete: 'CASCADE',
-    nullable: false,
   })
   public media: Media;
 

@@ -25,7 +25,6 @@ class Season {
 
   @ManyToOne(() => Media, (media) => media.seasons, {
     onDelete: 'CASCADE',
-    nullable: false,
   })
   public media: Promise<Media>;
 
