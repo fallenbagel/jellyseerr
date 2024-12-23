@@ -780,13 +780,13 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
           <div className="media-facts">
             {(!!data.voteCount ||
               (ratingData?.rt?.criticsRating &&
-                !!ratingData?.rt?.criticsScore) ||
+                typeof ratingData?.rt?.criticsScore === 'number') ||
               (ratingData?.rt?.audienceRating &&
                 !!ratingData?.rt?.audienceScore) ||
               ratingData?.imdb?.criticsScore) && (
               <div className="media-ratings">
                 {ratingData?.rt?.criticsRating &&
-                  !!ratingData?.rt?.criticsScore && (
+                  typeof ratingData?.rt?.criticsScore === 'number' && (
                     <Tooltip
                       content={intl.formatMessage(messages.rtcriticsscore)}
                     >
