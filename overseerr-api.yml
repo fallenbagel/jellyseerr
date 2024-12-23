@@ -3878,7 +3878,7 @@ paths:
             schema:
               type: object
               properties:
-                jellyfinIds:
+                jellyfinUserIds:
                   type: array
                   items:
                     type: string
