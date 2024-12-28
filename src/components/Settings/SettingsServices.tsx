@@ -6,12 +6,14 @@ import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import Modal from '@app/components/Common/Modal';
 import PageTitle from '@app/components/Common/PageTitle';
+import OverrideRuleModal from '@app/components/Settings/OverrideRule/OverrideRuleModal';
 import RadarrModal from '@app/components/Settings/RadarrModal';
 import SonarrModal from '@app/components/Settings/SonarrModal';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
+import type OverrideRule from '@server/entity/OverrideRule';
 import type { RadarrSettings, SonarrSettings } from '@server/lib/settings';
 import { Fragment, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -56,6 +58,33 @@ interface ServerInstanceProps {
   onEdit: () => void;
   onDelete: () => void;
 }
+
+export interface DVRTestResponse {
+  profiles: {
+    id: number;
+    name: string;
+  }[];
+  rootFolders: {
+    id: number;
+    path: string;
+  }[];
+  tags: {
+    id: number;
+    label: string;
+  }[];
+  urlBase?: string;
+}
+
+export type RadarrTestResponse = DVRTestResponse;
+
+export type SonarrTestResponse = DVRTestResponse & {
+  languageProfiles:
+    | {
+        id: number;
+        name: string;
+      }[]
+    | null;
+};
 
 const ServerInstance = ({
   name,
@@ -193,6 +222,15 @@ const SettingsServices = () => {
     type: 'radarr',
     serverId: null,
   });
+  const [overrideRuleModal, setOverrideRuleModal] = useState<{
+    open: boolean;
+    rule: OverrideRule | null;
+    testResponse: DVRTestResponse | null;
+  }>({
+    open: false,
+    rule: null,
+    testResponse: null,
+  });
 
   const deleteServer = async () => {
     const res = await fetch(
@@ -227,26 +265,51 @@ const SettingsServices = () => {
           })}
         </p>
       </div>
+      {overrideRuleModal.open && overrideRuleModal.testResponse && (
+        <OverrideRuleModal
+          rule={overrideRuleModal.rule}
+          onClose={() =>
+            setOverrideRuleModal({
+              open: false,
+              rule: null,
+              testResponse: null,
+            })
+          }
+          testResponse={overrideRuleModal.testResponse}
+          radarrId={editRadarrModal.radarr?.id}
+          sonarrId={editSonarrModal.sonarr?.id}
+        />
+      )}
       {editRadarrModal.open && (
         <RadarrModal
           radarr={editRadarrModal.radarr}
-          onClose={() => setEditRadarrModal({ open: false, radarr: null })}
+          onClose={() => {
+            if (!overrideRuleModal.open)
+              setEditRadarrModal({ open: false, radarr: null });
+          }}
           onSave={() => {
             revalidateRadarr();
             mutate('/api/v1/settings/public');
             setEditRadarrModal({ open: false, radarr: null });
           }}
+          overrideRuleModal={overrideRuleModal}
+          setOverrideRuleModal={setOverrideRuleModal}
         />
       )}
       {editSonarrModal.open && (
         <SonarrModal
           sonarr={editSonarrModal.sonarr}
-          onClose={() => setEditSonarrModal({ open: false, sonarr: null })}
+          onClose={() => {
+            if (!overrideRuleModal.open)
+              setEditSonarrModal({ open: false, sonarr: null });
+          }}
           onSave={() => {
             revalidateSonarr();
             mutate('/api/v1/settings/public');
             setEditSonarrModal({ open: false, sonarr: null });
           }}
+          overrideRuleModal={overrideRuleModal}
+          setOverrideRuleModal={setOverrideRuleModal}
         />
       )}
       <Transition

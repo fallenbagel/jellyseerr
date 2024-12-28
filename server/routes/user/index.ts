@@ -34,7 +34,15 @@ router.get('/', async (req, res, next) => {
   try {
     const pageSize = req.query.take ? Number(req.query.take) : 10;
     const skip = req.query.skip ? Number(req.query.skip) : 0;
+    const q = req.query.q ? req.query.q.toString().toLowerCase() : '';
     let query = getRepository(User).createQueryBuilder('user');
+
+    if (q) {
+      query = query.where(
+        'LOWER(user.username) LIKE :q OR LOWER(user.email) LIKE :q OR LOWER(user.plexUsername) LIKE :q OR LOWER(user.jellyfinUsername) LIKE :q',
+        { q: `%${q}%` }
+      );
+    }
 
     switch (req.query.sort) {
       case 'updated':

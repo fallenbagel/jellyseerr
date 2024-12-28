@@ -13,6 +13,7 @@ import type {
   TmdbKeywordSearchResponse,
 } from '@server/api/themoviedb/interfaces';
 import type { GenreSliderItem } from '@server/interfaces/api/discoverInterfaces';
+import type { UserResultsResponse } from '@server/interfaces/api/userInterfaces';
 import type {
   Keyword,
   ProductionCompany,
@@ -29,6 +30,7 @@ const messages = defineMessages('components.Selector', {
   searchKeywords: 'Search keywords…',
   searchGenres: 'Select genres…',
   searchStudios: 'Search studios…',
+  searchUsers: 'Select users…',
   starttyping: 'Starting typing to search.',
   nooptions: 'No results.',
   showmore: 'Show More',
@@ -544,5 +546,79 @@ export const WatchProviderSelector = ({
         </div>
       )}
     </>
+  );
+};
+
+export const UserSelector = ({
+  isMulti,
+  defaultValue,
+  onChange,
+}: BaseSelectorMultiProps | BaseSelectorSingleProps) => {
+  const intl = useIntl();
+  const [defaultDataValue, setDefaultDataValue] = useState<
+    { label: string; value: number }[] | null
+  >(null);
+
+  useEffect(() => {
+    const loadUsers = async (): Promise<void> => {
+      if (!defaultValue) {
+        return;
+      }
+
+      const users = defaultValue.split(',');
+
+      const res = await fetch(`/api/v1/user`);
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const response: UserResultsResponse = await res.json();
+
+      const genreData = users
+        .filter((u) => response.results.find((user) => user.id === Number(u)))
+        .map((u) => response.results.find((user) => user.id === Number(u)))
+        .map((u) => ({
+          label: u?.displayName ?? '',
+          value: u?.id ?? 0,
+        }));
+
+      setDefaultDataValue(genreData);
+    };
+
+    loadUsers();
+  }, [defaultValue]);
+
+  const loadUserOptions = async (inputValue: string) => {
+    const res = await fetch(
+      `/api/v1/user${inputValue ? `?q=${encodeURIComponent(inputValue)}` : ''}`
+    );
+    if (!res.ok) throw new Error();
+    const results: UserResultsResponse = await res.json();
+
+    return results.results
+      .map((result) => ({
+        label: result.displayName,
+        value: result.id,
+      }))
+      .filter(({ label }) =>
+        label.toLowerCase().includes(inputValue.toLowerCase())
+      );
+  };
+
+  return (
+    <AsyncSelect
+      key={`user-select-${defaultDataValue}`}
+      className="react-select-container"
+      classNamePrefix="react-select"
+      defaultValue={isMulti ? defaultDataValue : defaultDataValue?.[0]}
+      defaultOptions
+      cacheOptions
+      isMulti={isMulti}
+      loadOptions={loadUserOptions}
+      placeholder={intl.formatMessage(messages.searchUsers)}
+      onChange={(value) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onChange(value as any);
+      }}
+    />
   );
 };

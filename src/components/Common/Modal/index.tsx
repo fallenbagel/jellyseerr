@@ -7,7 +7,7 @@ import { useLockBodyScroll } from '@app/hooks/useLockBodyScroll';
 import globalMessages from '@app/i18n/globalMessages';
 import { Transition } from '@headlessui/react';
 import type { MouseEvent } from 'react';
-import React, { Fragment, useRef } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useIntl } from 'react-intl';
 
@@ -66,8 +66,12 @@ const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
   ) => {
     const intl = useIntl();
     const modalRef = useRef<HTMLDivElement>(null);
+    const backgroundClickableRef = useRef(backgroundClickable); // This ref is used to detect state change inside the useClickOutside hook
+    useEffect(() => {
+      backgroundClickableRef.current = backgroundClickable;
+    }, [backgroundClickable]);
     useClickOutside(modalRef, () => {
-      if (onCancel && backgroundClickable) {
+      if (onCancel && backgroundClickableRef.current) {
         onCancel();
       }
     });

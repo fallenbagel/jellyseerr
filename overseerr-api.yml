@@ -1939,6 +1939,11 @@ components:
           type: string
         native_name:
           type: string
+    OverrideRule:
+      type: object
+      properties:
+        id:
+          type: string
   securitySchemes:
     cookieAuth:
       type: apiKey
@@ -3762,6 +3767,11 @@ paths:
             type: string
             enum: [created, updated, requests, displayname]
             default: created
+        - in: query
+          name: q
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: A JSON array of all users
@@ -6970,6 +6980,68 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/WatchProviderDetails'
+  /overrideRule:
+    get:
+      summary: Get override rules
+      description: Returns a list of all override rules with their conditions and settings
+      tags:
+        - overriderule
+      responses:
+        '200':
+          description: Override rules returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OverrideRule'
+    post:
+      summary: Create override rule
+      description: Creates a new Override Rule from the request body.
+      tags:
+        - overriderule
+      responses:
+        '200':
+          description: 'Values were successfully created'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OverrideRule'
+  /overrideRule/{ruleId}:
+    put:
+      summary: Update override rule
+      description: Updates an Override Rule from the request body.
+      tags:
+        - overriderule
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OverrideRule'
+    delete:
+      summary: Delete override rule by ID
+      description: Deletes the override rule with the provided ruleId.
+      tags:
+        - overriderule
+      parameters:
+        - in: path
+          name: ruleId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Override rule successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OverrideRule'
 security:
   - cookieAuth: []
   - apiKey: []
