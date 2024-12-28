@@ -7,7 +7,9 @@ import defineMessages from '@app/utils/defineMessages';
 import type { TvResult } from '@server/models/Search';
 import { useIntl } from 'react-intl';
 
-const messages = defineMessages('components.DiscoverTvUpcoming', {});
+const messages = defineMessages('components.DiscoverTvUpcoming', {
+  upcomingtv: 'Upcoming Series',
+});
 
 const DiscoverTvUpcoming = () => {
   const intl = useIntl();
