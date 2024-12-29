@@ -131,6 +131,7 @@ export interface MainSettings {
   trustProxy: boolean;
   mediaServerType: number;
   partialRequestsEnabled: boolean;
+  enableSpecialEpisodes: boolean;
   locale: string;
   proxy: ProxySettings;
 }
@@ -154,6 +155,7 @@ interface FullPublicSettings extends PublicSettings {
   jellyfinForgotPasswordUrl?: string;
   jellyfinServerName?: string;
   partialRequestsEnabled: boolean;
+  enableSpecialEpisodes: boolean;
   cacheImages: boolean;
   vapidPublic: string;
   enablePushRegistration: boolean;
@@ -343,6 +345,7 @@ class Settings {
         trustProxy: false,
         mediaServerType: MediaServerType.NOT_CONFIGURED,
         partialRequestsEnabled: true,
+        enableSpecialEpisodes: false,
         locale: 'en',
         proxy: {
           enabled: false,
@@ -587,6 +590,7 @@ class Settings {
       originalLanguage: this.data.main.originalLanguage,
       mediaServerType: this.main.mediaServerType,
       partialRequestsEnabled: this.data.main.partialRequestsEnabled,
+      enableSpecialEpisodes: this.data.main.enableSpecialEpisodes,
       cacheImages: this.data.main.cacheImages,
       vapidPublic: this.vapidPublic,
       enablePushRegistration: this.data.notifications.agents.webpush.enabled,

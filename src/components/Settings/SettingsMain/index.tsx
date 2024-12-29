@@ -56,6 +56,7 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   validationApplicationUrl: 'You must provide a valid URL',
   validationApplicationUrlTrailingSlash: 'URL must not end in a trailing slash',
   partialRequestsEnabled: 'Allow Partial Series Requests',
+  enableSpecialEpisodes: 'Allow Special Episodes Requests',
   locale: 'Display Language',
   proxyEnabled: 'HTTP(S) Proxy',
   proxyHostname: 'Proxy Hostname',
@@ -158,6 +159,7 @@ const SettingsMain = () => {
             originalLanguage: data?.originalLanguage,
             streamingRegion: data?.streamingRegion,
             partialRequestsEnabled: data?.partialRequestsEnabled,
+            enableSpecialEpisodes: data?.enableSpecialEpisodes,
             trustProxy: data?.trustProxy,
             cacheImages: data?.cacheImages,
             proxyEnabled: data?.proxy?.enabled,
@@ -188,6 +190,7 @@ const SettingsMain = () => {
                   streamingRegion: values.streamingRegion,
                   originalLanguage: values.originalLanguage,
                   partialRequestsEnabled: values.partialRequestsEnabled,
+                  enableSpecialEpisodes: values.enableSpecialEpisodes,
                   trustProxy: values.trustProxy,
                   cacheImages: values.cacheImages,
                   proxy: {
@@ -499,6 +502,47 @@ const SettingsMain = () => {
                   </div>
                 </div>
                 <div className="form-row">
+                  <label
+                    htmlFor="enableSpecialEpisodes"
+                    className="checkbox-label"
+                  >
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.enableSpecialEpisodes)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      type="checkbox"
+                      id="enableSpecialEpisodes"
+                      name="enableSpecialEpisodes"
+                      onChange={() => {
+                        setFieldValue(
+                          'enableSpecialEpisodes',
+                          !values.enableSpecialEpisodes
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="actions">
+                  <div className="flex justify-end">
+                    <span className="ml-3 inline-flex rounded-md shadow-sm">
+                      <Button
+                        buttonType="primary"
+                        type="submit"
+                        disabled={isSubmitting || !isValid}
+                      >
+                        <ArrowDownOnSquareIcon />
+                        <span>
+                          {isSubmitting
+                            ? intl.formatMessage(globalMessages.saving)
+                            : intl.formatMessage(globalMessages.save)}
+                        </span>
+                      </Button>
+                    </span>
+                  </div>
+                </div>
+                <div className="form-row">
                   <label htmlFor="proxyEnabled" className="checkbox-label">
                     <span className="mr-2">
                       {intl.formatMessage(messages.proxyEnabled)}
@@ -668,24 +712,6 @@ const SettingsMain = () => {
                     </div>
                   </>
                 )}
-                <div className="actions">
-                  <div className="flex justify-end">
-                    <span className="ml-3 inline-flex rounded-md shadow-sm">
-                      <Button
-                        buttonType="primary"
-                        type="submit"
-                        disabled={isSubmitting || !isValid}
-                      >
-                        <ArrowDownOnSquareIcon />
-                        <span>
-                          {isSubmitting
-                            ? intl.formatMessage(globalMessages.saving)
-                            : intl.formatMessage(globalMessages.save)}
-                        </span>
-                      </Button>
-                    </span>
-                  </div>
-                </div>
               </Form>
             );
           }}

@@ -919,6 +919,7 @@
   "components.Settings.SettingsMain.csrfProtectionTip": "Set external API access to read-only (requires HTTPS)",
   "components.Settings.SettingsMain.discoverRegion": "Discover Region",
   "components.Settings.SettingsMain.discoverRegionTip": "Filter content by regional availability",
+  "components.Settings.SettingsMain.enableSpecialEpisodes": "Allow Special Episodes Requests",
   "components.Settings.SettingsMain.general": "General",
   "components.Settings.SettingsMain.generalsettings": "General Settings",
   "components.Settings.SettingsMain.generalsettingsDescription": "Configure global and default settings for Jellyseerr.",

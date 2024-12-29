@@ -188,6 +188,9 @@ components:
         defaultPermissions:
           type: number
           example: 32
+        enableSpecialEpisodes:
+          type: boolean
+          example: false
     PlexLibrary:
       type: object
       properties:

@@ -58,6 +58,7 @@ export class MediaRequest {
     const mediaRepository = getRepository(Media);
     const requestRepository = getRepository(MediaRequest);
     const userRepository = getRepository(User);
+    const settings = getSettings();
 
     let requestUser = user;
 
@@ -258,7 +259,11 @@ export class MediaRequest {
       >;
       const requestedSeasons =
         requestBody.seasons === 'all'
-          ? tmdbMediaShow.seasons.map((season) => season.season_number)
+          ? settings.main.enableSpecialEpisodes
+            ? tmdbMediaShow.seasons.map((season) => season.season_number)
+            : tmdbMediaShow.seasons
+                .map((season) => season.season_number)
+                .filter((sn) => sn > 0)
           : (requestBody.seasons as number[]);
       let existingSeasons: number[] = [];
 

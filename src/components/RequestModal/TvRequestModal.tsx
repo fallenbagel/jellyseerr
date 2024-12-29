@@ -253,9 +253,13 @@ const TvRequestModal = ({
   };
 
   const getAllSeasons = (): number[] => {
-    return (data?.seasons ?? [])
-      .filter((season) => season.episodeCount !== 0)
-      .map((season) => season.seasonNumber);
+    let allSeasons = (data?.seasons ?? []).filter(
+      (season) => season.episodeCount !== 0
+    );
+    if (!settings.currentSettings.partialRequestsEnabled) {
+      allSeasons = allSeasons.filter((season) => season.seasonNumber !== 0);
+    }
+    return allSeasons.map((season) => season.seasonNumber);
   };
 
   const getAllRequestedSeasons = (): number[] => {
@@ -577,7 +581,12 @@ const TvRequestModal = ({
                 </thead>
                 <tbody className="divide-y divide-gray-700">
                   {data?.seasons
-                    .filter((season) => season.episodeCount !== 0)
+                    .filter(
+                      (season) =>
+                        (!settings.currentSettings.enableSpecialEpisodes
+                          ? season.seasonNumber !== 0
+                          : true) && season.episodeCount !== 0
+                    )
                     .map((season) => {
                       const seasonRequest = getSeasonRequest(
                         season.seasonNumber

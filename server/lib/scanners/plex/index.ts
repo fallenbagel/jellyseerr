@@ -277,8 +277,13 @@ class PlexScanner
 
     const seasons = tvShow.seasons;
     const processableSeasons: ProcessableSeason[] = [];
+    const settings = getSettings();
 
-    for (const season of seasons) {
+    const filteredSeasons = settings.main.enableSpecialEpisodes
+      ? seasons
+      : seasons.filter((sn) => sn.season_number !== 0);
+
+    for (const season of filteredSeasons) {
       const matchedPlexSeason = metadata.Children?.Metadata.find(
         (md) => Number(md.index) === season.season_number
       );

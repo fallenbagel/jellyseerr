@@ -301,7 +301,9 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
   };
 
   const showHasSpecials = data.seasons.some(
-    (season) => season.seasonNumber === 0
+    (season) =>
+      season.seasonNumber === 0 &&
+      settings.currentSettings.partialRequestsEnabled
   );
 
   const isComplete =
@@ -799,6 +801,11 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
             {data.seasons
               .slice()
               .reverse()
+              .filter(
+                (season) =>
+                  settings.currentSettings.enableSpecialEpisodes ||
+                  season.seasonNumber !== 0
+              )
               .map((season) => {
                 const show4k =
                   settings.currentSettings.series4kEnabled &&
