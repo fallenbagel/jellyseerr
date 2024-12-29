@@ -563,151 +563,157 @@ const SettingsMain = () => {
                 </div>
                 {values.proxyEnabled && (
                   <>
-                    <div className="form-row">
-                      <label htmlFor="proxyHostname" className="checkbox-label">
-                        <span className="mr-2 ml-4">
+                    <div className="mr-2 ml-4">
+                      <div className="form-row">
+                        <label
+                          htmlFor="proxyHostname"
+                          className="checkbox-label"
+                        >
                           {intl.formatMessage(messages.proxyHostname)}
-                        </span>
-                      </label>
-                      <div className="form-input-area">
-                        <div className="form-input-field">
-                          <Field
-                            id="proxyHostname"
-                            name="proxyHostname"
-                            type="text"
-                          />
+                        </label>
+                        <div className="form-input-area">
+                          <div className="form-input-field">
+                            <Field
+                              id="proxyHostname"
+                              name="proxyHostname"
+                              type="text"
+                            />
+                          </div>
+                          {errors.proxyHostname &&
+                            touched.proxyHostname &&
+                            typeof errors.proxyHostname === 'string' && (
+                              <div className="error">
+                                {errors.proxyHostname}
+                              </div>
+                            )}
                         </div>
-                        {errors.proxyHostname &&
-                          touched.proxyHostname &&
-                          typeof errors.proxyHostname === 'string' && (
-                            <div className="error">{errors.proxyHostname}</div>
-                          )}
                       </div>
-                    </div>
-                    <div className="form-row">
-                      <label htmlFor="proxyPort" className="checkbox-label">
-                        <span className="mr-2 ml-4">
+                      <div className="form-row">
+                        <label htmlFor="proxyPort" className="checkbox-label">
                           {intl.formatMessage(messages.proxyPort)}
-                        </span>
-                      </label>
-                      <div className="form-input-area">
-                        <div className="form-input-field">
-                          <Field id="proxyPort" name="proxyPort" type="text" />
+                        </label>
+                        <div className="form-input-area">
+                          <div className="form-input-field">
+                            <Field
+                              id="proxyPort"
+                              name="proxyPort"
+                              type="text"
+                            />
+                          </div>
+                          {errors.proxyPort &&
+                            touched.proxyPort &&
+                            typeof errors.proxyPort === 'string' && (
+                              <div className="error">{errors.proxyPort}</div>
+                            )}
                         </div>
-                        {errors.proxyPort &&
-                          touched.proxyPort &&
-                          typeof errors.proxyPort === 'string' && (
-                            <div className="error">{errors.proxyPort}</div>
-                          )}
                       </div>
-                    </div>
-                    <div className="form-row">
-                      <label htmlFor="proxySsl" className="checkbox-label">
-                        <span className="mr-2 ml-4">
+                      <div className="form-row">
+                        <label htmlFor="proxySsl" className="checkbox-label">
                           {intl.formatMessage(messages.proxySsl)}
-                        </span>
-                      </label>
-                      <div className="form-input-area">
-                        <Field
-                          type="checkbox"
-                          id="proxySsl"
-                          name="proxySsl"
-                          onChange={() => {
-                            setFieldValue('proxySsl', !values.proxySsl);
-                          }}
-                        />
+                        </label>
+                        <div className="form-input-area">
+                          <Field
+                            type="checkbox"
+                            id="proxySsl"
+                            name="proxySsl"
+                            onChange={() => {
+                              setFieldValue('proxySsl', !values.proxySsl);
+                            }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-row">
-                      <label htmlFor="proxyUser" className="checkbox-label">
-                        <span className="mr-2 ml-4">
+                      <div className="form-row">
+                        <label htmlFor="proxyUser" className="checkbox-label">
                           {intl.formatMessage(messages.proxyUser)}
-                        </span>
-                      </label>
-                      <div className="form-input-area">
-                        <div className="form-input-field">
-                          <Field id="proxyUser" name="proxyUser" type="text" />
+                        </label>
+                        <div className="form-input-area">
+                          <div className="form-input-field">
+                            <Field
+                              id="proxyUser"
+                              name="proxyUser"
+                              type="text"
+                            />
+                          </div>
+                          {errors.proxyUser &&
+                            touched.proxyUser &&
+                            typeof errors.proxyUser === 'string' && (
+                              <div className="error">{errors.proxyUser}</div>
+                            )}
                         </div>
-                        {errors.proxyUser &&
-                          touched.proxyUser &&
-                          typeof errors.proxyUser === 'string' && (
-                            <div className="error">{errors.proxyUser}</div>
-                          )}
                       </div>
-                    </div>
-                    <div className="form-row">
-                      <label htmlFor="proxyPassword" className="checkbox-label">
-                        <span className="mr-2 ml-4">
+                      <div className="form-row">
+                        <label
+                          htmlFor="proxyPassword"
+                          className="checkbox-label"
+                        >
                           {intl.formatMessage(messages.proxyPassword)}
-                        </span>
-                      </label>
-                      <div className="form-input-area">
-                        <div className="form-input-field">
-                          <Field
-                            id="proxyPassword"
-                            name="proxyPassword"
-                            type="password"
-                          />
+                        </label>
+                        <div className="form-input-area">
+                          <div className="form-input-field">
+                            <Field
+                              id="proxyPassword"
+                              name="proxyPassword"
+                              type="password"
+                            />
+                          </div>
+                          {errors.proxyPassword &&
+                            touched.proxyPassword &&
+                            typeof errors.proxyPassword === 'string' && (
+                              <div className="error">
+                                {errors.proxyPassword}
+                              </div>
+                            )}
                         </div>
-                        {errors.proxyPassword &&
-                          touched.proxyPassword &&
-                          typeof errors.proxyPassword === 'string' && (
-                            <div className="error">{errors.proxyPassword}</div>
-                          )}
                       </div>
-                    </div>
-                    <div className="form-row">
-                      <label
-                        htmlFor="proxyBypassFilter"
-                        className="checkbox-label"
-                      >
-                        <span className="mr-2 ml-4">
+                      <div className="form-row">
+                        <label
+                          htmlFor="proxyBypassFilter"
+                          className="checkbox-label"
+                        >
                           {intl.formatMessage(messages.proxyBypassFilter)}
-                        </span>
-                        <span className="label-tip ml-4">
-                          {intl.formatMessage(messages.proxyBypassFilterTip)}
-                        </span>
-                      </label>
-                      <div className="form-input-area">
-                        <div className="form-input-field">
-                          <Field
-                            id="proxyBypassFilter"
-                            name="proxyBypassFilter"
-                            type="text"
-                          />
+                          <span className="label-tip">
+                            {intl.formatMessage(messages.proxyBypassFilterTip)}
+                          </span>
+                        </label>
+                        <div className="form-input-area">
+                          <div className="form-input-field">
+                            <Field
+                              id="proxyBypassFilter"
+                              name="proxyBypassFilter"
+                              type="text"
+                            />
+                          </div>
+                          {errors.proxyBypassFilter &&
+                            touched.proxyBypassFilter &&
+                            typeof errors.proxyBypassFilter === 'string' && (
+                              <div className="error">
+                                {errors.proxyBypassFilter}
+                              </div>
+                            )}
                         </div>
-                        {errors.proxyBypassFilter &&
-                          touched.proxyBypassFilter &&
-                          typeof errors.proxyBypassFilter === 'string' && (
-                            <div className="error">
-                              {errors.proxyBypassFilter}
-                            </div>
-                          )}
                       </div>
-                    </div>
-                    <div className="form-row">
-                      <label
-                        htmlFor="proxyBypassLocalAddresses"
-                        className="checkbox-label"
-                      >
-                        <span className="mr-2 ml-4">
+                      <div className="form-row">
+                        <label
+                          htmlFor="proxyBypassLocalAddresses"
+                          className="checkbox-label"
+                        >
                           {intl.formatMessage(
                             messages.proxyBypassLocalAddresses
                           )}
-                        </span>
-                      </label>
-                      <div className="form-input-area">
-                        <Field
-                          type="checkbox"
-                          id="proxyBypassLocalAddresses"
-                          name="proxyBypassLocalAddresses"
-                          onChange={() => {
-                            setFieldValue(
-                              'proxyBypassLocalAddresses',
-                              !values.proxyBypassLocalAddresses
-                            );
-                          }}
-                        />
+                        </label>
+                        <div className="form-input-area">
+                          <Field
+                            type="checkbox"
+                            id="proxyBypassLocalAddresses"
+                            name="proxyBypassLocalAddresses"
+                            onChange={() => {
+                              setFieldValue(
+                                'proxyBypassLocalAddresses',
+                                !values.proxyBypassLocalAddresses
+                              );
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </>
