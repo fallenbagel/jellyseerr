@@ -157,7 +157,7 @@ const SettingsMain = () => {
             locale: data?.locale ?? 'en',
             discoverRegion: data?.discoverRegion,
             originalLanguage: data?.originalLanguage,
-            streamingRegion: data?.streamingRegion,
+            streamingRegion: data?.streamingRegion || 'US',
             partialRequestsEnabled: data?.partialRequestsEnabled,
             enableSpecialEpisodes: data?.enableSpecialEpisodes,
             trustProxy: data?.trustProxy,
@@ -451,7 +451,7 @@ const SettingsMain = () => {
                   <div className="form-input-area">
                     <div className="form-input-field">
                       <RegionSelector
-                        value={values.streamingRegion || 'US'}
+                        value={values.streamingRegion}
                         name="streamingRegion"
                         onChange={setFieldValue}
                         regionType="streaming"
