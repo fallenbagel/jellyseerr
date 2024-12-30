@@ -524,24 +524,6 @@ const SettingsMain = () => {
                     />
                   </div>
                 </div>
-                <div className="actions">
-                  <div className="flex justify-end">
-                    <span className="ml-3 inline-flex rounded-md shadow-sm">
-                      <Button
-                        buttonType="primary"
-                        type="submit"
-                        disabled={isSubmitting || !isValid}
-                      >
-                        <ArrowDownOnSquareIcon />
-                        <span>
-                          {isSubmitting
-                            ? intl.formatMessage(globalMessages.saving)
-                            : intl.formatMessage(globalMessages.save)}
-                        </span>
-                      </Button>
-                    </span>
-                  </div>
-                </div>
                 <div className="form-row">
                   <label htmlFor="proxyEnabled" className="checkbox-label">
                     <span className="mr-2">
@@ -718,6 +700,24 @@ const SettingsMain = () => {
                     </div>
                   </>
                 )}
+                <div className="actions">
+                  <div className="flex justify-end">
+                    <span className="ml-3 inline-flex rounded-md shadow-sm">
+                      <Button
+                        buttonType="primary"
+                        type="submit"
+                        disabled={isSubmitting || !isValid}
+                      >
+                        <ArrowDownOnSquareIcon />
+                        <span>
+                          {isSubmitting
+                            ? intl.formatMessage(globalMessages.saving)
+                            : intl.formatMessage(globalMessages.save)}
+                        </span>
+                      </Button>
+                    </span>
+                  </div>
+                </div>
               </Form>
             );
           }}
