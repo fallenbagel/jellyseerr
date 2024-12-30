@@ -428,10 +428,10 @@ export class MediaRequest {
           : undefined,
         is4k: requestBody.is4k,
         serverId: requestBody.serverId,
-        profileId: requestBody.profileId,
-        rootFolder: requestBody.rootFolder,
+        profileId: profileId,
+        rootFolder: rootFolder,
         languageProfileId: requestBody.languageProfileId,
-        tags: requestBody.tags,
+        tags: tags,
         seasons: finalSeasons.map(
           (sn) =>
             new SeasonRequest({
