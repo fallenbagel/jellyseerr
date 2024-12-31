@@ -433,7 +433,7 @@ const SettingsMain = () => {
                     </span>
                   </label>
                   <div className="form-input-area">
-                    <div className="form-input-field">
+                    <div className="form-input-field relative z-30">
                       <LanguageSelector
                         setFieldValue={setFieldValue}
                         value={values.originalLanguage}
@@ -449,7 +449,7 @@ const SettingsMain = () => {
                     </span>
                   </label>
                   <div className="form-input-area">
-                    <div className="form-input-field">
+                    <div className="form-input-field relative z-20">
                       <RegionSelector
                         value={values.streamingRegion}
                         name="streamingRegion"
