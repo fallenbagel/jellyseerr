@@ -256,8 +256,8 @@ const TvRequestModal = ({
     let allSeasons = (data?.seasons ?? []).filter(
       (season) => season.episodeCount !== 0
     );
-    if (!settings.currentSettings.partialRequestsEnabled) {
-      allSeasons = allSeasons.filter((season) => season.seasonNumber !== 0);
+    if (!settings.currentSettings.enableSpecialEpisodes) {
+      allSeasons = allSeasons.filter((season) => season.seasonNumber > 0);
     }
     return allSeasons.map((season) => season.seasonNumber);
   };

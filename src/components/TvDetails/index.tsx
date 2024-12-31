@@ -303,7 +303,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
   const showHasSpecials = data.seasons.some(
     (season) =>
       season.seasonNumber === 0 &&
-      settings.currentSettings.partialRequestsEnabled
+      settings.currentSettings.enableSpecialEpisodes
   );
 
   const isComplete =

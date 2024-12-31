@@ -386,14 +386,14 @@ export class MediaRequest {
       const tmdbMediaShow = tmdbMedia as Awaited<
         ReturnType<typeof tmdb.getTvShow>
       >;
-      const requestedSeasons =
+      let requestedSeasons =
         requestBody.seasons === 'all'
-          ? settings.main.enableSpecialEpisodes
-            ? tmdbMediaShow.seasons.map((season) => season.season_number)
-            : tmdbMediaShow.seasons
-                .map((season) => season.season_number)
-                .filter((sn) => sn > 0)
+          ? tmdbMediaShow.seasons.map((season) => season.season_number)
           : (requestBody.seasons as number[]);
+      if (!settings.main.enableSpecialEpisodes) {
+        requestedSeasons = requestedSeasons.filter((sn) => sn > 0);
+      }
+
       let existingSeasons: number[] = [];
 
       // We need to check existing requests on this title to make sure we don't double up on seasons that were

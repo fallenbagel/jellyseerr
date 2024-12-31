@@ -107,7 +107,7 @@ class SonarrScanner
       const filteredSeasons = sonarrSeries.seasons.filter(
         (sn) =>
           tvShow.seasons.find((s) => s.season_number === sn.seasonNumber) &&
-          (!settings.main.partialRequestsEnabled ? sn.seasonNumber !== 0 : true)
+          (!settings.main.enableSpecialEpisodes ? sn.seasonNumber !== 0 : true)
       );
 
       for (const season of filteredSeasons) {
