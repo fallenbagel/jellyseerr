@@ -70,11 +70,11 @@ router.get('/', async (req, res, next) => {
         query = query
           .addSelect((subQuery) => {
             return subQuery
-              .select('COUNT(request.id)', 'requestCount')
+              .select('COUNT(request.id)', 'request_count')
               .from(MediaRequest, 'request')
               .where('request.requestedBy.id = user.id');
-          }, 'requestCount')
-          .orderBy('requestCount', 'DESC');
+          }, 'request_count')
+          .orderBy('request_count', 'DESC');
         break;
       default:
         query = query.orderBy('user.id', 'ASC');
