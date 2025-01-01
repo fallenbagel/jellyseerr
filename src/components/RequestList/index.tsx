@@ -220,8 +220,8 @@ const RequestList = () => {
             </select>
             <Tooltip content={intl.formatMessage(messages.sortDirection)}>
               <Button
-                buttonType="ghost"
-                className="z-40 mr-2 rounded-l-none"
+                buttonType="default"
+                className="z-40 mr-2 rounded-l-none border !border-gray-500 !bg-gray-800 !px-3 !text-gray-500 hover:!bg-gray-400 hover:!text-white"
                 buttonSize="md"
                 onClick={() =>
                   setCurrentSortDirection(
@@ -230,9 +230,9 @@ const RequestList = () => {
                 }
               >
                 {currentSortDirection === 'asc' ? (
-                  <ArrowUpIcon className="h-3" />
+                  <ArrowUpIcon className="h-6 w-6" />
                 ) : (
-                  <ArrowDownIcon className="h-3" />
+                  <ArrowDownIcon className="h-6 w-6" />
                 )}
               </Button>
             </Tooltip>
