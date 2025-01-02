@@ -34,6 +34,7 @@ const messages = defineMessages('components.Login', {
   validationUrlBaseTrailingSlash: 'URL base must not end in a trailing slash',
   loginerror: 'Something went wrong while trying to sign in.',
   adminerror: 'You must use an admin account to sign in.',
+  noadminerror: 'No admin user found on the server.',
   credentialerror: 'The username or password is incorrect.',
   invalidurlerror: 'Unable to connect to {mediaServerName} server.',
   signingin: 'Signing in…',
@@ -156,6 +157,9 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
                 break;
               case ApiErrorCode.NotAdmin:
                 errorMessage = messages.adminerror;
+                break;
+              case ApiErrorCode.NoAdminUser:
+                errorMessage = messages.noadminerror;
                 break;
               default:
                 errorMessage = messages.loginerror;
@@ -388,14 +392,35 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
                   email: values.username,
                 }),
               });
-              if (!res.ok) throw new Error();
+              if (!res.ok) throw new Error(res.statusText, { cause: res });
             } catch (e) {
+              let errorData;
+              try {
+                errorData = await e.cause?.text();
+                errorData = JSON.parse(errorData);
+              } catch {
+                /* empty */
+              }
+              let errorMessage = null;
+              switch (errorData?.message) {
+                case ApiErrorCode.InvalidUrl:
+                  errorMessage = messages.invalidurlerror;
+                  break;
+                case ApiErrorCode.InvalidCredentials:
+                  errorMessage = messages.credentialerror;
+                  break;
+                case ApiErrorCode.NotAdmin:
+                  errorMessage = messages.adminerror;
+                  break;
+                case ApiErrorCode.NoAdminUser:
+                  errorMessage = messages.noadminerror;
+                  break;
+                default:
+                  errorMessage = messages.loginerror;
+                  break;
+              }
               toasts.addToast(
-                intl.formatMessage(
-                  e.message == 'Request failed with status code 401'
-                    ? messages.credentialerror
-                    : messages.loginerror
-                ),
+                intl.formatMessage(errorMessage, mediaServerFormatValues),
                 {
                   autoDismiss: true,
                   appearance: 'error',

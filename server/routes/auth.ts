@@ -313,7 +313,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
         body.serverType !== MediaServerType.JELLYFIN &&
         body.serverType !== MediaServerType.EMBY
       ) {
-        throw new Error('select_server_type');
+        throw new ApiError(500, ApiErrorCode.NoAdminUser);
       }
       settings.main.mediaServerType = body.serverType;
 
@@ -520,6 +520,22 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       case ApiErrorCode.NotAdmin:
         logger.warn(
           'Failed login attempt from user without admin permissions',
+          {
+            label: 'Auth',
+            account: {
+              ip: req.ip,
+              email: body.username,
+            },
+          }
+        );
+        return next({
+          status: e.statusCode,
+          message: e.errorCode,
+        });
+
+      case ApiErrorCode.NoAdminUser:
+        logger.warn(
+          'Failed login attempt from user without admin permissions and no admin user exists',
           {
             label: 'Auth',
             account: {
