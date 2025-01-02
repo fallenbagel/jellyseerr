@@ -719,7 +719,8 @@ export class MediaRequest {
       // Do not update the status if the item is already partially available or available
       media[this.is4k ? 'status4k' : 'status'] !== MediaStatus.AVAILABLE &&
       media[this.is4k ? 'status4k' : 'status'] !==
-        MediaStatus.PARTIALLY_AVAILABLE
+        MediaStatus.PARTIALLY_AVAILABLE &&
+      media[this.is4k ? 'status4k' : 'status'] !== MediaStatus.PROCESSING
     ) {
       media[this.is4k ? 'status4k' : 'status'] = MediaStatus.PROCESSING;
       mediaRepository.save(media);
