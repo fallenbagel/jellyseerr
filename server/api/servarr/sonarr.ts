@@ -353,6 +353,30 @@ class SonarrAPI extends ServarrBase<{
       throw new Error(`[Radarr] Failed to remove serie: ${e.message}`);
     }
   };
+
+  public clearCache = ({
+    tvdbId,
+    externalId,
+    title,
+  }: {
+    tvdbId?: number | null;
+    externalId?: number | null;
+    title?: string | null;
+  }) => {
+    if (tvdbId) {
+      this.removeCache('/series/lookup', {
+        term: `tvdb:${tvdbId}`,
+      });
+    }
+    if (externalId) {
+      this.removeCache(`/series/${externalId}`);
+    }
+    if (title) {
+      this.removeCache('/series/lookup', {
+        term: title,
+      });
+    }
+  };
 }
 
 export default SonarrAPI;

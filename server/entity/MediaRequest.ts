@@ -1006,6 +1006,14 @@ export class MediaRequest {
             );
 
             this.sendNotification(media, Notification.MEDIA_FAILED);
+          })
+          .finally(() => {
+            radarr.clearCache({
+              tmdbId: movie.id,
+              externalId: this.is4k
+                ? media.externalServiceId4k
+                : media.externalServiceId,
+            });
           });
         logger.info('Sent request to Radarr', {
           label: 'Media Request',
@@ -1288,6 +1296,15 @@ export class MediaRequest {
             );
 
             this.sendNotification(media, Notification.MEDIA_FAILED);
+          })
+          .finally(() => {
+            sonarr.clearCache({
+              tvdbId,
+              externalId: this.is4k
+                ? media.externalServiceId4k
+                : media.externalServiceId,
+              title: series.name,
+            });
           });
         logger.info('Sent request to Sonarr', {
           label: 'Media Request',

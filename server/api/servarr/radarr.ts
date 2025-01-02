@@ -230,6 +230,23 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
       throw new Error(`[Radarr] Failed to remove movie: ${e.message}`);
     }
   };
+
+  public clearCache = ({
+    tmdbId,
+    externalId,
+  }: {
+    tmdbId?: number | null;
+    externalId?: number | null;
+  }) => {
+    if (tmdbId) {
+      this.removeCache('/movie/lookup', {
+        term: `tmdb:${tmdbId}`,
+      });
+    }
+    if (externalId) {
+      this.removeCache(`/movie/${externalId}`);
+    }
+  };
 }
 
 export default RadarrAPI;

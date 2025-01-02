@@ -293,6 +293,14 @@ class ExternalAPI {
     return data;
   }
 
+  protected removeCache(endpoint: string, params?: Record<string, string>) {
+    const cacheKey = this.serializeCacheKey(endpoint, {
+      ...this.params,
+      ...params,
+    });
+    this.cache?.del(cacheKey);
+  }
+
   private formatUrl(
     endpoint: string,
     params?: Record<string, string>,
