@@ -722,8 +722,12 @@ export class MediaRequest {
         MediaStatus.PARTIALLY_AVAILABLE &&
       media[this.is4k ? 'status4k' : 'status'] !== MediaStatus.PROCESSING
     ) {
-      media[this.is4k ? 'status4k' : 'status'] = MediaStatus.PROCESSING;
-      mediaRepository.save(media);
+      const statusField = this.is4k ? 'status4k' : 'status';
+
+      await mediaRepository.update(
+        { id: this.media.id },
+        { [statusField]: MediaStatus.PROCESSING }
+      );
     }
 
     if (
@@ -1271,19 +1275,23 @@ export class MediaRequest {
               throw new Error('Media data not found');
             }
 
-            media[this.is4k ? 'externalServiceId4k' : 'externalServiceId'] =
-              sonarrSeries.id;
-            media[this.is4k ? 'externalServiceSlug4k' : 'externalServiceSlug'] =
-              sonarrSeries.titleSlug;
-            media[this.is4k ? 'serviceId4k' : 'serviceId'] = sonarrSettings?.id;
+            const updateFields = {
+              [this.is4k ? 'externalServiceId4k' : 'externalServiceId']:
+                sonarrSeries.id,
+              [this.is4k ? 'externalServiceSlug4k' : 'externalServiceSlug']:
+                sonarrSeries.titleSlug,
+              [this.is4k ? 'serviceId4k' : 'serviceId']: sonarrSettings?.id,
+            };
 
-            await mediaRepository.save(media);
+            await mediaRepository.update({ id: this.media.id }, updateFields);
           })
           .catch(async () => {
             const requestRepository = getRepository(MediaRequest);
 
-            this.status = MediaRequestStatus.FAILED;
-            await requestRepository.save(this);
+            await requestRepository.update(
+              { id: this.id },
+              { status: MediaRequestStatus.FAILED }
+            );
 
             logger.warn(
               'Something went wrong sending series request to Sonarr, marking status as FAILED',
