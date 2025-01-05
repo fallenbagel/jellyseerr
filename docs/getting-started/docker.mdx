@@ -146,6 +146,16 @@ Then, create and start the Jellyseerr container:
 ```bash
 docker run -d --name jellyseerr -e LOG_LEVEL=debug -e TZ=Asia/Tashkent -p 5055:5055 -v "jellyseerr-data:/app/config" --restart unless-stopped fallenbagel/jellyseerr:latest
 ```
+
+#### Updating:
+Pull the latest image:
+```bash
+docker compose pull jellyseerr
+```
+Then, restart all services defined in the Compose file:
+```bash
+docker compose up -d
+```
   </TabItem>
 
   <TabItem value="docker-compose" label="Docker Compose">
@@ -168,6 +178,16 @@ volumes:
   jellyseerr-data:
     external: true
 ```
+
+#### Updating:
+Pull the latest image:
+```bash
+docker compose pull jellyseerr
+```
+Then, restart all services defined in the Compose file:
+```bash
+docker compose up -d
+```
   </TabItem>
 </Tabs>
 
@@ -185,3 +205,6 @@ Docker on Windows works differently than it does on Linux; it runs Docker inside
 **If you must run Docker on Windows, you should put the `/app/config` directory mount inside the VM and not on the Windows host.** (This also applies to other containers with SQLite databases.)
 
 Named volumes, like in the example commands above, are automatically mounted inside the VM. Therefore the warning on the setup about the `/app/config` folder being incorrectly mounted page should be ignored.
+:::
+
+
