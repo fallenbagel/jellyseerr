@@ -273,7 +273,9 @@ class PlexScanner
       await this.processHamaSpecials(metadata, mediaIds.tvdbId);
     }
 
-    const tvShow = await this.tmdb.getTvShow({ tvId: mediaIds.tmdbId });
+    const tvShow = await this.tvShowIndexer.getTvShow({
+      tvId: mediaIds.tmdbId,
+    });
 
     const seasons = tvShow.seasons;
     const processableSeasons: ProcessableSeason[] = [];
@@ -429,7 +431,7 @@ class PlexScanner
       const matchedtvdb = plexitem.guid.match(hamaTvdbRegex);
 
       if (matchedtvdb) {
-        const show = await this.tmdb.getShowByTvdbId({
+        const show = await this.tvShowIndexer.getShowByTvdbId({
           tvdbId: Number(matchedtvdb[1]),
         });
 
@@ -463,7 +465,7 @@ class PlexScanner
             type: 'tvdb',
           });
           if (extResponse.tv_results[0]) {
-            tvShow = await this.tmdb.getTvShow({
+            tvShow = await this.tvShowIndexer.getTvShow({
               tvId: extResponse.tv_results[0].id,
             });
             mediaIds.tvdbId = result.tvdbId;

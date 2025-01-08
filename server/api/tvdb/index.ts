@@ -66,6 +66,19 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     }
   }
 
+  public async getShowByTvdbId({
+    tvdbId,
+  }: {
+    tvdbId: number;
+    language?: string;
+  }): Promise<TmdbTvDetails> {
+    return await this.get<TmdbTvDetails>(
+      `/en/${tvdbId}`,
+      {},
+      Tvdb.DEFAULT_CACHE_TTL
+    );
+  }
+
   public async getTvShow({
     tvId,
     language = Tvdb.DEFAULT_LANGUAGE,
