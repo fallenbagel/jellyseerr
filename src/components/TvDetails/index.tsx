@@ -1254,6 +1254,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
                           key={`provider-${p.id}`}
                         >
                           <CachedImage
+                            type="tmdb"
                             src={'https://image.tmdb.org/t/p/w45/' + p.logoPath}
                             alt={p.name}
                             width={32}
