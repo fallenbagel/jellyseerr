@@ -8,7 +8,7 @@ All help is welcome and greatly appreciated! If you would like to contribute to 
 
 - HTML/Typescript/Javascript editor
 - [VSCode](https://code.visualstudio.com/) is recommended. Upon opening the project, a few extensions will be automatically recommended for install.
-- [NodeJS](https://nodejs.org/en/download/) (Node 20.x)
+- [NodeJS](https://nodejs.org/en/download/) (Node 22.x)
 - [Pnpm](https://pnpm.io/cli/install)
 - [Git](https://git-scm.com/downloads)
 

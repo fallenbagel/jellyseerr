@@ -13,7 +13,7 @@ jobs:
     name: Lint & Test Build
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-22.04
-    container: node:20-alpine
+    container: node:22-alpine
     steps:
       - name: Checkout
         uses: actions/checkout@v4
