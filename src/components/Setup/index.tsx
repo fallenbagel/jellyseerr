@@ -97,63 +97,58 @@ const Setup = () => {
       settings.currentSettings.mediaServerType !==
       MediaServerType.NOT_CONFIGURED
     ) {
-      setCurrentStep(3);
       setMediaServerType(settings.currentSettings.mediaServerType);
+      if (currentStep < 3) {
+        setCurrentStep(3);
+      }
     }
 
     if (currentStep === 3) {
-      const validateLibraries = async () => {
-        try {
-          const endpoint =
-            settings.currentSettings.mediaServerType ===
-              MediaServerType.JELLYFIN || MediaServerType.EMBY
-              ? '/api/v1/settings/jellyfin'
-              : '/api/v1/settings/plex';
-
-          const res = await fetch(endpoint);
-          if (!res.ok) throw new Error('Fetch failed');
-          const data = await res.json();
-
-          const hasEnabledLibraries = data?.libraries?.some(
-            (library: Library) => library.enabled
-          );
-
-          setMediaServerSettingsComplete(hasEnabledLibraries);
-          if (hasEnabledLibraries) {
-            localStorage.setItem('mediaServerSettingsComplete', 'true');
-          } else {
-            localStorage.removeItem('mediaServerSettingsComplete');
-          }
-        } catch (e) {
-          toasts.addToast(intl.formatMessage(messages.librarieserror), {
-            autoDismiss: true,
-            appearance: 'error',
-          });
-
-          setMediaServerSettingsComplete(false);
-          localStorage.removeItem('mediaServerSettingsComplete');
-        }
-      };
-
       validateLibraries();
-    } else {
-      // Initialize from localStorage on mount
-      const storedState =
-        localStorage.getItem('mediaServerSettingsComplete') === 'true';
-      setMediaServerSettingsComplete(storedState);
     }
   }, [
     settings.currentSettings.mediaServerType,
     settings.currentSettings.initialized,
     router,
-    currentStep,
     toasts,
     intl,
+    currentStep,
+    mediaServerType,
   ]);
 
+  const validateLibraries = async () => {
+    try {
+      const endpointMap: Record<MediaServerType, string> = {
+        [MediaServerType.JELLYFIN]: '/api/v1/settings/jellyfin',
+        [MediaServerType.EMBY]: '/api/v1/settings/jellyfin',
+        [MediaServerType.PLEX]: '/api/v1/settings/plex',
+        [MediaServerType.NOT_CONFIGURED]: '',
+      };
+
+      const endpoint = endpointMap[mediaServerType];
+      if (!endpoint) return;
+
+      const res = await fetch(endpoint);
+      if (!res.ok) throw new Error('Fetch failed');
+      const data = await res.json();
+
+      const hasEnabledLibraries = data?.libraries?.some(
+        (library: Library) => library.enabled
+      );
+
+      setMediaServerSettingsComplete(hasEnabledLibraries);
+    } catch (e) {
+      toasts.addToast(intl.formatMessage(messages.librarieserror), {
+        autoDismiss: true,
+        appearance: 'error',
+      });
+
+      setMediaServerSettingsComplete(false);
+    }
+  };
+
   const handleComplete = () => {
-    setMediaServerSettingsComplete(true);
-    localStorage.setItem('mediaServerSettingsComplete', 'true');
+    validateLibraries();
   };
 
   if (settings.currentSettings.initialized) return <></>;

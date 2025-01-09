@@ -350,6 +350,10 @@ const SettingsPlex = ({ onComplete }: SettingsPlexProps) => {
       );
       if (!res.ok) throw new Error();
     }
+
+    if (onComplete) {
+      onComplete();
+    }
     setIsSyncing(false);
     revalidate();
   };
@@ -435,10 +439,6 @@ const SettingsPlex = ({ onComplete }: SettingsPlexProps) => {
               autoDismiss: true,
               appearance: 'success',
             });
-
-            if (onComplete) {
-              onComplete();
-            }
           } catch (e) {
             if (toastId) {
               removeToast(toastId);
