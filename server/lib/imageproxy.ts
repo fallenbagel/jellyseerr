@@ -323,7 +323,7 @@ class ImageProxy {
     });
 
     await promises.mkdir(dir, { recursive: true });
-    await promises.writeFile(filename, buffer);
+    await promises.writeFile(filename, new Uint8Array(buffer));
   }
 
   private getCacheKey(path: string) {
@@ -334,7 +334,9 @@ class ImageProxy {
     const hash = createHash('sha256');
     for (const item of items) {
       if (typeof item === 'number') hash.update(String(item));
-      else {
+      else if (Buffer.isBuffer(item)) {
+        hash.update(item.toString());
+      } else {
         hash.update(item);
       }
     }
