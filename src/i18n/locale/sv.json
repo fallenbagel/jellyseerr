@@ -697,7 +697,7 @@
   "components.Layout.VersionStatus.commitsbehind": "{commitsBehind} {commitsBehind, plural, one {ändring} other {ändringar}} efter",
   "components.UserProfile.UserSettings.UserPasswordChange.noPasswordSetOwnAccount": "Ditt konto har för närvarande inget lösenord. Konfigurera ett lösenord nedan för att aktivera inloggning som en \"lokal användare\" med din e-postadress.",
   "components.UserProfile.UserSettings.UserPasswordChange.noPasswordSet": "Det här användarkontot har för närvarande inget lösenord. Konfigurera ett lösenord nedan så att det här kontot kan logga in som en \"lokal användare.\"",
-  "components.Settings.serviceSettingsDescription": "Konfigurera din server {serverType} nedan. Du kan ansluta flera {serverType} servrar, men bara två av dem kan markeras som standard (en icke-4K och en 4K). Administratörer kan åsidosätta servern som används för att behandla nya förfrågningar innan godkännande.",
+  "components.Settings.videoServiceSettingsDescription": "Konfigurera din server {serverType} nedan. Du kan ansluta flera {serverType} servrar, men bara två av dem kan markeras som standard (en icke-4K och en 4K). Administratörer kan åsidosätta servern som används för att behandla nya förfrågningar innan godkännande.",
   "components.Settings.noDefaultServer": "Minst en {serverType} server måste markeras som standard för att {mediaType} -förfrågningar ska kunna behandlas.",
   "components.Settings.noDefaultNon4kServer": "Om du bara har en enda {serverType} server för både icke-4K- och 4K-innehåll (eller om du bara laddar ner 4K-innehåll) bör din {serverType} server <strong> INTE </strong> betecknas som en 4K-server.",
   "components.Settings.mediaTypeSeries": "serier",
