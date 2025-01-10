@@ -56,6 +56,6 @@ If you don't have or don't want to use docker, you can build the working pgloade
 The most recent release of pgloader has an issue quoting the table columns. Use the version in the docker container to avoid this issue.
 :::
 ```bash
-docker run --rm -v config/db.sqlite3:/db.sqlite3:ro -v pgloader/pgloader.load:/pgloader.load ghcr.io/ralgar/pgloader:pr-1531 pgloader --with "quote identifiers" --with "data only" /db.sqlite3 postgresql://{{DB_USER}}:{{DB_PASS}}@{{DB_HOST}}:{{DB_PORT}}/{{DB_NAME}}
+docker run --rm -v config/db.sqlite3:/db.sqlite3:ro ghcr.io/ralgar/pgloader:pr-1531 pgloader --with "quote identifiers" --with "data only" /db.sqlite3 postgresql://{{DB_USER}}:{{DB_PASS}}@{{DB_HOST}}:{{DB_PORT}}/{{DB_NAME}}
    ```
 5. Start Jellyseerr
