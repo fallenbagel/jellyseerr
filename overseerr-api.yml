@@ -7018,6 +7018,12 @@ paths:
       description: Updates an Override Rule from the request body.
       tags:
         - overriderule
+      parameters:
+        - in: path
+          name: ruleId
+          required: true
+          schema:
+            type: number
       responses:
         '200':
           description: 'Values were successfully updated'
