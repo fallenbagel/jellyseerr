@@ -17,7 +17,7 @@ import { MediaServerType } from '@server/constants/server';
 import type { Library } from '@server/lib/settings';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR, { mutate } from 'swr';
@@ -82,6 +82,37 @@ const Setup = () => {
     }
   };
 
+  const validateLibraries = useCallback(async () => {
+    try {
+      const endpointMap: Record<MediaServerType, string> = {
+        [MediaServerType.JELLYFIN]: '/api/v1/settings/jellyfin',
+        [MediaServerType.EMBY]: '/api/v1/settings/jellyfin',
+        [MediaServerType.PLEX]: '/api/v1/settings/plex',
+        [MediaServerType.NOT_CONFIGURED]: '',
+      };
+
+      const endpoint = endpointMap[mediaServerType];
+      if (!endpoint) return;
+
+      const res = await fetch(endpoint);
+      if (!res.ok) throw new Error('Fetch failed');
+      const data = await res.json();
+
+      const hasEnabledLibraries = data?.libraries?.some(
+        (library: Library) => library.enabled
+      );
+
+      setMediaServerSettingsComplete(hasEnabledLibraries);
+    } catch (e) {
+      toasts.addToast(intl.formatMessage(messages.librarieserror), {
+        autoDismiss: true,
+        appearance: 'error',
+      });
+
+      setMediaServerSettingsComplete(false);
+    }
+  }, [intl, mediaServerType, toasts]);
+
   const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
     refreshInterval: 0,
     refreshWhenHidden: false,
@@ -114,38 +145,8 @@ const Setup = () => {
     intl,
     currentStep,
     mediaServerType,
+    validateLibraries,
   ]);
-
-  const validateLibraries = async () => {
-    try {
-      const endpointMap: Record<MediaServerType, string> = {
-        [MediaServerType.JELLYFIN]: '/api/v1/settings/jellyfin',
-        [MediaServerType.EMBY]: '/api/v1/settings/jellyfin',
-        [MediaServerType.PLEX]: '/api/v1/settings/plex',
-        [MediaServerType.NOT_CONFIGURED]: '',
-      };
-
-      const endpoint = endpointMap[mediaServerType];
-      if (!endpoint) return;
-
-      const res = await fetch(endpoint);
-      if (!res.ok) throw new Error('Fetch failed');
-      const data = await res.json();
-
-      const hasEnabledLibraries = data?.libraries?.some(
-        (library: Library) => library.enabled
-      );
-
-      setMediaServerSettingsComplete(hasEnabledLibraries);
-    } catch (e) {
-      toasts.addToast(intl.formatMessage(messages.librarieserror), {
-        autoDismiss: true,
-        appearance: 'error',
-      });
-
-      setMediaServerSettingsComplete(false);
-    }
-  };
 
   const handleComplete = () => {
     validateLibraries();
