@@ -245,7 +245,9 @@ const SettingsLogs = () => {
         <p className="description">
           {intl.formatMessage(messages.logsDescription, {
             code: (msg: React.ReactNode) => (
-              <code className="bg-opacity-50">{msg}</code>
+              <code className="whitespace-normal break-words bg-opacity-50">
+                {msg}
+              </code>
             ),
             appDataPath: appData ? appData.appDataPath : '/app/config',
           })}
