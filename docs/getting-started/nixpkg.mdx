@@ -6,6 +6,8 @@ sidebar_position: 3
 
 import { JellyseerrVersion, NixpkgVersion } from '@site/src/components/JellyseerrVersion';
 import Admonition from '@theme/Admonition';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Nix Package Manager (Advanced)
 :::info
@@ -13,22 +15,55 @@ This method is not recommended for most users. It is intended for advanced users
 :::
 
 export const VersionMismatchWarning = () => {
-  const jellyseerrVersion = JellyseerrVersion();
-  const nixpkgVersion = NixpkgVersion();
+  let jellyseerrVersion = null;
+  let nixpkgVersions = null;
+  try {
+    jellyseerrVersion = JellyseerrVersion();
+    nixpkgVersions = NixpkgVersion();
+  } catch (err) {
+    return (
+      <Admonition type="error">
+        Failed to load version information. Error: {err.message || JSON.stringify(err)}
+      </Admonition>
+    );
+  }
 
-  const isUpToDate = jellyseerrVersion === nixpkgVersion;
+    if (!nixpkgVersions || nixpkgVersions.error) {
+    return (
+      <Admonition type="error">
+        Failed to fetch Nixpkg versions: {nixpkgVersions?.error || 'Unknown error'}
+      </Admonition>
+    );
+  }
+
+  const isUnstableUpToDate = jellyseerrVersion === nixpkgVersions.unstable;
+  const isStableUpToDate = jellyseerrVersion === nixpkgVersions.stable;
 
   return (
-    <>
-      {!isUpToDate ? (
-        <Admonition type="warning">
-          The <a href="https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/servers/jellyseerr/default.nix#L14">upstream Jellyseerr Nix Package (v{nixpkgVersion})</a> is not <b>up-to-date</b>. If you want to use <b>Jellyseerr v{jellyseerrVersion}</b>, you will need to <a href="#overriding-the-package-derivation">override the package derivation</a>.
-        </Admonition>
-      ) : (
-        <Admonition type="success">
-          The <a href="https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/servers/jellyseerr/default.nix#L14">upstream Jellyseerr Nix Package (v{nixpkgVersion})</a> is <b>up-to-date</b> with <b>Jellyseerr v{jellyseerrVersion}</b>.
-        </Admonition>
-      )}
+     <>
+      {!isStableUpToDate ? (
+  <Admonition type="warning">
+    The{' '}
+    <a href="https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/servers/jellyseerr/default.nix#L14">
+      upstream Jellyseerr Nix Package (v{nixpkgVersions.stable})
+    </a>{' '}
+    is not <b>up-to-date</b>. If you want to use <b>Jellyseerr v{jellyseerrVersion}</b>,{' '}
+    {isUnstableUpToDate ? (
+      <>
+        consider using the{' '}
+        <a href="https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/je/jellyseerr/package.nix">
+          unstable package
+        </a>{' '}
+        instead.
+      </>
+    ) : (
+      <>
+        you will need to{' '}
+        <a href="#overriding-the-package-derivation">override the package derivation</a>.
+      </>
+    )}
+  </Admonition>
+) : null} 
     </>
   );
 };
@@ -48,6 +83,8 @@ To get up and running with jellyseerr using Nix, you can add the following to yo
 
 If you want more advanced configuration options, you can use the following:
 
+<Tabs groupId="nixpkg-methods" queryString>
+  <TabItem value="default" label="Default Configurations">
 ```nix
 { config, pkgs, ... }:
 
@@ -56,53 +93,20 @@ If you want more advanced configuration options, you can use the following:
     enable = true;
     port = 5055;
     openFirewall = true;
+    package = pkgs.jellyseerr; # Use the unstable package if stable is not up-to-date
   };
 }
 ```
-
-After adding the configuration to your `configuration.nix`, you can run the following command to install jellyseerr:
-
-```bash
-nixos-rebuild switch
-```
-After rebuild is complete jellyseerr should be running, verify that it is with the following command.
-```bash
-systemctl status jellyseerr
-```
-
-:::info
-You can now access Jellyseerr by visiting `http://localhost:5055` in your web browser.
-:::
-
-
-
-import CodeBlock from '@theme/CodeBlock';
-
-## Overriding the package derivation
-export const VersionMatch = () => {
-  const jellyseerrVersion = JellyseerrVersion();
-  const nixpkgVersion = NixpkgVersion();
-
-  const code = `{ config, pkgs, ... }:
+  </TabItem>
+  <TabItem value="custom" label="Database Configurations">
+In order to use postgres, you will need to add override the default module of jellyseerr with the following as the current default module is not compatible with postgres:
+```nix
 {
-  nixpkgs.config.packageOverrides = pkgs: {
-    jellyseerr = pkgs.jellyseerr.overrideAttrs (oldAttrs: rec {
-      version = "${jellyseerrVersion}";
-
-      src = pkgs.fetchFromGitHub {
-        rev = "v\${version}";
-        sha256 = pkgs.lib.fakeSha256;
-      };
-
-      offlineCache = pkgs.fetchYarnDeps {
-        sha256 = pkgs.lib.fakeSha256;
-      };
-    });
-  };
-}`;
-
-  const module = `{ config, pkgs, lib, ... }:
-
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 with lib;
 let
   cfg = config.services.jellyseerr;
@@ -113,28 +117,65 @@ in
   disabledModules = [ "services/misc/jellyseerr.nix" ];
 
   options.services.jellyseerr = {
-    enable = mkEnableOption (mdDoc ''Jellyseerr, a requests manager for Jellyfin'');
+    enable = mkEnableOption ''Jellyseerr, a requests manager for Jellyfin'';
 
     openFirewall = mkOption {
       type = types.bool;
       default = false;
-      description = mdDoc ''Open port in the firewall for the Jellyseerr web interface.'';
+      description = ''Open port in the firewall for the Jellyseerr web interface.'';
     };
 
     port = mkOption {
       type = types.port;
       default = 5055;
-      description = mdDoc ''The port which the Jellyseerr web UI should listen to.'';
+      description = ''The port which the Jellyseerr web UI should listen to.'';
     };
 
     package = mkOption {
-        type = types.package;
-        default = pkgs.jellyseerr;
-        defaultText = literalExpression "pkgs.jellyseerr";
-        description = lib.mdDoc ''
-          Jellyseerr package to use.
-        '';
+      type = types.package;
+      default = pkgs.jellyseerr;
+      defaultText = literalExpression "pkgs.jellyseerr";
+      description = ''
+        Jellyseerr package to use.
+      '';
+    };
+
+    databaseConfig = mkOption {
+      type = types.attrsOf types.str;
+      default = {
+        type = "sqlite";
+        configDirectory = "config";
+        logQueries = "false";
       };
+      description = ''
+        Database configuration. For "sqlite", only "type", "configDirectory", and "logQueries" are relevant.
+        For "postgres", include host, port, user, pass, name, and optionally socket.
+        Example:
+        {
+          type = "postgres";
+          socket = "/run/postgresql";
+          user = "jellyseerr";
+          name = "jellyseerr";
+          logQueries = "false";
+        }
+        or
+        {
+          type = "postgres";
+          host = "localhost";
+          port = "5432";
+          user = "dbuser";
+          pass = "password";
+          name = "jellyseerr";
+          logQueries = "false";
+        }
+        or
+        {
+          type = "sqlite";
+          configDirectory = "config";
+          logQueries = "false";
+        }
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
@@ -142,14 +183,29 @@ in
       description = "Jellyseerr, a requests manager for Jellyfin";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
-      environment.PORT = toString cfg.port;
+      environment =
+        let
+          dbConfig = cfg.databaseConfig;
+        in
+        {
+          PORT = toString cfg.port;
+          DB_TYPE = toString dbConfig.type;
+          CONFIG_DIRECTORY = toString dbConfig.configDirectory or "";
+          DB_LOG_QUERIES = toString dbConfig.logQueries;
+          DB_HOST = if dbConfig.type == "postgres" && !(hasAttr "socket" dbConfig) then toString dbConfig.host or "" else "";
+          DB_PORT = if dbConfig.type == "postgres" && !(hasAttr "socket" dbConfig) then toString dbConfig.port or "" else "";
+          DB_SOCKET_PATH = if dbConfig.type == "postgres" && hasAttr "socket" dbConfig then toString dbConfig.socket or "" else "";
+          DB_USER = if dbConfig.type == "postgres" then toString dbConfig.user or "" else "";
+          DB_PASS = if dbConfig.type == "postgres" then toString dbConfig.pass or "" else "";
+          DB_NAME = if dbConfig.type == "postgres" then toString dbConfig.name or "" else "";
+        };
       serviceConfig = {
         Type = "exec";
         StateDirectory = "jellyseerr";
-        WorkingDirectory = "\${cfg.package}/libexec/jellyseerr/deps/jellyseerr";
+        WorkingDirectory = "${cfg.package}/libexec/jellyseerr";
         DynamicUser = true;
-        ExecStart = "\${cfg.package}/bin/jellyseerr";
-        BindPaths = [ "/var/lib/jellyseerr/:\${cfg.package}/libexec/jellyseerr/deps/jellyseerr/config/" ];
+        ExecStart = "${cfg.package}/bin/jellyseerr";
+        BindPaths = [ "/var/lib/jellyseerr/:${cfg.package}/libexec/jellyseerr/config/" ];
         Restart = "on-failure";
         ProtectHome = true;
         ProtectSystem = "strict";
@@ -169,57 +225,47 @@ in
       };
     };
 
-    networking.firewall = mkIf cfg.openFirewall {
-      allowedTCPPorts = [ cfg.port ];
-    };
+    networking.firewall = mkIf cfg.openFirewall { allowedTCPPorts = [ cfg.port ]; };
   };
-}`;
-
-  const configuration = `{ config, pkgs, ... }:
+}
+```
+Then, import the module into your `configuration.nix`:
+```nix
+{ config, pkgs, ... }:
 {
-    imports = [ ./jellyseerr-module.nix ]
+  imports = [ ./modules/jellyseerr.nix ];
 
-    services.jellyseerr = {
-        enable = true;
-        port = 5055;
-        openFirewall = true;
-        package = (pkgs.callPackage (import ../../../pkgs/jellyseerr) { });
+  services.jellyseerr = {
+    enable = true;
+    port = 5055;
+    openFirewall = true;
+    package = pkgs.unstable.jellyseerr; # use the unstable package if stable is not up-to-date
+    databaseConfig = {
+      type = "postgres";
+      host = "localhost"; # or socket: "/run/postgresql"
+      port = "5432"; # if using socket, this is not needed
+      user = "jellyseerr";
+      pass = "jellyseerr";
+      name = "jellyseerr";
+      logQueries = "false";
     };
-}`;
+  }
+}
+```
+  </TabItem>
+</Tabs>
 
-  const isUpToDate = jellyseerrVersion === nixpkgVersion;
+After adding the configuration to your `configuration.nix`, you can run the following command to install jellyseerr:
 
-  return (
-    <>
-      {isUpToDate ? (
-        <>
-          <p>The latest version of Jellyseerr <strong>({jellyseerrVersion})</strong> and the Jellyseerr nixpkg package version <strong>({nixpkgVersion})</strong> is <strong>up-to-date</strong>.</p>
-          <p>There is no need to override the package derivation.</p>
-        </>
-      ) : (
-        <>
-          <p>The latest version of Jellyseerr <strong>({jellyseerrVersion})</strong> and the Jellyseerr nixpkg version <strong>(v{nixpkgVersion})</strong> is <strong>out-of-date</strong>.
-          If you want to use <b>Jellyseerr v{jellyseerrVersion}</b>, you will need to override the package derivation.</p>
-          <p>In order to override the package derivation:</p>
-          <ol>
-            <li style={{ marginBottom: '1rem' }}>Grab the <a href="https://raw.githubusercontent.com/NixOS/nixpkgs/nixos-unstable/pkgs/servers/jellyseerr/default.nix">latest nixpkg derivation for Jellyseerr</a></li>
-            <li style={{ marginBottom: '1rem' }}>Grab the latest <a href="https://raw.githubusercontent.com/Fallenbagel/jellyseerr/main/package.json">package.json</a> for Jellyseerr</li>
-            <li style={{ marginBottom: '1rem' }}>Add it to the same directory as the nixpkg derivation</li>
-            <li style={{ marginBottom: '1rem' }}>Update the `src` and `offlineCache` attributes in the nixpkg derivation:</li>
-            <CodeBlock className="language-nix" style={{ marginBottom: '1rem' }}>{code}</CodeBlock>
-            <Admonition type="tip" style={{ marginBottom: '1rem' }}>You can replace the <b>sha256</b> with the actual hash that <b>nixos-rebuild</b> outputs when you run the command.</Admonition>
-            <li style={{ marginBottom: '1rem' }}>Grab this module and import it in your `configuration.nix`</li>
-            <CodeBlock className="language-nix" style={{ marginBottom: '1rem' }}>{module}</CodeBlock>
-            <Admonition type="tip" style={{ marginBottom: '1rem' }}>We are using a custom module because the upstream module does not have a package option.</Admonition>
-            <li style={{ marginBottom: '1rem' }}>Call the new package in your `configuration.nix`</li>
-            <CodeBlock className="language-nix" style={{ marginBottom: '1rem' }}>{configuration}</CodeBlock>
-          </ol>
-        </>
-      )}
-    </>
-  );
+```bash
+nixos-rebuild switch
+```
+After rebuild is complete jellyseerr should be running, verify that it is with the following command.
+```bash
+systemctl status jellyseerr
+```
 
-};
-
-<VersionMatch />
+:::info
+You can now access Jellyseerr by visiting `http://localhost:5055` in your web browser.
+:::
 
