@@ -147,6 +147,21 @@ const Login = () => {
           </Button>
         ))
       )),
+    ...settings.currentSettings.openIdProviders.map((provider) => (
+      <Button
+        as="a"
+        href={`/api/v1/auth/oidc/login/${provider.slug}`}
+        className="flex-1 bg-transparent"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={provider.logo}
+          alt={provider.name}
+          className="mr-2 max-h-5 w-5"
+        />
+        <span>{provider.name}</span>
+      </Button>
+    )),
   ].filter((o): o is JSX.Element => !!o);
 
   return (
