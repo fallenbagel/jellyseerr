@@ -1,3 +1,4 @@
+import type { PublicOidcProvider } from '@server/lib/settings';
 import type { PaginatedResponse } from './common';
 
 export type LogMessage = {
@@ -47,6 +48,7 @@ export interface PublicSettingsResponse {
   emailEnabled: boolean;
   newPlexLogin: boolean;
   youtubeUrl: string;
+  openIdProviders: PublicOidcProvider[];
 }
 
 export interface CacheItem {
