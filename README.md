@@ -11,7 +11,7 @@
 <a href="http://translate.jellyseerr.dev/engage/jellyseerr/"><img src="http://translate.jellyseerr.dev/widget/jellyseerr/jellyseerr-frontend/svg-badge.svg" alt="Translation status" /></a>
 <a href="https://github.com/fallenbagel/jellyseerr/blob/develop/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/fallenbagel/jellyseerr"></a>
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-62-orange.svg"/></a>
+<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-63-orange.svg"/></a>
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Jellyseerr** is a free and open source software application for managing requests for your media library.
@@ -165,6 +165,7 @@ Thanks goes to these wonderful people from Overseerr ([emoji key](https://allcon
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/gageorsburn"><img src="https://avatars.githubusercontent.com/u/4692734?v=4?s=100" width="100px;" alt="Gage Orsburn"/><br /><sub><b>Gage Orsburn</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=gageorsburn" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/GkhnGRBZ"><img src="https://avatars.githubusercontent.com/u/127258824?v=4?s=100" width="100px;" alt="GkhnGRBZ"/><br /><sub><b>GkhnGRBZ</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=GkhnGRBZ" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://benhaney.com"><img src="https://avatars.githubusercontent.com/u/31331498?v=4?s=100" width="100px;" alt="Ben Haney"/><br /><sub><b>Ben Haney</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=benhaney" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Wunderharke"><img src="https://avatars.githubusercontent.com/u/5105672?v=4?s=100" width="100px;" alt="Wunderharke"/><br /><sub><b>Wunderharke</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=Wunderharke" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
