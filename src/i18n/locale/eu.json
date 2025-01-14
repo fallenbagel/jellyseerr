@@ -234,5 +234,22 @@
   "components.TvDetails.overview": "Ikuspegi orokorra",
   "components.UserProfile.UserSettings.UserGeneralSettings.admin": "Administratzailea",
   "components.UserProfile.UserSettings.UserGeneralSettings.role": "Rola",
-  "i18n.approved": "Onartuta"
+  "i18n.approved": "Onartuta",
+  "components.Discover.CreateSlider.nooptions": "Emaitzarik ez.",
+  "components.Discover.CreateSlider.searchGenres": "Bilatu generoak…",
+  "components.Discover.CreateSlider.searchStudios": "Bilatu estudioak…",
+  "components.Discover.DiscoverMovieGenre.genreMovies": "{genre} filmak",
+  "components.Discover.DiscoverMovieKeyword.keywordMovies": "{keywordTitle} filmak",
+  "components.Discover.FilterSlideover.studio": "Estudioa",
+  "components.Discover.studios": "Estudioak",
+  "components.IssueDetails.IssueDescription.description": "Deskribapena",
+  "components.Layout.Sidebar.browsetv": "Telesailak",
+  "components.ManageSlideOver.tvshow": "telesailak",
+  "components.Settings.mediaTypeSeries": "telesaila",
+  "i18n.tvshow": "Telesailak",
+  "i18n.tvshows": "Telesailak",
+  "components.Discover.StudioSlider.studios": "Estudioak",
+  "components.Discover.networks": "Sareak",
+  "components.Settings.jellyfinSettingsDescription": "Aukeran, barne eta kanpo-konexioko puntuak konfiguratu {mediaServerName} zerbitzariarentzat. Kasu gehienetan, kanpoko URLa barnekoaren desberdina da. Era berean, pasahitza berrezartzeko URL pertsonalizatu bat ezar daiteke {mediaServerName} saioaren hasierarako, pasahitz desberdin bat berrezartzeko orri bat nahi baduzu. Jellyfinen API gakoa ere aldatu daiteke, lehenago automatikoki sortua.",
+  "components.Discover.DiscoverWatchlist.discoverwatchlist": "Zure jarraipenak"
 }
