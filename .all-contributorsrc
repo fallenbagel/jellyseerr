@@ -565,6 +565,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "benhaney",
+      "name": "Ben Haney",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31331498?v=4",
+      "profile": "http://benhaney.com",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
