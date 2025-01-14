@@ -11,7 +11,7 @@
 <a href="http://translate.jellyseerr.dev/engage/jellyseerr/"><img src="http://translate.jellyseerr.dev/widget/jellyseerr/jellyseerr-frontend/svg-badge.svg" alt="Translation status" /></a>
 <a href="https://github.com/fallenbagel/jellyseerr/blob/develop/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/fallenbagel/jellyseerr"></a>
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-60-orange.svg"/></a>
+<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-61-orange.svg"/></a>
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Jellyseerr** is a free and open source software application for managing requests for your media library.
@@ -163,6 +163,7 @@ Thanks goes to these wonderful people from Overseerr ([emoji key](https://allcon
       <td align="center" valign="top" width="14.28%"><a href="https://me.garnx.fr"><img src="https://avatars.githubusercontent.com/u/37373941?v=4?s=100" width="100px;" alt="Guillaume ARNOUX"/><br /><sub><b>Guillaume ARNOUX</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=guillaumearnx" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/dr-carrot"><img src="https://avatars.githubusercontent.com/u/17272571?v=4?s=100" width="100px;" alt="dr-carrot"/><br /><sub><b>dr-carrot</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=dr-carrot" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/gageorsburn"><img src="https://avatars.githubusercontent.com/u/4692734?v=4?s=100" width="100px;" alt="Gage Orsburn"/><br /><sub><b>Gage Orsburn</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=gageorsburn" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/GkhnGRBZ"><img src="https://avatars.githubusercontent.com/u/127258824?v=4?s=100" width="100px;" alt="GkhnGRBZ"/><br /><sub><b>GkhnGRBZ</b></sub></a><br /><a href="https://github.com/Fallenbagel/jellyseerr/commits?author=GkhnGRBZ" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
