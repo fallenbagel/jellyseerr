@@ -63,6 +63,8 @@ body:
         - PostgreSQL
       label: Database
       description: Which database backend are you using?
+    validations:
+      required: true
   - type: input
     id: device
     attributes:
