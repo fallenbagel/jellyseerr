@@ -14,14 +14,14 @@
 <a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-63-orange.svg"/></a>
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-**Jellyseerr** is a free and open source software application for managing requests for your media library.
-It is a fork of [Overseerr](https://github.com/sct/overseerr) built to bring additional support for [Jellyfin](https://github.com/jellyfin/jellyfin) & [Emby](https://github.com/MediaBrowser/Emby) media servers!
+**Jellyseerr** is a free and open source software application for managing requests for your media library. It integrates with the media server of your choice: [Jellyfin](https://jellyfin.org), [Plex](https://plex.tv), and [Emby](https://emby.media/). In addition, it integrates with your existing services, such as **[Sonarr](https://sonarr.tv/)**, **[Radarr](https://radarr.video/)**.
 
 ## Current Features
 
-- Full Jellyfin/Emby/Plex integration including authentication with user import & management
-- Supports Movies, Shows and Mixed Libraries
-- Ability to change email addresses for smtp purposes
+- Full Jellyfin/Emby/Plex integration including authentication with user import & management.
+- Support for **PostgreSQL** and **SQLite** databases.
+- Supports Movies, Shows and Mixed Libraries.
+- Ability to change email addresses for SMTP purposes.
 - Easy integration with your existing services. Currently, Jellyseerr supports Sonarr and Radarr. More to come!
 - Jellyfin/Emby/Plex library scan, to keep track of the titles which are already available.
 - Customizable request system, which allows users to request individual seasons or movies in a friendly, easy-to-use interface.
@@ -29,8 +29,7 @@ It is a fork of [Overseerr](https://github.com/sct/overseerr) built to bring add
 - Granular permission system.
 - Support for various notification agents.
 - Mobile-friendly design, for when you need to approve requests on the go!
-
-  (Upcoming Features include: Multiple Server Instances, and much more!)
+- Support for watchlisting & blacklisting media.
 
 With more features on the way! Check out our [issue tracker](https://github.com/fallenbagel/jellyseerr/issues) to see the features which have already been requested.
 
