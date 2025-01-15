@@ -1070,38 +1070,42 @@ const SonarrModal = ({
                   </div>
                 </div>
               </div>
-              <h3 className="mb-4 text-xl font-bold leading-8 text-gray-100">
-                {intl.formatMessage(messages.overrideRules)}
-              </h3>
-              <ul className="grid gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-6 lg:grid-cols-2">
-                {rules && (
-                  <OverrideRuleTile
-                    rules={rules}
-                    setOverrideRuleModal={setOverrideRuleModal}
-                    testResponse={testResponse}
-                    sonarr={sonarr}
-                    revalidate={revalidate}
-                  />
-                )}
-                <li className="min-h-[8rem] rounded-lg border-2 border-dashed border-gray-400 shadow sm:min-h-[11rem]">
-                  <div className="flex h-full w-full items-center justify-center">
-                    <Button
-                      buttonType="ghost"
-                      onClick={() =>
-                        setOverrideRuleModal({
-                          open: true,
-                          rule: null,
-                          testResponse,
-                        })
-                      }
-                      disabled={!isValidated}
-                    >
-                      <PlusIcon />
-                      <span>{intl.formatMessage(messages.addrule)}</span>
-                    </Button>
-                  </div>
-                </li>
-              </ul>
+              {sonarr && (
+                <>
+                  <h3 className="mb-4 text-xl font-bold leading-8 text-gray-100">
+                    {intl.formatMessage(messages.overrideRules)}
+                  </h3>
+                  <ul className="grid gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-6 lg:grid-cols-2">
+                    {rules && (
+                      <OverrideRuleTile
+                        rules={rules}
+                        setOverrideRuleModal={setOverrideRuleModal}
+                        testResponse={testResponse}
+                        sonarr={sonarr}
+                        revalidate={revalidate}
+                      />
+                    )}
+                    <li className="min-h-[8rem] rounded-lg border-2 border-dashed border-gray-400 shadow sm:min-h-[11rem]">
+                      <div className="flex h-full w-full items-center justify-center">
+                        <Button
+                          buttonType="ghost"
+                          onClick={() =>
+                            setOverrideRuleModal({
+                              open: true,
+                              rule: null,
+                              testResponse,
+                            })
+                          }
+                          disabled={!isValidated}
+                        >
+                          <PlusIcon />
+                          <span>{intl.formatMessage(messages.addrule)}</span>
+                        </Button>
+                      </div>
+                    </li>
+                  </ul>
+                </>
+              )}
             </Modal>
           );
         }}
