@@ -117,12 +117,17 @@ class JellyfinAPI extends ExternalAPI {
       authHeaderVal = `MediaBrowser Client="Jellyseerr", Device="Jellyseerr", DeviceId="${deviceId}", Version="${getAppVersion()}"`;
     }
 
+    const settings = getSettings();
+
     super(
       jellyfinHost,
       {},
       {
         headers: {
           'X-Emby-Authorization': authHeaderVal,
+          ...(settings.main.mediaServerType === MediaServerType.EMBY && {
+            'Accept-Encoding': 'gzip',
+          }),
         },
       }
     );
