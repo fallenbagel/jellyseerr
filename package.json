@@ -235,7 +235,8 @@
           "COMMIT_TAG": "$GIT_SHA"
         },
         "imageNames": [
-          "fallenbagel/jellyseerr"
+          "fallenbagel/jellyseerr",
+          "ghcr.io/fallenbagel/jellyseerr"
         ],
         "platforms": [
           "linux/amd64",
