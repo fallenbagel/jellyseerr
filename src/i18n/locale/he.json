@@ -228,7 +228,6 @@
   "components.Layout.UserWarnings.passwordRequired": "דרושה סיסמה.",
   "components.Login.credentialerror": "שם המשתמש או הסיסמה שגויים.",
   "components.Login.description": "בהתחברות ראשונית ל-{applicationName}, יש להוסיף כתובת מייל.",
-  "components.Login.host": "קישור {mediaServerName}",
   "components.Login.initialsignin": "חיבור",
   "components.Login.initialsigningin": "מתחבר…",
   "components.Login.save": "הוספה",

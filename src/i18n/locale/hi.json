@@ -60,7 +60,6 @@
   "components.UserList.usercreatedfailedexisting": "प्रदान किया गया ईमेल पता पहले से ही किसी अन्य उपयोगकर्ता द्वारा उपयोग में है।",
   "components.UserList.usercreatedsuccess": "उपयोगकर्ता सफलतापूर्वक बनाया गया!",
   "components.UserList.userfail": "उपयोगकर्ता अनुमतियां सहेजते समय कोई गड़बड़ी हुई.",
-  "components.UserList.displayName": "प्रदर्शित होने वाला नाम",
   "components.UserProfile.ProfileHeader.profile": "प्रोफ़ाइल देखें",
   "components.UserProfile.ProfileHeader.settings": "सेटिंग्स बदलें",
   "components.Discover.DiscoverTvGenre.genreSeries": "{genre} शृंखला",
