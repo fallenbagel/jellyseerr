@@ -41,11 +41,6 @@ import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 
-if (process.env.forceIpv4First === 'true') {
-  dns.setDefaultResultOrder('ipv4first');
-  net.setDefaultAutoSelectFamily(false);
-}
-
 const API_SPEC_PATH = path.join(__dirname, '../overseerr-api.yml');
 
 logger.info(`Starting Overseerr version ${getAppVersion()}`);
@@ -78,6 +73,18 @@ app
     // Load Settings
     const settings = await getSettings().load();
     restartFlag.initializeSettings(settings.main);
+
+    // Check if we force IPv4 first
+    if (process.env.forceIpv4First === 'true' || settings.main.forceIpv4First) {
+      dns.setDefaultResultOrder('ipv4first');
+      net.setDefaultAutoSelectFamily(false);
+    }
+
+    if (settings.main.dnsServers.trim() !== '') {
+      dns.setServers(
+        settings.main.dnsServers.split(',').map((server) => server.trim())
+      );
+    }
 
     // Register HTTP proxy
     if (settings.main.proxy.enabled) {

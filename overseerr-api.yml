@@ -191,6 +191,12 @@ components:
         enableSpecialEpisodes:
           type: boolean
           example: false
+        forceIpv4First:
+          type: boolean
+          example: false
+        dnsServers:
+          type: string
+          example: '1.1.1.1'
     PlexLibrary:
       type: object
       properties:

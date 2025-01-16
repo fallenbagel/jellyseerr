@@ -132,6 +132,8 @@ export interface MainSettings {
   mediaServerType: number;
   partialRequestsEnabled: boolean;
   enableSpecialEpisodes: boolean;
+  forceIpv4First: boolean;
+  dnsServers: string;
   locale: string;
   proxy: ProxySettings;
 }
@@ -346,6 +348,8 @@ class Settings {
         mediaServerType: MediaServerType.NOT_CONFIGURED,
         partialRequestsEnabled: true,
         enableSpecialEpisodes: false,
+        forceIpv4First: false,
+        dnsServers: '',
         locale: 'en',
         proxy: {
           enabled: false,

@@ -57,6 +57,12 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   validationApplicationUrlTrailingSlash: 'URL must not end in a trailing slash',
   partialRequestsEnabled: 'Allow Partial Series Requests',
   enableSpecialEpisodes: 'Allow Special Episodes Requests',
+  forceIpv4First: 'IPv4 Resolution First',
+  forceIpv4FirstTip:
+    'Force Jellyseerr to resolve IPv4 addresses first instead of IPv6',
+  dnsServers: 'Custom DNS Servers',
+  dnsServersTip:
+    'Comma-separated list of custom DNS servers, e.g. "1.1.1.1,[2606:4700:4700::1111]"',
   locale: 'Display Language',
   proxyEnabled: 'HTTP(S) Proxy',
   proxyHostname: 'Proxy Hostname',
@@ -160,6 +166,8 @@ const SettingsMain = () => {
             streamingRegion: data?.streamingRegion || 'US',
             partialRequestsEnabled: data?.partialRequestsEnabled,
             enableSpecialEpisodes: data?.enableSpecialEpisodes,
+            forceIpv4First: data?.forceIpv4First,
+            dnsServers: data?.dnsServers,
             trustProxy: data?.trustProxy,
             cacheImages: data?.cacheImages,
             proxyEnabled: data?.proxy?.enabled,
@@ -191,6 +199,8 @@ const SettingsMain = () => {
                   originalLanguage: values.originalLanguage,
                   partialRequestsEnabled: values.partialRequestsEnabled,
                   enableSpecialEpisodes: values.enableSpecialEpisodes,
+                  forceIpv4First: values.forceIpv4First,
+                  dnsServers: values.dnsServers,
                   trustProxy: values.trustProxy,
                   cacheImages: values.cacheImages,
                   proxy: {
@@ -522,6 +532,55 @@ const SettingsMain = () => {
                         );
                       }}
                     />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="forceIpv4First" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.forceIpv4First)}
+                    </span>
+                    <SettingsBadge badgeType="advanced" className="mr-2" />
+                    <SettingsBadge badgeType="restartRequired" />
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.forceIpv4FirstTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      type="checkbox"
+                      id="forceIpv4First"
+                      name="forceIpv4First"
+                      onChange={() => {
+                        setFieldValue('forceIpv4First', !values.forceIpv4First);
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="dnsServers" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.dnsServers)}
+                    </span>
+                    <SettingsBadge badgeType="advanced" className="mr-2" />
+                    <SettingsBadge badgeType="restartRequired" />
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.dnsServersTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field">
+                      <Field
+                        id="dnsServers"
+                        name="dnsServers"
+                        type="text"
+                        inputMode="url"
+                      />
+                    </div>
+                    {errors.dnsServers &&
+                      touched.dnsServers &&
+                      typeof errors.dnsServers === 'string' && (
+                        <div className="error">{errors.dnsServers}</div>
+                      )}
                   </div>
                 </div>
                 <div className="form-row">
