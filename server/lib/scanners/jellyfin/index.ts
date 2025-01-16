@@ -1,5 +1,6 @@
 import type { JellyfinLibraryItem } from '@server/api/jellyfin';
 import JellyfinAPI from '@server/api/jellyfin';
+import MusicBrainz from '@server/api/musicbrainz';
 import TheMovieDb from '@server/api/themoviedb';
 import type { TmdbTvDetails } from '@server/api/themoviedb/interfaces';
 import { MediaStatus, MediaType } from '@server/constants/media';
@@ -528,6 +529,7 @@ class JellyfinScanner {
 
   private async processMusic(jellyfinitem: JellyfinLibraryItem) {
     const mediaRepository = getRepository(Media);
+    const musicBrainz = new MusicBrainz();
 
     try {
       const metadata = await this.jfClient.getItemData(jellyfinitem.Id);
@@ -541,10 +543,25 @@ class JellyfinScanner {
         return;
       }
 
-      // Use MusicBrainzReleaseGroup as the foreign ID
       newMedia.mbId = metadata.ProviderIds?.MusicBrainzReleaseGroup;
 
-      // Only proceed if we have a valid ID
+      if (!newMedia.mbId && metadata.ProviderIds?.MusicBrainzAlbum) {
+        try {
+          const releaseGroupId = await musicBrainz.getReleaseGroup({
+            releaseId: metadata.ProviderIds.MusicBrainzAlbum,
+          });
+          if (releaseGroupId) {
+            newMedia.mbId = releaseGroupId;
+          }
+        } catch (e) {
+          this.log('Failed to get release group ID', 'error', {
+            title: metadata.Name,
+            releaseId: metadata.ProviderIds.MusicBrainzAlbum,
+            error: e.message,
+          });
+        }
+      }
+
       if (!newMedia.mbId) {
         this.log(
           'No MusicBrainz Album ID found for this title. Skipping.',
