@@ -1398,5 +1398,6 @@
   "i18n.addToBlacklist": "Ajouter à la liste noire",
   "i18n.blacklist": "Liste noire",
   "i18n.removeFromBlacklistSuccess": "<strong>{title}</strong> a été retiré de la liste noire avec succès.",
-  "i18n.removefromBlacklist": "Retirer de la liste noire"
+  "i18n.removefromBlacklist": "Retirer de la liste noire",
+  "i18n.specials": "Hors-série"
 }
