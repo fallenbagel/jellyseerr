@@ -246,7 +246,7 @@ const ManageSlideOver = ({
         isMovie(data)
           ? data.title
           : isMusic(data)
-          ? `${data.artist} - ${data.title}`
+          ? `${data.title} - ${data.artist.artistName}`
           : data.name
       }
     >
