@@ -95,6 +95,7 @@ export interface JellyfinLibraryItemExtended extends JellyfinLibraryItem {
     Imdb?: string;
     Tvdb?: string;
     MusicBrainzReleaseGroup: string | undefined;
+    MusicBrainzAlbum?: string;
     MusicBrainzArtistId?: string;
   };
   MediaSources?: JellyfinMediaSource[];
