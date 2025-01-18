@@ -87,8 +87,8 @@ jobs:
           build-args: |
             COMMIT_TAG=${{ github.sha }}
           tags: |
-            fallenbagel/jellyseerr:develop-${{ matrix.platform }}
-            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop-${{ matrix.platform }}
+            fallenbagel/jellyseerr:develop-${{ matrix.platform // '/' / '-' }}
+            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop-${{ matrix.platform // '/' / '-' }}
           cache-from: type=gha,scope=${{ matrix.platform }}
           cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
           provenance: false
@@ -110,11 +110,11 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/jellyseerr:develop-linux-arm64
           target: |
             fallenbagel/jellyseerr:develop
-            ghcr.io/${{ github.repository_owner }}/jellyseerr:develop
+            ghcr.io/fallenbagel/jellyseerr:develop
       - name: Inspect Manifest
         run: |
           docker buildx imagetools inspect fallenbagel/jellyseerr:develop
-          docker buildx imagetools inspect ghcr.io/${{ github.repository_owner }}/jellyseerr:develop
+          docker buildx imagetools inspect ghcr.io/fallenbagel/jellyseerr:develop
 
   discord:
     name: Send Discord Notification
