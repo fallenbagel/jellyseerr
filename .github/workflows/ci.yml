@@ -12,7 +12,7 @@ jobs:
   test:
     name: Lint & Test Build
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     container: node:22-alpine
     steps:
       - name: Checkout
@@ -49,9 +49,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - runner: ubuntu-22.04
+          - runner: ubuntu-24.04
             platform: linux/amd64
-          - runner: ubuntu-22.04-arm64
+          - runner: ubuntu-24.04-arm64
             platform: linux/arm64
     runs-on: ${{ matrix.runner }}
     steps:
@@ -96,7 +96,7 @@ jobs:
     name: Send Discord Notification
     needs: build_and_push
     if: always() && github.event_name != 'pull_request' && !contains(github.event.head_commit.message, '[skip ci]')
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Get Build Job Status
         uses: technote-space/workflow-conclusion-action@v3
