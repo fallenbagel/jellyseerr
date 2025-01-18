@@ -114,15 +114,20 @@ jobs:
           echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
         env:
           OWNER: ${{ github.repository_owner }}
-      - name: Create and push manifest
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          tags: |
-            fallenbagel/jellyseerr:develop
-            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop
-          platforms: linux/amd64,linux/arm64
-          inputs: ${{ needs.build.outputs.image-amd64 }},${{ needs.build.outputs.image-arm64 }}
+      - name: Create and push Docker Hub manifest
+        run: |
+          docker manifest create fallenbagel/jellyseerr:develop \
+            ${{ needs.build.outputs.image-amd64 }} \
+            ${{ needs.build.outputs.image-arm64 }}
+
+          docker manifest push fallenbagel/jellyseerr:develop
+      - name: Create and push GHCR manifest
+        run: |
+          docker manifest create ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop \
+            ${{ needs.build.outputs.image-amd64 }} \
+            ${{ needs.build.outputs.image-arm64 }}
+
+          docker manifest push ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop
 
   discord:
     name: Send Discord Notification
