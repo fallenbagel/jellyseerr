@@ -136,12 +136,6 @@ jobs:
             ghcr.io/${{ env.OWNER_LC }}/jellyseerr:temp-arm64
           docker manifest push ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop
 
-          # Cleanup temporary tags
-          docker manifest rm fallenbagel/jellyseerr:temp-amd64
-          docker manifest rm fallenbagel/jellyseerr:temp-arm64
-          docker manifest rm ghcr.io/${{ env.OWNER_LC }}/jellyseerr:temp-amd64
-          docker manifest rm ghcr.io/${{ env.OWNER_LC }}/jellyseerr:temp-arm64
-
   discord:
     name: Send Discord Notification
     needs: merge_and_push
