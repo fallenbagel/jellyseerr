@@ -275,7 +275,9 @@ mediaRoutes.delete(
           url: LidarrAPI.buildUrl(serviceSettings, '/api/v1'),
         });
         await service.removeAlbum(
-          parseInt(media.externalServiceSlug as string)
+          media.externalServiceId
+            ? parseInt(media.externalServiceId.toString())
+            : 0
         );
       }
 
