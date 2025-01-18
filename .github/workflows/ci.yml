@@ -73,7 +73,7 @@ jobs:
       - name: Sanitize Owner and Platform name
         run: |
           echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
-          echo "PLATFORM=${PLATFORM,,}' | sed 's|/|-|g')" >> $GITHUB_ENV
+          echo "PLATFORM=$(echo '${PLATFORM}' | sed 's|/|-|g')" >> $GITHUB_ENV
         env:
           OWNER: ${{ github.repository_owner }}
           PLATFORM: ${{ matrix.platform }}
