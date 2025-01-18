@@ -48,7 +48,11 @@ jobs:
     if: github.ref == 'refs/heads/develop' && !contains(github.event.head_commit.message, '[skip ci]')
     strategy:
       matrix:
-        runner: [ubuntu-22.04, ubuntu-22.04-arm64]
+        include:
+          - runner: ubuntu-22.04
+            platform: linux/amd64
+          - runner: ubuntu-22.04-arm64
+            platform: linux/arm64
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout
@@ -77,15 +81,16 @@ jobs:
           context: .
           file: ./Dockerfile
           # platforms: linux/amd64,linux/arm64
-          platforms: ${{ matrix.runner == 'ubuntu-22.04' && 'linux/amd64' || 'linux/arm64' }}
+          platforms: ${{ matrix.platform }}
           push: true
           build-args: |
             COMMIT_TAG=${{ github.sha }}
           tags: |
             fallenbagel/jellyseerr:develop
             ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.platform }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
+          provenance: false
 
   discord:
     name: Send Discord Notification
