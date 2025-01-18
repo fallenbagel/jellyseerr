@@ -65,30 +65,39 @@ jobs:
           - runner: ubuntu-24.04-arm
             platform: linux/arm64
     runs-on: ${{ matrix.runner }}
-    outputs:
-      image-amd64: ${{ steps.meta.outputs.image-amd64 }}
-      image-arm64: ${{ steps.meta.outputs.image-arm64 }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Generate image metadata
-        id: meta
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set lower case owner name
         run: |
-          echo "image-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}=localhost/jellyseerr:develop-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}" >> $GITHUB_OUTPUT
-      - name: Build platform image
+          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+        env:
+          OWNER: ${{ github.repository_owner }}
+      - name: Build and push temp platform image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           platforms: ${{ matrix.platform }}
-          # dont push until merged
-          push: false
-          load: true
+          push: true
           build-args: |
             COMMIT_TAG=${{ github.sha }}
-          tags: ${{ steps.meta.outputs[format('image-{0}', matrix.platform == 'linux/amd64' && 'amd64' || 'arm64')] }}
+          tags: |
+            fallenbagel/jellyseerr:temp-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
+            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:temp-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
           cache-from: type=gha,scope=${{ matrix.platform }}
           cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
           provenance: false
@@ -114,20 +123,24 @@ jobs:
           echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
         env:
           OWNER: ${{ github.repository_owner }}
-      - name: Create and push Docker Hub manifest
+      - name: Create and push manifest
         run: |
           docker manifest create fallenbagel/jellyseerr:develop \
-            ${{ needs.build.outputs.image-amd64 }} \
-            ${{ needs.build.outputs.image-arm64 }}
-
+            fallenbagel/jellyseerr:temp-amd64 \
+            fallenbagel/jellyseerr:temp-arm64
           docker manifest push fallenbagel/jellyseerr:develop
-      - name: Create and push GHCR manifest
-        run: |
-          docker manifest create ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop \
-            ${{ needs.build.outputs.image-amd64 }} \
-            ${{ needs.build.outputs.image-arm64 }}
 
+          # GHCR manifest
+          docker manifest create ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop \
+            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:temp-amd64 \
+            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:temp-arm64
           docker manifest push ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop
+
+          # Cleanup temporary tags
+          docker manifest rm fallenbagel/jellyseerr:temp-amd64
+          docker manifest rm fallenbagel/jellyseerr:temp-arm64
+          docker manifest rm ghcr.io/${{ env.OWNER_LC }}/jellyseerr:temp-amd64
+          docker manifest rm ghcr.io/${{ env.OWNER_LC }}/jellyseerr:temp-arm64
 
   discord:
     name: Send Discord Notification
