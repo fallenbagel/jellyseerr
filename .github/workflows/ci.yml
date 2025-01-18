@@ -54,7 +54,7 @@ jobs:
       - name: Build
         run: pnpm build
 
-  build_and_push:
+  build:
     name: Build & Publish Docker Images
     if: github.ref == 'refs/heads/develop' && !contains(github.event.head_commit.message, '[skip ci]')
     strategy:
@@ -65,11 +65,39 @@ jobs:
           - runner: ubuntu-24.04-arm
             platform: linux/arm64
     runs-on: ${{ matrix.runner }}
+    outputs:
+      image-amd64: ${{ steps.meta.outputs.image-amd64 }}
+      image-arm64: ${{ steps.meta.outputs.image-arm64 }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+      - name: Generate image metadata
+        id: meta
+        run: |
+          echo "image-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}=localhost/jellyseerr:develop-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}" >> $GITHUB_OUTPUT
+      - name: Build platform image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ matrix.platform }}
+          # dont push until merged
+          push: false
+          load: true
+          build-args: |
+            COMMIT_TAG=${{ github.sha }}
+          tags: ${{ steps.meta.outputs[format('image-{0}', matrix.platform == 'linux/amd64' && 'amd64' || 'arm64')] }}
+          cache-from: type=gha,scope=${{ matrix.platform }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
+          provenance: false
+
+  merge_and_push:
+    name: Create and Push Multi-arch Manifest
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -86,57 +114,19 @@ jobs:
           echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
         env:
           OWNER: ${{ github.repository_owner }}
-      - name: Build architecture specific images
+      - name: Create and push manifest
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Dockerfile
-          # platforms: linux/amd64,linux/arm64
-          platforms: ${{ matrix.platform }}
-          # dont push until merged
-          push: false
-          build-args: |
-            COMMIT_TAG=${{ github.sha }}
-          tags: |
-            fallenbagel/jellyseerr:develop-${{ matrix.platform == 'linux/amd64' && 'linux-amd64' || 'linux-arm64' }}
-            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop-${{ matrix.platform == 'linux/amd64' && 'linux-amd64' || 'linux-arm64' }}
-          cache-from: type=gha,scope=${{ matrix.platform }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
-          provenance: false
-
-  create_manifest:
-    name: Create Multi-Architecture Image
-    needs: build_and_push
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Set lower case owner name
-        run: |
-          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
-        env:
-          OWNER: ${{ github.repository_owner }}
-
-      - name: Create and Push Multi-Architecture Image
-        uses: int128/docker-manifest-create-action@v2
-        with:
+          push: true
           tags: |
             fallenbagel/jellyseerr:develop
-            ghcr.io/${{ github.repository_owner }}/jellyseerr:develop
-          sources: |
-            fallenbagel/jellyseerr:develop-linux-amd64
-            fallenbagel/jellyseerr:develop-linux-arm64
-            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop-linux-amd64
-            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop-linux-arm64
-      - name: Inspect Manifest
-        run: |
-          docker buildx imagetools inspect fallenbagel/jellyseerr:develop
-          docker buildx imagetools inspect ghcr.io/fallenbagel/jellyseerr:develop
+            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop
+          platforms: linux/amd64,linux/arm64
+          inputs: ${{ needs.build.outputs.image-amd64 }},${{ needs.build.outputs.image-arm64 }}
 
   discord:
     name: Send Discord Notification
-    needs: create_manifest
+    needs: merge_and_push
     if: always() && github.event_name != 'pull_request' && !contains(github.event.head_commit.message, '[skip ci]')
     runs-on: ubuntu-24.04
     steps:
