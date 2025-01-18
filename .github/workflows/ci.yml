@@ -111,17 +111,24 @@ jobs:
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Set lower case owner name
+        run: |
+          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+        env:
+          OWNER: ${{ github.repository_owner }}
+
       - name: Create and Push Multi-Architecture Image
-        uses: docker/build-push-action@v5
+        uses: docker/manifest-action@v5
         with:
           images: |
             fallenbagel/jellyseerr:develop-linux-amd64
             fallenbagel/jellyseerr:develop-linux-arm64
-            ghcr.io/${{ github.repository_owner }}/jellyseerr:develop-linux-amd64
-            ghcr.io/${{ github.repository_owner }}/jellyseerr:develop-linux-arm64
+            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop-linux-amd64
+            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop-linux-arm64
           target: |
             fallenbagel/jellyseerr:develop
-            ghcr.io/fallenbagel/jellyseerr:develop
+            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop
       - name: Inspect Manifest
         run: |
           docker buildx imagetools inspect fallenbagel/jellyseerr:develop
