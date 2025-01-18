@@ -119,16 +119,16 @@ jobs:
           OWNER: ${{ github.repository_owner }}
 
       - name: Create and Push Multi-Architecture Image
-        uses: docker/manifest-action@v5
+        uses: int128/docker-manifest-create-action
         with:
-          images: |
+          tags: |
+            fallenbagel/jellyseerr:develop
+            ghcr.io/${{ github.repository_owner }}/jellyseerr:develop
+          sourceas: |
             fallenbagel/jellyseerr:develop-linux-amd64
             fallenbagel/jellyseerr:develop-linux-arm64
             ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop-linux-amd64
             ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop-linux-arm64
-          target: |
-            fallenbagel/jellyseerr:develop
-            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop
       - name: Inspect Manifest
         run: |
           docker buildx imagetools inspect fallenbagel/jellyseerr:develop
