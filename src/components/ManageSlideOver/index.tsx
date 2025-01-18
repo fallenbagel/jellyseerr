@@ -68,6 +68,7 @@ const messages = defineMessages('components.ManageSlideOver', {
   playedby: 'Played By',
   movie: 'movie',
   tvshow: 'series',
+  album: 'album',
 });
 
 const isMovie = (
@@ -485,9 +486,16 @@ const ManageSlideOver = ({
                             mediaType: intl.formatMessage(
                               mediaType === 'movie'
                                 ? messages.movie
+                                : mediaType === 'music'
+                                ? messages.album
                                 : messages.tvshow
                             ),
-                            arr: mediaType === 'movie' ? 'Radarr' : 'Sonarr',
+                            arr:
+                              mediaType === 'movie'
+                                ? 'Radarr'
+                                : mediaType === 'music'
+                                ? 'Lidarr'
+                                : 'Sonarr',
                           }
                         )}
                       </div>
@@ -712,7 +720,11 @@ const ManageSlideOver = ({
                   <div className="mt-2 text-xs text-gray-400">
                     {intl.formatMessage(messages.manageModalClearMediaWarning, {
                       mediaType: intl.formatMessage(
-                        mediaType === 'movie' ? messages.movie : messages.tvshow
+                        mediaType === 'movie'
+                          ? messages.movie
+                          : mediaType === 'music'
+                          ? messages.album
+                          : messages.tvshow
                       ),
                       mediaServerName:
                         settings.currentSettings.mediaServerType ===
