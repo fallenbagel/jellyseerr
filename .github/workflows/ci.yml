@@ -124,7 +124,7 @@ jobs:
           tags: |
             fallenbagel/jellyseerr:develop
             ghcr.io/${{ github.repository_owner }}/jellyseerr:develop
-          sourceas: |
+          sources: |
             fallenbagel/jellyseerr:develop-linux-amd64
             fallenbagel/jellyseerr:develop-linux-arm64
             ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop-linux-amd64
