@@ -119,7 +119,7 @@ jobs:
           OWNER: ${{ github.repository_owner }}
 
       - name: Create and Push Multi-Architecture Image
-        uses: int128/docker-manifest-create-action
+        uses: int128/docker-manifest-create-action@v2
         with:
           tags: |
             fallenbagel/jellyseerr:develop
@@ -136,7 +136,7 @@ jobs:
 
   discord:
     name: Send Discord Notification
-    needs: build_and_push
+    needs: create_manifest
     if: always() && github.event_name != 'pull_request' && !contains(github.event.head_commit.message, '[skip ci]')
     runs-on: ubuntu-24.04
     steps:
