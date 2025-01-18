@@ -1,4 +1,5 @@
 import TheMovieDb from '@server/api/themoviedb';
+import MusicBrainz from '@server/api/musicbrainz';
 import {
   MediaRequestStatus,
   MediaStatus,
@@ -174,6 +175,66 @@ export class MediaSubscriber implements EntitySubscriberInterface<Media> {
     }
   }
 
+  private async notifyAvailableMusic(
+    entity: Media,
+    dbEntity: Media,
+    is4k: boolean
+  ) {
+    if (
+      entity[is4k ? 'status4k' : 'status'] === MediaStatus.AVAILABLE &&
+      dbEntity[is4k ? 'status4k' : 'status'] !== MediaStatus.AVAILABLE
+    ) {
+      if (entity.mediaType === MediaType.MUSIC) {
+        const requestRepository = getRepository(MediaRequest);
+        const relatedRequests = await requestRepository.find({
+          where: {
+            media: {
+              id: entity.id,
+            },
+            is4k,
+            status: Not(MediaRequestStatus.DECLINED),
+          },
+        });
+
+        if (relatedRequests.length > 0) {
+          try {
+            const musicbrainz = new MusicBrainz();
+            const albumDetails = await musicbrainz.getAlbum({
+              albumId: entity.mbId,
+            });
+
+            const coverImage = albumDetails.images?.find(
+              (img) => img.CoverType.toLowerCase() === 'cover'
+            )?.Url;
+
+            relatedRequests.forEach((request) => {
+              notificationManager.sendNotification(
+                Notification.MEDIA_AVAILABLE,
+                {
+                  event: `${is4k ? '4K ' : ''}Album Request Now Available`,
+                  notifyAdmin: false,
+                  notifySystem: true,
+                  notifyUser: request.requestedBy,
+                  subject: albumDetails.title ?? entity.mbId ?? 'Unknown Album',
+                  message: albumDetails.overview || 'Album is now available.',
+                  media: entity,
+                  request,
+                  image: coverImage,
+                }
+              );
+            });
+          } catch (e) {
+            logger.error('Something went wrong sending media notification(s)', {
+              label: 'Notifications',
+              errorMessage: e.message,
+              mediaId: entity.id,
+            });
+          }
+        }
+      }
+    }
+  }
+
   private async updateChildRequestStatus(event: Media, is4k: boolean) {
     const requestRepository = getRepository(MediaRequest);
 
@@ -237,6 +298,28 @@ export class MediaSubscriber implements EntitySubscriberInterface<Media> {
         event.entity.status4k === MediaStatus.PARTIALLY_AVAILABLE)
     ) {
       this.notifyAvailableSeries(
+        event.entity as Media,
+        event.databaseEntity,
+        true
+      );
+    }
+
+    if (
+      event.entity.mediaType === MediaType.MUSIC &&
+      event.entity.status === MediaStatus.AVAILABLE
+    ) {
+      this.notifyAvailableMusic(
+        event.entity as Media,
+        event.databaseEntity,
+        false
+      );
+    }
+
+    if (
+      event.entity.mediaType === MediaType.MUSIC &&
+      event.entity.status4k === MediaStatus.AVAILABLE
+    ) {
+      this.notifyAvailableMusic(
         event.entity as Media,
         event.databaseEntity,
         true
