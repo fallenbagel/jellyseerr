@@ -1246,7 +1246,7 @@
   "components.Settings.saving": "Sauvegarde en cours…",
   "components.Settings.syncing": "Synchronisation en cours",
   "components.Setup.signin": "Se connecter",
-  "components.Setup.signinWithPlex": "Entrez vos identifiants plex",
+  "components.Setup.signinWithPlex": "Entrez vos identifiants Plex",
   "components.StatusBadge.managemedia": "Gérer {mediaType}",
   "components.StatusBadge.openinarr": "Ouvrir dans {arr}",
   "components.StatusBadge.playonplex": "Lire sur {mediaServerName}",
@@ -1399,5 +1399,9 @@
   "i18n.blacklist": "Liste noire",
   "i18n.removeFromBlacklistSuccess": "<strong>{title}</strong> a été retiré de la liste noire avec succès.",
   "i18n.removefromBlacklist": "Retirer de la liste noire",
-  "i18n.specials": "Hors-série"
+  "i18n.specials": "Hors-série",
+  "components.Settings.Notifications.webhookRoleIdTip": "L'ID à mentionner dans le message du webhook. Laissez ce champ vide pour désactiver les mentions",
+  "components.Settings.Notifications.webhookRoleId": "ID de rôle de notification",
+  "components.Settings.SettingsJobsCache.plex-refresh-token": "Jeton de rafraîchissement Plex",
+  "components.Settings.tip": "Conseil"
 }
