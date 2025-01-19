@@ -23,7 +23,7 @@ interface TvdbConfig {
 }
 
 const DEFAULT_CONFIG: TvdbConfig = {
-  baseUrl: 'https://skyhook.sonarr.tv/v1/tvdb/shows',
+  baseUrl: 'https://api4.thetvdb.com/v4',
   maxRequestsPerSecond: 50,
   cachePrefix: 'tvdb' as const,
 };
