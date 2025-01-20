@@ -28,6 +28,7 @@ import discoverSettingRoutes from '@server/routes/settings/discover';
 import { ApiError } from '@server/types/error';
 import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
+import { dnsCache } from '@server/utils/dnsCacheManager';
 import { getHostname } from '@server/utils/getHostname';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
@@ -59,8 +60,23 @@ const filteredMainSettings = (
   return main;
 };
 
+settingsRoutes.get('/dnsCache', async (req, res) => {
+  const stats = dnsCache.getStats();
+  const entries = dnsCache.getCacheEntries();
+
+  res.json({
+    stats,
+    entries,
+  });
+});
+
 settingsRoutes.get('/main', (req, res, next) => {
   const settings = getSettings();
+  const stats = dnsCache.getStats();
+  const entries = dnsCache.getCacheEntries();
+
+  console.log(entries);
+  console.log(stats);
 
   if (!req.user) {
     return next({ status: 400, message: 'User missing from request.' });
