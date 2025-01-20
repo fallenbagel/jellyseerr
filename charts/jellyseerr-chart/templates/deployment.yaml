@@ -65,10 +65,16 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /app/config
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       volumes:
         - name: config
           persistentVolumeClaim:
             claimName: {{ include "jellyseerr.configPersistenceName" . }}
+      {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
