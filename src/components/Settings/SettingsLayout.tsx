@@ -38,11 +38,6 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       route: '/settings/users',
       regex: /^\/settings\/users/,
     },
-    {
-      text: 'Tvdb',
-      route: '/settings/tvdb',
-      regex: /^\/settings\/tvdb/,
-    },
     settings.currentSettings.mediaServerType === MediaServerType.PLEX
       ? {
           text: intl.formatMessage(messages.menuPlexSettings),
@@ -63,6 +58,11 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       text: intl.formatMessage(messages.menuNetwork),
       route: '/settings/network',
       regex: /^\/settings\/network/,
+    },
+    {
+      text: 'Metadata',
+      route: '/settings/metadata',
+      regex: /^\/settings\/metadata/,
     },
     {
       text: intl.formatMessage(messages.menuNotifications),

@@ -94,11 +94,11 @@ class SonarrScanner
       });
 
       if (!media || !media.tmdbId) {
-        tvShow = await this.tvShowIndexer.getShowByTvdbId({
+        tvShow = await this.tmdb.getShowByTvdbId({
           tvdbId: sonarrSeries.tvdbId,
         });
       } else {
-        tvShow = await this.tvShowIndexer.getTvShow({ tvId: media.tmdbId });
+        tvShow = await this.tmdb.getTvShow({ tvId: media.tmdbId });
       }
 
       const tmdbId = tvShow.id;
