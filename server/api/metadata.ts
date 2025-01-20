@@ -14,16 +14,13 @@ export const getMetadataProvider = async (
       return new TheMovieDb();
     }
 
-    if (
-      mediaType == 'tv' &&
-      settings.metadataSettings.tvShow == IndexerType.TVDB
-    ) {
+    if (mediaType == 'tv' && settings.metadataType.tv == IndexerType.TVDB) {
       return await Tvdb.getInstance();
     }
 
     if (
       mediaType == 'anime' &&
-      settings.metadataSettings.anime == IndexerType.TVDB
+      settings.metadataType.anime == IndexerType.TVDB
     ) {
       return await Tvdb.getInstance();
     }

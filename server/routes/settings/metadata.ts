@@ -1,30 +1,24 @@
 import Tvdb from '@server/api/tvdb';
-import { getSettings, type TvdbSettings } from '@server/lib/settings';
+import { getSettings, type MetadataSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { Router } from 'express';
 
-const tvdbRoutes = Router();
+const metadataRoutes = Router();
 
-export interface MetadataSettings {
-  tvdb: boolean;
-}
-
-tvdbRoutes.get('/', (_req, res) => {
+metadataRoutes.get('/', (_req, res) => {
   const settings = getSettings();
 
-  res.status(200).json({
-    tvdb: settings.tvdb,
-  });
+  res.status(200).json(settings.metadataSettings);
 });
 
-tvdbRoutes.put('/', (req, res) => {
+metadataRoutes.put('/', (req, res) => {
   const settings = getSettings();
 
-  const body = req.body as TvdbSettings;
+  const body = req.body as MetadataSettings;
 
-  settings.tvdb = {
-    apiKey: body.apiKey,
-    pin: body.pin,
+  settings.metadataSettings = {
+    providers: body.providers,
+    settings: body.settings,
   };
   settings.save();
 
@@ -33,11 +27,13 @@ tvdbRoutes.put('/', (req, res) => {
   });
 });
 
-tvdbRoutes.post('/test', async (req, res, next) => {
+metadataRoutes.post('/test', async (req, res, next) => {
   try {
     const tvdb = await Tvdb.getInstance();
     await tvdb.test();
-    return res.status(200).json({ message: 'Successfully connected to Tvdb' });
+
+    // TODO: add tmdb test
+    return res.status(200).json({ tvdb: true });
   } catch (e) {
     logger.error('Failed to test Tvdb', {
       label: 'Tvdb',
@@ -48,4 +44,4 @@ tvdbRoutes.post('/test', async (req, res, next) => {
   }
 });
 
-export default tvdbRoutes;
+export default metadataRoutes;
