@@ -3,7 +3,7 @@ import { MediaStatus, MediaType } from '@server/constants/media';
 import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';
 import Season from '@server/entity/Season';
-import { getIndexer, getSettings } from '@server/lib/settings';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import AsyncLock from '@server/utils/asyncLock';
 import { randomUUID } from 'crypto';
@@ -62,7 +62,6 @@ class BaseScanner<T> {
   protected sessionId: string;
   protected running = false;
   readonly asyncLock = new AsyncLock();
-  readonly tvShowIndexer = getIndexer();
   readonly tmdb = new TheMovieDb();
 
   protected constructor(
