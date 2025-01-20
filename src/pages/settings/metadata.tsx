@@ -1,16 +1,16 @@
 import SettingsLayout from '@app/components/Settings/SettingsLayout';
-import SettingsTvdb from '@app/components/Settings/SettingsTvdb';
+import SettingsMetadata from '@app/components/Settings/SettingsMetadata';
 import useRouteGuard from '@app/hooks/useRouteGuard';
 import { Permission } from '@app/hooks/useUser';
 import type { NextPage } from 'next';
 
-const TvdbSettingsPage: NextPage = () => {
+const MetadataSettingsPage: NextPage = () => {
   useRouteGuard(Permission.ADMIN);
   return (
     <SettingsLayout>
-      <SettingsTvdb />
+      <SettingsMetadata />
     </SettingsLayout>
   );
 };
 
-export default TvdbSettingsPage;
+export default MetadataSettingsPage;

@@ -10,7 +10,7 @@ import Media from '@server/entity/Media';
 import Season from '@server/entity/Season';
 import { User } from '@server/entity/User';
 import type { Library } from '@server/lib/settings';
-import { getIndexer, getSettings } from '@server/lib/settings';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import AsyncLock from '@server/utils/asyncLock';
 import { getHostname } from '@server/utils/getHostname';
@@ -45,7 +45,6 @@ class JellyfinScanner {
 
   constructor({ isRecentOnly }: { isRecentOnly?: boolean } = {}) {
     this.tmdb = new TheMovieDb();
-    this.tvShowIndexer = getIndexer();
 
     this.isRecentOnly = isRecentOnly ?? false;
   }

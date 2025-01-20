@@ -3,73 +3,142 @@ export interface TvdbBaseResponse<T> {
   errors: string;
 }
 
+export interface TvdbLoginResponse {
+  token: string;
+}
+
 export interface TvdbLoginResponse extends TvdbBaseResponse<{ token: string }> {
   data: { token: string };
 }
 
-export interface TvdbTvShowDetail {
-  tvdbId: number;
-  title: string;
-  overview: string;
+interface TvDetailsAliases {
+  language: string;
+  name: string;
+}
+
+interface TvDetailsStatus {
+  id: number;
+  name: string;
+  recordType: string;
+  keepUpdated: boolean;
+}
+
+export interface TvdbTvDetails extends TvdbBaseResponse<TvdbTvDetails> {
+  id: number;
+  name: string;
   slug: string;
+  image: string;
+  nameTranslations: string[];
+  overwiewTranslations: string[];
+  aliases: TvDetailsAliases[];
+  firstAired: Date;
+  lastAired: Date;
+  nextAired: Date | string;
+  score: number;
+  status: TvDetailsStatus;
   originalCountry: string;
   originalLanguage: string;
-  language: string;
-  firstAired: string;
-  lastAired: string;
-  tvMazeId: number;
-  tmdbId: number;
-  imdbId: string;
-  lastUpdated: string;
-  status: string;
-  runtime: number;
-  timeOfDay: TvdbTimeOfDay;
-  originalNetwork: string;
-  network: string;
-  genres: string[];
-  alternativeTitles: TvdbAlternativeTitle[];
-  actors: TvdbActor[];
-  images: TvdbImage[];
-  seasons: TvdbSeason[];
+  defaultSeasonType: string;
+  isOrderRandomized: boolean;
+  lastUpdated: Date;
+  averageRuntime: number;
+  seasons: TvdbSeasonDetails[];
   episodes: TvdbEpisode[];
 }
 
-export interface TvdbTimeOfDay {
-  hours: number;
-  minutes: number;
+interface TvdbCompanyType {
+  companyTypeId: number;
+  companyTypeName: string;
 }
 
-export interface TvdbAlternativeTitle {
-  title: string;
+interface TvdbParentCompany {
+  id?: number;
+  name?: string;
+  relation?: {
+    id?: number;
+    typeName?: string;
+  };
 }
 
-export interface TvdbActor {
+interface TvdbCompany {
+  id: number;
   name: string;
-  character: string;
-  image?: string;
+  slug: string;
+  nameTranslations?: string[];
+  overviewTranslations?: string[];
+  aliases?: string[];
+  country: string;
+  primaryCompanyType: number;
+  activeDate: string;
+  inactiveDate?: string;
+  companyType: TvdbCompanyType;
+  parentCompany: TvdbParentCompany;
+  tagOptions?: string[];
 }
 
-export interface TvdbImage {
-  coverType: string;
-  url: string;
+interface TvdbType {
+  id: number;
+  name: string;
+  type: string;
+  alternateName?: string;
 }
 
-export interface TvdbSeason {
-  seasonNumber: number;
+interface TvdbArtwork {
+  id: number;
+  image: string;
+  thumbnail: string;
+  language: string;
+  type: number;
+  score: number;
+  width: number;
+  height: number;
+  includesText: boolean;
 }
 
 export interface TvdbEpisode {
-  tvdbShowId: number;
-  tvdbId: number;
-  seasonNumber: number;
-  episodeNumber: number;
-  absoluteEpisodeNumber: number;
-  title?: string;
-  airDate: string;
-  airDateUtc: string;
-  runtime?: number;
+  id: number;
+  seriesId: number;
+  name: string;
+  aired: string;
+  runtime: number;
+  nameTranslations: string[];
   overview?: string;
-  image?: string;
+  overviewTranslations: string[];
+  image: string;
+  imageType: number;
+  isMovie: number;
+  seasons?: string[];
+  number: number;
+  absoluteNumber: number;
+  seasonNumber: number;
+  lastUpdated: string;
+  finaleType?: string;
+  year: string;
+}
+
+export interface TvdbSeasonDetails extends TvdbBaseResponse<TvdbSeasonDetails> {
+  id: number;
+  seriesId: number;
+  type: TvdbType;
+  number: number;
+  nameTranslations: string[];
+  overviewTranslations: string[];
+  image: string;
+  imageType: number;
+  companies: {
+    studio: TvdbCompany[];
+    network: TvdbCompany[];
+    production: TvdbCompany[];
+    distributor: TvdbCompany[];
+    special_effects: TvdbCompany[];
+  };
+  lastUpdated: string;
+  year: string;
+  episodes: TvdbEpisode[];
+  trailers: string[];
+  artwork: TvdbArtwork[];
+  tagOptions?: string[];
+  firstAired: string;
 }
 
 export interface TvdbEpisodeTranslation

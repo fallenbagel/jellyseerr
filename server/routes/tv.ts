@@ -1,10 +1,12 @@
+import { getMetadataProvider } from '@server/api/metadata';
 import RottenTomatoes from '@server/api/rating/rottentomatoes';
 import TheMovieDb from '@server/api/themoviedb';
+import { ANIME_KEYWORD_ID } from '@server/api/themoviedb/constants';
+import type { TmdbKeyword } from '@server/api/themoviedb/interfaces';
 import { MediaType } from '@server/constants/media';
 import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';
 import { Watchlist } from '@server/entity/Watchlist';
-import { getIndexer } from '@server/lib/settings';
 import logger from '@server/logger';
 import { mapTvResult } from '@server/models/Search';
 import { mapSeasonWithEpisodes, mapTvDetails } from '@server/models/Tv';
@@ -13,14 +15,21 @@ import { Router } from 'express';
 const tvRoutes = Router();
 
 tvRoutes.get('/:id', async (req, res, next) => {
-  const indexer = getIndexer();
+  const tmdb = new TheMovieDb();
 
   try {
+    const tmdbTv = await tmdb.getTvShow({
+      tvId: Number(req.params.id),
+    });
+    const indexer = tmdbTv.keywords.results.some(
+      (keyword: TmdbKeyword) => keyword.id === ANIME_KEYWORD_ID
+    )
+      ? await getMetadataProvider('anime')
+      : await getMetadataProvider('tv');
     const tv = await indexer.getTvShow({
       tvId: Number(req.params.id),
       language: (req.query.language as string) ?? req.locale,
     });
-
     const media = await Media.getMedia(tv.id, MediaType.TV);
 
     const onUserWatchlist = await getRepository(Watchlist).exist({
@@ -58,7 +67,15 @@ tvRoutes.get('/:id', async (req, res, next) => {
 
 tvRoutes.get('/:id/season/:seasonNumber', async (req, res, next) => {
   try {
-    const indexer = getIndexer();
+    const tmdb = new TheMovieDb();
+    const tmdbTv = await tmdb.getTvShow({
+      tvId: Number(req.params.id),
+    });
+    const indexer = tmdbTv.keywords.results.some(
+      (keyword: TmdbKeyword) => keyword.id === ANIME_KEYWORD_ID
+    )
+      ? await getMetadataProvider('anime')
+      : await getMetadataProvider('tv');
 
     const season = await indexer.getTvSeason({
       tvId: Number(req.params.id),

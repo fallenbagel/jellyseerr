@@ -1,11 +1,11 @@
 import Tvdb from '@server/api/tvdb';
-import { getSettings } from '@server/lib/settings';
+import { getSettings, type TvdbSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { Router } from 'express';
 
 const tvdbRoutes = Router();
 
-export interface TvdbSettings {
+export interface MetadataSettings {
   tvdb: boolean;
 }
 
@@ -22,7 +22,10 @@ tvdbRoutes.put('/', (req, res) => {
 
   const body = req.body as TvdbSettings;
 
-  settings.tvdb = body.tvdb ?? settings.tvdb ?? false;
+  settings.tvdb = {
+    apiKey: body.apiKey,
+    pin: body.pin,
+  };
   settings.save();
 
   return res.status(200).json({
@@ -32,7 +35,7 @@ tvdbRoutes.put('/', (req, res) => {
 
 tvdbRoutes.post('/test', async (req, res, next) => {
   try {
-    const tvdb = new Tvdb();
+    const tvdb = await Tvdb.getInstance();
     await tvdb.test();
     return res.status(200).json({ message: 'Successfully connected to Tvdb' });
   } catch (e) {

@@ -10,10 +10,11 @@ import type {
 import type {
   TvdbEpisode,
   TvdbLoginResponse,
-  TvdbSeason,
-  TvdbTvShowDetail,
+  TvdbSeasonDetails,
+  TvdbTvDetails,
 } from '@server/api/tvdb/interfaces';
 import cacheManager, { type AvailableCacheIds } from '@server/lib/cache';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 
 interface TvdbConfig {
@@ -36,16 +37,21 @@ type TvdbId = number;
 type ValidTvdbId = Exclude<TvdbId, TvdbIdStatus.INVALID>;
 
 class Tvdb extends ExternalAPI implements TvShowIndexer {
+  static instance: Tvdb;
   private readonly tmdb: TheMovieDb;
   private static readonly DEFAULT_CACHE_TTL = 43200;
-  private static readonly DEFAULT_LANGUAGE = 'en';
+  private static readonly DEFAULT_LANGUAGE = 'eng';
+  private token: string;
+  private apiKey?: string;
+  private pin?: string;
 
-  constructor(config: Partial<TvdbConfig> = {}) {
-    const finalConfig = { ...DEFAULT_CONFIG, ...config };
-
+  constructor(apiKey: string, pin?: string) {
+    const finalConfig = { ...DEFAULT_CONFIG };
     super(
       finalConfig.baseUrl,
-      {},
+      {
+        apiKey: apiKey,
+      },
       {
         nodeCache: cacheManager.getCache(finalConfig.cachePrefix).data,
         rateLimit: {
@@ -54,7 +60,31 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
         },
       }
     );
+    this.apiKey = apiKey;
+    this.pin = pin;
     this.tmdb = new TheMovieDb();
+  }
+
+  public static async getInstance(): Promise<Tvdb> {
+    if (!this.instance) {
+      const settings = await getSettings();
+
+      if (!settings.tvdb.apiKey) {
+        throw new Error('TVDB API key is not set');
+      }
+
+      try {
+        this.instance = new Tvdb(settings.tvdb.apiKey, settings.tvdb.pin);
+        await this.instance.login();
+      } catch (error) {
+        logger.error(`Failed to login to TVDB: ${error.message}`);
+        throw new Error('TVDB API key is not set');
+      }
+
+      this.instance = new Tvdb(settings.tvdb.apiKey, settings.tvdb.pin);
+    }
+
+    return this.instance;
   }
 
   public async test(): Promise<TvdbLoginResponse> {
@@ -64,6 +94,21 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
       this.handleError('Login failed', error);
       throw error;
     }
+  }
+
+  async handleRenewToken(): Promise<TvdbLoginResponse> {
+    throw new Error('Method not implemented.');
+  }
+
+  async login(): Promise<TvdbLoginResponse> {
+    const response = await this.post<TvdbLoginResponse>('/login', {
+      apiKey: process.env.TVDB_API_KEY,
+    });
+
+    this.defaultHeaders.Authorization = `Bearer ${response.token}`;
+    this.token = response.token;
+
+    return response;
   }
 
   public async getShowByTvdbId({
@@ -152,29 +197,34 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     }
   }
 
-  private async fetchTvdbShowData(tvdbId: number): Promise<TvdbTvShowDetail> {
-    return await this.get<TvdbTvShowDetail>(
-      `/en/${tvdbId}`,
-      {},
+  private async fetchTvdbShowData(tvdbId: number): Promise<TvdbTvDetails> {
+    return await this.get<TvdbTvDetails>(
+      `/series/${tvdbId}/extended?meta=episodes`,
+      {
+        short: 'true',
+      },
       Tvdb.DEFAULT_CACHE_TTL
     );
   }
 
-  private processSeasons(tvdbData: TvdbTvShowDetail): TmdbTvSeasonResult[] {
-    if (!tvdbData || !tvdbData.seasons) {
+  private processSeasons(tvdbData: TvdbTvDetails): TmdbTvSeasonResult[] {
+    if (!tvdbData || !tvdbData.seasons || !tvdbData.episodes) {
       return [];
     }
 
     return tvdbData.seasons
-      .filter((season) => season.seasonNumber !== 0)
+      .filter(
+        (season) =>
+          season.number > 0 && season.type && season.type.type === 'official'
+      )
       .map((season) => this.createSeasonData(season, tvdbData));
   }
 
   private createSeasonData(
-    season: TvdbSeason,
-    tvdbData: TvdbTvShowDetail
+    season: TvdbSeasonDetails,
+    tvdbData: TvdbTvDetails
   ): TmdbTvSeasonResult {
-    if (!season.seasonNumber) {
+    if (!season.number) {
       return {
         id: 0,
         episode_count: 0,
@@ -187,15 +237,15 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     }
 
     const episodeCount = tvdbData.episodes.filter(
-      (episode) => episode.seasonNumber === season.seasonNumber
+      (episode) => episode.seasonNumber === season.number
     ).length;
 
     return {
-      id: tvdbData.tvdbId,
+      id: tvdbData.id,
       episode_count: episodeCount,
-      name: `${season.seasonNumber}`,
+      name: `${season.number}`,
       overview: '',
-      season_number: season.seasonNumber,
+      season_number: season.number,
       poster_path: '',
       air_date: '',
     };
@@ -204,25 +254,35 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
   private async getTvdbSeasonData(
     tvdbId: number,
     seasonNumber: number,
-    tvId: number
+    tvId: number,
+    language: string = Tvdb.DEFAULT_LANGUAGE
   ): Promise<TmdbSeasonWithEpisodes> {
-    const tvdbSeason = await this.fetchTvdbShowData(tvdbId);
+    const tvdbData = await this.fetchTvdbShowData(tvdbId);
 
-    const episodes = this.processEpisodes(tvdbSeason, seasonNumber, tvId);
+    if (!tvdbData) {
+      return this.createEmptySeasonResponse(tvId);
+    }
+
+    const seasons = await this.get<TvdbSeasonDetails>(
+      `/series/${tvdbId}/episodes/official/${language}`,
+      {}
+    );
+
+    const episodes = this.processEpisodes(seasons, seasonNumber, tvId);
 
     return {
       episodes,
-      external_ids: { tvdb_id: tvdbSeason.tvdbId },
+      external_ids: { tvdb_id: tvdbId },
       name: '',
       overview: '',
-      id: tvdbSeason.tvdbId,
-      air_date: tvdbSeason.firstAired,
+      id: seasons.id,
+      air_date: seasons.firstAired,
       season_number: episodes.length,
     };
   }
 
   private processEpisodes(
-    tvdbSeason: TvdbTvShowDetail,
+    tvdbSeason: TvdbSeasonDetails,
     seasonNumber: number,
     tvId: number
   ): TmdbTvEpisodeResult[] {
@@ -241,10 +301,10 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     tvId: number
   ): TmdbTvEpisodeResult {
     return {
-      id: episode.tvdbId,
-      air_date: episode.airDate,
-      episode_number: episode.episodeNumber,
-      name: episode.title || `Episode ${index + 1}`,
+      id: episode.id,
+      air_date: episode.aired,
+      episode_number: episode.number,
+      name: episode.name || `Episode ${index + 1}`,
       overview: episode.overview || '',
       season_number: episode.seasonNumber,
       production_code: '',
