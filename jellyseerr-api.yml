@@ -519,12 +519,32 @@ components:
         serverID:
           type: string
           readOnly: true
-    TvdbSettings:
+    MetadataSettings:
       type: object
       properties:
-        use:
-          type: boolean
-          example: true
+        settings:
+          type: object
+          properties:
+            tv:
+              type: string
+              enum: [tvdb, tmdb]
+              example: 'tvdb'
+            anime:
+              type: string
+              enum: [tvdb, tmdb]
+              example: 'tvdb'
+        providers:
+          type: object
+          properties:
+            tvdb:
+              type: object
+              properties:
+                apiKey:
+                  type: string
+                  example: '123456789'
+                pin:
+                  type: string
+                  example: '1234'
     TautulliSettings:
       type: object
       properties:
@@ -2574,10 +2594,10 @@ paths:
                       type: string
                     thumb:
                       type: string
-  /settings/tvdb:
+  /settings/metadatas:
     get:
-      summary: Get TVDB settings
-      description: Retrieves current TVDB settings.
+      summary: Get Metadata settings
+      description: Retrieves current Metadata settings.
       tags:
         - settings
       responses:
@@ -2586,10 +2606,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TvdbSettings'
+                $ref: '#/components/schemas/MetadataSettings'
     put:
-      summary: Update TVDB settings
-      description: Updates TVDB settings with the provided values.
+      summary: Update Metadata settings
+      description: Updates Metadata settings with the provided values.
       tags:
         - settings
       requestBody:
@@ -2597,14 +2617,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TvdbSettings'
+              $ref: '#/components/schemas/MetadataSettings'
       responses:
         '200':
           description: 'Values were successfully updated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TvdbSettings'
+                $ref: '#/components/schemas/MetadataSettings'
   /settings/tvdb/test:
     post:
       summary: Test TVDB configuration

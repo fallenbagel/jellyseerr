@@ -106,13 +106,21 @@ export enum IndexerType {
 }
 
 export interface MetadataSettings {
-  tvShow: IndexerType;
-  anime: IndexerType;
+  settings: MetadataTypeSettings;
+  providers: ProviderSettings;
 }
 
 export interface TvdbSettings {
   apiKey?: string;
   pin?: string;
+}
+
+export interface ProviderSettings {
+  tvdb: TvdbSettings;
+}
+export interface MetadataTypeSettings {
+  tv: IndexerType;
+  anime: IndexerType;
 }
 
 export interface ProxySettings {
@@ -428,8 +436,16 @@ class Settings {
       },
       tautulli: {},
       metadataSettings: {
-        tvShow: IndexerType.TMDB,
-        anime: IndexerType.TVDB,
+        settings: {
+          tv: IndexerType.TMDB,
+          anime: IndexerType.TVDB,
+        },
+        providers: {
+          tvdb: {
+            apiKey: '',
+            pin: '',
+          },
+        },
       },
       tvdb: {
         apiKey: '',
@@ -643,6 +659,14 @@ class Settings {
 
   set tvdb(data: TvdbSettings) {
     this.data.tvdb = data;
+  }
+
+  get metadataType(): MetadataTypeSettings {
+    return this.data.metadataSettings.settings;
+  }
+
+  set metadataType(data: MetadataTypeSettings) {
+    this.data.metadataSettings.settings = data;
   }
 
   get radarr(): RadarrSettings[] {
