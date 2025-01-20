@@ -5,7 +5,6 @@ import SettingsBadge from '@app/components/Settings/SettingsBadge';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
-import type { MetadataSettings } from '@server/routes/settings/metadata';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -15,11 +14,41 @@ import useSWR from 'swr';
 const messages = defineMessages('components.Settings', {
   general: 'General',
   settings: 'Settings',
-  enable: 'Enable',
+  apiKey: 'Api Key',
+  pin: 'Pin',
   enableTip:
     'Enable Tvdb (only for season and episode).' +
     ' Due to a limitation of the api used, only English is available.',
 });
+
+interface providerResponse {
+  tvdb: boolean;
+  tmdb: boolean;
+}
+
+enum indexerType {
+  TMDB,
+  TVDB,
+}
+
+interface metadataSettings {
+  settings: metadataTypeSettings;
+  providers: providerSettings;
+}
+
+interface metadataTypeSettings {
+  tv: indexerType;
+  anime: indexerType;
+}
+
+interface providerSettings {
+  tvdb: tvdbSettings;
+}
+
+interface tvdbSettings {
+  apiKey: string;
+  pin: string;
+}
 
 const SettingsMetadata = () => {
   const intl = useIntl();
@@ -28,35 +57,41 @@ const SettingsMetadata = () => {
   const { addToast } = useToasts();
 
   const testConnection = async () => {
-    const response = await fetch('/api/v1/settings/tvdb/test', {
+    const response = await fetch('/api/v1/settings/metadats/test', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
+    const body = (await response.json()) as providerResponse;
+
     if (!response.ok) {
-      throw new Error('Failed to test Tvdb');
+      console.log(body);
     }
   };
 
-  const saveSettings = async (value: MetadataSettings) => {
-    const response = await fetch('/api/v1/settings/tvdb', {
+  const saveSettings = async (
+    value: metadataSettings
+  ): Promise<metadataSettings> => {
+    const response = await fetch('/api/v1/settings/metadatas', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        tvdb: value.tvdb,
-      }),
+      body: JSON.stringify(value),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to save Tvdb settings');
+      throw new Error('Failed to save Metadata settings');
     }
+
+    return (await response.json()) as metadataSettings;
   };
 
-  const { data, error } = useSWR<MetadataSettings>('/api/v1/settings/tvdb');
+  const { data, error } = useSWR<metadataSettings>(
+    '/api/v1/settings/metadatas'
+  );
 
   if (!data && !error) {
     return <LoadingSpinner />;
@@ -71,32 +106,43 @@ const SettingsMetadata = () => {
         ]}
       />
       <div className="mb-6">
+        me
         <h3 className="heading">{'Metadata'}</h3>
         <p className="description">{'Settings for metadata indexer'}</p>
       </div>
       <div className="section">
         <Formik
           initialValues={{
-            enable: data?.tvdb ?? false,
+            settings: data?.settings ?? {
+              tv: indexerType.TMDB,
+              anime: indexerType.TMDB,
+            },
+            providers: data?.providers ?? {
+              tvdb: {
+                apiKey: '',
+                pin: '',
+              },
+            },
           }}
           onSubmit={async (values) => {
             try {
-              setIsTesting(true);
-              await testConnection();
-              setIsTesting(false);
-            } catch (e) {
-              addToast('Tvdb connection error, check your credentials', {
-                appearance: 'error',
-              });
-              return;
-            }
-
-            try {
-              await saveSettings({
-                tvdb: values.enable ?? false,
-              });
+              await saveSettings(
+                data ?? {
+                  providers: {
+                    tvdb: {
+                      apiKey: '',
+                      pin: '',
+                    },
+                  },
+                  settings: {
+                    tv: indexerType.TMDB,
+                    anime: indexerType.TMDB,
+                  },
+                }
+              );
               if (data) {
-                data.tvdb = values.enable;
+                data.providers = values.providers;
+                data.settings = values.settings;
               }
             } catch (e) {
               addToast('Failed to save Tvdb settings', { appearance: 'error' });
@@ -111,7 +157,7 @@ const SettingsMetadata = () => {
                 <div className="form-row">
                   <label htmlFor="trustProxy" className="checkbox-label">
                     <span className="mr-2">
-                      {intl.formatMessage(messages.enable)}
+                      {intl.formatMessage(messages.apiKey)}
                     </span>
                     <SettingsBadge badgeType="experimental" />
 
@@ -121,15 +167,24 @@ const SettingsMetadata = () => {
                   </label>
                   <div className="form-input-area">
                     <Field
-                      data-testid="tvdb-enable"
-                      type="checkbox"
-                      id="enable"
-                      name="enable"
+                      data-testid="tvdb-apiKey"
+                      type="text"
+                      id="apiKey"
+                      name="apiKey"
                       onChange={() => {
-                        setFieldValue('enable', !values.enable);
+                        setFieldValue('apiKey', values.providers.tvdb.apiKey);
                         addToast('Tvdb connection successful', {
                           appearance: 'success',
                         });
+                      }}
+                    />
+                    <Field
+                      data-testid="tvdb-pin"
+                      type="text"
+                      id="pin"
+                      name="pin"
+                      onChange={() => {
+                        setFieldValue('pin', values.providers.tvdb.pin);
                       }}
                     />
                   </div>
