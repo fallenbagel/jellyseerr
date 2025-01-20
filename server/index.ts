@@ -26,6 +26,7 @@ import imageproxy from '@server/routes/imageproxy';
 import { appDataPermissions } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
 import createCustomProxyAgent from '@server/utils/customProxyAgent';
+import { dnsCache } from '@server/utils/dnsCacheManager';
 import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
 import { TypeormStore } from 'connect-typeorm/out';
@@ -39,6 +40,7 @@ import next from 'next';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import dns from 'node:dns';
 
 const API_SPEC_PATH = path.join(__dirname, '../jellyseerr-api.yml');
 
@@ -72,6 +74,57 @@ app
     // Load Settings
     const settings = await getSettings().load();
     restartFlag.initializeSettings(settings);
+
+    // Add DNS caching
+    dns.lookup = (() => {
+      const wrappedLookup = function (
+        hostname: string,
+        options:
+          | number
+          | dns.LookupOneOptions
+          | dns.LookupOptions
+          | dns.LookupAllOptions,
+        callback: (
+          err: NodeJS.ErrnoException | null,
+          address: string | dns.LookupAddress[] | undefined,
+          family?: number
+        ) => void
+      ): void {
+        if (typeof options === 'function') {
+          callback = options;
+          options = {};
+        }
+
+        dnsCache
+          .lookup(hostname)
+          .then((result) => {
+            if ((options as dns.LookupOptions).all) {
+              callback(null, [
+                { address: result.address, family: result.family },
+              ]);
+            } else {
+              callback(null, result.address, result.family);
+            }
+          })
+          .catch((error) => {
+            callback(error, undefined, undefined);
+          });
+      } as typeof dns.lookup;
+
+      (wrappedLookup as any).__promisify__ = async function (
+        hostname: string,
+        options?: dns.LookupAllOptions | dns.LookupOneOptions
+      ): Promise<dns.LookupAddress[] | { address: string; family: number }> {
+        const result = await dnsCache.lookup(hostname);
+
+        if (options && 'all' in options && options.all === true) {
+          return [{ address: result.address, family: result.family }];
+        }
+        return { address: result.address, family: result.family };
+      };
+
+      return wrappedLookup;
+    })();
 
     // Register HTTP proxy
     if (settings.network.proxy.enabled) {
