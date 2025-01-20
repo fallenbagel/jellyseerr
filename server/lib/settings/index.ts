@@ -1,6 +1,3 @@
-import type { TvShowIndexer } from '@server/api/indexer';
-import TheMovieDb from '@server/api/themoviedb';
-import Tvdb from '@server/api/tvdb';
 import { MediaServerType } from '@server/constants/server';
 import { Permission } from '@server/lib/permissions';
 import { runMigrations } from '@server/lib/settings/migrator';
@@ -101,6 +98,32 @@ export interface SonarrSettings extends DVRSettings {
 interface Quota {
   quotaLimit?: number;
   quotaDays?: number;
+}
+
+export enum IndexerType {
+  TMDB,
+  TVDB,
+}
+
+export interface MetadataSettings {
+  tvShow: IndexerType;
+  anime: IndexerType;
+}
+
+export interface TvdbSettings {
+  apiKey?: string;
+  pin?: string;
+}
+
+export interface ProxySettings {
+  enabled: boolean;
+  hostname: string;
+  port: number;
+  useSsl: boolean;
+  user: string;
+  password: string;
+  bypassFilter: string;
+  bypassLocalAddresses: boolean;
 }
 
 export interface MainSettings {
@@ -342,7 +365,8 @@ export interface AllSettings {
   notifications: NotificationSettings;
   jobs: Record<JobId, JobSettings>;
   network: NetworkSettings;
-  tvdb: boolean;
+  tvdb: TvdbSettings;
+  metadataSettings: MetadataSettings;
 }
 
 const SETTINGS_PATH = process.env.CONFIG_DIRECTORY
@@ -403,7 +427,14 @@ class Settings {
         apiKey: '',
       },
       tautulli: {},
-      tvdb: false,
+      metadataSettings: {
+        tvShow: IndexerType.TMDB,
+        anime: IndexerType.TVDB,
+      },
+      tvdb: {
+        apiKey: '',
+        pin: '',
+      },
       radarr: [],
       sonarr: [],
       public: {
@@ -598,11 +629,19 @@ class Settings {
     this.data.tautulli = data;
   }
 
-  get tvdb(): boolean {
+  get metadataSettings(): MetadataSettings {
+    return this.data.metadataSettings;
+  }
+
+  set metadataSettings(data: MetadataSettings) {
+    this.data.metadataSettings = data;
+  }
+
+  get tvdb(): TvdbSettings {
     return this.data.tvdb;
   }
 
-  set tvdb(data: boolean) {
+  set tvdb(data: TvdbSettings) {
     this.data.tvdb = data;
   }
 
@@ -784,15 +823,6 @@ export const getSettings = (initialSettings?: AllSettings): Settings => {
   }
 
   return settings;
-};
-
-export const getIndexer = (): TvShowIndexer => {
-  const settings = getSettings();
-  if (settings.tvdb) {
-    return new Tvdb();
-  } else {
-    return new TheMovieDb();
-  }
 };
 
 export default Settings;

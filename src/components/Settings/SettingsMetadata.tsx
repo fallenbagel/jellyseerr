@@ -5,7 +5,7 @@ import SettingsBadge from '@app/components/Settings/SettingsBadge';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
-import type { TvdbSettings } from '@server/routes/settings/tvdb';
+import type { MetadataSettings } from '@server/routes/settings/metadata';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -15,15 +15,13 @@ import useSWR from 'swr';
 const messages = defineMessages('components.Settings', {
   general: 'General',
   settings: 'Settings',
-  apikey: 'API Key',
-  pin: 'PIN',
   enable: 'Enable',
   enableTip:
     'Enable Tvdb (only for season and episode).' +
     ' Due to a limitation of the api used, only English is available.',
 });
 
-const SettingsTvdb = () => {
+const SettingsMetadata = () => {
   const intl = useIntl();
   const [isTesting, setIsTesting] = useState(false);
 
@@ -42,7 +40,7 @@ const SettingsTvdb = () => {
     }
   };
 
-  const saveSettings = async (value: TvdbSettings) => {
+  const saveSettings = async (value: MetadataSettings) => {
     const response = await fetch('/api/v1/settings/tvdb', {
       method: 'PUT',
       headers: {
@@ -58,7 +56,7 @@ const SettingsTvdb = () => {
     }
   };
 
-  const { data, error } = useSWR<TvdbSettings>('/api/v1/settings/tvdb');
+  const { data, error } = useSWR<MetadataSettings>('/api/v1/settings/tvdb');
 
   if (!data && !error) {
     return <LoadingSpinner />;
@@ -73,8 +71,8 @@ const SettingsTvdb = () => {
         ]}
       />
       <div className="mb-6">
-        <h3 className="heading">{'Tvdb'}</h3>
-        <p className="description">{'Settings for Tvdb'}</p>
+        <h3 className="heading">{'Metadata'}</h3>
+        <p className="description">{'Settings for metadata indexer'}</p>
       </div>
       <div className="section">
         <Formik
@@ -195,4 +193,4 @@ const SettingsTvdb = () => {
   );
 };
 
-export default SettingsTvdb;
+export default SettingsMetadata;

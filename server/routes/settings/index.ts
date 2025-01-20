@@ -39,10 +39,10 @@ import { rescheduleJob } from 'node-schedule';
 import path from 'path';
 import semver from 'semver';
 import { URL } from 'url';
+import tvdbRoutes from './metadata';
 import notificationRoutes from './notifications';
 import radarrRoutes from './radarr';
 import sonarrRoutes from './sonarr';
-import tvdbRoutes from './tvdb';
 
 const settingsRoutes = Router();
 
