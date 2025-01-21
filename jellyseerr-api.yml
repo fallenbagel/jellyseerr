@@ -2625,9 +2625,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MetadataSettings'
-  /settings/tvdb/test:
+  /settings/metadatas/test:
     post:
-      summary: Test TVDB configuration
+      summary: Test Provider configuration
       description: Tests if the TVDB configuration is valid. Returns a list of available languages on success.
       tags:
         - settings
