@@ -11,7 +11,7 @@ const config: Config = {
   baseUrl: '/',
   trailingSlash: false,
 
-  organizationName: 'Fallenbagel',
+  organizationName: 'fallenbagel',
   projectName: 'Jellyseerr',
   deploymentBranch: 'gh-pages',
 
@@ -32,7 +32,7 @@ const config: Config = {
           routeBasePath: '/',
           path: '../docs',
           editUrl:
-            'https://github.com/Fallenbagel/jellyseerr/edit/develop/docs/',
+            'https://github.com/fallenbagel/jellyseerr/edit/develop/docs/',
         },
         blog: false,
         pages: false,
@@ -70,7 +70,7 @@ const config: Config = {
       },
       items: [
         {
-          href: 'https://github.com/Fallenbagel/jellyseerr',
+          href: 'https://github.com/fallenbagel/jellyseerr',
           label: 'GitHub',
           position: 'right',
         },
