@@ -1,7 +1,6 @@
 import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
-import SettingsBadge from '@app/components/Settings/SettingsBadge';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
@@ -57,7 +56,7 @@ const SettingsMetadata = () => {
   const { addToast } = useToasts();
 
   const testConnection = async () => {
-    const response = await fetch('/api/v1/settings/metadats/test', {
+    const response = await fetch('/api/v1/settings/metadatas/test', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -67,8 +66,10 @@ const SettingsMetadata = () => {
     const body = (await response.json()) as providerResponse;
 
     if (!response.ok) {
-      console.log(body);
+      throw new Error('Failed to test Tvdb connection');
     }
+
+    console.log(body);
   };
 
   const saveSettings = async (
@@ -106,7 +107,6 @@ const SettingsMetadata = () => {
         ]}
       />
       <div className="mb-6">
-        me
         <h3 className="heading">{'Metadata'}</h3>
         <p className="description">{'Settings for metadata indexer'}</p>
       </div>
@@ -151,15 +151,18 @@ const SettingsMetadata = () => {
             addToast('Tvdb settings saved', { appearance: 'success' });
           }}
         >
-          {({ isSubmitting, isValid, values, setFieldValue }) => {
+          {({ isSubmitting, isValid, values }) => {
             return (
               <Form className="section" data-testid="settings-main-form">
+                <div className="mb-6">
+                  <h2 className="heading">{'TVDB'}</h2>
+                  <p className="description">{'Settings for TVDB indexer'}</p>
+                </div>
                 <div className="form-row">
                   <label htmlFor="trustProxy" className="checkbox-label">
                     <span className="mr-2">
                       {intl.formatMessage(messages.apiKey)}
                     </span>
-                    <SettingsBadge badgeType="experimental" />
 
                     <span className="label-tip">
                       {intl.formatMessage(messages.enableTip)}
@@ -171,20 +174,31 @@ const SettingsMetadata = () => {
                       type="text"
                       id="apiKey"
                       name="apiKey"
-                      onChange={() => {
-                        setFieldValue('apiKey', values.providers.tvdb.apiKey);
-                        addToast('Tvdb connection successful', {
-                          appearance: 'success',
-                        });
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        values.providers.tvdb.apiKey = e.target.value;
                       }}
                     />
+                  </div>
+                  <div className="error"></div>
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="trustProxy" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.pin)}
+                    </span>
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.enableTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
                     <Field
                       data-testid="tvdb-pin"
                       type="text"
                       id="pin"
                       name="pin"
-                      onChange={() => {
-                        setFieldValue('pin', values.providers.tvdb.pin);
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        values.providers.tvdb.pin = e.target.value;
                       }}
                     />
                   </div>
