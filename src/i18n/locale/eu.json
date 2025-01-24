@@ -422,5 +422,8 @@
   "components.MovieDetails.theatricalrelease": "Zineman argitaratuta",
   "components.RequestBlock.server": "Helburuko zerbitzaria",
   "components.RequestModal.AdvancedRequester.notagoptions": "Etiketarik gabe.",
-  "components.Settings.serviceSettingsDescription": "Konfiguratu zure {serverType} zerbitzaria(k) jarraian. Hainbat {serverType} zerbitzari konekta ditzakezu, baina horietako bi bakarrik markatu daitezke lehetsi gisa (bata 4K eta bestea 4K ez dena). Administratzaileek eskaera berriak prozesatzeko erabilitako zerbitzaria baliogabetu dezakete onartu aurretik."
+  "components.Settings.serviceSettingsDescription": "Konfiguratu zure {serverType} zerbitzaria(k) jarraian. Hainbat {serverType} zerbitzari konekta ditzakezu, baina horietako bi bakarrik markatu daitezke lehetsi gisa (bata 4K eta bestea 4K ez dena). Administratzaileek eskaera berriak prozesatzeko erabilitako zerbitzaria baliogabetu dezakete onartu aurretik.",
+  "components.PermissionEdit.managerequestsDescription": "Eduki-eskaerak kudeatzeko baimenak ematen ditu. Baimen hau duen erabiltzaile baten eskaera guztiak automatikoki onartuko dira.",
+  "components.Settings.noDefault4kServer": "{serverType}-(e)ko 4K zerbitzari bat lehenetsi behar da erabiltzaileen {mediaType}-(e)ko 4K eskaerak gaitu ahal izateko.",
+  "components.ResetPassword.requestresetlinksuccessmessage": "Pasahitza berrezartzeko esteka bat adierazitako helbide elektronikora bidaliko da, erabiltzaile baliozko bati lotuta badago."
 }
