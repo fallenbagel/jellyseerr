@@ -4,6 +4,7 @@ import PageTitle from '@app/components/Common/PageTitle';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import LanguageSelector from '@app/components/LanguageSelector';
 import RegionSelector from '@app/components/RegionSelector';
+import { KeywordSelector } from '@app/components/Selector';
 import CopyButton from '@app/components/Settings/CopyButton';
 import SettingsBadge from '@app/components/Settings/SettingsBadge';
 import type { AvailableLocale } from '@app/context/LanguageContext';
@@ -35,6 +36,12 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   discoverRegionTip: 'Filter content by regional availability',
   originallanguage: 'Discover Language',
   originallanguageTip: 'Filter content by original language',
+  blacktags: 'Blacklist Content with Tags',
+  blacktagsTip:
+    'Automatically add content with tags to the blacklist using the "Process Blacktags" job',
+  blacktagsLimit: 'Limit Content Blacklisted per Tag',
+  blacktagsLimitTip:
+    'The "Process Blacktags" job will blacklist this many pages into each sort. Larger numbers will create a more accurate blacklist, but use more space.',
   streamingRegion: 'Streaming Region',
   streamingRegionTip: 'Show streaming sites by regional availability',
   toastApiKeySuccess: 'New API key generated successfully!',
@@ -80,6 +87,17 @@ const SettingsMain = () => {
         'no-trailing-slash',
         intl.formatMessage(messages.validationApplicationUrlTrailingSlash),
         (value) => !value || !value.endsWith('/')
+      ),
+    blacktagsLimit: Yup.number()
+      .test(
+        'positive',
+        'Number must be greater than 0.',
+        (value) => (value ?? 0) >= 0
+      )
+      .test(
+        'lte-250',
+        'Number must be less than or equal to 250.',
+        (value) => (value ?? 0) <= 250
       ),
   });
 
@@ -130,6 +148,8 @@ const SettingsMain = () => {
             discoverRegion: data?.discoverRegion,
             originalLanguage: data?.originalLanguage,
             streamingRegion: data?.streamingRegion || 'US',
+            blacktags: data?.blacktags,
+            blacktagsLimit: data?.blacktagsLimit || 50,
             partialRequestsEnabled: data?.partialRequestsEnabled,
             enableSpecialEpisodes: data?.enableSpecialEpisodes,
             cacheImages: data?.cacheImages,
@@ -146,6 +166,8 @@ const SettingsMain = () => {
                 discoverRegion: values.discoverRegion,
                 streamingRegion: values.streamingRegion,
                 originalLanguage: values.originalLanguage,
+                blacktags: values.blacktags,
+                blacktagsLimit: values.blacktagsLimit,
                 partialRequestsEnabled: values.partialRequestsEnabled,
                 enableSpecialEpisodes: values.enableSpecialEpisodes,
                 cacheImages: values.cacheImages,
@@ -350,6 +372,54 @@ const SettingsMain = () => {
                         disableAll
                       />
                     </div>
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="blacktags" className="text-label">
+                    <span>{intl.formatMessage(messages.blacktags)}</span>
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.blacktagsTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field relative z-10">
+                      <KeywordSelector
+                        isMulti
+                        onChange={(value) => {
+                          setFieldValue(
+                            'blacktags',
+                            value?.map((v) => v.value).join(',')
+                          );
+                        }}
+                        defaultValue={values.blacktags}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="blacktagsLimit" className="text-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.blacktagsLimit)}
+                    </span>
+                    <SettingsBadge badgeType="advanced" />
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.blacktagsLimitTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      id="blacktagsLimit"
+                      name="blacktagsLimit"
+                      type="text"
+                      inputMode="numeric"
+                      className="short"
+                      placeholder={50}
+                    />
+                    {errors.blacktagsLimit &&
+                      touched.blacktagsLimit &&
+                      typeof errors.blacktagsLimit === 'string' && (
+                        <div className="error">{errors.blacktagsLimit}</div>
+                      )}
                   </div>
                 </div>
                 <div className="form-row">
