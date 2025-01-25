@@ -1,3 +1,4 @@
+import BlacktagsBadge from '@app/components/BlacktagsBadge';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import CachedImage from '@app/components/Common/CachedImage';
@@ -353,24 +354,33 @@ const BlacklistedItem = ({ item, revalidateList }: BlacklistedItemProps) => {
                       numeric="auto"
                     />
                   ),
-                  user: (
-                    <Link href={`/users/${item.user.id}`}>
-                      <span className="group flex items-center truncate">
-                        <CachedImage
-                          type="avatar"
-                          src={item.user.avatar}
-                          alt=""
-                          className="avatar-sm ml-1.5"
-                          width={20}
-                          height={20}
-                          style={{ objectFit: 'cover' }}
-                        />
-                        <span className="ml-1 truncate text-sm font-semibold group-hover:text-white group-hover:underline">
-                          {item.user.displayName}
+                  user:
+                    item.user != null ? (
+                      <Link href={`/users/${item.user.id}`}>
+                        <span className="group flex items-center truncate">
+                          <CachedImage
+                            type="avatar"
+                            src={item.user.avatar}
+                            alt=""
+                            className="avatar-sm ml-1.5"
+                            width={20}
+                            height={20}
+                            style={{ objectFit: 'cover' }}
+                          />
+                          <span className="ml-1 truncate text-sm font-semibold group-hover:text-white group-hover:underline">
+                            {item.user.displayName}
+                          </span>
                         </span>
+                      </Link>
+                    ) : item.blacktags ? (
+                      <span className="ml-1">
+                        <BlacktagsBadge data={item} />
                       </span>
-                    </Link>
-                  ),
+                    ) : (
+                      <span className="ml-1 truncate text-sm font-semibold">
+                        ???
+                      </span>
+                    ),
                 })}
               </span>
             </div>
