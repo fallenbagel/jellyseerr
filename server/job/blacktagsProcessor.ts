@@ -178,7 +178,11 @@ class BlacktagProcessor implements RunnableScanner<StatusBase> {
       .innerJoinAndSelect(Blacklist, 'blist', 'blist.tmdbId = media.tmdbId')
       .where(`blist.blacktags IS NOT NULL`)
       .getMany();
-    await mediaRepository.remove(mediaToRemove); // This also deletes the blacklist entries via cascading
+
+    // Batch removes so the query doesn't get too large
+    for (let i = 0; i < mediaToRemove.length; i += 500) {
+      await mediaRepository.remove(mediaToRemove.slice(i, i + 500)); // This also deletes the blacklist entries via cascading
+    }
   }
 }
 
