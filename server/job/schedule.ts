@@ -1,4 +1,5 @@
 import { MediaServerType } from '@server/constants/server';
+import blacktagsProcessor from '@server/job/blacktagsProcessor';
 import availabilitySync from '@server/lib/availabilitySync';
 import downloadTracker from '@server/lib/downloadtracker';
 import ImageProxy from '@server/lib/imageproxy';
@@ -21,7 +22,7 @@ interface ScheduledJob {
   job: schedule.Job;
   name: string;
   type: 'process' | 'command';
-  interval: 'seconds' | 'minutes' | 'hours' | 'fixed';
+  interval: 'seconds' | 'minutes' | 'hours' | 'days' | 'fixed';
   cronSchedule: string;
   running?: () => boolean;
   cancelFn?: () => void;
@@ -237,5 +238,21 @@ export const startJobs = (): void => {
     }),
   });
 
+  scheduledJobs.push({
+    id: 'process-blacklisted-tags',
+    name: 'Process Blacktags',
+    type: 'process',
+    interval: 'days',
+    cronSchedule: jobs['process-blacklisted-tags'].schedule,
+    job: schedule.scheduleJob(jobs['process-blacklisted-tags'].schedule, () => {
+      logger.info('Starting scheduled job: Process Blacktags', {
+        label: 'Jobs',
+      });
+      blacktagsProcessor.run();
+    }),
+    running: () => blacktagsProcessor.status().running,
+    cancelFn: () => blacktagsProcessor.cancel(),
+  });
+  
   logger.info('Scheduled jobs loaded', { label: 'Jobs' });
 };

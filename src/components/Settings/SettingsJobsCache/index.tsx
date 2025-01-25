@@ -67,11 +67,14 @@ const messages: { [messageName: string]: MessageDescriptor } = defineMessages(
     'download-sync': 'Download Sync',
     'download-sync-reset': 'Download Sync Reset',
     'image-cache-cleanup': 'Image Cache Cleanup',
+    'process-blacklisted-tags': 'Process Blacktags',
     editJobSchedule: 'Modify Job',
     jobScheduleEditSaved: 'Job edited successfully!',
     jobScheduleEditFailed: 'Something went wrong while saving the job.',
     editJobScheduleCurrent: 'Current Frequency',
     editJobSchedulePrompt: 'New Frequency',
+    editJobScheduleSelectorDays:
+      'Every {jobScheduleDays, plural, one {day} other {{jobScheduleDays} days}}',
     editJobScheduleSelectorHours:
       'Every {jobScheduleHours, plural, one {hour} other {{jobScheduleHours} hours}}',
     editJobScheduleSelectorMinutes:
@@ -91,7 +94,7 @@ interface Job {
   id: JobId;
   name: string;
   type: 'process' | 'command';
-  interval: 'seconds' | 'minutes' | 'hours' | 'fixed';
+  interval: 'seconds' | 'minutes' | 'hours' | 'days' | 'fixed';
   cronSchedule: string;
   nextExecutionTime: string;
   running: boolean;
@@ -100,13 +103,20 @@ interface Job {
 type JobModalState = {
   isOpen?: boolean;
   job?: Job;
+  scheduleDays: number;
   scheduleHours: number;
   scheduleMinutes: number;
   scheduleSeconds: number;
 };
 
 type JobModalAction =
-  | { type: 'set'; hours?: number; minutes?: number; seconds?: number }
+  | {
+      type: 'set';
+      days?: number;
+      hours?: number;
+      minutes?: number;
+      seconds?: number;
+    }
   | {
       type: 'close';
     }
@@ -127,6 +137,7 @@ const jobModalReducer = (
       return {
         isOpen: true,
         job: action.job,
+        scheduleDays: 1,
         scheduleHours: 1,
         scheduleMinutes: 5,
         scheduleSeconds: 30,
@@ -135,6 +146,7 @@ const jobModalReducer = (
     case 'set':
       return {
         ...state,
+        scheduleDays: action.days ?? state.scheduleDays,
         scheduleHours: action.hours ?? state.scheduleHours,
         scheduleMinutes: action.minutes ?? state.scheduleMinutes,
         scheduleSeconds: action.seconds ?? state.scheduleSeconds,
@@ -163,6 +175,7 @@ const SettingsJobs = () => {
 
   const [jobModalState, dispatch] = useReducer(jobModalReducer, {
     isOpen: false,
+    scheduleDays: 1,
     scheduleHours: 1,
     scheduleMinutes: 5,
     scheduleSeconds: 30,
@@ -247,6 +260,9 @@ const SettingsJobs = () => {
         jobScheduleCron[1] = `*/${jobModalState.scheduleMinutes}`;
       } else if (jobModalState.job?.interval === 'hours') {
         jobScheduleCron[2] = `*/${jobModalState.scheduleHours}`;
+      } else if (jobModalState.job?.interval === 'days') {
+        jobScheduleCron[2] = '1';
+        jobScheduleCron[3] = `*/${jobModalState.scheduleDays}`;
       } else {
         // jobs with interval: fixed should not be editable
         throw new Error();
@@ -377,6 +393,29 @@ const SettingsJobs = () => {
                             messages.editJobScheduleSelectorMinutes,
                             {
                               jobScheduleMinutes: v,
+                            }
+                          )}
+                        </option>
+                      ))}
+                    </select>
+                  ) : jobModalState.job?.interval === 'days' ? (
+                    <select
+                      name="jobScheduleDays"
+                      className="inline"
+                      value={jobModalState.scheduleDays}
+                      onChange={(e) =>
+                        dispatch({
+                          type: 'set',
+                          days: Number(e.target.value),
+                        })
+                      }
+                    >
+                      {[1, 2, 3, 4, 5, 6, 7, 10, 14, 21].map((v) => (
+                        <option value={v} key={`jobScheduleDays-${v}`}>
+                          {intl.formatMessage(
+                            messages.editJobScheduleSelectorDays,
+                            {
+                              jobScheduleDays: v,
                             }
                           )}
                         </option>
