@@ -1,10 +1,10 @@
+import BlacktagsSelector from '@app/components/BlacktagsSelector';
 import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import LanguageSelector from '@app/components/LanguageSelector';
 import RegionSelector from '@app/components/RegionSelector';
-import { KeywordSelector } from '@app/components/Selector';
 import CopyButton from '@app/components/Settings/CopyButton';
 import SettingsBadge from '@app/components/Settings/SettingsBadge';
 import type { AvailableLocale } from '@app/context/LanguageContext';
@@ -383,16 +383,7 @@ const SettingsMain = () => {
                   </label>
                   <div className="form-input-area">
                     <div className="form-input-field relative z-10">
-                      <KeywordSelector
-                        isMulti
-                        onChange={(value) => {
-                          setFieldValue(
-                            'blacktags',
-                            value?.map((v) => v.value).join(',')
-                          );
-                        }}
-                        defaultValue={values.blacktags}
-                      />
+                      <BlacktagsSelector defaultValue={values.blacktags} />
                     </div>
                   </div>
                 </div>
