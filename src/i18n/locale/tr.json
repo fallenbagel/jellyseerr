@@ -938,7 +938,7 @@
   "components.Settings.Notifications.webhookUrlTip": "Sunucunuz için bir <DiscordWebhookLink>Webhook</DiscordWebhookLink> entegrasyonu oluştur",
   "components.Settings.SettingsAbout.outofdate": "Eski Sürüm",
   "components.Settings.SettingsAbout.runningDevelop": "Jellyseerr'in yalnızca geliştirmeye katkıda bulunan veya en son testlere yardımcı olan kişiler için önerilen <code>develop</code> dalını çalıştırıyorsunuz.",
-  "components.Settings.SettingsJobsCache.cachevsize": "Önbelleğin Büyüklüğü",
+  "components.Settings.SettingsJobsCache.cachevsize": "Değer Boyutu",
   "components.Settings.SettingsJobsCache.imagecacheDescription": "Ayarlarda etkinleştirildiğinde, Jellyseerr önceden yapılandırılmış harici kaynaklardan gelen görüntüleri proxy'leyecek ve önbelleğe alacaktır. Önbelleğe alınan görüntüler yapılandırma klasörünüze kaydedilir. Dosyaları <code>{appDataPath}/cache/images</code> konumunda bulabilirsiniz.",
   "components.Settings.SettingsUsers.userSettingsDescription": "Genel ve varsayılan kullanıcı ayarlarını yapılandırın.",
   "components.Settings.SonarrModal.editsonarr": "Sonarr Sunucusunu Düzenle",
