@@ -94,19 +94,21 @@ const Blacklist = () => {
   return (
     <>
       <PageTitle title={[intl.formatMessage(globalMessages.blacklist)]} />
-      <Header>{intl.formatMessage(globalMessages.blacklist)}</Header>
+      <div className="mb-4 flex flex-col justify-between lg:flex-row lg:items-end">
+        <Header>{intl.formatMessage(globalMessages.blacklist)}</Header>
 
-      <div className="mt-2 flex flex-grow flex-col sm:flex-grow-0 sm:flex-row sm:justify-end">
-        <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 md:flex-grow-0">
-          <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-gray-500 bg-gray-800 px-3 text-sm text-gray-100">
-            <MagnifyingGlassIcon className="h-6 w-6" />
-          </span>
-          <input
-            type="text"
-            className="rounded-r-only"
-            value={searchFilter}
-            onChange={(e) => searchItem(e)}
-          />
+        <div className="mt-2 flex flex-grow flex-col sm:flex-grow-0 sm:flex-row sm:justify-end">
+          <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 md:flex-grow-0">
+            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-gray-500 bg-gray-800 px-3 text-sm text-gray-100">
+              <MagnifyingGlassIcon className="h-6 w-6" />
+            </span>
+            <input
+              type="text"
+              className="rounded-r-only"
+              value={searchFilter}
+              onChange={(e) => searchItem(e)}
+            />
+          </div>
         </div>
       </div>
 
