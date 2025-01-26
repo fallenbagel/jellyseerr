@@ -4239,6 +4239,12 @@ paths:
             type: string
             nullable: true
             example: dune
+        - in: query
+          name: filter
+          schema:
+            type: string
+            enum: [all, manual, blacktags]
+            default: manual
       responses:
         '200':
           description: Blacklisted items returned
