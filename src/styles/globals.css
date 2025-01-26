@@ -382,6 +382,10 @@
     @apply w-full;
   }
 
+  .react-select-container:has(+ .input-action) .react-select__control {
+    @apply rounded-r-none border border-gray-500 bg-gray-700 text-white hover:border-gray-500;
+  }
+
   .react-select-container .react-select__control {
     @apply rounded-md border border-gray-500 bg-gray-700 text-white hover:border-gray-500;
   }
