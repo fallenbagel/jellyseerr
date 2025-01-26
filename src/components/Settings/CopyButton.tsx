@@ -32,6 +32,7 @@ const CopyButton = ({ textToCopy }: { textToCopy: string }) => {
         setCopied();
       }}
       className="input-action"
+      type="button"
     >
       <ClipboardDocumentIcon />
     </button>

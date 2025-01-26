@@ -231,6 +231,7 @@ const SettingsMain = () => {
                             regenerate();
                           }}
                           className="input-action"
+                          type="button"
                         >
                           <ArrowPathIcon />
                         </button>
