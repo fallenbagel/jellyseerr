@@ -15,6 +15,7 @@ import defineMessages from '@app/utils/defineMessages';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
+  FunnelIcon,
   MagnifyingGlassIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
@@ -42,7 +43,16 @@ const messages = defineMessages('components.Blacklist', {
   blacklistdate: 'date',
   blacklistedby: '{date} by {user}',
   blacklistNotFoundError: '<strong>{title}</strong> is not blacklisted.',
+  filterManual: 'Manual',
+  filterBlacktags: 'Blacktags',
+  showAllBlacklisted: 'Show All Blacklisted Media',
 });
+
+enum Filter {
+  ALL = 'all',
+  MANUAL = 'manual',
+  BLACKTAGS = 'blacktags',
+}
 
 const isMovie = (movie: MovieDetails | TvDetails): movie is MovieDetails => {
   return (movie as MovieDetails).title !== undefined;
@@ -52,6 +62,7 @@ const Blacklist = () => {
   const [currentPageSize, setCurrentPageSize] = useState<number>(10);
   const [searchFilter, debouncedSearchFilter, setSearchFilter] =
     useDebouncedState('');
+  const [currentFilter, setCurrentFilter] = useState<Filter>(Filter.MANUAL);
   const router = useRouter();
   const intl = useIntl();
 
@@ -64,9 +75,11 @@ const Blacklist = () => {
     error,
     mutate: revalidate,
   } = useSWR<BlacklistResultsResponse>(
-    `/api/v1/blacklist/?take=${currentPageSize}
-    &skip=${pageIndex * currentPageSize}
-    ${debouncedSearchFilter ? `&search=${debouncedSearchFilter}` : ''}`,
+    `/api/v1/blacklist/?take=${currentPageSize}&skip=${
+      pageIndex * currentPageSize
+    }&filter=${currentFilter}${
+      debouncedSearchFilter ? `&search=${debouncedSearchFilter}` : ''
+    }`,
     {
       refreshInterval: 0,
       revalidateOnFocus: false,
@@ -97,7 +110,38 @@ const Blacklist = () => {
       <div className="mb-4 flex flex-col justify-between lg:flex-row lg:items-end">
         <Header>{intl.formatMessage(globalMessages.blacklist)}</Header>
 
-        <div className="mt-2 flex flex-grow flex-col sm:flex-grow-0 sm:flex-row sm:justify-end">
+        <div className="mt-2 flex flex-grow flex-col sm:flex-row lg:flex-grow-0">
+          <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0">
+            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-gray-500 bg-gray-800 px-3 text-sm text-gray-100">
+              <FunnelIcon className="h-6 w-6" />
+            </span>
+            <select
+              id="filter"
+              name="filter"
+              onChange={(e) => {
+                setCurrentFilter(e.target.value as Filter);
+                router.push({
+                  pathname: router.pathname,
+                  query: router.query.userId
+                    ? { userId: router.query.userId }
+                    : {},
+                });
+              }}
+              value={currentFilter}
+              className="rounded-r-only"
+            >
+              <option value="all">
+                {intl.formatMessage(globalMessages.all)}
+              </option>
+              <option value="manual">
+                {intl.formatMessage(messages.filterManual)}
+              </option>
+              <option value="blacktags">
+                {intl.formatMessage(messages.filterBlacktags)}
+              </option>
+            </select>
+          </div>
+
           <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 md:flex-grow-0">
             <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-gray-500 bg-gray-800 px-3 text-sm text-gray-100">
               <MagnifyingGlassIcon className="h-6 w-6" />
@@ -119,6 +163,16 @@ const Blacklist = () => {
           <span className="text-2xl text-gray-400">
             {intl.formatMessage(globalMessages.noresults)}
           </span>
+          {currentFilter !== Filter.ALL && (
+            <div className="mt-4">
+              <Button
+                buttonType="primary"
+                onClick={() => setCurrentFilter(Filter.ALL)}
+              >
+                {intl.formatMessage(messages.showAllBlacklisted)}
+              </Button>
+            </div>
+          )}
         </div>
       ) : (
         data.results.map((item: BlacklistItem) => {
