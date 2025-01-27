@@ -219,7 +219,7 @@
   "components.Settings.hostname": "Nom d'hôte ou adresse IP",
   "components.Settings.librariesRemaining": "Bibliothèques restantes : {count}",
   "components.Settings.manualscan": "Scan manuel des bibliothèques",
-  "components.Settings.manualscanDescription": "Normalement, le scan sera effectué une fois toutes les 24 heures seulement. Jellyseerr vérifiera les ajouts récents de votre serveur Plex de façon proactive. Si c'est la première fois que vous configurez Plex, un scan complet de la bibliothèque est recommandé!",
+  "components.Settings.manualscanDescription": "Normalement, le scan sera effectué une fois toutes les 24 heures seulement. Jellyseerr vérifiera les ajouts récents de votre serveur Plex de façon proactive. Si c'est la première fois que vous configurez Plex, un scan complet de la bibliothèque est recommandé !",
   "components.Settings.menuAbout": "À propos",
   "components.Settings.menuGeneralSettings": "Général",
   "components.Settings.menuJobs": "Tâches et cache",
@@ -628,7 +628,7 @@
   "components.Settings.scan": "Synchroniser les bibliothèques",
   "components.Settings.SettingsJobsCache.sonarr-scan": "Scan de Sonarr",
   "components.Settings.SettingsJobsCache.radarr-scan": "Scan de Radarr",
-  "components.Settings.SettingsJobsCache.plex-recently-added-scan": "Scan des ajouts récents Plex.",
+  "components.Settings.SettingsJobsCache.plex-recently-added-scan": "Scan des ajouts récents Plex",
   "components.Settings.SettingsJobsCache.plex-full-scan": "Scan complet des bibliothèques Plex.",
   "components.Settings.Notifications.validationUrl": "Vous devez fournir une URL valide",
   "components.Settings.Notifications.botAvatarUrl": "L'URL de l'avatar de votre Bot",
@@ -1402,6 +1402,6 @@
   "i18n.specials": "Hors-série",
   "components.Settings.Notifications.webhookRoleIdTip": "L'ID à mentionner dans le message du webhook. Laissez ce champ vide pour désactiver les mentions",
   "components.Settings.Notifications.webhookRoleId": "ID de rôle de notification",
-  "components.Settings.SettingsJobsCache.plex-refresh-token": "Jeton de rafraîchissement Plex",
+  "components.Settings.SettingsJobsCache.plex-refresh-token": "Rafraîchir le token Plex",
   "components.Settings.tip": "Conseil"
 }
