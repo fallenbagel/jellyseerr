@@ -425,5 +425,16 @@
   "components.Settings.serviceSettingsDescription": "Konfiguratu zure {serverType} zerbitzaria(k) jarraian. Hainbat {serverType} zerbitzari konekta ditzakezu, baina horietako bi bakarrik markatu daitezke lehetsi gisa (bata 4K eta bestea 4K ez dena). Administratzaileek eskaera berriak prozesatzeko erabilitako zerbitzaria baliogabetu dezakete onartu aurretik.",
   "components.PermissionEdit.managerequestsDescription": "Eduki-eskaerak kudeatzeko baimenak ematen ditu. Baimen hau duen erabiltzaile baten eskaera guztiak automatikoki onartuko dira.",
   "components.Settings.noDefault4kServer": "{serverType}-(e)ko 4K zerbitzari bat lehenetsi behar da erabiltzaileen {mediaType}-(e)ko 4K eskaerak gaitu ahal izateko.",
-  "components.ResetPassword.requestresetlinksuccessmessage": "Pasahitza berrezartzeko esteka bat adierazitako helbide elektronikora bidaliko da, erabiltzaile baliozko bati lotuta badago."
+  "components.ResetPassword.requestresetlinksuccessmessage": "Pasahitza berrezartzeko esteka bat adierazitako helbide elektronikora bidaliko da, erabiltzaile baliozko bati lotuta badago.",
+  "components.AppDataWarning.dockerVolumeMissingDescription": "<code>{appDataPath}</code> bolumenaren muntaia ez da behar bezala konfiguratu. Datu guztiak ezabatu egingo dira edukiontzia gelditu edo berriro hasten denean.",
+  "components.Login.description": "{applicationName} aplikazioan saioa hasten duzun lehen aldia denez, baliozko helbide elektroniko bat gehitu behar duzu.",
+  "components.PermissionEdit.usersDescription": "Eman baimena erabiltzaileak kudeatzeko. Baimen hau duten erabiltzaileek ezin dituzte administratzaile-pribilegioa duten erabiltzaileak aldatu edo pribilegio hau eman.",
+  "components.Settings.SettingsAbout.betawarning": "Hau BETA softwarea da. Ezaugarriak apurtura edota desegonkorrak izan daitezke. Mesedez, eman edozein arazoren berri GitHuben!",
+  "components.Settings.SettingsJobsCache.cacheDescription": "Jellyseerrrek kanpoko APIaren eskaerak cachean gordetzen ditu, errendimendua optimizatzeko eta beharrezkoak ez diren API deirik ez egiteko.",
+  "components.Settings.jellyfinsettingsDescription": "Konfiguratu zerbitzarirako doikuntzak {mediaServerName}-(e)rako. {mediaServerName} liburutegiak eskaneatzen ditu, zer eduki dagoen ikusteko.",
+  "components.Settings.noDefaultServer": "Gutxienez {serverType} zerbitzari bat lehenetsi gisa markatu behar da {mediaType} eskaerak prozesatu ahal izateko.",
+  "components.Settings.tautulliSettingsDescription": "Aukeran, konfiguratu zure Tautulli zerbitzariaren ezarpenak. Jellyseerr-ek Tautulliren Plex multimedia erreprodukzioen historialaren datuak lortu ditu.",
+  "components.Settings.plexsettingsDescription": "Konfiguratu zure Plex zerbitzariaren ezarpenak. Jellyseerr-ek zure Plexeko liburutegiak eskaneatzen ditu edukiaren erabilgarritasuna zehazteko.",
+  "components.Settings.webAppUrlTip": "Aukeran erabiltzaileak zure zerbitzariko web aplikaziora zuzendu, web-aplikazio \"ostatuaren\" ordez",
+  "components.UserList.deleteconfirm": "Ziur al zaude erabiltzaile hau ezabatu nahi duzula? Bere eskaera guztiak betirako ezabatuko dira."
 }
