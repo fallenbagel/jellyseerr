@@ -129,7 +129,6 @@ class BlacktagProcessor implements RunnableScanner<StatusBase> {
     em: EntityManager
   ) {
     const blacklistRepository = em.getRepository(Blacklist);
-    let processedCount = 0;
 
     for (const entry of response.results) {
       const blacklistEntry = await blacklistRepository.findOne({
@@ -146,7 +145,6 @@ class BlacktagProcessor implements RunnableScanner<StatusBase> {
           await blacklistRepository.update(blacklistEntry.id, {
             blacktags: `${blacklistEntry.blacktags}${keywordId},`,
           });
-          processedCount++;
         }
 
         continue;
@@ -164,10 +162,7 @@ class BlacktagProcessor implements RunnableScanner<StatusBase> {
         },
         em
       );
-      processedCount++;
     }
-
-    return processedCount;
   }
 
   private async cleanBlacklist(em: EntityManager) {
