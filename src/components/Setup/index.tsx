@@ -133,10 +133,6 @@ const Setup = () => {
         setCurrentStep(3);
       }
     }
-
-    if (currentStep === 3) {
-      validateLibraries();
-    }
   }, [
     settings.currentSettings.mediaServerType,
     settings.currentSettings.initialized,
@@ -147,6 +143,13 @@ const Setup = () => {
     mediaServerType,
     validateLibraries,
   ]);
+
+  useEffect(() => {
+    if (currentStep === 3) {
+      validateLibraries();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep]);
 
   const handleComplete = () => {
     validateLibraries();
