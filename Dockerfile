@@ -29,7 +29,7 @@ RUN pnpm build
 # remove development dependencies
 RUN pnpm prune --prod --ignore-scripts
 
-RUN rm -rf src server .next/cache
+RUN rm -rf src server .next/cache charts gen-docs docs
 
 RUN touch config/DOCKER
 
