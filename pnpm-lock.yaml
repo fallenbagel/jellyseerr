@@ -38,6 +38,9 @@ importers:
       '@tanem/react-nprogress':
         specifier: 5.0.30
         version: 5.0.30(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/wink-jaro-distance':
+        specifier: ^2.0.2
+        version: 2.0.2
       ace-builds:
         specifier: 1.15.2
         version: 1.15.2
@@ -203,6 +206,9 @@ importers:
       web-push:
         specifier: 3.5.0
         version: 3.5.0
+      wink-jaro-distance:
+        specifier: ^2.0.0
+        version: 2.0.0
       winston:
         specifier: 3.8.2
         version: 3.8.2
@@ -3249,6 +3255,9 @@ packages:
 
   '@types/webxr@0.5.20':
     resolution: {integrity: sha512-JGpU6qiIJQKUuVSKx1GtQnHJGxRjtfGIhzO2ilq43VZZS//f1h1Sgexbdk+Lq+7569a6EYhOWrUpIruR/1Enmg==}
+
+  '@types/wink-jaro-distance@2.0.2':
+    resolution: {integrity: sha512-Q79orp7qA/g/uLdFmqd5MtEa0ZfJW5X1WXikAu8IVHt24IrHWrcTNYNdPpLK5mwVg34C6FQnrv/DMtcUhjE/zA==}
 
   '@types/xml2js@0.4.11':
     resolution: {integrity: sha512-JdigeAKmCyoJUiQljjr7tQG3if9NkqGUgwEUqBvV0N7LM4HyQk7UXCnusRa1lnvXAEYJ8mw8GtZWioagNztOwA==}
@@ -9467,6 +9476,9 @@ packages:
   wide-align@1.1.5:
     resolution: {integrity: sha512-eDMORYaPNZ4sQIuuYPDHdQvf4gyCF9rEEV/yPxGfwPkRodwEgiMUUXTx/dex+Me0wxx53S+NgUHaP7y3MGlDmg==}
 
+  wink-jaro-distance@2.0.0:
+    resolution: {integrity: sha512-9bcUaXCi9N8iYpGWbFkf83OsBkg17r4hEyxusEzl+nnReLRPqxhB9YNeRn3g54SYnVRNXP029lY3HDsbdxTAuA==}
+
   winston-daily-rotate-file@4.7.1:
     resolution: {integrity: sha512-7LGPiYGBPNyGHLn9z33i96zx/bd71pjBn9tqQzO3I4Tayv94WPmBNwKC7CO1wPHdP9uvu+Md/1nr6VSH9h0iaA==}
     engines: {node: '>=8'}
@@ -13736,6 +13748,8 @@ snapshots:
       '@types/node': 22.10.5
 
   '@types/webxr@0.5.20': {}
+
+  '@types/wink-jaro-distance@2.0.2': {}
 
   '@types/xml2js@0.4.11':
     dependencies:
@@ -20904,6 +20918,8 @@ snapshots:
   wide-align@1.1.5:
     dependencies:
       string-width: 4.2.3
+
+  wink-jaro-distance@2.0.0: {}
 
   winston-daily-rotate-file@4.7.1(winston@3.8.2):
     dependencies:

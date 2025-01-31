@@ -1,6 +1,7 @@
 import ExternalAPI from '@server/api/externalapi';
 import cacheManager from '@server/lib/cache';
 import { getSettings } from '@server/lib/settings';
+import jaro from 'wink-jaro-distance';
 
 interface RTAlgoliaSearchResponse {
   results: {
@@ -15,7 +16,7 @@ interface RTAlgoliaHit {
   tmsId: string;
   type: string;
   title: string;
-  titles: string[];
+  titles?: string[];
   description: string;
   releaseYear: number;
   rating: string;
@@ -24,9 +25,9 @@ interface RTAlgoliaHit {
   isEmsSearchable: boolean;
   rtId: number;
   vanity: string;
-  aka: string[];
+  aka?: string[];
   posterImageUrl: string;
-  rottenTomatoes: {
+  rottenTomatoes?: {
     audienceScore: number;
     criticsIconUrl: string;
     wantToSeeCount: number;
@@ -46,6 +47,47 @@ export interface RTRating {
   audienceScore?: number;
   url: string;
 }
+
+// Tunables
+const INEXACT_TITLE_FACTOR = 0.25;
+const ALTERNATE_TITLE_FACTOR = 0.8;
+const PER_YEAR_PENALTY = 0.4;
+const MINIMUM_SCORE = 0.175;
+
+// Normalization for title comparisons.
+// Lowercase and strip non-alphanumeric (unicode-aware).
+const norm = (s: string): string =>
+  s.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '');
+
+// Title similarity. 1 if exact, quarter-jaro otherwise.
+const similarity = (a: string, b: string): number =>
+  a === b ? 1 : jaro(a, b).similarity * INEXACT_TITLE_FACTOR;
+
+// Gets the best similarity score between the searched title and all alternate
+// titles of the search result. Non-main titles are penalized.
+const t_score = ({ title, titles, aka }: RTAlgoliaHit, s: string): number => {
+  const f = (t: string, i: number) =>
+    similarity(norm(t), norm(s)) * (i ? ALTERNATE_TITLE_FACTOR : 1);
+  return Math.max(...[title].concat(aka || [], titles || []).map(f));
+};
+
+// Year difference to score: 0 -> 1.0, 1 -> 0.6, 2 -> 0.2, 3+ -> 0.0
+const y_score = (r: RTAlgoliaHit, y?: number): number =>
+  y ? Math.max(0, 1 - Math.abs(r.releaseYear - y) * PER_YEAR_PENALTY) : 1;
+
+// Cut score in half if result has no ratings.
+const extra_score = (r: RTAlgoliaHit): number => (r.rottenTomatoes ? 1 : 0.5);
+
+// Score search result as product of all subscores
+const score = (r: RTAlgoliaHit, name: string, year?: number): number =>
+  t_score(r, name) * y_score(r, year) * extra_score(r);
+
+// Score each search result and return the highest scoring result, if any
+const best = (rs: RTAlgoliaHit[], name: string, year?: number): RTAlgoliaHit =>
+  rs
+    .map((r) => ({ score: score(r, name, year), result: r }))
+    .filter(({ score }) => score > MINIMUM_SCORE)
+    .sort(({ score: a }, { score: b }) => b - a)[0]?.result;
 
 /**
  * This is a best-effort API. The Rotten Tomatoes API is technically
@@ -90,47 +132,21 @@ class RottenTomatoes extends ExternalAPI {
     year: number
   ): Promise<RTRating | null> {
     try {
+      const filters = encodeURIComponent('isEmsSearchable=1 AND type:"movie"');
       const data = await this.post<RTAlgoliaSearchResponse>('/queries', {
         requests: [
           {
             indexName: 'content_rt',
-            query: name,
-            params: 'filters=isEmsSearchable%20%3D%201&hitsPerPage=20',
+            query: name.replace(/\bthe\b ?/gi, ''),
+            params: `filters=${filters}&hitsPerPage=20`,
           },
         ],
       });
 
       const contentResults = data.results.find((r) => r.index === 'content_rt');
+      const movie = best(contentResults?.hits || [], name, year);
 
-      if (!contentResults) {
-        return null;
-      }
-
-      // First, attempt to match exact name and year
-      let movie = contentResults.hits.find(
-        (movie) => movie.releaseYear === year && movie.title === name
-      );
-
-      // If we don't find a movie, try to match partial name and year
-      if (!movie) {
-        movie = contentResults.hits.find(
-          (movie) => movie.releaseYear === year && movie.title.includes(name)
-        );
-      }
-
-      // If we still dont find a movie, try to match just on year
-      if (!movie) {
-        movie = contentResults.hits.find((movie) => movie.releaseYear === year);
-      }
-
-      // One last try, try exact name match only
-      if (!movie) {
-        movie = contentResults.hits.find((movie) => movie.title === name);
-      }
-
-      if (!movie?.rottenTomatoes) {
-        return null;
-      }
+      if (!movie?.rottenTomatoes) return null;
 
       return {
         title: movie.title,
@@ -158,33 +174,21 @@ class RottenTomatoes extends ExternalAPI {
     year?: number
   ): Promise<RTRating | null> {
     try {
+      const filters = encodeURIComponent('isEmsSearchable=1 AND type:"tv"');
       const data = await this.post<RTAlgoliaSearchResponse>('/queries', {
         requests: [
           {
             indexName: 'content_rt',
             query: name,
-            params: 'filters=isEmsSearchable%20%3D%201&hitsPerPage=20',
+            params: `filters=${filters}&hitsPerPage=20`,
           },
         ],
       });
 
       const contentResults = data.results.find((r) => r.index === 'content_rt');
+      const tvshow = best(contentResults?.hits || [], name, year);
 
-      if (!contentResults) {
-        return null;
-      }
-
-      let tvshow: RTAlgoliaHit | undefined = contentResults.hits[0];
-
-      if (year) {
-        tvshow = contentResults.hits.find(
-          (series) => series.releaseYear === year
-        );
-      }
-
-      if (!tvshow || !tvshow.rottenTomatoes) {
-        return null;
-      }
+      if (!tvshow?.rottenTomatoes) return null;
 
       return {
         title: tvshow.title,
