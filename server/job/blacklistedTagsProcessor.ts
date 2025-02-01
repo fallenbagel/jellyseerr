@@ -20,7 +20,7 @@ import type { EntityManager } from 'typeorm';
 const TMDB_API_DELAY_MS = 250;
 class AbortTransaction extends Error {}
 
-class BlacktagProcessor implements RunnableScanner<StatusBase> {
+class BlacklistedTagProcessor implements RunnableScanner<StatusBase> {
   private running = false;
   private progress = 0;
   private total = 0;
@@ -35,7 +35,7 @@ class BlacktagProcessor implements RunnableScanner<StatusBase> {
       });
     } catch (err) {
       if (err instanceof AbortTransaction) {
-        logger.info('Aborting job: Process Blacktags', {
+        logger.info('Aborting job: Process Blacklisted Tags', {
           label: 'Jobs',
         });
       } else {
@@ -68,25 +68,25 @@ class BlacktagProcessor implements RunnableScanner<StatusBase> {
     const tmdb = createTmdbWithRegionLanguage();
 
     const settings = getSettings();
-    const blacktags = settings.main.blacktags;
-    const blacktagsArr = blacktags.split(',');
+    const blacklistedTags = settings.main.blacklistedTags;
+    const blacklistedTagsArr = blacklistedTags.split(',');
 
-    const pageLimit = settings.main.blacktagsLimit;
+    const pageLimit = settings.main.blacklistedTagsLimit;
 
-    if (blacktags.length === 0) {
+    if (blacklistedTags.length === 0) {
       return;
     }
 
     // The maximum number of queries we're expected to execute
     this.total =
-      2 * blacktagsArr.length * pageLimit * SortOptionsIterable.length;
+      2 * blacklistedTagsArr.length * pageLimit * SortOptionsIterable.length;
 
     for (const type of [MediaType.MOVIE, MediaType.TV]) {
       const getDiscover =
         type == MediaType.MOVIE ? tmdb.getDiscoverMovies : tmdb.getDiscoverTv;
 
       // Iterate for each tag
-      for (const tag of blacktagsArr) {
+      for (const tag of blacklistedTagsArr) {
         let queryMax = pageLimit * SortOptionsIterable.length;
         let fixedSortMode = false; // Set to true when the page limit allows for getting every page of tag
 
@@ -139,11 +139,11 @@ class BlacktagProcessor implements RunnableScanner<StatusBase> {
         // Don't mark manual blacklists with tags
         // If media wasn't previously blacklisted for this tag, add the tag to the media's blacklist
         if (
-          blacklistEntry.blacktags != null &&
-          !blacklistEntry.blacktags.includes(`,${keywordId},`)
+          blacklistEntry.blacklistedTags != null &&
+          !blacklistEntry.blacklistedTags.includes(`,${keywordId},`)
         ) {
           await blacklistRepository.update(blacklistEntry.id, {
-            blacktags: `${blacklistEntry.blacktags}${keywordId},`,
+            blacklistedTags: `${blacklistEntry.blacklistedTags}${keywordId},`,
           });
         }
 
@@ -157,7 +157,7 @@ class BlacktagProcessor implements RunnableScanner<StatusBase> {
             mediaType,
             title: 'title' in entry ? entry.title : entry.name,
             tmdbId: entry.id,
-            blacktags: `,${keywordId},`,
+            blacklistedTags: `,${keywordId},`,
           },
         },
         em
@@ -166,12 +166,12 @@ class BlacktagProcessor implements RunnableScanner<StatusBase> {
   }
 
   private async cleanBlacklist(em: EntityManager) {
-    // Remove blacklist and media entries blacklisted by blacktags
+    // Remove blacklist and media entries blacklisted by tags
     const mediaRepository = em.getRepository(Media);
     const mediaToRemove = await mediaRepository
       .createQueryBuilder('media')
       .innerJoinAndSelect(Blacklist, 'blist', 'blist.tmdbId = media.tmdbId')
-      .where(`blist.blacktags IS NOT NULL`)
+      .where(`blist.blacklistedTags IS NOT NULL`)
       .getMany();
 
     // Batch removes so the query doesn't get too large
@@ -181,6 +181,6 @@ class BlacktagProcessor implements RunnableScanner<StatusBase> {
   }
 }
 
-const blacktagsProcessor = new BlacktagProcessor();
+const blacklistedTagsProcessor = new BlacklistedTagProcessor();
 
-export default blacktagsProcessor;
+export default blacklistedTagsProcessor;

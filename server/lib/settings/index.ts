@@ -128,8 +128,8 @@ export interface MainSettings {
   discoverRegion: string;
   streamingRegion: string;
   originalLanguage: string;
-  blacktags: string;
-  blacktagsLimit: number;
+  blacklistedTags: string;
+  blacklistedTagsLimit: number;
   mediaServerType: number;
   partialRequestsEnabled: boolean;
   enableSpecialEpisodes: boolean;
@@ -353,8 +353,8 @@ class Settings {
         discoverRegion: '',
         streamingRegion: '',
         originalLanguage: '',
-        blacktags: '',
-        blacktagsLimit: 50,
+        blacklistedTags: '',
+        blacklistedTagsLimit: 50,
         mediaServerType: MediaServerType.NOT_CONFIGURED,
         partialRequestsEnabled: true,
         enableSpecialEpisodes: false,

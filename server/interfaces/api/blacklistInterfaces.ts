@@ -7,7 +7,7 @@ export interface BlacklistItem {
   title?: string;
   createdAt?: Date;
   user?: User;
-  blacktags?: string;
+  blacklistedTags?: string;
 }
 
 export interface BlacklistResultsResponse extends PaginatedResponse {
