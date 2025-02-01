@@ -23,7 +23,7 @@ const blacklistGet = z.object({
   take: z.coerce.number().int().positive().default(25),
   skip: z.coerce.number().int().nonnegative().default(0),
   search: z.string().optional(),
-  filter: z.enum(['all', 'manual', 'blacktags']).optional(),
+  filter: z.enum(['all', 'manual', 'blacklistedTags']).optional(),
 });
 
 blacklistRoutes.get(
@@ -42,10 +42,10 @@ blacklistRoutes.get(
 
       switch (filter) {
         case 'manual':
-          query = query.andWhere('blacklist.blacktags IS NULL');
+          query = query.andWhere('blacklist.blacklistedTags IS NULL');
           break;
-        case 'blacktags':
-          query = query.andWhere('blacklist.blacktags IS NOT NULL');
+        case 'blacklistedTags':
+          query = query.andWhere('blacklist.blacklistedTags IS NOT NULL');
           break;
       }
 

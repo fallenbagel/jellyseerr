@@ -1,5 +1,5 @@
 import { MediaServerType } from '@server/constants/server';
-import blacktagsProcessor from '@server/job/blacktagsProcessor';
+import blacklistedTagsProcessor from '@server/job/blacklistedTagsProcessor';
 import availabilitySync from '@server/lib/availabilitySync';
 import downloadTracker from '@server/lib/downloadtracker';
 import ImageProxy from '@server/lib/imageproxy';
@@ -240,18 +240,18 @@ export const startJobs = (): void => {
 
   scheduledJobs.push({
     id: 'process-blacklisted-tags',
-    name: 'Process Blacktags',
+    name: 'Process Blacklisted Tags',
     type: 'process',
     interval: 'days',
     cronSchedule: jobs['process-blacklisted-tags'].schedule,
     job: schedule.scheduleJob(jobs['process-blacklisted-tags'].schedule, () => {
-      logger.info('Starting scheduled job: Process Blacktags', {
+      logger.info('Starting scheduled job: Process Blacklisted Tags', {
         label: 'Jobs',
       });
-      blacktagsProcessor.run();
+      blacklistedTagsProcessor.run();
     }),
-    running: () => blacktagsProcessor.status().running,
-    cancelFn: () => blacktagsProcessor.cancel(),
+    running: () => blacklistedTagsProcessor.status().running,
+    cancelFn: () => blacklistedTagsProcessor.cancel(),
   });
   
   logger.info('Scheduled jobs loaded', { label: 'Jobs' });

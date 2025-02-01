@@ -45,7 +45,7 @@ export class Blacklist implements BlacklistItem {
   public media: Media;
 
   @Column({ nullable: true, type: 'varchar' })
-  public blacktags?: string;
+  public blacklistedTags?: string;
 
   @CreateDateColumn()
   public createdAt: Date;
@@ -62,7 +62,7 @@ export class Blacklist implements BlacklistItem {
         mediaType: MediaType;
         title?: ZodOptional<ZodString>['_output'];
         tmdbId: ZodNumber['_output'];
-        blacktags?: string;
+        blacklistedTags?: string;
       };
     },
     entityManager?: EntityManager

@@ -1,4 +1,4 @@
-import BlacktagsBadge from '@app/components/BlacktagsBadge';
+import BlacklistedTagsBadge from '@app/components/BlacklistedTagsBadge';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
@@ -97,12 +97,12 @@ const BlacklistBlock = ({
                   </Link>
                 </span>
               </>
-            ) : data.blacktags != null && data.blacktags != '' ? (
+            ) : data.blacklistedTags != null && data.blacklistedTags != '' ? (
               <>
                 <span className="w-40 truncate md:w-auto">
                   {intl.formatMessage(messages.blacklistedby)}:&nbsp;
                 </span>
-                <BlacktagsBadge data={data} />
+                <BlacklistedTagsBadge data={data} />
               </>
             ) : null}
           </div>

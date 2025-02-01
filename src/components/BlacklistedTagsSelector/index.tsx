@@ -26,17 +26,18 @@ import { useToasts } from 'react-toast-notifications';
 import useClipboard from 'react-use-clipboard';
 
 const messages = defineMessages('components.Settings', {
-  copyBlacktags: 'Copied blacktags to clipboard.',
-  copyBlacktagsTip: 'Copy blacktag configuration',
-  importBlacktagsTip: 'Import blacktag configuration',
-  clearBlacktagsConfirm: 'Are you sure you want to clear the blacktags?',
+  copyBlacklistedTags: 'Copied blacklisted tags to clipboard.',
+  copyBlacklistedTagsTip: 'Copy blacklisted tags configuration',
+  importBlacklistedTagsTip: 'Import blacklisted tags configuration',
+  clearBlacklistedTagsConfirm:
+    'Are you sure you want to clear the blacklisted tags?',
   yes: 'Yes',
   no: 'No',
   searchKeywords: 'Search keywords…',
   starttyping: 'Starting typing to search.',
   nooptions: 'No results.',
-  blacktagImportTitle: 'Import Blacktag Configuration',
-  blacktagImportInstructions: 'Paste blacktag configuration below.',
+  blacklistedTagImportTitle: 'Import Blacklist Tag Configuration',
+  blacklistedTagImportInstructions: 'Paste blacklist tag configuration below.',
   valueRequired: 'You must provide a value.',
   noSpecialCharacters:
     'Configuration must be a comma delimited list of TMDB keyword ids, and must not start or end with a comma.',
@@ -48,11 +49,13 @@ type SingleVal = {
   value: number;
 };
 
-type BlacktagsSelectorProps = {
+type BlacklistedTagsSelectorProps = {
   defaultValue?: string;
 };
 
-const BlacktagsSelector = ({ defaultValue }: BlacktagsSelectorProps) => {
+const BlacklistedTagsSelector = ({
+  defaultValue,
+}: BlacklistedTagsSelectorProps) => {
   const { setFieldValue } = useFormikContext();
   const [value, setValue] = useState<string | undefined>(defaultValue);
   const [selectorValue, setSelectorValue] =
@@ -63,7 +66,7 @@ const BlacktagsSelector = ({ defaultValue }: BlacktagsSelectorProps) => {
       const strVal = value?.map((v) => v.value).join(',');
       setSelectorValue(value);
       setValue(strVal);
-      setFieldValue('blacktags', strVal);
+      setFieldValue('blacklistedTags', strVal);
     },
     [setSelectorValue, setValue, setFieldValue]
   );
@@ -81,8 +84,8 @@ const BlacktagsSelector = ({ defaultValue }: BlacktagsSelectorProps) => {
         }}
       />
 
-      <BlacktagsCopyButton value={value ?? ''} />
-      <BlacktagsImportButton setSelector={update} />
+      <BlacklistedTagsCopyButton value={value ?? ''} />
+      <BlacklistedTagsImportButton setSelector={update} />
     </>
   );
 };
@@ -148,7 +151,7 @@ const ControlledKeywordSelector = ({
 
   return (
     <AsyncSelect
-      key={`keyword-select-blacktags`}
+      key={`keyword-select-blacklistedTags`}
       inputId="data"
       isMulti
       className="react-select-container"
@@ -167,11 +170,13 @@ const ControlledKeywordSelector = ({
   );
 };
 
-type BlacktagsCopyButtonProps = {
+type BlacklistedTagsCopyButtonProps = {
   value: string;
 };
 
-const BlacktagsCopyButton = ({ value }: BlacktagsCopyButtonProps) => {
+const BlacklistedTagsCopyButton = ({
+  value,
+}: BlacklistedTagsCopyButtonProps) => {
   const intl = useIntl();
   const [isCopied, setCopied] = useClipboard(value, {
     successDuration: 1000,
@@ -180,7 +185,7 @@ const BlacktagsCopyButton = ({ value }: BlacktagsCopyButtonProps) => {
 
   useEffect(() => {
     if (isCopied) {
-      addToast(intl.formatMessage(messages.copyBlacktags), {
+      addToast(intl.formatMessage(messages.copyBlacklistedTags), {
         appearance: 'info',
         autoDismiss: true,
       });
@@ -189,7 +194,7 @@ const BlacktagsCopyButton = ({ value }: BlacktagsCopyButtonProps) => {
 
   return (
     <Tooltip
-      content={intl.formatMessage(messages.copyBlacktagsTip)}
+      content={intl.formatMessage(messages.copyBlacklistedTagsTip)}
       tooltipConfig={{ followCursor: false }}
     >
       <button
@@ -206,11 +211,13 @@ const BlacktagsCopyButton = ({ value }: BlacktagsCopyButtonProps) => {
   );
 };
 
-type BlacktagsImportButton = {
+type BlacklistedTagsImportButton = {
   setSelector: (value: MultiValue<SingleVal>) => void;
 };
 
-const BlacktagsImportButton = ({ setSelector }: BlacktagsImportButton) => {
+const BlacklistedTagsImportButton = ({
+  setSelector,
+}: BlacklistedTagsImportButton) => {
   const [show, setShow] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const intl = useIntl();
@@ -241,17 +248,17 @@ const BlacktagsImportButton = ({ setSelector }: BlacktagsImportButton) => {
         show={show}
       >
         <Modal
-          title={intl.formatMessage(messages.blacktagImportTitle)}
+          title={intl.formatMessage(messages.blacklistedTagImportTitle)}
           okText="Confirm"
           onOk={onConfirm}
           onCancel={() => setShow(false)}
         >
-          <BlacktagImportForm ref={formRef} setSelector={setSelector} />
+          <BlacklistedTagImportForm ref={formRef} setSelector={setSelector} />
         </Modal>
       </Transition>
 
       <Tooltip
-        content={intl.formatMessage(messages.importBlacktagsTip)}
+        content={intl.formatMessage(messages.importBlacklistedTagsTip)}
         tooltipConfig={{ followCursor: false }}
       >
         <button className="input-action" onClick={onClick} type="button">
@@ -262,11 +269,11 @@ const BlacktagsImportButton = ({ setSelector }: BlacktagsImportButton) => {
   );
 };
 
-type BlacktagImportFormProps = BlacktagsImportButton;
+type BlacklistedTagImportFormProps = BlacklistedTagsImportButton;
 
-const BlacktagImportForm = forwardRef<
+const BlacklistedTagImportForm = forwardRef<
   Partial<HTMLFormElement>,
-  BlacktagImportFormProps
+  BlacklistedTagImportFormProps
 >((props, ref) => {
   const { setSelector } = props;
   const intl = useIntl();
@@ -328,7 +335,7 @@ const BlacktagImportForm = forwardRef<
     <form onSubmit={handleSubmit}>
       <div>
         <label htmlFor="value">
-          {intl.formatMessage(messages.blacktagImportInstructions)}
+          {intl.formatMessage(messages.blacklistedTagImportInstructions)}
         </label>
         <textarea
           id="value"
@@ -414,7 +421,7 @@ const VerifyClearIndicator = <
         show={show}
       >
         <Modal
-          subTitle={intl.formatMessage(messages.clearBlacktagsConfirm)}
+          subTitle={intl.formatMessage(messages.clearBlacklistedTagsConfirm)}
           okText={intl.formatMessage(messages.yes)}
           cancelText={intl.formatMessage(messages.no)}
           onOk={clearValue}
@@ -428,4 +435,4 @@ const VerifyClearIndicator = <
   );
 };
 
-export default BlacktagsSelector;
+export default BlacklistedTagsSelector;

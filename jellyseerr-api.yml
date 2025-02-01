@@ -4243,7 +4243,7 @@ paths:
           name: filter
           schema:
             type: string
-            enum: [all, manual, blacktags]
+            enum: [all, manual, blacklistedTags]
             default: manual
       responses:
         '200':

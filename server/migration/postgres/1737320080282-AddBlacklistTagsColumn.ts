@@ -5,11 +5,13 @@ export class AddBlacklistTagsColumn1737320080282 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "blacklist" ADD blacktags character varying`
+      `ALTER TABLE "blacklist" ADD blacklistedTags character varying`
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ALTER TABLE "blacklist" DROP COLUMN blacktags`);
+    await queryRunner.query(
+      `ALTER TABLE "blacklist" DROP COLUMN blacklistedTags`
+    );
   }
 }

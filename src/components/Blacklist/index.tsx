@@ -1,4 +1,4 @@
-import BlacktagsBadge from '@app/components/BlacktagsBadge';
+import BlacklistedTagsBadge from '@app/components/BlacklistedTagsBadge';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import CachedImage from '@app/components/Common/CachedImage';
@@ -45,14 +45,14 @@ const messages = defineMessages('components.Blacklist', {
   blacklistedby: '{date} by {user}',
   blacklistNotFoundError: '<strong>{title}</strong> is not blacklisted.',
   filterManual: 'Manual',
-  filterBlacktags: 'Blacktags',
+  filterBlacklistedTags: 'Blacklisted Tags',
   showAllBlacklisted: 'Show All Blacklisted Media',
 });
 
 enum Filter {
   ALL = 'all',
   MANUAL = 'manual',
-  BLACKTAGS = 'blacktags',
+  BLACKLISTEDTAGS = 'blacklistedTags',
 }
 
 const isMovie = (movie: MovieDetails | TvDetails): movie is MovieDetails => {
@@ -137,8 +137,8 @@ const Blacklist = () => {
               <option value="manual">
                 {intl.formatMessage(messages.filterManual)}
               </option>
-              <option value="blacktags">
-                {intl.formatMessage(messages.filterBlacktags)}
+              <option value="blacklistedTags">
+                {intl.formatMessage(messages.filterBlacklistedTags)}
               </option>
             </select>
           </div>
@@ -427,9 +427,9 @@ const BlacklistedItem = ({ item, revalidateList }: BlacklistedItemProps) => {
                           </span>
                         </span>
                       </Link>
-                    ) : item.blacktags ? (
+                    ) : item.blacklistedTags ? (
                       <span className="ml-1">
-                        <BlacktagsBadge data={item} />
+                        <BlacklistedTagsBadge data={item} />
                       </span>
                     ) : (
                       <span className="ml-1 truncate text-sm font-semibold">

@@ -1,4 +1,4 @@
-import BlacktagsSelector from '@app/components/BlacktagsSelector';
+import BlacklistedTagsSelector from '@app/components/BlacklistedTagsSelector';
 import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
@@ -36,12 +36,12 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   discoverRegionTip: 'Filter content by regional availability',
   originallanguage: 'Discover Language',
   originallanguageTip: 'Filter content by original language',
-  blacktags: 'Blacklist Content with Tags',
-  blacktagsTip:
-    'Automatically add content with tags to the blacklist using the "Process Blacktags" job',
-  blacktagsLimit: 'Limit Content Blacklisted per Tag',
-  blacktagsLimitTip:
-    'The "Process Blacktags" job will blacklist this many pages into each sort. Larger numbers will create a more accurate blacklist, but use more space.',
+  blacklistedTags: 'Blacklist Content with Tags',
+  blacklistedTagsTip:
+    'Automatically add content with tags to the blacklist using the "Process Blacklisted Tags" job',
+  blacklistedTagsLimit: 'Limit Content Blacklisted per Tag',
+  blacklistedTagsLimitTip:
+    'The "Process Blacklisted Tags" job will blacklist this many pages into each sort. Larger numbers will create a more accurate blacklist, but use more space.',
   streamingRegion: 'Streaming Region',
   streamingRegionTip: 'Show streaming sites by regional availability',
   toastApiKeySuccess: 'New API key generated successfully!',
@@ -88,7 +88,7 @@ const SettingsMain = () => {
         intl.formatMessage(messages.validationApplicationUrlTrailingSlash),
         (value) => !value || !value.endsWith('/')
       ),
-    blacktagsLimit: Yup.number()
+    blacklistedTagsLimit: Yup.number()
       .test(
         'positive',
         'Number must be greater than 0.',
@@ -148,8 +148,8 @@ const SettingsMain = () => {
             discoverRegion: data?.discoverRegion,
             originalLanguage: data?.originalLanguage,
             streamingRegion: data?.streamingRegion || 'US',
-            blacktags: data?.blacktags,
-            blacktagsLimit: data?.blacktagsLimit || 50,
+            blacklistedTags: data?.blacklistedTags,
+            blacklistedTagsLimit: data?.blacklistedTagsLimit || 50,
             partialRequestsEnabled: data?.partialRequestsEnabled,
             enableSpecialEpisodes: data?.enableSpecialEpisodes,
             cacheImages: data?.cacheImages,
@@ -166,8 +166,8 @@ const SettingsMain = () => {
                 discoverRegion: values.discoverRegion,
                 streamingRegion: values.streamingRegion,
                 originalLanguage: values.originalLanguage,
-                blacktags: values.blacktags,
-                blacktagsLimit: values.blacktagsLimit,
+                blacklistedTags: values.blacklistedTags,
+                blacklistedTagsLimit: values.blacklistedTagsLimit,
                 partialRequestsEnabled: values.partialRequestsEnabled,
                 enableSpecialEpisodes: values.enableSpecialEpisodes,
                 cacheImages: values.cacheImages,
@@ -376,41 +376,45 @@ const SettingsMain = () => {
                   </div>
                 </div>
                 <div className="form-row">
-                  <label htmlFor="blacktags" className="text-label">
-                    <span>{intl.formatMessage(messages.blacktags)}</span>
+                  <label htmlFor="blacklistedTags" className="text-label">
+                    <span>{intl.formatMessage(messages.blacklistedTags)}</span>
                     <span className="label-tip">
-                      {intl.formatMessage(messages.blacktagsTip)}
+                      {intl.formatMessage(messages.blacklistedTagsTip)}
                     </span>
                   </label>
                   <div className="form-input-area">
                     <div className="form-input-field relative z-10">
-                      <BlacktagsSelector defaultValue={values.blacktags} />
+                      <BlacklistedTagsSelector
+                        defaultValue={values.blacklistedTags}
+                      />
                     </div>
                   </div>
                 </div>
                 <div className="form-row">
-                  <label htmlFor="blacktagsLimit" className="text-label">
+                  <label htmlFor="blacklistedTagsLimit" className="text-label">
                     <span className="mr-2">
-                      {intl.formatMessage(messages.blacktagsLimit)}
+                      {intl.formatMessage(messages.blacklistedTagsLimit)}
                     </span>
                     <SettingsBadge badgeType="advanced" />
                     <span className="label-tip">
-                      {intl.formatMessage(messages.blacktagsLimitTip)}
+                      {intl.formatMessage(messages.blacklistedTagsLimitTip)}
                     </span>
                   </label>
                   <div className="form-input-area">
                     <Field
-                      id="blacktagsLimit"
-                      name="blacktagsLimit"
+                      id="blacklistedTagsLimit"
+                      name="blacklistedTagsLimit"
                       type="text"
                       inputMode="numeric"
                       className="short"
                       placeholder={50}
                     />
-                    {errors.blacktagsLimit &&
-                      touched.blacktagsLimit &&
-                      typeof errors.blacktagsLimit === 'string' && (
-                        <div className="error">{errors.blacktagsLimit}</div>
+                    {errors.blacklistedTagsLimit &&
+                      touched.blacklistedTagsLimit &&
+                      typeof errors.blacklistedTagsLimit === 'string' && (
+                        <div className="error">
+                          {errors.blacklistedTagsLimit}
+                        </div>
                       )}
                   </div>
                 </div>
