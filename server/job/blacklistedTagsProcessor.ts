@@ -132,7 +132,7 @@ class BlacklistedTagProcessor implements RunnableScanner<StatusBase> {
 
     for (const entry of response.results) {
       const blacklistEntry = await blacklistRepository.findOne({
-        where: { tmdbId: entry.id, mediaType },
+        where: { tmdbId: entry.id },
       });
 
       if (blacklistEntry != null) {
