@@ -64,9 +64,11 @@ These settings filter content shown on the "Discover" home page based on regiona
 
 ## Blacklist Content with Tags and Limit Content Blacklisted per Tag
 
-These settings blacklist any TV shows or movies that have one of the entered tags. Entries are added to the blacklist using the "Process Blacklisted Tags" job. Removing blacklisted tags will remove media from the blacklist if it was blacklisted for that tag. To clear all blacklist entries created with tag, remove all tags in the setting and run the "Process Blacklisted Tags" job.  
-The limit configures the number of pages per tag the job will blacklist, where each page is 20 entires. The job cycles through each of the 16 available discovery sort options and queries the defined number of pages to blacklist media most likely to appear at the top of a sort. Increasing the limit will create a more accurate blacklist, but will use more space.  
-Blacklisted tags are disabled until tags to blacklist are entered. These settings cannot be overriden in user settings.
+These settings blacklist any TV shows or movies that have one of the entered tags. The "Process Blacklisted Tags" job adds entries to the blacklist based on the configured blacklisted tags. If a blacklisted tag is removed, any media blacklisted under that tag will be removed from the blacklist when the "Process Blacklisted Tags" job runs.
+
+The limit setting determines how many pages per tag the job will process, with each page containing 20 entries. The job cycles through all 16 available discovery sort options, querying the defined number of pages to blacklist media that is most likely to appear at the top of each sort. Higher limits will create a more accurate blacklist, but will require more storage.
+
+Blacklisted tags are disabled until at least one tag is entered. These settings cannot be overridden in user settings.
 
 ## Hide Available Media
 
