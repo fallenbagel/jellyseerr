@@ -70,6 +70,35 @@ export const startJobs = (): void => {
       running: () => plexFullScanner.status().running,
       cancelFn: () => plexFullScanner.cancel(),
     });
+
+    scheduledJobs.push({
+      id: 'plex-refresh-token',
+      name: 'Plex Refresh Token',
+      type: 'process',
+      interval: 'fixed',
+      cronSchedule: jobs['plex-refresh-token'].schedule,
+      job: schedule.scheduleJob(jobs['plex-refresh-token'].schedule, () => {
+        logger.info('Starting scheduled job: Plex Refresh Token', {
+          label: 'Jobs',
+        });
+        refreshToken.run();
+      }),
+    });
+
+    // Watchlist Sync
+    scheduledJobs.push({
+      id: 'plex-watchlist-sync',
+      name: 'Plex Watchlist Sync',
+      type: 'process',
+      interval: 'seconds',
+      cronSchedule: jobs['plex-watchlist-sync'].schedule,
+      job: schedule.scheduleJob(jobs['plex-watchlist-sync'].schedule, () => {
+        logger.info('Starting scheduled job: Plex Watchlist Sync', {
+          label: 'Jobs',
+        });
+        watchlistSync.syncWatchlist();
+      }),
+    });
   } else if (
     mediaServerType === MediaServerType.JELLYFIN ||
     mediaServerType === MediaServerType.EMBY
@@ -111,21 +140,6 @@ export const startJobs = (): void => {
       cancelFn: () => jellyfinFullScanner.cancel(),
     });
   }
-
-  // Watchlist Sync
-  scheduledJobs.push({
-    id: 'plex-watchlist-sync',
-    name: 'Plex Watchlist Sync',
-    type: 'process',
-    interval: 'seconds',
-    cronSchedule: jobs['plex-watchlist-sync'].schedule,
-    job: schedule.scheduleJob(jobs['plex-watchlist-sync'].schedule, () => {
-      logger.info('Starting scheduled job: Plex Watchlist Sync', {
-        label: 'Jobs',
-      });
-      watchlistSync.syncWatchlist();
-    }),
-  });
 
   // Run full radarr scan every 24 hours
   scheduledJobs.push({
@@ -220,20 +234,6 @@ export const startJobs = (): void => {
 
       // Clean users avatar image cache
       ImageProxy.clearCache('avatar');
-    }),
-  });
-
-  scheduledJobs.push({
-    id: 'plex-refresh-token',
-    name: 'Plex Refresh Token',
-    type: 'process',
-    interval: 'fixed',
-    cronSchedule: jobs['plex-refresh-token'].schedule,
-    job: schedule.scheduleJob(jobs['plex-refresh-token'].schedule, () => {
-      logger.info('Starting scheduled job: Plex Refresh Token', {
-        label: 'Jobs',
-      });
-      refreshToken.run();
     }),
   });
 
