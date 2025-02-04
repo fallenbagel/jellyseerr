@@ -28,7 +28,7 @@ import useClipboard from 'react-use-clipboard';
 const messages = defineMessages('components.Settings', {
   copyBlacklistedTags: 'Copied blacklisted tags to clipboard.',
   copyBlacklistedTagsTip: 'Copy blacklisted tags configuration',
-  importBlacklistedTagsTip: 'Import blacklisted tags configuration',
+  importBlacklistedTagsTip: 'Import blacklisted tag configuration',
   clearBlacklistedTagsConfirm:
     'Are you sure you want to clear the blacklisted tags?',
   yes: 'Yes',
@@ -36,7 +36,7 @@ const messages = defineMessages('components.Settings', {
   searchKeywords: 'Search keywords…',
   starttyping: 'Starting typing to search.',
   nooptions: 'No results.',
-  blacklistedTagImportTitle: 'Import Blacklist Tag Configuration',
+  blacklistedTagImportTitle: 'Import Blacklisted Tag Configuration',
   blacklistedTagImportInstructions: 'Paste blacklist tag configuration below.',
   valueRequired: 'You must provide a value.',
   noSpecialCharacters:
