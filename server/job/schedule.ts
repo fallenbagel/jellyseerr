@@ -253,6 +253,6 @@ export const startJobs = (): void => {
     running: () => blacklistedTagsProcessor.status().running,
     cancelFn: () => blacklistedTagsProcessor.cancel(),
   });
-  
+
   logger.info('Scheduled jobs loaded', { label: 'Jobs' });
 };
