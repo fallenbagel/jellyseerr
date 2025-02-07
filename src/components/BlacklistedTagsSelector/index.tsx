@@ -1,12 +1,10 @@
 import Modal from '@app/components/Common/Modal';
 import Tooltip from '@app/components/Common/Tooltip';
+import CopyButton from '@app/components/Settings/CopyButton';
 import { encodeURIExtraParams } from '@app/hooks/useDiscover';
 import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
-import {
-  ArrowDownIcon,
-  ClipboardDocumentIcon,
-} from '@heroicons/react/24/solid';
+import { ArrowDownIcon } from '@heroicons/react/24/solid';
 import type { TmdbKeywordSearchResponse } from '@server/api/themoviedb/interfaces';
 import type { Keyword } from '@server/models/common';
 import { useFormikContext } from 'formik';
@@ -22,12 +20,11 @@ import { useIntl } from 'react-intl';
 import type { ClearIndicatorProps, GroupBase, MultiValue } from 'react-select';
 import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
-import { useToasts } from 'react-toast-notifications';
-import useClipboard from 'react-use-clipboard';
 
 const messages = defineMessages('components.Settings', {
   copyBlacklistedTags: 'Copied blacklisted tags to clipboard.',
-  copyBlacklistedTagsTip: 'Copy blacklisted tags configuration',
+  copyBlacklistedTagsTip: 'Copy blacklisted tag configuration',
+  copyBlacklistedTagsEmpty: 'Nothing to copy',
   importBlacklistedTagsTip: 'Import blacklisted tag configuration',
   clearBlacklistedTagsConfirm:
     'Are you sure you want to clear the blacklisted tags?',
@@ -58,6 +55,7 @@ const BlacklistedTagsSelector = ({
 }: BlacklistedTagsSelectorProps) => {
   const { setFieldValue } = useFormikContext();
   const [value, setValue] = useState<string | undefined>(defaultValue);
+  const intl = useIntl();
   const [selectorValue, setSelectorValue] =
     useState<MultiValue<SingleVal> | null>(null);
 
@@ -70,6 +68,8 @@ const BlacklistedTagsSelector = ({
     },
     [setSelectorValue, setValue, setFieldValue]
   );
+
+  const copyDisabled = value === null || value?.length === 0;
 
   return (
     <>
@@ -84,7 +84,17 @@ const BlacklistedTagsSelector = ({
         }}
       />
 
-      <BlacklistedTagsCopyButton value={value ?? ''} />
+      <CopyButton
+        textToCopy={value ?? ''}
+        disabled={copyDisabled}
+        toastMessage={intl.formatMessage(messages.copyBlacklistedTags)}
+        tooltipContent={intl.formatMessage(
+          copyDisabled
+            ? messages.copyBlacklistedTagsEmpty
+            : messages.copyBlacklistedTagsTip
+        )}
+        tooltipConfig={{ followCursor: false }}
+      />
       <BlacklistedTagsImportButton setSelector={update} />
     </>
   );
@@ -170,54 +180,13 @@ const ControlledKeywordSelector = ({
   );
 };
 
-type BlacklistedTagsCopyButtonProps = {
-  value: string;
-};
-
-const BlacklistedTagsCopyButton = ({
-  value,
-}: BlacklistedTagsCopyButtonProps) => {
-  const intl = useIntl();
-  const [isCopied, setCopied] = useClipboard(value, {
-    successDuration: 1000,
-  });
-  const { addToast } = useToasts();
-
-  useEffect(() => {
-    if (isCopied) {
-      addToast(intl.formatMessage(messages.copyBlacklistedTags), {
-        appearance: 'info',
-        autoDismiss: true,
-      });
-    }
-  }, [isCopied, addToast, intl]);
-
-  return (
-    <Tooltip
-      content={intl.formatMessage(messages.copyBlacklistedTagsTip)}
-      tooltipConfig={{ followCursor: false }}
-    >
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          setCopied();
-        }}
-        className="input-action"
-        type="button"
-      >
-        <ClipboardDocumentIcon />
-      </button>
-    </Tooltip>
-  );
-};
-
-type BlacklistedTagsImportButton = {
+type BlacklistedTagsImportButtonProps = {
   setSelector: (value: MultiValue<SingleVal>) => void;
 };
 
 const BlacklistedTagsImportButton = ({
   setSelector,
-}: BlacklistedTagsImportButton) => {
+}: BlacklistedTagsImportButtonProps) => {
   const [show, setShow] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const intl = useIntl();
@@ -269,7 +238,7 @@ const BlacklistedTagsImportButton = ({
   );
 };
 
-type BlacklistedTagImportFormProps = BlacklistedTagsImportButton;
+type BlacklistedTagImportFormProps = BlacklistedTagsImportButtonProps;
 
 const BlacklistedTagImportForm = forwardRef<
   Partial<HTMLFormElement>,

@@ -30,6 +30,7 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   generalsettingsDescription:
     'Configure global and default settings for Jellyseerr.',
   apikey: 'API Key',
+  apikeyCopied: 'Copied API key to clipboard.',
   applicationTitle: 'Application Title',
   applicationurl: 'Application URL',
   discoverRegion: 'Discover Region',
@@ -223,6 +224,9 @@ const SettingsMain = () => {
                         />
                         <CopyButton
                           textToCopy={data?.apiKey ?? ''}
+                          toastMessage={intl.formatMessage(
+                            messages.apikeyCopied
+                          )}
                           key={data?.apiKey}
                         />
                         <button
