@@ -21,7 +21,7 @@ const BlacklistedTagsBadge = ({ data }: BlacklistedTagsBadgeProps) => {
   const intl = useIntl();
 
   useEffect(() => {
-    if (data.blacklistedTags == null) {
+    if (!data.blacklistedTags) {
       return;
     }
 

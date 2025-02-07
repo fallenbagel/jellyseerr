@@ -79,7 +79,7 @@ const BlacklistBlock = ({
       <div className="flex items-center justify-between">
         <div className="mr-6 min-w-0 flex-1 flex-col items-center text-sm leading-5">
           <div className="white mb-1 flex flex-nowrap">
-            {data.user != null ? (
+            {data.user ? (
               <>
                 <Tooltip content={intl.formatMessage(messages.blacklistedby)}>
                   <UserIcon className="mr-1.5 h-5 w-5 min-w-0 flex-shrink-0" />
@@ -98,7 +98,7 @@ const BlacklistBlock = ({
                   </Link>
                 </span>
               </>
-            ) : data.blacklistedTags != null && data.blacklistedTags != '' ? (
+            ) : data.blacklistedTags ? (
               <>
                 <span className="w-40 truncate md:w-auto">
                   {intl.formatMessage(messages.blacklistedby)}:&nbsp;

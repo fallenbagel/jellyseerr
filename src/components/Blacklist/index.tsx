@@ -410,33 +410,32 @@ const BlacklistedItem = ({ item, revalidateList }: BlacklistedItemProps) => {
                       numeric="auto"
                     />
                   ),
-                  user:
-                    item.user != null ? (
-                      <Link href={`/users/${item.user.id}`}>
-                        <span className="group flex items-center truncate">
-                          <CachedImage
-                            type="avatar"
-                            src={item.user.avatar}
-                            alt=""
-                            className="avatar-sm ml-1.5"
-                            width={20}
-                            height={20}
-                            style={{ objectFit: 'cover' }}
-                          />
-                          <span className="ml-1 truncate text-sm font-semibold group-hover:text-white group-hover:underline">
-                            {item.user.displayName}
-                          </span>
+                  user: item.user ? (
+                    <Link href={`/users/${item.user.id}`}>
+                      <span className="group flex items-center truncate">
+                        <CachedImage
+                          type="avatar"
+                          src={item.user.avatar}
+                          alt=""
+                          className="avatar-sm ml-1.5"
+                          width={20}
+                          height={20}
+                          style={{ objectFit: 'cover' }}
+                        />
+                        <span className="ml-1 truncate text-sm font-semibold group-hover:text-white group-hover:underline">
+                          {item.user.displayName}
                         </span>
-                      </Link>
-                    ) : item.blacklistedTags ? (
-                      <span className="ml-1">
-                        <BlacklistedTagsBadge data={item} />
                       </span>
-                    ) : (
-                      <span className="ml-1 truncate text-sm font-semibold">
-                        ???
-                      </span>
-                    ),
+                    </Link>
+                  ) : item.blacklistedTags ? (
+                    <span className="ml-1">
+                      <BlacklistedTagsBadge data={item} />
+                    </span>
+                  ) : (
+                    <span className="ml-1 truncate text-sm font-semibold">
+                      ???
+                    </span>
+                  ),
                 })}
               </span>
             </div>
