@@ -83,7 +83,7 @@ class BlacklistedTagProcessor implements RunnableScanner<StatusBase> {
 
     for (const type of [MediaType.MOVIE, MediaType.TV]) {
       const getDiscover =
-        type == MediaType.MOVIE ? tmdb.getDiscoverMovies : tmdb.getDiscoverTv;
+        type === MediaType.MOVIE ? tmdb.getDiscoverMovies : tmdb.getDiscoverTv;
 
       // Iterate for each tag
       for (const tag of blacklistedTagsArr) {
@@ -111,7 +111,7 @@ class BlacklistedTagProcessor implements RunnableScanner<StatusBase> {
           await new Promise((res) => setTimeout(res, TMDB_API_DELAY_MS));
 
           this.progress++;
-          if (page == 1 && response.total_pages <= queryMax) {
+          if (page === 1 && response.total_pages <= queryMax) {
             // We will finish the tag with less queries than expected, move progress accordingly
             this.progress += queryMax - response.total_pages;
             fixedSortMode = true;
@@ -135,33 +135,31 @@ class BlacklistedTagProcessor implements RunnableScanner<StatusBase> {
         where: { tmdbId: entry.id },
       });
 
-      if (blacklistEntry != null) {
+      if (blacklistEntry) {
         // Don't mark manual blacklists with tags
         // If media wasn't previously blacklisted for this tag, add the tag to the media's blacklist
         if (
-          blacklistEntry.blacklistedTags != null &&
+          blacklistEntry.blacklistedTags &&
           !blacklistEntry.blacklistedTags.includes(`,${keywordId},`)
         ) {
           await blacklistRepository.update(blacklistEntry.id, {
             blacklistedTags: `${blacklistEntry.blacklistedTags}${keywordId},`,
           });
         }
-
-        continue;
-      }
-
-      // Media wasn't previously blacklisted, add it to the blacklist
-      await Blacklist.addToBlacklist(
-        {
-          blacklistRequest: {
-            mediaType,
-            title: 'title' in entry ? entry.title : entry.name,
-            tmdbId: entry.id,
-            blacklistedTags: `,${keywordId},`,
+      } else {
+        // Media wasn't previously blacklisted, add it to the blacklist
+        await Blacklist.addToBlacklist(
+          {
+            blacklistRequest: {
+              mediaType,
+              title: 'title' in entry ? entry.title : entry.name,
+              tmdbId: entry.id,
+              blacklistedTags: `,${keywordId},`,
+            },
           },
-        },
-        em
-      );
+          em
+        );
+      }
     }
   }
 
