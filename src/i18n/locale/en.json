@@ -941,6 +941,8 @@
   "components.Settings.SettingsNetwork.csrfProtectionHoverTip": "Do NOT enable this setting unless you understand what you are doing!",
   "components.Settings.SettingsNetwork.csrfProtectionTip": "Set external API access to read-only (requires HTTPS)",
   "components.Settings.SettingsNetwork.docs": "documentation",
+  "components.Settings.SettingsNetwork.enableForwardAuth": "Enable Proxy Forward Authentication",
+  "components.Settings.SettingsNetwork.enableForwardAuthTip": "Authenticate as the user specified by the X-Forwarded-User header. Only enable when secured behind a trusted proxy.",
   "components.Settings.SettingsNetwork.forceIpv4First": "Force IPv4 Resolution First",
   "components.Settings.SettingsNetwork.forceIpv4FirstTip": "Force Jellyseerr to resolve IPv4 addresses first instead of IPv6",
   "components.Settings.SettingsNetwork.network": "Network",
