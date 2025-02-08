@@ -4,7 +4,13 @@ You can use [forward-auth](https://doc.traefik.io/traefik/middlewares/http/forwa
 
 This works by passing the authenticated user e-mail in `X-Forwarded-User` header by the auth server, therefore enabling single-sign-on (SSO) login.
 
-> The user has to exist, it will not be created automatically.
+:::warning
+The user has to exist, it will not be created automatically.
+:::
+
+:::info
+If the user has no email set, the username will also work
+:::
 
 ## Example with Goauthentik and Traefik
 

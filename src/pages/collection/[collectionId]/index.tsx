@@ -1,5 +1,5 @@
 import CollectionDetails from '@app/components/CollectionDetails';
-import { getRequestHeaders } from '@app/utils/localRequestHelper';
+import { getAuthHeaders } from '@app/utils/localRequestHelper';
 import type { Collection } from '@server/models/Collection';
 import axios from 'axios';
 import type { GetServerSideProps, NextPage } from 'next';
@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps<
       process.env.PORT || 5055
     }/api/v1/collection/${ctx.query.collectionId}`,
     {
-      headers: getRequestHeaders(ctx),
+      headers: getAuthHeaders(ctx),
     }
   );
 

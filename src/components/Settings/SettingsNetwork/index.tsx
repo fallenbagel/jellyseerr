@@ -28,6 +28,9 @@ const messages = defineMessages('components.Settings.SettingsNetwork', {
   trustProxy: 'Enable Proxy Support',
   trustProxyTip:
     'Allow Jellyseerr to correctly register client IP addresses behind a proxy',
+  enableForwardAuth: 'Enable Proxy Forward Authentication',
+  enableForwardAuthTip:
+    'Authenticate as the user specified by the X-Forwarded-User header. Only enable when secured behind a trusted proxy.',
   proxyEnabled: 'HTTP(S) Proxy',
   proxyHostname: 'Proxy Hostname',
   proxyPort: 'Proxy Port',
@@ -86,6 +89,9 @@ const SettingsNetwork = () => {
         <Formik
           initialValues={{
             csrfProtection: data?.csrfProtection,
+            forceIpv4First: data?.forceIpv4First,
+            enableForwardAuth: data?.enableForwardAuth,
+            dnsServers: data?.dnsServers,
             trustProxy: data?.trustProxy,
             proxyEnabled: data?.proxy?.enabled,
             proxyHostname: data?.proxy?.hostname,
@@ -113,6 +119,22 @@ const SettingsNetwork = () => {
                   bypassFilter: values.proxyBypassFilter,
                   bypassLocalAddresses: values.proxyBypassLocalAddresses,
                 },
+                body: JSON.stringify({
+                  csrfProtection: values.csrfProtection,
+                  forceIpv4First: values.forceIpv4First,
+                  trustProxy: values.trustProxy,
+                  enableForwardAuth: values.enableForwardAuth,
+                  proxy: {
+                    enabled: values.proxyEnabled,
+                    hostname: values.proxyHostname,
+                    port: values.proxyPort,
+                    useSsl: values.proxySsl,
+                    user: values.proxyUser,
+                    password: values.proxyPassword,
+                    bypassFilter: values.proxyBypassFilter,
+                    bypassLocalAddresses: values.proxyBypassLocalAddresses,
+                  },
+                }),
               });
               mutate('/api/v1/settings/public');
               mutate('/api/v1/status');
@@ -158,6 +180,30 @@ const SettingsNetwork = () => {
                       name="trustProxy"
                       onChange={() => {
                         setFieldValue('trustProxy', !values.trustProxy);
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="enableForwardAuth" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.enableForwardAuth)}
+                    </span>
+                    <SettingsBadge badgeType="advanced" className="mr-2" />
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.enableForwardAuthTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      type="checkbox"
+                      id="enableForwardAuth"
+                      name="enableForwardAuth"
+                      onChange={() => {
+                        setFieldValue(
+                          'enableForwardAuth',
+                          !values.enableForwardAuth
+                        );
                       }}
                     />
                   </div>
