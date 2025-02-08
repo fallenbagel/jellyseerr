@@ -2,7 +2,7 @@ import type { NextPageContext } from 'next/dist/shared/lib/utils';
 import type { GetServerSidePropsContext, PreviewData } from 'next/types';
 import type { ParsedUrlQuery } from 'querystring';
 
-export const getRequestHeaders = (
+export const getAuthHeaders = (
   ctx: NextPageContext | GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
 ) => {
   return ctx.req && ctx.req.headers

@@ -44,6 +44,12 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   cacheImages: 'Enable Image Caching',
   cacheImagesTip:
     'Cache externally sourced images (requires a significant amount of disk space)',
+  trustProxy: 'Enable Proxy Support',
+  trustProxyTip:
+    'Allow Jellyseerr to correctly register client IP addresses behind a proxy',
+  enableForwardAuth: 'Enable Proxy Forward Authentication',
+  enableForwardAuthTip:
+    'Authenticate as the user specified by the X-Forwarded-User header. Only enable when secured behind a trusted proxy.',
   validationApplicationTitle: 'You must provide an application title',
   validationApplicationUrl: 'You must provide a valid URL',
   validationApplicationUrlTrailingSlash: 'URL must not end in a trailing slash',
@@ -134,6 +140,10 @@ const SettingsMain = () => {
             streamingRegion: data?.streamingRegion || 'US',
             partialRequestsEnabled: data?.partialRequestsEnabled,
             enableSpecialEpisodes: data?.enableSpecialEpisodes,
+            forceIpv4First: data?.forceIpv4First,
+            dnsServers: data?.dnsServers,
+            trustProxy: data?.trustProxy,
+            enableForwardAuth: data?.enableForwardAuth,
             cacheImages: data?.cacheImages,
           }}
           enableReinitialize
@@ -155,6 +165,10 @@ const SettingsMain = () => {
                   originalLanguage: values.originalLanguage,
                   partialRequestsEnabled: values.partialRequestsEnabled,
                   enableSpecialEpisodes: values.enableSpecialEpisodes,
+                  forceIpv4First: values.forceIpv4First,
+                  dnsServers: values.dnsServers,
+                  trustProxy: values.trustProxy,
+                  enableForwardAuth: values.enableForwardAuth,
                   cacheImages: values.cacheImages,
                 }),
               });
@@ -262,6 +276,82 @@ const SettingsMain = () => {
                       typeof errors.applicationUrl === 'string' && (
                         <div className="error">{errors.applicationUrl}</div>
                       )}
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="trustProxy" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.trustProxy)}
+                    </span>
+                    <SettingsBadge badgeType="restartRequired" />
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.trustProxyTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      type="checkbox"
+                      id="trustProxy"
+                      name="trustProxy"
+                      onChange={() => {
+                        setFieldValue('trustProxy', !values.trustProxy);
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="enableForwardAuth" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.enableForwardAuth)}
+                    </span>
+                    <SettingsBadge badgeType="advanced" className="mr-2" />
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.enableForwardAuthTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      type="checkbox"
+                      id="enableForwardAuth"
+                      name="enableForwardAuth"
+                      onChange={() => {
+                        setFieldValue(
+                          'enableForwardAuth',
+                          !values.enableForwardAuth
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="csrfProtection" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.csrfProtection)}
+                    </span>
+                    <SettingsBadge badgeType="advanced" className="mr-2" />
+                    <SettingsBadge badgeType="restartRequired" />
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.csrfProtectionTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Tooltip
+                      content={intl.formatMessage(
+                        messages.csrfProtectionHoverTip
+                      )}
+                    >
+                      <Field
+                        type="checkbox"
+                        id="csrfProtection"
+                        name="csrfProtection"
+                        onChange={() => {
+                          setFieldValue(
+                            'csrfProtection',
+                            !values.csrfProtection
+                          );
+                        }}
+                      />
+                    </Tooltip>
                   </div>
                 </div>
                 <div className="form-row">
