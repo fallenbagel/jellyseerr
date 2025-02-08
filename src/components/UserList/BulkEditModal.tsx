@@ -1,9 +1,10 @@
 import Modal from '@app/components/Common/Modal';
 import PermissionEdit from '@app/components/PermissionEdit';
 import type { User } from '@app/hooks/useUser';
-import { useUser } from '@app/hooks/useUser';
+import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
+import { hasPermission } from '@server/lib/permissions';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -79,7 +80,10 @@ const BulkEditModal = ({
       const { permissions: allPermissionsEqual } = selectedUsers.reduce(
         ({ permissions: aPerms }, { permissions: bPerms }) => {
           return {
-            permissions: aPerms === bPerms ? aPerms : NaN,
+            permissions:
+              aPerms === bPerms || hasPermission(Permission.ADMIN, aPerms)
+                ? aPerms
+                : NaN,
           };
         },
         { permissions: selectedUsers[0].permissions }
