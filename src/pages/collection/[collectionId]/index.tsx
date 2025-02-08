@@ -1,5 +1,5 @@
 import CollectionDetails from '@app/components/CollectionDetails';
-import { getRequestHeaders } from '@app/utils/localRequestHelper';
+import { getAuthHeaders } from '@app/utils/localRequestHelper';
 import type { Collection } from '@server/models/Collection';
 import type { GetServerSideProps, NextPage } from 'next';
 
@@ -19,7 +19,7 @@ export const getServerSideProps: GetServerSideProps<
       ctx.query.collectionId
     }`,
     {
-      headers: getRequestHeaders(ctx),
+      headers: getAuthHeaders(ctx),
     }
   );
   if (!res.ok) throw new Error();
