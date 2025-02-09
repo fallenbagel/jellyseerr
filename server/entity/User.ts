@@ -83,13 +83,13 @@ export class User {
   @Column({ nullable: true })
   public jellyfinUserId?: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   public jellyfinDeviceId?: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   public jellyfinAuthToken?: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   public plexToken?: string;
 
   @Column({ type: 'integer', default: 0 })

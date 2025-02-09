@@ -263,6 +263,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
     // Try to find deviceId that corresponds to jellyfin user, else generate a new one
     let user = await userRepository.findOne({
       where: { jellyfinUsername: body.username },
+      select: { id: true, jellyfinDeviceId: true },
     });
 
     let deviceId = '';
