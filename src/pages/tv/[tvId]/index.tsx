@@ -1,5 +1,5 @@
 import TvDetails from '@app/components/TvDetails';
-import { getAuthHeaders } from '@app/utils/localRequestHelper';
+import { getAuthHeaders } from '@app/utils/serverSidePropsHelpers';
 import type { TvDetails as TvDetailsType } from '@server/models/Tv';
 import axios from 'axios';
 import type { GetServerSideProps, NextPage } from 'next';

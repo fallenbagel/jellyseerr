@@ -1,5 +1,5 @@
 import MovieDetails from '@app/components/MovieDetails';
-import { getAuthHeaders } from '@app/utils/localRequestHelper';
+import { getAuthHeaders } from '@app/utils/serverSidePropsHelpers';
 import type { MovieDetails as MovieDetailsType } from '@server/models/Movie';
 import axios from 'axios';
 import type { GetServerSideProps, NextPage } from 'next';

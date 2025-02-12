@@ -1,5 +1,5 @@
 import CollectionDetails from '@app/components/CollectionDetails';
-import { getAuthHeaders } from '@app/utils/localRequestHelper';
+import { getAuthHeaders } from '@app/utils/serverSidePropsHelpers';
 import type { Collection } from '@server/models/Collection';
 import axios from 'axios';
 import type { GetServerSideProps, NextPage } from 'next';
