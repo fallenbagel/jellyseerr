@@ -49,7 +49,7 @@ export const isAuthenticated = (
   permissions?: Permission | Permission[],
   options?: PermissionCheckOptions
 ): Middleware => {
-  const authMiddleware: Middleware = async (req, res, next) => {
+  const authMiddleware: Middleware = (req, res, next) => {
     if (!req.user || !req.user.hasPermission(permissions ?? 0, options)) {
       res.status(403).json({
         status: 403,
