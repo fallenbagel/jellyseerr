@@ -102,7 +102,7 @@ const messages = defineMessages('components.MovieDetails', {
   watchlistSuccess: '<strong>{title}</strong> added to watchlist successfully!',
   watchlistDeleted:
     '<strong>{title}</strong> Removed from watchlist successfully!',
-  watchlistError: 'Something went wrong try again.',
+  watchlistError: 'Something went wrong. Please try again.',
   removefromwatchlist: 'Remove From Watchlist',
   addtowatchlist: 'Add To Watchlist',
 });

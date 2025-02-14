@@ -51,7 +51,7 @@ const messages = defineMessages('components.TitleCard', {
   watchlistDeleted:
     '<strong>{title}</strong> Removed from watchlist  successfully!',
   watchlistCancel: 'watchlist for <strong>{title}</strong> canceled.',
-  watchlistError: 'Something went wrong try again.',
+  watchlistError: 'Something went wrong. Please try again.',
 });
 
 const TitleCard = ({
