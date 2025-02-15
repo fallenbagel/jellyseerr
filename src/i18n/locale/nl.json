@@ -1392,5 +1392,16 @@
   "i18n.blacklisted": "Geblokkeerd",
   "i18n.removeFromBlacklistSuccess": "<strong>{title}</strong> is succesvol verwijderd van de blokkeerlijst.",
   "i18n.removefromBlacklist": "Verwijderen van blokkeerlijst",
-  "i18n.specials": "Specials"
+  "i18n.specials": "Specials",
+  "components.Settings.SettingsJobsCache.plex-refresh-token": "Plex verversingstoken",
+  "components.Settings.SettingsMain.proxyBypassFilter": "Genegeerde proxy adressen",
+  "components.Settings.SettingsMain.proxyBypassFilterTip": "Gebruik ',' als een scheidingsteken, en '*' als een joker voor subdomeinen",
+  "components.Settings.SettingsMain.proxyBypassLocalAddresses": "Proxy omzeilen voor lokaal adres",
+  "components.Settings.SettingsMain.proxyEnabled": "HTTP(S) Proxy",
+  "components.Settings.SettingsMain.proxyHostname": "Proxy hostnaam",
+  "components.Settings.SettingsMain.proxyPassword": "Proxy wachtwoord",
+  "components.Settings.SettingsMain.proxyPort": "Proxy poort",
+  "components.Settings.SettingsMain.proxySsl": "Gebruik SSL/TLS voor proxy",
+  "components.Settings.SettingsMain.proxyUser": "Proxy gebruikersnaam",
+  "components.Settings.tip": "Tip"
 }
