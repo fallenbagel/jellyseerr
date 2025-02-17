@@ -6,7 +6,7 @@ import { Agent, ProxyAgent, setGlobalDispatcher } from 'undici';
 export default async function createCustomProxyAgent(
   proxySettings: ProxySettings
 ) {
-  const defaultAgent = new Agent();
+  const defaultAgent = new Agent({ keepAliveTimeout: 5000 });
 
   const skipUrl = (url: string) => {
     const hostname = new URL(url).hostname;
@@ -63,6 +63,7 @@ export default async function createCustomProxyAgent(
       interceptors: {
         Client: [noProxyInterceptor],
       },
+      keepAliveTimeout: 5000,
     });
 
     setGlobalDispatcher(proxyAgent);
