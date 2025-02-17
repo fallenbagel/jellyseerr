@@ -190,7 +190,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
     })
   ) {
     mediaLinks.push({
-      text: getAvalaibleMediaServerName(),
+      text: getAvailableMediaServerName(),
       url: plexUrl,
       svg: <PlayIcon />,
     });
@@ -204,7 +204,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
     })
   ) {
     mediaLinks.push({
-      text: getAvalaible4kMediaServerName(),
+      text: getAvailable4kMediaServerName(),
       url: plexUrl4k,
       svg: <PlayIcon />,
     });
@@ -292,7 +292,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
       (provider) => provider.iso_3166_1 === streamingRegion
     )?.flatrate ?? [];
 
-  function getAvalaibleMediaServerName() {
+  function getAvailableMediaServerName() {
     if (settings.currentSettings.mediaServerType === MediaServerType.EMBY) {
       return intl.formatMessage(messages.play, { mediaServerName: 'Emby' });
     }
@@ -304,7 +304,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
     return intl.formatMessage(messages.play, { mediaServerName: 'Jellyfin' });
   }
 
-  function getAvalaible4kMediaServerName() {
+  function getAvailable4kMediaServerName() {
     if (settings.currentSettings.mediaServerType === MediaServerType.EMBY) {
       return intl.formatMessage(messages.play, { mediaServerName: 'Emby' });
     }
