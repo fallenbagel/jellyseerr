@@ -7,7 +7,7 @@
   "badgeTemplate": "<a href=\"#contributors-\"><img alt=\"All Contributors\" src=\"https://img.shields.io/badge/all_contributors-<%= contributors.length %>-orange.svg\"/></a>",
   "contributorsPerLine": 7,
   "projectName": "jellyseerr",
-  "projectOwner": "Fallenbagel",
+  "projectOwner": "fallenbagel",
   "repoType": "github",
   "repoHost": "https://github.com",
   "skipCi": true,
@@ -600,6 +600,15 @@
       "profile": "https://github.com/andrewkolda",
       "contributions": [
         "design"
+      ]
+    },
+    {
+      "login": "ishanjain28",
+      "name": "Ishan Jain",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7921368?v=4",
+      "profile": "https://ishanjain.me",
+      "contributions": [
+        "code"
       ]
     }
   ]
