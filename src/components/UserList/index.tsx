@@ -16,6 +16,7 @@ import type { User } from '@app/hooks/useUser';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
+import { getBasedPath } from '@app/utils/navigationUtil';
 import { Transition } from '@headlessui/react';
 import {
   BarsArrowDownIcon,
@@ -550,7 +551,7 @@ const UserList = () => {
               name="sort"
               onChange={(e) => {
                 setCurrentSort(e.target.value as Sort);
-                router.push(router.pathname);
+                router.push(getBasedPath(router.pathname));
               }}
               value={currentSort}
               className="rounded-r-only"
