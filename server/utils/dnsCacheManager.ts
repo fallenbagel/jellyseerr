@@ -792,7 +792,7 @@ if (typeof global.fetch === 'function') {
         }
 
         if (hostname && error.message?.includes('fetch failed')) {
-          dnsCache.reportNetworkError(hostname, '');
+          dnsCache.reportNetworkError(hostname);
           logger.warn(
             `Reporting network error for ${hostname}: ${error.message}`,
             {
