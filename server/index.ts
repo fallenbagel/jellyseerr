@@ -72,23 +72,26 @@ app
 
     // Load Settings
     const settings = await getSettings().load();
-    restartFlag.initializeSettings(settings.main);
+    restartFlag.initializeSettings(settings);
 
     // Check if we force IPv4 first
-    if (process.env.forceIpv4First === 'true' || settings.main.forceIpv4First) {
+    if (
+      process.env.forceIpv4First === 'true' ||
+      settings.network.forceIpv4First
+    ) {
       dns.setDefaultResultOrder('ipv4first');
       net.setDefaultAutoSelectFamily(false);
     }
 
-    if (settings.main.dnsServers.trim() !== '') {
+    if (settings.network.dnsServers.trim() !== '') {
       dns.setServers(
-        settings.main.dnsServers.split(',').map((server) => server.trim())
+        settings.network.dnsServers.split(',').map((server) => server.trim())
       );
     }
 
     // Register HTTP proxy
-    if (settings.main.proxy.enabled) {
-      await createCustomProxyAgent(settings.main.proxy);
+    if (settings.network.proxy.enabled) {
+      await createCustomProxyAgent(settings.network.proxy);
     }
 
     // Migrate library types
@@ -143,7 +146,7 @@ app
     await DiscoverSlider.bootstrapSliders();
 
     const server = express();
-    if (settings.main.trustProxy) {
+    if (settings.network.trustProxy) {
       server.enable('trust proxy');
     }
     server.use(cookieParser());
@@ -164,7 +167,7 @@ app
         next();
       }
     });
-    if (settings.main.csrfProtection) {
+    if (settings.network.csrfProtection) {
       server.use(
         csurf({
           cookie: {
@@ -194,7 +197,7 @@ app
         cookie: {
           maxAge: 1000 * 60 * 60 * 24 * 30,
           httpOnly: true,
-          sameSite: settings.main.csrfProtection ? 'strict' : 'lax',
+          sameSite: settings.network.csrfProtection ? 'strict' : 'lax',
           secure: 'auto',
         },
         store: new TypeormStore({

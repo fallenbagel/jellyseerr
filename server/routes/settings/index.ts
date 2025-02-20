@@ -78,6 +78,21 @@ settingsRoutes.post('/main', async (req, res) => {
   return res.status(200).json(settings.main);
 });
 
+settingsRoutes.get('/network', (req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.network);
+});
+
+settingsRoutes.post('/network', async (req, res) => {
+  const settings = getSettings();
+
+  settings.network = merge(settings.network, req.body);
+  await settings.save();
+
+  return res.status(200).json(settings.network);
+});
+
 settingsRoutes.post('/main/regenerate', async (req, res, next) => {
   const settings = getSettings();
 

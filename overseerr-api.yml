@@ -164,12 +164,6 @@ components:
         applicationUrl:
           type: string
           example: https://os.example.com
-        trustProxy:
-          type: boolean
-          example: true
-        csrfProtection:
-          type: boolean
-          example: false
         hideAvailable:
           type: boolean
           example: false
@@ -191,12 +185,21 @@ components:
         enableSpecialEpisodes:
           type: boolean
           example: false
+    NetworkSettings:
+      type: object
+      properties:
+        csrfProtection:
+          type: boolean
+          example: false
         forceIpv4First:
           type: boolean
           example: false
         dnsServers:
           type: string
           example: '1.1.1.1'
+        trustProxy:
+          type: boolean
+          example: true
     PlexLibrary:
       type: object
       properties:
@@ -2045,6 +2048,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MainSettings'
+  /settings/network:
+    get:
+      summary: Get network settings
+      description: Retrieves all network settings in a JSON object.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MainSettings'
+    post:
+      summary: Update network settings
+      description: Updates network settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NetworkSettings'
+      responses:
+        '200':
+          description: 'Values were sucessfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkSettings'
   /settings/main/regenerate:
     post:
       summary: Get main settings with newly-generated API key
