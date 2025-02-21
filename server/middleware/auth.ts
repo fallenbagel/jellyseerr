@@ -26,7 +26,7 @@ export const checkUser: Middleware = async (req, _res, next) => {
     req.header('Remote-User')
   ) {
     user = await userRepository.findOne({
-      where: { email: req.header('Remote-User') },
+      where: { id: req.header('Remote-User') },
     });
   } else if (req.session?.userId) {
     user = await userRepository.findOne({
