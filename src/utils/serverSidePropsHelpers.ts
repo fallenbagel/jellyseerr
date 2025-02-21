@@ -10,8 +10,8 @@ export const getAuthHeaders = (
         ...(ctx.req.headers.cookie && {
           cookie: ctx.req.headers.cookie,
         }),
-        ...(ctx.req.headers['x-forwarded-user'] && {
-          'x-forwarded-user': ctx.req.headers['x-forwarded-user'] as string,
+        ...(ctx.req.headers['remote-user'] && {
+          'remote-user': ctx.req.headers['remote-user'] as string,
         }),
       }
     : undefined;

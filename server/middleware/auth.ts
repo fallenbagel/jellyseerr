@@ -23,10 +23,10 @@ export const checkUser: Middleware = async (req, _res, next) => {
     user = await userRepository.findOne({ where: { id: userId } });
   } else if (
     settings.main.enableForwardAuth === true &&
-    req.header('X-Forwarded-User')
+    req.header('Remote-User')
   ) {
     user = await userRepository.findOne({
-      where: { email: req.header('X-Forwarded-User') },
+      where: { email: req.header('Remote-User') },
     });
   } else if (req.session?.userId) {
     user = await userRepository.findOne({
