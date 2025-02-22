@@ -41,6 +41,8 @@ interface DnsCache {
   timestamp: number;
   ttl: number;
   networkErrors?: number;
+  hits: number;
+  misses: number;
 }
 
 interface CacheStats {
@@ -172,6 +174,8 @@ class DnsCacheManager {
                     timestamp: Date.now(),
                     ttl: 60000,
                     networkErrors: 0,
+                    hits: 0,
+                    misses: 0,
                   };
 
                   this.updateCache(hostname, cacheEntry).catch(() => {
@@ -264,6 +268,8 @@ class DnsCacheManager {
         timestamp: Date.now(),
         ttl: 0,
         networkErrors: 0,
+        hits: 0,
+        misses: 0,
       };
     }
 
@@ -300,12 +306,14 @@ class DnsCacheManager {
           };
         }
 
+        cached.hits++;
         this.stats.hits++;
         return cached;
       }
 
       // Soft expiration. Will use stale entry while refreshing
       if (age < this.hardTtlMs) {
+        cached.hits++;
         this.stats.hits++;
 
         // Background refresh
@@ -323,6 +331,7 @@ class DnsCacheManager {
             );
             const family = activeAddress.includes(':') ? 6 : 4;
 
+            const existing = this.cache.get(hostname);
             this.cache.set(hostname, {
               addresses: result.addresses,
               activeAddress,
@@ -330,6 +339,8 @@ class DnsCacheManager {
               timestamp: Date.now(),
               ttl: result.ttl,
               networkErrors: 0,
+              hits: existing?.hits ?? 0,
+              misses: (existing?.misses ?? 0) + 1,
             });
           })
           .catch((error) => {
@@ -342,6 +353,7 @@ class DnsCacheManager {
       }
 
       // Hard expiration to remove stale entry
+      cached.misses++;
       this.cache.delete(hostname);
     }
 
@@ -361,6 +373,8 @@ class DnsCacheManager {
       );
       const family = activeAddress.includes(':') ? 6 : 4;
 
+      const existingMisses = this.cache.get(hostname)?.misses ?? 0;
+
       const dnsCache: DnsCache = {
         addresses: result.addresses,
         activeAddress,
@@ -368,6 +382,8 @@ class DnsCacheManager {
         timestamp: Date.now(),
         ttl: result.ttl,
         networkErrors: 0,
+        hits: 0,
+        misses: existingMisses + 1,
       };
 
       this.cache.set(hostname, dnsCache);
@@ -479,6 +495,8 @@ class DnsCacheManager {
           timestamp: entry.timestamp,
           ttl: entry.ttl,
           networkErrors: 0,
+          hits: entry.hits,
+          misses: entry.misses,
         };
       }
       return entry;
@@ -568,6 +586,8 @@ class DnsCacheManager {
       timestamp: entry.timestamp || Date.now(),
       ttl: entry.ttl || 60000,
       networkErrors: entry.networkErrors || 0,
+      hits: entry.hits || 0,
+      misses: entry.misses || 0,
     };
 
     if (
@@ -603,6 +623,8 @@ class DnsCacheManager {
         timestamp: validatedEntry.timestamp,
         ttl: validatedEntry.ttl,
         networkErrors: 0,
+        hits: 0,
+        misses: 0,
       };
 
       this.cache.set(hostname, mergedEntry);
@@ -726,6 +748,8 @@ class DnsCacheManager {
           timestamp: Date.now(),
           ttl: 60000,
           networkErrors: 0,
+          hits: 0,
+          misses: 0,
         });
       });
     });
@@ -774,6 +798,8 @@ class DnsCacheManager {
       timestamp: Date.now(),
       ttl: 30000,
       networkErrors: 0,
+      hits: 0,
+      misses: 0,
     };
   }
 
@@ -853,6 +879,8 @@ class DnsCacheManager {
         age: number;
         ttl: number;
         networkErrors?: number;
+        hits: number;
+        misses: number;
       }
     > = {};
 
@@ -870,6 +898,8 @@ class DnsCacheManager {
         age,
         ttl,
         networkErrors: data.networkErrors,
+        hits: data.hits,
+        misses: data.misses,
       };
     }
 
