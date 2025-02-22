@@ -54,6 +54,15 @@ const messages: { [messageName: string]: MessageDescriptor } = defineMessages(
     cachekeys: 'Total Keys',
     cacheksize: 'Key Size',
     cachevsize: 'Value Size',
+    dnsCache: 'DNS Cache',
+    dnsCacheDescription:
+      'Jellyseerr caches DNS lookups to optimize performance and avoid making unnecessary API calls.',
+    dnscachename: 'Hostname',
+    dnscacheactiveaddress: 'Active Address',
+    dnscachehits: 'Hits',
+    dnscachemisses: 'Misses',
+    dnscacheage: 'Age',
+    dnscachenetworkerrors: 'Network Errors',
     flushcache: 'Flush Cache',
     unknownJob: 'Unknown Job',
     'plex-recently-added-scan': 'Plex Recently Added Scan',
@@ -173,6 +182,7 @@ const SettingsJobs = () => {
       refreshInterval: 10000,
     }
   );
+  console.log(cacheData);
 
   const [jobModalState, dispatch] = useReducer(jobModalReducer, {
     isOpen: false,
@@ -564,6 +574,59 @@ const SettingsJobs = () => {
                   </Table.TD>
                 </tr>
               ))}
+          </Table.TBody>
+        </Table>
+      </div>
+      <div>
+        <h3 className="heading">{intl.formatMessage(messages.dnsCache)}</h3>
+        <p className="description">
+          {intl.formatMessage(messages.dnsCacheDescription)}
+        </p>
+      </div>
+      <div className="section">
+        <Table>
+          <thead>
+            <tr>
+              <Table.TH>{intl.formatMessage(messages.dnscachename)}</Table.TH>
+              <Table.TH>
+                {intl.formatMessage(messages.dnscacheactiveaddress)}
+              </Table.TH>
+              <Table.TH>{intl.formatMessage(messages.dnscachehits)}</Table.TH>
+              <Table.TH>{intl.formatMessage(messages.dnscachemisses)}</Table.TH>
+              <Table.TH>{intl.formatMessage(messages.dnscacheage)}</Table.TH>
+              <Table.TH>
+                {intl.formatMessage(messages.dnscachenetworkerrors)}
+              </Table.TH>
+            </tr>
+          </thead>
+          <Table.TBody>
+            {Object.entries(cacheData?.dnsCache.entries || {}).map(
+              ([hostname, data]) => (
+                <tr key={`cache-list-${hostname}`}>
+                  <Table.TD>{hostname}</Table.TD>
+                  <Table.TD>{data.activeAddress}</Table.TD>
+                  <Table.TD>
+                    {intl.formatNumber(cacheData?.dnsCache.stats.hits ?? 0)}
+                  </Table.TD>
+                  <Table.TD>
+                    {intl.formatNumber(cacheData?.dnsCache.stats.misses ?? 0)}
+                  </Table.TD>
+                  <Table.TD>
+                    {intl.formatNumber(Math.floor(data.age / 1000))}s
+                  </Table.TD>
+                  <Table.TD>{intl.formatNumber(data.networkErrors)}</Table.TD>
+                  {/* <Table.TD alignText="right">
+                    <Button
+                      buttonType="danger"
+                      onClick={() => flushCache(cache)}
+                    >
+                      <TrashIcon />
+                      <span>{intl.formatMessage(messages.flushcache)}</span>
+                    </Button>
+                  </Table.TD> */}
+                </tr>
+              )
+            )}
           </Table.TBody>
         </Table>
       </div>

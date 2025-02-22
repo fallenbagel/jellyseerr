@@ -2967,6 +2967,62 @@ paths:
                           imageCount:
                             type: number
                             example: 123
+                  dnsCache:
+                    type: object
+                    properties:
+                      stats:
+                        type: object
+                        properties:
+                          size:
+                            type: number
+                            example: 1
+                          maxSize:
+                            type: number
+                            example: 500
+                          hits:
+                            type: number
+                            example: 19
+                          misses:
+                            type: number
+                            example: 1
+                          failures:
+                            type: number
+                            example: 0
+                          ipv4Fallbacks:
+                            type: number
+                            example: 0
+                          hitRate:
+                            type: number
+                            example: 0.95
+                      entries:
+                        type: array
+                        additionalProperties:
+                          type: object
+                          properties:
+                            addresses:
+                              type: object
+                              properties:
+                                ipv4:
+                                  type: number
+                                  example: 1
+                                ipv6:
+                                  type: number
+                                  example: 1
+                            activeAddress:
+                              type: string
+                              example: 127.0.0.1
+                            family:
+                              type: number
+                              example: 4
+                            age:
+                              type: number
+                              example: 10
+                            ttl:
+                              type: number
+                              example: 10
+                            networkErrors:
+                              type: number
+                              example: 0
                   apiCaches:
                     type: array
                     items:
