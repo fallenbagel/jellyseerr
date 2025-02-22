@@ -60,23 +60,8 @@ const filteredMainSettings = (
   return main;
 };
 
-settingsRoutes.get('/dnsCache', async (req, res) => {
-  const stats = dnsCache.getStats();
-  const entries = dnsCache.getCacheEntries();
-
-  res.json({
-    stats,
-    entries,
-  });
-});
-
 settingsRoutes.get('/main', (req, res, next) => {
   const settings = getSettings();
-  const stats = dnsCache.getStats();
-  const entries = dnsCache.getCacheEntries();
-
-  console.log(entries);
-  console.log(stats);
 
   if (!req.user) {
     return next({ status: 400, message: 'User missing from request.' });
@@ -771,11 +756,18 @@ settingsRoutes.get('/cache', async (_req, res) => {
   const tmdbImageCache = await ImageProxy.getImageStats('tmdb');
   const avatarImageCache = await ImageProxy.getImageStats('avatar');
 
+  const stats = dnsCache.getStats();
+  const entries = dnsCache.getCacheEntries();
+
   return res.status(200).json({
     apiCaches,
     imageCache: {
       tmdb: tmdbImageCache,
       avatar: avatarImageCache,
+    },
+    dnsCache: {
+      stats,
+      entries,
     },
   });
 });

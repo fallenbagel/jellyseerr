@@ -3,6 +3,37 @@ import logger from '@server/logger';
 import { LRUCache } from 'lru-cache';
 import dns from 'node:dns';
 
+type LookupCallback = (
+  err: NodeJS.ErrnoException | null,
+  address: string | dns.LookupAddress[] | undefined,
+  family?: number
+) => void;
+
+type LookupFunction = {
+  (hostname: string, callback: LookupCallback): void;
+  (
+    hostname: string,
+    options: dns.LookupOptions,
+    callback: LookupCallback
+  ): void;
+  (
+    hostname: string,
+    options: dns.LookupOneOptions,
+    callback: LookupCallback
+  ): void;
+  (
+    hostname: string,
+    options: dns.LookupAllOptions,
+    callback: LookupCallback
+  ): void;
+  (
+    hostname: string,
+    options: dns.LookupOptions | dns.LookupOneOptions | dns.LookupAllOptions,
+    callback: LookupCallback
+  ): void;
+  __promisify__: typeof dns.lookup.__promisify__;
+} & typeof dns.lookup;
+
 interface DnsCache {
   addresses: { ipv4: string[]; ipv6: string[] };
   activeAddress: string;
@@ -33,6 +64,8 @@ class DnsCacheManager {
   private maxRetries: number;
   private testMode: boolean;
   private forceIpv4InTest: boolean;
+  private originalDnsLookup: typeof dns.lookup;
+  private originalPromisify: any;
 
   constructor(
     maxSize = 500,
@@ -41,6 +74,9 @@ class DnsCacheManager {
     testMode = false,
     forceIpv4InTest = true
   ) {
+    this.originalDnsLookup = dns.lookup;
+    this.originalPromisify = this.originalDnsLookup.__promisify__;
+
     this.cache = new LRUCache<string, DnsCache>({
       max: maxSize,
       ttl: hardTtlMs,
@@ -56,6 +92,160 @@ class DnsCacheManager {
     if (testMode && forceIpv4InTest) {
       dns.setDefaultResultOrder('ipv4first');
     }
+  }
+
+  public initialize(): void {
+    const wrappedLookup = ((
+      hostname: string,
+      options:
+        | number
+        | dns.LookupOneOptions
+        | dns.LookupOptions
+        | dns.LookupAllOptions,
+      callback: LookupCallback
+    ): void => {
+      if (typeof options === 'function') {
+        callback = options;
+        options = {};
+      }
+
+      this.lookup(hostname)
+        .then((result) => {
+          if ((options as dns.LookupOptions).all) {
+            const allAddresses: dns.LookupAddress[] = [];
+
+            result.addresses.ipv4.forEach((addr) => {
+              allAddresses.push({ address: addr, family: 4 });
+            });
+
+            result.addresses.ipv6.forEach((addr) => {
+              allAddresses.push({ address: addr, family: 6 });
+            });
+
+            callback(
+              null,
+              allAddresses.length > 0
+                ? allAddresses
+                : [{ address: result.activeAddress, family: result.family }]
+            );
+          } else {
+            callback(null, result.activeAddress, result.family);
+          }
+        })
+        .catch((error) => {
+          logger.warn(
+            `Cached DNS lookup failed for ${hostname}, falling back to native DNS: ${error.message}`,
+            {
+              label: 'DNSCache',
+            }
+          );
+
+          try {
+            this.originalDnsLookup(
+              hostname,
+              options as any,
+              (err, addr, fam) => {
+                if (!err && addr) {
+                  const cacheEntry = {
+                    addresses: {
+                      ipv4: Array.isArray(addr)
+                        ? addr
+                            .filter((a) => !a.address.includes(':'))
+                            .map((a) => a.address)
+                        : typeof addr === 'string' && !addr.includes(':')
+                        ? [addr]
+                        : [],
+                      ipv6: Array.isArray(addr)
+                        ? addr
+                            .filter((a) => a.address.includes(':'))
+                            .map((a) => a.address)
+                        : typeof addr === 'string' && addr.includes(':')
+                        ? [addr]
+                        : [],
+                    },
+                    activeAddress: Array.isArray(addr)
+                      ? addr[0]?.address || ''
+                      : addr || '',
+                    family: Array.isArray(addr)
+                      ? addr[0]?.family || 4
+                      : fam || 4,
+                    timestamp: Date.now(),
+                    ttl: 60000,
+                    networkErrors: 0,
+                  };
+
+                  this.updateCache(hostname, cacheEntry).catch(() => {
+                    logger.debug(
+                      `Failed to update DNS cache for ${hostname}: ${error.message}`,
+                      {
+                        label: 'DNSCache',
+                      }
+                    );
+                  });
+                }
+                callback(err, addr, fam);
+              }
+            );
+            return;
+          } catch (fallbackError) {
+            logger.error(
+              `Native DNS fallback also failed for ${hostname}: ${fallbackError.message}`,
+              {
+                label: 'DNSCache',
+              }
+            );
+          }
+
+          callback(error, undefined, undefined);
+        });
+    }) as LookupFunction;
+
+    (wrappedLookup as any).__promisify__ = async function (
+      hostname: string,
+      options?:
+        | dns.LookupAllOptions
+        | dns.LookupOneOptions
+        | number
+        | dns.LookupOptions
+    ): Promise<dns.LookupAddress[] | { address: string; family: number }> {
+      try {
+        const result = await this.lookup(hostname);
+
+        if (
+          options &&
+          typeof options === 'object' &&
+          'all' in options &&
+          options.all === true
+        ) {
+          const allAddresses: dns.LookupAddress[] = [];
+
+          result.addresses.ipv4.forEach((addr: string) => {
+            allAddresses.push({ address: addr, family: 4 });
+          });
+
+          result.addresses.ipv6.forEach((addr: string) => {
+            allAddresses.push({ address: addr, family: 6 });
+          });
+
+          return allAddresses.length > 0
+            ? allAddresses
+            : [{ address: result.activeAddress, family: result.family }];
+        }
+
+        return { address: result.activeAddress, family: result.family };
+      } catch (error) {
+        if (this.originalPromisify) {
+          const nativeResult = await this.originalPromisify(
+            hostname,
+            options as any
+          );
+          return nativeResult;
+        }
+        throw error;
+      }
+    };
+
+    dns.lookup = wrappedLookup;
   }
 
   async lookup(
@@ -111,26 +301,12 @@ class DnsCacheManager {
         }
 
         this.stats.hits++;
-        logger.debug(`DNS cache hit for ${hostname}`, {
-          label: 'DNSCache',
-          activeAddress: cached.activeAddress,
-          family: cached.family,
-          age,
-          ttlRemaining,
-        });
         return cached;
       }
 
       // Soft expiration. Will use stale entry while refreshing
       if (age < this.hardTtlMs) {
         this.stats.hits++;
-        logger.debug(`Using stale DNS cache for ${hostname}`, {
-          label: 'DNSCache',
-          address: cached.activeAddress,
-          family: cached.family,
-          age,
-          ttlRemaining,
-        });
 
         // Background refresh
         this.resolveWithTtl(hostname)
@@ -154,17 +330,6 @@ class DnsCacheManager {
               timestamp: Date.now(),
               ttl: result.ttl,
               networkErrors: 0,
-            });
-
-            logger.debug(`DNS cache refreshed for ${hostname}`, {
-              label: 'DNSCache',
-              addresses: {
-                ipv4: result.addresses.ipv4.length,
-                ipv6: result.addresses.ipv6.length,
-              },
-              activeAddress,
-              family,
-              ttl: result.ttl,
             });
           })
           .catch((error) => {
@@ -206,17 +371,6 @@ class DnsCacheManager {
       };
 
       this.cache.set(hostname, dnsCache);
-
-      logger.debug(`DNS cache miss for ${hostname}, cached new result`, {
-        label: 'DNSCache',
-        addresses: {
-          ipv4: result.addresses.ipv4.length,
-          ipv6: result.addresses.ipv6.length,
-        },
-        activeAddress,
-        family,
-        ttl: result.ttl,
-      });
 
       return dnsCache;
     } catch (error) {
@@ -385,10 +539,6 @@ class DnsCacheManager {
       }
 
       const ttlMs = minTtl * 1000;
-
-      logger.debug(
-        `Resolved ${hostname} with TTL: ${minTtl}s, found IPv4: ${addresses.ipv4.length}, IPv6: ${addresses.ipv6.length}`
-      );
 
       return { addresses, ttl: ttlMs };
     } catch (error) {
