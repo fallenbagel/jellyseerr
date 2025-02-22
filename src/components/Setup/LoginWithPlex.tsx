@@ -1,4 +1,4 @@
-import PlexLoginButton from '@app/components/PlexLoginButton';
+import PlexLoginButton from '@app/components/Login/PlexLoginButton';
 import { useUser } from '@app/hooks/useUser';
 import defineMessages from '@app/utils/defineMessages';
 import { useEffect, useState } from 'react';

@@ -1,5 +1,6 @@
 import type { ForwardedRef } from 'react';
 import React from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export type ButtonType =
   | 'default'
@@ -97,7 +98,7 @@ function Button<P extends ElementTypes = 'button'>(
   if (as === 'a') {
     return (
       <a
-        className={buttonStyle.join(' ')}
+        className={twMerge(buttonStyle)}
         {...(props as React.ComponentProps<'a'>)}
         ref={ref as ForwardedRef<HTMLAnchorElement>}
       >
@@ -107,7 +108,7 @@ function Button<P extends ElementTypes = 'button'>(
   } else {
     return (
       <button
-        className={buttonStyle.join(' ')}
+        className={twMerge(buttonStyle)}
         {...(props as React.ComponentProps<'button'>)}
         ref={ref as ForwardedRef<HTMLButtonElement>}
       >

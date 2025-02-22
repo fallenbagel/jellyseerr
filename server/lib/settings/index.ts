@@ -123,6 +123,7 @@ export interface MainSettings {
   };
   hideAvailable: boolean;
   localLogin: boolean;
+  mediaServerLogin: boolean;
   newPlexLogin: boolean;
   discoverRegion: string;
   streamingRegion: string;
@@ -150,6 +151,7 @@ interface FullPublicSettings extends PublicSettings {
   applicationUrl: string;
   hideAvailable: boolean;
   localLogin: boolean;
+  mediaServerLogin: boolean;
   movie4kEnabled: boolean;
   series4kEnabled: boolean;
   discoverRegion: string;
@@ -343,6 +345,7 @@ class Settings {
         },
         hideAvailable: false,
         localLogin: true,
+        mediaServerLogin: true,
         newPlexLogin: true,
         discoverRegion: '',
         streamingRegion: '',
@@ -588,6 +591,8 @@ class Settings {
       applicationUrl: this.data.main.applicationUrl,
       hideAvailable: this.data.main.hideAvailable,
       localLogin: this.data.main.localLogin,
+      mediaServerLogin: this.data.main.mediaServerLogin,
+      jellyfinExternalHost: this.data.jellyfin.externalHostname,
       jellyfinForgotPasswordUrl: this.data.jellyfin.jellyfinForgotPasswordUrl,
       movie4kEnabled: this.data.radarr.some(
         (radarr) => radarr.is4k && radarr.isDefault

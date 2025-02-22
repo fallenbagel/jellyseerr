@@ -74,15 +74,6 @@
     top: env(safe-area-inset-top);
   }
 
-  .plex-button {
-    @apply flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-center text-sm font-medium text-white transition duration-150 ease-in-out disabled:opacity-50;
-    background-color: #cc7b19;
-  }
-
-  .plex-button:hover {
-    background: #f19a30;
-  }
-
   .server-type-button {
     @apply rounded-md border border-gray-500 bg-gray-700 px-4  py-2 text-white transition duration-150 ease-in-out hover:bg-gray-500;
   }
@@ -354,9 +345,8 @@
     @apply relative -ml-px inline-flex items-center border border-gray-500 bg-indigo-600 bg-opacity-80 px-3 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out last:rounded-r-md hover:bg-opacity-100 active:bg-gray-100 active:text-gray-700 sm:px-3.5;
   }
 
-  .button-md svg,
-  button.input-action svg,
-  .plex-button svg {
+  .button-md :where(svg),
+  button.input-action svg {
     @apply ml-2 mr-2 h-5 w-5 first:ml-0 last:mr-0;
   }
 

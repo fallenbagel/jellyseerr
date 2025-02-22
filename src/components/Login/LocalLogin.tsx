@@ -2,10 +2,7 @@ import Button from '@app/components/Common/Button';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import useSettings from '@app/hooks/useSettings';
 import defineMessages from '@app/utils/defineMessages';
-import {
-  ArrowLeftOnRectangleIcon,
-  LifebuoyIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -13,6 +10,7 @@ import { useIntl } from 'react-intl';
 import * as Yup from 'yup';
 
 const messages = defineMessages('components.Login', {
+  loginwithapp: 'Login with {appName}',
   username: 'Username',
   email: 'Email Address',
   password: 'Password',
@@ -53,6 +51,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
         password: '',
       }}
       validationSchema={LoginSchema}
+      validateOnBlur={false}
       onSubmit={async (values) => {
         try {
           const res = await fetch('/api/v1/auth/local', {
@@ -78,19 +77,24 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
           <>
             <Form>
               <div>
-                <label htmlFor="email" className="text-label">
-                  {intl.formatMessage(messages.email) +
-                    ' / ' +
-                    intl.formatMessage(messages.username)}
-                </label>
-                <div className="mt-1 mb-2 sm:col-span-2 sm:mt-0">
+                <h2 className="mb-6 -mt-1 text-center text-lg font-bold text-neutral-200">
+                  {intl.formatMessage(messages.loginwithapp, {
+                    appName: settings.currentSettings.applicationTitle,
+                  })}
+                </h2>
+
+                <div className="mt-1 mb-4">
                   <div className="form-input-field">
                     <Field
                       id="email"
                       name="email"
+                      placeholder={`${intl.formatMessage(
+                        messages.email
+                      )} / ${intl.formatMessage(messages.username)}`}
                       type="text"
                       inputMode="email"
                       data-testid="email"
+                      className="!bg-gray-700/80 placeholder:text-gray-400"
                     />
                   </div>
                   {errors.email &&
@@ -99,25 +103,35 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                       <div className="error">{errors.email}</div>
                     )}
                 </div>
-                <label htmlFor="password" className="text-label">
-                  {intl.formatMessage(messages.password)}
-                </label>
-                <div className="mt-1 mb-2 sm:col-span-2 sm:mt-0">
+                <div className="mt-1 mb-2">
                   <div className="form-input-field">
                     <SensitiveInput
                       as="field"
                       id="password"
                       name="password"
                       type="password"
+                      placeholder={intl.formatMessage(messages.password)}
                       autoComplete="current-password"
                       data-testid="password"
+                      className="!bg-gray-700/80 placeholder:text-gray-400"
                     />
                   </div>
-                  {errors.password &&
-                    touched.password &&
-                    typeof errors.password === 'string' && (
-                      <div className="error">{errors.password}</div>
+                  <div className="flex">
+                    {errors.password &&
+                      touched.password &&
+                      typeof errors.password === 'string' && (
+                        <div className="error">{errors.password}</div>
+                      )}
+                    <div className="flex-grow"></div>
+                    {passwordResetEnabled && (
+                      <Link
+                        href="/resetpassword"
+                        className="pt-2 text-sm text-indigo-500 hover:text-indigo-400"
+                      >
+                        {intl.formatMessage(messages.forgotpassword)}
+                      </Link>
                     )}
+                  </div>
                 </div>
                 {loginError && (
                   <div className="mt-1 mb-2 sm:col-span-2 sm:mt-0">
@@ -125,37 +139,21 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                   </div>
                 )}
               </div>
-              <div className="mt-8 border-t border-gray-700 pt-5">
-                <div className="flex flex-row-reverse justify-between">
-                  <span className="inline-flex rounded-md shadow-sm">
-                    <Button
-                      buttonType="primary"
-                      type="submit"
-                      disabled={isSubmitting || !isValid}
-                      data-testid="local-signin-button"
-                    >
-                      <ArrowLeftOnRectangleIcon />
-                      <span>
-                        {isSubmitting
-                          ? intl.formatMessage(messages.signingin)
-                          : intl.formatMessage(messages.signin)}
-                      </span>
-                    </Button>
-                  </span>
-                  {passwordResetEnabled && (
-                    <span className="inline-flex rounded-md shadow-sm">
-                      <Link href="/resetpassword" passHref legacyBehavior>
-                        <Button as="a" buttonType="ghost">
-                          <LifebuoyIcon />
-                          <span>
-                            {intl.formatMessage(messages.forgotpassword)}
-                          </span>
-                        </Button>
-                      </Link>
-                    </span>
-                  )}
-                </div>
-              </div>
+
+              <Button
+                buttonType="primary"
+                type="submit"
+                disabled={isSubmitting || !isValid}
+                data-testid="local-signin-button"
+                className="mt-2 w-full shadow-sm"
+              >
+                <ArrowLeftOnRectangleIcon />
+                <span>
+                  {isSubmitting
+                    ? intl.formatMessage(messages.signingin)
+                    : intl.formatMessage(messages.signin)}
+                </span>
+              </Button>
             </Form>
           </>
         );

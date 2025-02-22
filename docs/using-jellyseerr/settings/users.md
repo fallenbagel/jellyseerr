@@ -14,6 +14,14 @@ When disabled, your mediaserver OAuth becomes the only sign-in option, and any "
 
 This setting is **enabled** by default.
 
+## Enable Jellyfin/Emby/Plex Sign-In
+
+When enabled, users will be able to sign in to Jellyseerr using their Jellyfin/Emby/Plex credentials, provided they have linked their media server accounts.
+
+When disabled, users will only be able to sign in using their email address. Users without a password set will not be able to sign in to Jellyseerr.
+
+This setting is **enabled** by default.
+
 ## Enable New Jellyfin/Emby/Plex Sign-In
 
 When enabled, users with access to your media server will be able to sign in to Jellyseerr even if they have not yet been imported. Users will be automatically assigned the permissions configured in the [Default Permissions](#default-permissions) setting upon first sign-in.

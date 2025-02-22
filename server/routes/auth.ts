@@ -56,8 +56,9 @@ authRoutes.post('/plex', async (req, res, next) => {
   }
 
   if (
-    settings.main.mediaServerType != MediaServerType.PLEX &&
-    settings.main.mediaServerType != MediaServerType.NOT_CONFIGURED
+    settings.main.mediaServerType != MediaServerType.NOT_CONFIGURED &&
+    (settings.main.mediaServerLogin === false ||
+      settings.main.mediaServerType != MediaServerType.PLEX)
   ) {
     return res.status(500).json({ error: 'Plex login is disabled' });
   }
@@ -231,10 +232,13 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
 
   //Make sure jellyfin login is enabled, but only if jellyfin && Emby is not already configured
   if (
-    settings.main.mediaServerType !== MediaServerType.JELLYFIN &&
-    settings.main.mediaServerType !== MediaServerType.EMBY &&
+    // media server not configured, allow login for setup
     settings.main.mediaServerType != MediaServerType.NOT_CONFIGURED &&
-    settings.jellyfin.ip !== ''
+    (settings.main.mediaServerLogin === false ||
+      // media server is neither jellyfin or emby
+      (settings.main.mediaServerType !== MediaServerType.JELLYFIN &&
+        settings.main.mediaServerType !== MediaServerType.EMBY &&
+        settings.jellyfin.ip !== ''))
   ) {
     return res.status(500).json({ error: 'Jellyfin login is disabled' });
   }
