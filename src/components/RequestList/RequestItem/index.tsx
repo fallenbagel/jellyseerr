@@ -348,6 +348,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
 
   const deleteMediaFile = async () => {
     if (request.media) {
+      // we don't check if the response is ok here because there may be no file to delete
       await fetch(`/api/v1/media/${request.media.id}/file`, {
         method: 'DELETE',
       });

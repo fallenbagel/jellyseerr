@@ -122,15 +122,13 @@ const ManageSlideOver = ({
 
   const deleteMediaFile = async () => {
     if (data.mediaInfo) {
-      const res1 = await fetch(`/api/v1/media/${data.mediaInfo.id}/file`, {
+      // we don't check if the response is ok here because there may be no file to delete
+      await fetch(`/api/v1/media/${data.mediaInfo.id}/file`, {
         method: 'DELETE',
       });
-      if (!res1.ok) throw new Error();
-
-      const res2 = await fetch(`/api/v1/media/${data.mediaInfo.id}`, {
+      await fetch(`/api/v1/media/${data.mediaInfo.id}`, {
         method: 'DELETE',
       });
-      if (!res2.ok) throw new Error();
 
       revalidate();
       onClose();
