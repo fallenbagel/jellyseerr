@@ -313,8 +313,8 @@ class DnsCacheManager {
 
       // Soft expiration. Will use stale entry while refreshing
       if (age < this.hardTtlMs) {
-        cached.hits++;
-        this.stats.hits++;
+        cached.misses++;
+        this.stats.misses++;
 
         // Background refresh
         this.resolveWithTtl(hostname)
@@ -353,11 +353,10 @@ class DnsCacheManager {
       }
 
       // Hard expiration to remove stale entry
-      cached.misses++;
+      this.stats.misses++;
       this.cache.delete(hostname);
     }
 
-    this.stats.misses++;
     try {
       const result = await this.resolveWithTtl(hostname);
 
