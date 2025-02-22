@@ -734,8 +734,11 @@ export class MediaRequest {
       media.mediaType === MediaType.MOVIE &&
       this.status === MediaRequestStatus.DECLINED
     ) {
-      media[this.is4k ? 'status4k' : 'status'] = MediaStatus.UNKNOWN;
-      mediaRepository.save(media);
+      const statusField = this.is4k ? 'status4k' : 'status';
+      await mediaRepository.update(
+        { id: this.media.id },
+        { [statusField]: MediaStatus.UNKNOWN }
+      );
     }
 
     /**
@@ -752,8 +755,11 @@ export class MediaRequest {
       ).length === 0 &&
       media[this.is4k ? 'status4k' : 'status'] === MediaStatus.PENDING
     ) {
-      media[this.is4k ? 'status4k' : 'status'] = MediaStatus.UNKNOWN;
-      mediaRepository.save(media);
+      const statusField = this.is4k ? 'status4k' : 'status';
+      mediaRepository.update(
+        { id: this.media.id },
+        { [statusField]: MediaStatus.UNKNOWN }
+      );
     }
 
     // Approve child seasons if parent is approved
@@ -955,8 +961,10 @@ export class MediaRequest {
           });
 
           const requestRepository = getRepository(MediaRequest);
-          this.status = MediaRequestStatus.APPROVED;
-          await requestRepository.save(this);
+
+          await requestRepository.update(this.id, {
+            status: MediaRequestStatus.APPROVED,
+          });
           return;
         }
 
@@ -986,18 +994,22 @@ export class MediaRequest {
               throw new Error('Media data not found');
             }
 
-            media[this.is4k ? 'externalServiceId4k' : 'externalServiceId'] =
-              radarrMovie.id;
-            media[this.is4k ? 'externalServiceSlug4k' : 'externalServiceSlug'] =
-              radarrMovie.titleSlug;
-            media[this.is4k ? 'serviceId4k' : 'serviceId'] = radarrSettings?.id;
-            await mediaRepository.save(media);
+            const updateFields = {
+              [this.is4k ? 'externalServiceId4k' : 'externalServiceId']:
+                radarrMovie.id,
+              [this.is4k ? 'externalServiceSlug4k' : 'externalServiceSlug']:
+                radarrMovie.titleSlug,
+              [this.is4k ? 'serviceId4k' : 'serviceId']: radarrMovie?.id,
+            };
+
+            await mediaRepository.update({ id: this.media.id }, updateFields);
           })
           .catch(async () => {
             const requestRepository = getRepository(MediaRequest);
 
-            this.status = MediaRequestStatus.FAILED;
-            await requestRepository.save(this);
+            await requestRepository.update(this.id, {
+              status: MediaRequestStatus.FAILED,
+            });
 
             logger.warn(
               'Something went wrong sending movie request to Radarr, marking status as FAILED',
@@ -1113,8 +1125,9 @@ export class MediaRequest {
           });
 
           const requestRepository = getRepository(MediaRequest);
-          this.status = MediaRequestStatus.APPROVED;
-          await requestRepository.save(this);
+          await requestRepository.update(this.id, {
+            status: MediaRequestStatus.APPROVED,
+          });
           return;
         }
 
