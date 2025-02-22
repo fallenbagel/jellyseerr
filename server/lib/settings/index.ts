@@ -143,7 +143,7 @@ export interface NetworkSettings {
   forceIpv4First: boolean;
   trustProxy: boolean;
   proxy: ProxySettings;
-  cacheDns: boolean;
+  dnsCache: boolean;
 }
 
 interface PublicSettings {
@@ -543,7 +543,7 @@ class Settings {
           bypassFilter: '',
           bypassLocalAddresses: true,
         },
-        cacheDns: false,
+        dnsCache: false,
       },
     };
     if (initialSettings) {
