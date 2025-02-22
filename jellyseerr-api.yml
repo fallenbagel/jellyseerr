@@ -3062,6 +3062,21 @@ paths:
       responses:
         '204':
           description: 'Flushed cache'
+  /settings/cache/dns/{dnsEntry}/flush:
+    post:
+      summary: Flush a specific DNS cache entry
+      description: Flushes a specific DNS cache entry
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: dnsEntry
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'Flushed dns cache'
   /settings/logs:
     get:
       summary: Returns logs

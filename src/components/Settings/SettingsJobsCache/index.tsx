@@ -54,16 +54,18 @@ const messages: { [messageName: string]: MessageDescriptor } = defineMessages(
     cachekeys: 'Total Keys',
     cacheksize: 'Key Size',
     cachevsize: 'Value Size',
+    flushcache: 'Flush Cache',
     dnsCache: 'DNS Cache',
     dnsCacheDescription:
       'Jellyseerr caches DNS lookups to optimize performance and avoid making unnecessary API calls.',
+    dnsCacheFlushed: '{hostname} dns cache flushed.',
     dnscachename: 'Hostname',
     dnscacheactiveaddress: 'Active Address',
     dnscachehits: 'Hits',
     dnscachemisses: 'Misses',
     dnscacheage: 'Age',
     dnscachenetworkerrors: 'Network Errors',
-    flushcache: 'Flush Cache',
+    flushdnscache: 'Flush DNS Cache',
     unknownJob: 'Unknown Job',
     'plex-recently-added-scan': 'Plex Recently Added Scan',
     'plex-full-scan': 'Plex Full Library Scan',
@@ -252,6 +254,18 @@ const SettingsJobs = () => {
     cacheRevalidate();
   };
 
+  const flushDnsCache = async (hostname: string) => {
+    const res = await fetch(`/api/v1/settings/cache/dns/${hostname}/flush`, {
+      method: 'POST',
+    });
+    if (!res.ok) throw new Error();
+    addToast(intl.formatMessage(messages.dnscacheflushed, { hostname }), {
+      appearance: 'success',
+      autoDismiss: true,
+    });
+    cacheRevalidate();
+  };
+
   const scheduleJob = async () => {
     const jobScheduleCron = ['0', '0', '*', '*', '*', '*'];
 
@@ -293,6 +307,13 @@ const SettingsJobs = () => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const formatAge = (milliseconds: number): string => {
+    const seconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}m ${remainingSeconds}s`;
   };
 
   return (
@@ -597,6 +618,7 @@ const SettingsJobs = () => {
               <Table.TH>
                 {intl.formatMessage(messages.dnscachenetworkerrors)}
               </Table.TH>
+              <Table.TH></Table.TH>
             </tr>
           </thead>
           <Table.TBody>
@@ -611,19 +633,17 @@ const SettingsJobs = () => {
                   <Table.TD>
                     {intl.formatNumber(cacheData?.dnsCache.stats.misses ?? 0)}
                   </Table.TD>
-                  <Table.TD>
-                    {intl.formatNumber(Math.floor(data.age / 1000))}s
-                  </Table.TD>
+                  <Table.TD>{formatAge(data.age)}</Table.TD>
                   <Table.TD>{intl.formatNumber(data.networkErrors)}</Table.TD>
-                  {/* <Table.TD alignText="right">
+                  <Table.TD alignText="right">
                     <Button
                       buttonType="danger"
-                      onClick={() => flushCache(cache)}
+                      onClick={() => flushDnsCache(hostname)}
                     >
                       <TrashIcon />
-                      <span>{intl.formatMessage(messages.flushcache)}</span>
+                      <span>{intl.formatMessage(messages.flushdnscache)}</span>
                     </Button>
-                  </Table.TD> */}
+                  </Table.TD>
                 </tr>
               )
             )}
