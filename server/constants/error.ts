@@ -7,5 +7,6 @@ export enum ApiErrorCode {
   NoAdminUser = 'NO_ADMIN_USER',
   SyncErrorGroupedFolders = 'SYNC_ERROR_GROUPED_FOLDERS',
   SyncErrorNoLibraries = 'SYNC_ERROR_NO_LIBRARIES',
+  Unauthorized = 'UNAUTHORIZED',
   Unknown = 'UNKNOWN',
 }

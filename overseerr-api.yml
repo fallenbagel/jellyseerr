@@ -4423,6 +4423,104 @@ paths:
       responses:
         '204':
           description: User password updated
+  /user/{userId}/settings/linked-accounts/plex:
+    post:
+      summary: Link the provided Plex account to the current user
+      description: Logs in to Plex with the provided auth token, then links the associated Plex account with the user's account. Users can only link external accounts to their own account.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                authToken:
+                  type: string
+              required:
+                - authToken
+      responses:
+        '204':
+          description: Linking account succeeded
+        '403':
+          description: Invalid credentials
+        '422':
+          description: Account already linked to a user
+    delete:
+      summary: Remove the linked Plex account for a user
+      description: Removes the linked Plex account for a specific user. Requires `MANAGE_USERS` permission if editing other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '204':
+          description: Unlinking account succeeded
+        '400':
+          description: Unlink request invalid
+        '404':
+          description: User does not exist
+  /user/{userId}/settings/linked-accounts/jellyfin:
+    post:
+      summary: Link the provided Jellyfin account to the current user
+      description: Logs in to Jellyfin with the provided credentials, then links the associated Jellyfin account with the user's account. Users can only link external accounts to their own account.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: 'Mr User'
+                password:
+                  type: string
+                  example: 'supersecret'
+      responses:
+        '204':
+          description: Linking account succeeded
+        '403':
+          description: Invalid credentials
+        '422':
+          description: Account already linked to a user
+    delete:
+      summary: Remove the linked Jellyfin account for a user
+      description: Removes the linked Jellyfin account for a specific user. Requires `MANAGE_USERS` permission if editing other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '204':
+          description: Unlinking account succeeded
+        '400':
+          description: Unlink request invalid
+        '404':
+          description: User does not exist
   /user/{userId}/settings/notifications:
     get:
       summary: Get notification settings for a user
