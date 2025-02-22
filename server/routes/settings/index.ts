@@ -758,8 +758,6 @@ settingsRoutes.get('/cache', async (_req, res) => {
 
   const stats = dnsCache.getStats();
   const entries = dnsCache.getCacheEntries();
-  console.log(entries);
-  console.log(stats);
 
   return res.status(200).json({
     apiCaches,
