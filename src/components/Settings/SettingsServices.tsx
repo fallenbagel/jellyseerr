@@ -7,6 +7,7 @@ import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import Modal from '@app/components/Common/Modal';
 import PageTitle from '@app/components/Common/PageTitle';
 import OverrideRuleModal from '@app/components/Settings/OverrideRule/OverrideRuleModal';
+import OverrideRuleTiles from '@app/components/Settings/OverrideRule/OverrideRuleTiles';
 import RadarrModal from '@app/components/Settings/RadarrModal';
 import SonarrModal from '@app/components/Settings/SonarrModal';
 import globalMessages from '@app/i18n/globalMessages';
@@ -14,6 +15,7 @@ import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 import type OverrideRule from '@server/entity/OverrideRule';
+import type { OverrideRuleResultsResponse } from '@server/interfaces/api/overrideRuleInterfaces';
 import type { RadarrSettings, SonarrSettings } from '@server/lib/settings';
 import { Fragment, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -43,6 +45,10 @@ const messages = defineMessages('components.Settings', {
   mediaTypeMovie: 'movie',
   mediaTypeSeries: 'series',
   deleteServer: 'Delete {serverType} Server',
+  overrideRules: 'Override Rules',
+  overrideRulesDescription:
+    'Override rules allow you to specify properties that will be replaced if a request matches the rule.',
+  addrule: 'New Override Rule',
 });
 
 interface ServerInstanceProps {
@@ -199,6 +205,8 @@ const SettingsServices = () => {
     error: sonarrError,
     mutate: revalidateSonarr,
   } = useSWR<SonarrSettings[]>('/api/v1/settings/sonarr');
+  const { data: rules, mutate: revalidate } =
+    useSWR<OverrideRuleResultsResponse>('/api/v1/overrideRule');
   const [editRadarrModal, setEditRadarrModal] = useState<{
     open: boolean;
     radarr: RadarrSettings | null;
@@ -225,11 +233,9 @@ const SettingsServices = () => {
   const [overrideRuleModal, setOverrideRuleModal] = useState<{
     open: boolean;
     rule: OverrideRule | null;
-    testResponse: DVRTestResponse | null;
   }>({
     open: false,
     rule: null,
-    testResponse: null,
   });
 
   const deleteServer = async () => {
@@ -265,21 +271,6 @@ const SettingsServices = () => {
           })}
         </p>
       </div>
-      {overrideRuleModal.open && overrideRuleModal.testResponse && (
-        <OverrideRuleModal
-          rule={overrideRuleModal.rule}
-          onClose={() =>
-            setOverrideRuleModal({
-              open: false,
-              rule: null,
-              testResponse: null,
-            })
-          }
-          testResponse={overrideRuleModal.testResponse}
-          radarrId={editRadarrModal.radarr?.id}
-          sonarrId={editSonarrModal.sonarr?.id}
-        />
-      )}
       {editRadarrModal.open && (
         <RadarrModal
           radarr={editRadarrModal.radarr}
@@ -292,8 +283,6 @@ const SettingsServices = () => {
             mutate('/api/v1/settings/public');
             setEditRadarrModal({ open: false, radarr: null });
           }}
-          overrideRuleModal={overrideRuleModal}
-          setOverrideRuleModal={setOverrideRuleModal}
         />
       )}
       {editSonarrModal.open && (
@@ -308,8 +297,6 @@ const SettingsServices = () => {
             mutate('/api/v1/settings/public');
             setEditSonarrModal({ open: false, sonarr: null });
           }}
-          overrideRuleModal={overrideRuleModal}
-          setOverrideRuleModal={setOverrideRuleModal}
         />
       )}
       <Transition
@@ -507,6 +494,59 @@ const SettingsServices = () => {
           </>
         )}
       </div>
+      <div className="mt-10 mb-6">
+        <h3 className="heading">
+          {intl.formatMessage(messages.overrideRules)}
+        </h3>
+        <p className="description">
+          {intl.formatMessage(messages.overrideRulesDescription, {
+            serverType: 'Sonarr',
+          })}
+        </p>
+      </div>
+      <div className="section">
+        <ul className="grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+          {rules && radarrData && sonarrData && (
+            <OverrideRuleTiles
+              rules={rules}
+              radarrServices={radarrData}
+              sonarrServices={sonarrData}
+              setOverrideRuleModal={setOverrideRuleModal}
+              revalidate={revalidate}
+            />
+          )}
+          <li className="min-h-[8rem] rounded-lg border-2 border-dashed border-gray-400 shadow sm:min-h-[11rem]">
+            <div className="flex h-full w-full items-center justify-center">
+              <Button
+                buttonType="ghost"
+                onClick={() =>
+                  setOverrideRuleModal({
+                    open: true,
+                    rule: null,
+                  })
+                }
+              >
+                <PlusIcon />
+                <span>{intl.formatMessage(messages.addrule)}</span>
+              </Button>
+            </div>
+          </li>
+        </ul>
+      </div>
+      {overrideRuleModal.open && radarrData && sonarrData && (
+        <OverrideRuleModal
+          rule={overrideRuleModal.rule}
+          onClose={() => {
+            setOverrideRuleModal({
+              open: false,
+              rule: null,
+            });
+            revalidate();
+          }}
+          radarrServices={radarrData}
+          sonarrServices={sonarrData}
+        />
+      )}
     </>
   );
 };

@@ -11,7 +11,13 @@ import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import type OverrideRule from '@server/entity/OverrideRule';
+import type {
+  DVRSettings,
+  RadarrSettings,
+  SonarrSettings,
+} from '@server/lib/settings';
 import { Field, Formik } from 'formik';
+import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import Select from 'react-select';
 import { useToasts } from 'react-toast-notifications';
@@ -20,6 +26,9 @@ const messages = defineMessages('components.Settings.OverrideRuleModal', {
   createrule: 'New Override Rule',
   editrule: 'Edit Override Rule',
   create: 'Create rule',
+  service: 'Service',
+  serviceDescription: 'Apply this rule to the selected service.',
+  selectService: 'Select service',
   conditions: 'Conditions',
   conditionsDescription:
     'Specifies conditions before applying parameter changes. Each field must be validated for the rules to be applied (AND operation). A field is considered verified if any of its properties match (OR operation).',
@@ -49,21 +58,88 @@ type OptionType = {
 interface OverrideRuleModalProps {
   rule: OverrideRule | null;
   onClose: () => void;
-  testResponse: DVRTestResponse;
-  radarrId?: number;
-  sonarrId?: number;
+  radarrServices: RadarrSettings[];
+  sonarrServices: SonarrSettings[];
 }
 
 const OverrideRuleModal = ({
   onClose,
   rule,
-  testResponse,
-  radarrId,
-  sonarrId,
+  radarrServices,
+  sonarrServices,
 }: OverrideRuleModalProps) => {
   const intl = useIntl();
   const { addToast } = useToasts();
   const { currentSettings } = useSettings();
+  const [isValidated, setIsValidated] = useState(rule ? true : false);
+  const [isTesting, setIsTesting] = useState(false);
+  const [testResponse, setTestResponse] = useState<DVRTestResponse>({
+    profiles: [],
+    rootFolders: [],
+    tags: [],
+  });
+
+  const getServiceInfos = useCallback(
+    async ({
+      hostname,
+      port,
+      apiKey,
+      baseUrl,
+      useSsl = false,
+    }: {
+      hostname: string;
+      port: number;
+      apiKey: string;
+      baseUrl?: string;
+      useSsl?: boolean;
+    }) => {
+      setIsTesting(true);
+      try {
+        const res = await fetch('/api/v1/settings/sonarr/test', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            hostname,
+            apiKey,
+            port: Number(port),
+            baseUrl,
+            useSsl,
+          }),
+        });
+        if (!res.ok) throw new Error();
+        const data: DVRTestResponse = await res.json();
+
+        setIsValidated(true);
+        setTestResponse(data);
+      } catch (e) {
+        setIsValidated(false);
+      } finally {
+        setIsTesting(false);
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    let service: DVRSettings | null = null;
+    if (rule?.radarrServiceId !== null && rule?.radarrServiceId !== undefined) {
+      service = radarrServices[rule?.radarrServiceId] || null;
+    }
+    if (rule?.sonarrServiceId !== null && rule?.sonarrServiceId !== undefined) {
+      service = sonarrServices[rule?.sonarrServiceId] || null;
+    }
+    if (service) {
+      getServiceInfos(service);
+    }
+  }, [
+    getServiceInfos,
+    radarrServices,
+    rule?.radarrServiceId,
+    rule?.sonarrServiceId,
+    sonarrServices,
+  ]);
 
   return (
     <Transition
@@ -79,6 +155,8 @@ const OverrideRuleModal = ({
     >
       <Formik
         initialValues={{
+          radarrServiceId: rule?.radarrServiceId,
+          sonarrServiceId: rule?.sonarrServiceId,
           users: rule?.users,
           genre: rule?.genre,
           language: rule?.language,
@@ -97,8 +175,8 @@ const OverrideRuleModal = ({
               profileId: Number(values.profileId) || null,
               rootFolder: values.rootFolder || null,
               tags: values.tags || null,
-              radarrServiceId: radarrId,
-              sonarrServiceId: sonarrId,
+              radarrServiceId: values.radarrServiceId,
+              sonarrServiceId: values.sonarrServiceId,
             };
             if (!rule) {
               const res = await fetch('/api/v1/overrideRule', {
@@ -171,6 +249,75 @@ const OverrideRuleModal = ({
             >
               <div className="mb-6">
                 <h3 className="text-lg font-bold leading-8 text-gray-100">
+                  {intl.formatMessage(messages.service)}
+                </h3>
+                <p className="description">
+                  {intl.formatMessage(messages.serviceDescription)}
+                </p>
+                <div className="form-row">
+                  <label htmlFor="service" className="text-label">
+                    {intl.formatMessage(messages.service)}
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field">
+                      <select
+                        id="service"
+                        name="service"
+                        defaultValue={
+                          values.radarrServiceId !== null
+                            ? `radarr-${values.radarrServiceId}`
+                            : `sonarr-${values.sonarrServiceId}`
+                        }
+                        onChange={(e) => {
+                          const id = Number(e.target.value.split('-')[1]);
+                          if (e.target.value.startsWith('radarr-')) {
+                            setFieldValue('radarrServiceId', id);
+                            setFieldValue('sonarrServiceId', null);
+                            if (radarrServices[id]) {
+                              getServiceInfos(radarrServices[id]);
+                            }
+                          } else if (e.target.value.startsWith('sonarr-')) {
+                            setFieldValue('radarrServiceId', null);
+                            setFieldValue('sonarrServiceId', id);
+                            if (sonarrServices[id]) {
+                              getServiceInfos(sonarrServices[id]);
+                            }
+                          } else {
+                            setFieldValue('radarrServiceId', null);
+                            setFieldValue('sonarrServiceId', null);
+                            setIsValidated(false);
+                          }
+                        }}
+                      >
+                        <option value="">
+                          {intl.formatMessage(messages.selectService)}
+                        </option>
+                        {radarrServices.map((radarr) => (
+                          <option
+                            key={`radarr-${radarr.id}`}
+                            value={`radarr-${radarr.id}`}
+                          >
+                            {radarr.name}
+                          </option>
+                        ))}
+                        {sonarrServices.map((sonarr) => (
+                          <option
+                            key={`sonarr-${sonarr.id}`}
+                            value={`sonarr-${sonarr.id}`}
+                          >
+                            {sonarr.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {errors.rootFolder &&
+                      touched.rootFolder &&
+                      typeof errors.rootFolder === 'string' && (
+                        <div className="error">{errors.rootFolder}</div>
+                      )}
+                  </div>
+                </div>
+                <h3 className="text-lg font-bold leading-8 text-gray-100">
                   {intl.formatMessage(messages.conditions)}
                 </h3>
                 <p className="description">
@@ -184,6 +331,7 @@ const OverrideRuleModal = ({
                     <div className="form-input-field">
                       <UserSelector
                         defaultValue={values.users}
+                        isDisabled={!isValidated || isTesting}
                         isMulti
                         onChange={(users) => {
                           setFieldValue(
@@ -207,9 +355,10 @@ const OverrideRuleModal = ({
                   <div className="form-input-area">
                     <div className="form-input-field">
                       <GenreSelector
-                        type={radarrId ? 'movie' : 'tv'}
+                        type={values.radarrServiceId ? 'movie' : 'tv'}
                         defaultValue={values.genre}
                         isMulti
+                        isDisabled={!isValidated || isTesting}
                         onChange={(genres) => {
                           setFieldValue(
                             'genre',
@@ -237,6 +386,7 @@ const OverrideRuleModal = ({
                         setFieldValue={(_key, value) => {
                           setFieldValue('language', value);
                         }}
+                        isDisabled={!isValidated || isTesting}
                       />
                     </div>
                     {errors.language &&
@@ -255,6 +405,7 @@ const OverrideRuleModal = ({
                       <KeywordSelector
                         defaultValue={values.keywords}
                         isMulti
+                        isDisabled={!isValidated || isTesting}
                         onChange={(value) => {
                           setFieldValue(
                             'keywords',
@@ -282,7 +433,12 @@ const OverrideRuleModal = ({
                   </label>
                   <div className="form-input-area">
                     <div className="form-input-field">
-                      <Field as="select" id="rootFolderRule" name="rootFolder">
+                      <Field
+                        as="select"
+                        id="rootFolderRule"
+                        name="rootFolder"
+                        disabled={!isValidated || isTesting}
+                      >
                         <option value="">
                           {intl.formatMessage(messages.selectRootFolder)}
                         </option>
@@ -310,7 +466,12 @@ const OverrideRuleModal = ({
                   </label>
                   <div className="form-input-area">
                     <div className="form-input-field">
-                      <Field as="select" id="profileIdRule" name="profileId">
+                      <Field
+                        as="select"
+                        id="profileIdRule"
+                        name="profileId"
+                        disabled={!isValidated || isTesting}
+                      >
                         <option value="">
                           {intl.formatMessage(messages.selectQualityProfile)}
                         </option>
@@ -343,6 +504,7 @@ const OverrideRuleModal = ({
                         value: tag.id,
                       }))}
                       isMulti
+                      isDisabled={!isValidated || isTesting}
                       placeholder={intl.formatMessage(messages.selecttags)}
                       className="react-select-container"
                       classNamePrefix="react-select"

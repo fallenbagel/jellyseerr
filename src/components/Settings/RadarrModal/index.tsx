@@ -1,24 +1,15 @@
-import Button from '@app/components/Common/Button';
 import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
-import OverrideRuleTile from '@app/components/Settings/OverrideRule/OverrideRuleTile';
-import type {
-  DVRTestResponse,
-  RadarrTestResponse,
-} from '@app/components/Settings/SettingsServices';
+import type { RadarrTestResponse } from '@app/components/Settings/SettingsServices';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
-import { PlusIcon } from '@heroicons/react/24/solid';
-import type OverrideRule from '@server/entity/OverrideRule';
-import type { OverrideRuleResultsResponse } from '@server/interfaces/api/overrideRuleInterfaces';
 import type { RadarrSettings } from '@server/lib/settings';
 import { Field, Formik } from 'formik';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import Select from 'react-select';
 import { useToasts } from 'react-toast-notifications';
-import useSWR from 'swr';
 import * as Yup from 'yup';
 
 type OptionType = {
@@ -79,36 +70,16 @@ const messages = defineMessages('components.Settings.RadarrModal', {
   announced: 'Announced',
   inCinemas: 'In Cinemas',
   released: 'Released',
-  overrideRules: 'Override Rules',
-  addrule: 'New Override Rule',
 });
 
 interface RadarrModalProps {
   radarr: RadarrSettings | null;
   onClose: () => void;
   onSave: () => void;
-  overrideRuleModal: { open: boolean; rule: OverrideRule | null };
-  setOverrideRuleModal: ({
-    open,
-    rule,
-    testResponse,
-  }: {
-    open: boolean;
-    rule: OverrideRule | null;
-    testResponse: DVRTestResponse;
-  }) => void;
 }
 
-const RadarrModal = ({
-  onClose,
-  radarr,
-  onSave,
-  overrideRuleModal,
-  setOverrideRuleModal,
-}: RadarrModalProps) => {
+const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
   const intl = useIntl();
-  const { data: rules, mutate: revalidate } =
-    useSWR<OverrideRuleResultsResponse>('/api/v1/overrideRule');
   const initialLoad = useRef(false);
   const { addToast } = useToasts();
   const [isValidated, setIsValidated] = useState(radarr ? true : false);
@@ -234,10 +205,6 @@ const RadarrModal = ({
       });
     }
   }, [radarr, testConnection]);
-
-  useEffect(() => {
-    revalidate();
-  }, [overrideRuleModal, revalidate]);
 
   return (
     <Transition
@@ -382,7 +349,6 @@ const RadarrModal = ({
                       values.is4k ? messages.edit4kradarr : messages.editradarr
                     )
               }
-              backgroundClickable={!overrideRuleModal.open}
             >
               <div className="mb-6">
                 <div className="form-row">
@@ -773,42 +739,6 @@ const RadarrModal = ({
                   </div>
                 </div>
               </div>
-              {radarr && (
-                <>
-                  <h3 className="mb-4 text-xl font-bold leading-8 text-gray-100">
-                    {intl.formatMessage(messages.overrideRules)}
-                  </h3>
-                  <ul className="grid gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-6 lg:grid-cols-2">
-                    {rules && (
-                      <OverrideRuleTile
-                        rules={rules}
-                        setOverrideRuleModal={setOverrideRuleModal}
-                        testResponse={testResponse}
-                        radarr={radarr}
-                        revalidate={revalidate}
-                      />
-                    )}
-                    <li className="min-h-[8rem] rounded-lg border-2 border-dashed border-gray-400 shadow sm:min-h-[11rem]">
-                      <div className="flex h-full w-full items-center justify-center">
-                        <Button
-                          buttonType="ghost"
-                          onClick={() =>
-                            setOverrideRuleModal({
-                              open: true,
-                              rule: null,
-                              testResponse,
-                            })
-                          }
-                          disabled={!isValidated}
-                        >
-                          <PlusIcon />
-                          <span>{intl.formatMessage(messages.addrule)}</span>
-                        </Button>
-                      </div>
-                    </li>
-                  </ul>
-                </>
-              )}
             </Modal>
           );
         }}

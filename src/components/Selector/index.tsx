@@ -52,18 +52,21 @@ type SingleVal = {
 type BaseSelectorMultiProps = {
   defaultValue?: string;
   isMulti: true;
+  isDisabled?: boolean;
   onChange: (value: MultiValue<SingleVal> | null) => void;
 };
 
 type BaseSelectorSingleProps = {
   defaultValue?: string;
   isMulti?: false;
+  isDisabled?: boolean;
   onChange: (value: SingleValue<SingleVal> | null) => void;
 };
 
 export const CompanySelector = ({
   defaultValue,
   isMulti,
+  isDisabled,
   onChange,
 }: BaseSelectorSingleProps | BaseSelectorMultiProps) => {
   const intl = useIntl();
@@ -117,6 +120,7 @@ export const CompanySelector = ({
       className="react-select-container"
       classNamePrefix="react-select"
       isMulti={isMulti}
+      isDisabled={isDisabled}
       defaultValue={defaultDataValue}
       defaultOptions
       cacheOptions
@@ -143,6 +147,7 @@ type GenreSelectorProps = (BaseSelectorMultiProps | BaseSelectorSingleProps) & {
 export const GenreSelector = ({
   isMulti,
   defaultValue,
+  isDisabled,
   onChange,
   type,
 }: GenreSelectorProps) => {
@@ -203,6 +208,7 @@ export const GenreSelector = ({
       defaultOptions
       cacheOptions
       isMulti={isMulti}
+      isDisabled={isDisabled}
       loadOptions={loadGenreOptions}
       placeholder={intl.formatMessage(messages.searchGenres)}
       onChange={(value) => {
@@ -215,6 +221,7 @@ export const GenreSelector = ({
 
 export const StatusSelector = ({
   isMulti,
+  isDisabled,
   defaultValue,
   onChange,
 }: BaseSelectorMultiProps | BaseSelectorSingleProps) => {
@@ -272,6 +279,7 @@ export const StatusSelector = ({
       defaultValue={isMulti ? defaultDataValue : defaultDataValue?.[0]}
       defaultOptions
       isMulti={isMulti}
+      isDisabled={isDisabled}
       loadOptions={loadStatusOptions}
       placeholder={intl.formatMessage(messages.searchStatus)}
       onChange={(value) => {
@@ -284,6 +292,7 @@ export const StatusSelector = ({
 
 export const KeywordSelector = ({
   isMulti,
+  isDisabled,
   defaultValue,
   onChange,
 }: BaseSelectorMultiProps | BaseSelectorSingleProps) => {
@@ -341,6 +350,7 @@ export const KeywordSelector = ({
       key={`keyword-select-${defaultDataValue}`}
       inputId="data"
       isMulti={isMulti}
+      isDisabled={isDisabled}
       className="react-select-container"
       classNamePrefix="react-select"
       noOptionsMessage={({ inputValue }) =>
@@ -551,6 +561,7 @@ export const WatchProviderSelector = ({
 
 export const UserSelector = ({
   isMulti,
+  isDisabled,
   defaultValue,
   onChange,
 }: BaseSelectorMultiProps | BaseSelectorSingleProps) => {
@@ -613,6 +624,7 @@ export const UserSelector = ({
       defaultOptions
       cacheOptions
       isMulti={isMulti}
+      isDisabled={isDisabled}
       loadOptions={loadUserOptions}
       placeholder={intl.formatMessage(messages.searchUsers)}
       onChange={(value) => {

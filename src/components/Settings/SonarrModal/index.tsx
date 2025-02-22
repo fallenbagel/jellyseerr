@@ -1,17 +1,9 @@
-import Button from '@app/components/Common/Button';
 import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
-import OverrideRuleTile from '@app/components/Settings/OverrideRule/OverrideRuleTile';
-import type {
-  DVRTestResponse,
-  SonarrTestResponse,
-} from '@app/components/Settings/SettingsServices';
+import type { SonarrTestResponse } from '@app/components/Settings/SettingsServices';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
-import { PlusIcon } from '@heroicons/react/24/solid';
-import type OverrideRule from '@server/entity/OverrideRule';
-import type { OverrideRuleResultsResponse } from '@server/interfaces/api/overrideRuleInterfaces';
 import type { SonarrSettings } from '@server/lib/settings';
 import { Field, Formik } from 'formik';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -19,7 +11,6 @@ import { useIntl } from 'react-intl';
 import type { OnChangeValue } from 'react-select';
 import Select from 'react-select';
 import { useToasts } from 'react-toast-notifications';
-import useSWR from 'swr';
 import * as Yup from 'yup';
 
 type OptionType = {
@@ -85,36 +76,16 @@ const messages = defineMessages('components.Settings.SonarrModal', {
   animeTags: 'Anime Tags',
   notagoptions: 'No tags.',
   selecttags: 'Select tags',
-  overrideRules: 'Override Rules',
-  addrule: 'New Override Rule',
 });
 
 interface SonarrModalProps {
   sonarr: SonarrSettings | null;
   onClose: () => void;
   onSave: () => void;
-  overrideRuleModal: { open: boolean; rule: OverrideRule | null };
-  setOverrideRuleModal: ({
-    open,
-    rule,
-    testResponse,
-  }: {
-    open: boolean;
-    rule: OverrideRule | null;
-    testResponse: DVRTestResponse;
-  }) => void;
 }
 
-const SonarrModal = ({
-  onClose,
-  sonarr,
-  onSave,
-  overrideRuleModal,
-  setOverrideRuleModal,
-}: SonarrModalProps) => {
+const SonarrModal = ({ onClose, sonarr, onSave }: SonarrModalProps) => {
   const intl = useIntl();
-  const { data: rules, mutate: revalidate } =
-    useSWR<OverrideRuleResultsResponse>('/api/v1/overrideRule');
   const initialLoad = useRef(false);
   const { addToast } = useToasts();
   const [isValidated, setIsValidated] = useState(sonarr ? true : false);
@@ -243,10 +214,6 @@ const SonarrModal = ({
       });
     }
   }, [sonarr, testConnection]);
-
-  useEffect(() => {
-    revalidate();
-  }, [overrideRuleModal, revalidate]);
 
   return (
     <Transition
@@ -415,7 +382,6 @@ const SonarrModal = ({
                       values.is4k ? messages.edit4ksonarr : messages.editsonarr
                     )
               }
-              backgroundClickable={!overrideRuleModal.open}
             >
               <div className="mb-6">
                 <div className="form-row">
@@ -1070,42 +1036,6 @@ const SonarrModal = ({
                   </div>
                 </div>
               </div>
-              {sonarr && (
-                <>
-                  <h3 className="mb-4 text-xl font-bold leading-8 text-gray-100">
-                    {intl.formatMessage(messages.overrideRules)}
-                  </h3>
-                  <ul className="grid gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-6 lg:grid-cols-2">
-                    {rules && (
-                      <OverrideRuleTile
-                        rules={rules}
-                        setOverrideRuleModal={setOverrideRuleModal}
-                        testResponse={testResponse}
-                        sonarr={sonarr}
-                        revalidate={revalidate}
-                      />
-                    )}
-                    <li className="min-h-[8rem] rounded-lg border-2 border-dashed border-gray-400 shadow sm:min-h-[11rem]">
-                      <div className="flex h-full w-full items-center justify-center">
-                        <Button
-                          buttonType="ghost"
-                          onClick={() =>
-                            setOverrideRuleModal({
-                              open: true,
-                              rule: null,
-                              testResponse,
-                            })
-                          }
-                          disabled={!isValidated}
-                        >
-                          <PlusIcon />
-                          <span>{intl.formatMessage(messages.addrule)}</span>
-                        </Button>
-                      </div>
-                    </li>
-                  </ul>
-                </>
-              )}
             </Modal>
           );
         }}

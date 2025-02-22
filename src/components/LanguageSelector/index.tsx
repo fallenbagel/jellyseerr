@@ -33,6 +33,7 @@ interface LanguageSelectorProps {
   setFieldValue: (property: string, value: string) => void;
   serverValue?: string;
   isUserSettings?: boolean;
+  isDisabled?: boolean;
 }
 
 const LanguageSelector = ({
@@ -40,6 +41,7 @@ const LanguageSelector = ({
   setFieldValue,
   serverValue,
   isUserSettings = false,
+  isDisabled,
 }: LanguageSelectorProps) => {
   const intl = useIntl();
   const { data: languages } = useSWR<Language[]>('/api/v1/languages');
@@ -96,6 +98,7 @@ const LanguageSelector = ({
     <Select<OptionType, true>
       options={options}
       isMulti
+      isDisabled={isDisabled}
       className="react-select-container"
       classNamePrefix="react-select"
       value={
