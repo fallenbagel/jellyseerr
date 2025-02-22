@@ -73,6 +73,8 @@ export interface DNSRecord {
   age: number;
   ttl: number;
   networkErrors: number;
+  hits: number;
+  misses: number;
 }
 
 export interface DNSStats {

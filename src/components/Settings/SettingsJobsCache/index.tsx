@@ -58,7 +58,7 @@ const messages: { [messageName: string]: MessageDescriptor } = defineMessages(
     dnsCache: 'DNS Cache',
     dnsCacheDescription:
       'Jellyseerr caches DNS lookups to optimize performance and avoid making unnecessary API calls.',
-    dnsCacheFlushed: '{hostname} dns cache flushed.',
+    dnscacheflushed: '{hostname} dns cache flushed.',
     dnscachename: 'Hostname',
     dnscacheactiveaddress: 'Active Address',
     dnscachehits: 'Hits',
@@ -259,10 +259,13 @@ const SettingsJobs = () => {
       method: 'POST',
     });
     if (!res.ok) throw new Error();
-    addToast(intl.formatMessage(messages.dnscacheflushed, { hostname }), {
-      appearance: 'success',
-      autoDismiss: true,
-    });
+    addToast(
+      intl.formatMessage(messages.dnscacheflushed, { hostname: hostname }),
+      {
+        appearance: 'success',
+        autoDismiss: true,
+      }
+    );
     cacheRevalidate();
   };
 
@@ -627,12 +630,8 @@ const SettingsJobs = () => {
                 <tr key={`cache-list-${hostname}`}>
                   <Table.TD>{hostname}</Table.TD>
                   <Table.TD>{data.activeAddress}</Table.TD>
-                  <Table.TD>
-                    {intl.formatNumber(cacheData?.dnsCache.stats.hits ?? 0)}
-                  </Table.TD>
-                  <Table.TD>
-                    {intl.formatNumber(cacheData?.dnsCache.stats.misses ?? 0)}
-                  </Table.TD>
+                  <Table.TD>{intl.formatNumber(data.hits)}</Table.TD>
+                  <Table.TD>{intl.formatNumber(data.misses)}</Table.TD>
                   <Table.TD>{formatAge(data.age)}</Table.TD>
                   <Table.TD>{intl.formatNumber(data.networkErrors)}</Table.TD>
                   <Table.TD alignText="right">

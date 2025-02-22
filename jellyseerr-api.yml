@@ -3023,6 +3023,12 @@ paths:
                             networkErrors:
                               type: number
                               example: 0
+                            hits:
+                              type: number
+                              example: 1
+                            misses:
+                              type: number
+                              example: 1
                   apiCaches:
                     type: array
                     items:
