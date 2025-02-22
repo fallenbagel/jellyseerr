@@ -66,6 +66,15 @@ const messages: { [messageName: string]: MessageDescriptor } = defineMessages(
     dnscacheage: 'Age',
     dnscachenetworkerrors: 'Network Errors',
     flushdnscache: 'Flush DNS Cache',
+    dnsCacheGlobalStats: 'Global DNS Cache Stats',
+    dnsCacheGlobalStatsDescription:
+      'These stats are aggregated across all DNS cache entries.',
+    size: 'Size',
+    hits: 'Hits',
+    misses: 'Misses',
+    failures: 'Failures',
+    ipv4Fallbacks: 'IPv4 Fallbacks',
+    hitRate: 'Hit Rate',
     unknownJob: 'Unknown Job',
     'plex-recently-added-scan': 'Plex Recently Added Scan',
     'plex-full-scan': 'Plex Full Library Scan',
@@ -648,6 +657,94 @@ const SettingsJobs = () => {
             )}
           </Table.TBody>
         </Table>
+      </div>
+      <div>
+        <h3 className="heading">
+          {intl.formatMessage(messages.dnsCacheGlobalStats)}
+        </h3>
+        <p className="description">
+          {intl.formatMessage(messages.dnsCacheGlobalStatsDescription)}
+        </p>
+      </div>
+      <div className="section">
+        <Table>
+          <thead>
+            <tr>
+              {Object.entries(cacheData?.dnsCache.stats || {})
+                .filter(([statName]) => statName !== 'maxSize')
+                .map(([statName]) => (
+                  <Table.TH key={`dns-stat-header-${statName}`}>
+                    {messages[statName]
+                      ? intl.formatMessage(messages[statName])
+                      : statName}
+                  </Table.TH>
+                ))}
+            </tr>
+          </thead>
+          <Table.TBody>
+            <tr>
+              {Object.entries(cacheData?.dnsCache.stats || {})
+                .filter(([statName]) => statName !== 'maxSize')
+                .map(([statName, statValue]) => (
+                  <Table.TD key={`dns-stat-${statName}`}>
+                    {statName === 'hitRate'
+                      ? intl.formatNumber(statValue, {
+                          style: 'percent',
+                          maximumFractionDigits: 2,
+                        })
+                      : intl.formatNumber(statValue)}
+                  </Table.TD>
+                ))}
+            </tr>
+          </Table.TBody>
+        </Table>
+        {/* <Table>
+          <thead>
+            <tr>
+              <Table.TH>
+                {intl.formatMessage(messages.dnscacheglobalsize)}
+              </Table.TH>
+              <Table.TH>
+                {intl.formatMessage(messages.dnscacheglobalhits)}
+              </Table.TH>
+              <Table.TH>
+                {intl.formatMessage(messages.dnscacheglobalmisses)}
+              </Table.TH>
+              <Table.TH>
+                {intl.formatMessage(messages.dnscacheglobalhitrate)}
+              </Table.TH>
+              <Table.TH>
+                {intl.formatMessage(messages.dnscacheglobalfailures)}
+              </Table.TH>
+              <Table.TH>
+                {intl.formatMessage(messages.dnscacheglobalipv4fallbacks)}
+              </Table.TH>
+            </tr>
+          </thead>
+          <Table.TBody>
+            {Object.entries(cacheData?.dnsCache.stats || {}).map(
+              ([key, value]) => (
+                <tr>
+                  <Table.TD>{hostname}</Table.TD>
+                  <Table.TD>{data.activeAddress}</Table.TD>
+                  <Table.TD>{intl.formatNumber(data.hits)}</Table.TD>
+                  <Table.TD>{intl.formatNumber(data.misses)}</Table.TD>
+                  <Table.TD>{formatAge(data.age)}</Table.TD>
+                  <Table.TD>{intl.formatNumber(data.networkErrors)}</Table.TD>
+                  <Table.TD alignText="right">
+                    <Button
+                      buttonType="danger"
+                      onClick={() => flushDnsCache(hostname)}
+                    >
+                      <TrashIcon />
+                      <span>{intl.formatMessage(messages.flushdnscache)}</span>
+                    </Button>
+                  </Table.TD>
+                </tr>
+              )
+            )}
+          </Table.TBody>
+        </Table> */}
       </div>
       <div className="break-words">
         <h3 className="heading">{intl.formatMessage(messages.imagecache)}</h3>
