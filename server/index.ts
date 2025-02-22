@@ -76,7 +76,9 @@ app
     restartFlag.initializeSettings(settings);
 
     // Add DNS caching
-    dnsCache.initialize();
+    if (settings.network.cacheDns) {
+      dnsCache.initialize();
+    }
 
     // Register HTTP proxy
     if (settings.network.proxy.enabled) {
