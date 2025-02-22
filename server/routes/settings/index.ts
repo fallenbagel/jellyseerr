@@ -786,6 +786,20 @@ settingsRoutes.post<{ cacheId: AvailableCacheIds }>(
   }
 );
 
+settingsRoutes.post<{ dnsEntry: string }>(
+  '/cache/dns/:dnsEntry/flush',
+  (req, res, next) => {
+    const dnsEntry = req.params.dnsEntry;
+
+    if (dnsCache) {
+      dnsCache.clear(dnsEntry);
+      return res.status(204).send();
+    }
+
+    next({ status: 404, message: 'Cache not found.' });
+  }
+);
+
 settingsRoutes.post(
   '/initialize',
   isAuthenticated(Permission.ADMIN),
