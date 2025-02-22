@@ -313,7 +313,7 @@ class DnsCacheManager {
           .then((result) => {
             const preferredFamily = shouldForceIpv4
               ? 4
-              : getSettings().main.forceIpv4First
+              : getSettings().network.forceIpv4First
               ? 4
               : 6;
 
@@ -351,7 +351,7 @@ class DnsCacheManager {
 
       const preferredFamily = shouldForceIpv4
         ? 4
-        : getSettings().main.forceIpv4First
+        : getSettings().network.forceIpv4First
         ? 4
         : 6;
 
@@ -699,7 +699,8 @@ class DnsCacheManager {
           .filter((a) => a.family === 6)
           .map((a) => a.address);
 
-        const preferIpv4 = this.testMode || getSettings().main.forceIpv4First;
+        const preferIpv4 =
+          this.testMode || getSettings().network.forceIpv4First;
 
         let activeAddress: string;
         let family: number;
@@ -751,7 +752,7 @@ class DnsCacheManager {
       throw new Error('No addresses resolved');
     }
 
-    const preferIpv4 = this.testMode || getSettings().main.forceIpv4First;
+    const preferIpv4 = this.testMode || getSettings().network.forceIpv4First;
     let activeAddress: string;
     let family: number;
 
