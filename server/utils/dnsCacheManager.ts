@@ -895,7 +895,25 @@ class DnsCacheManager {
     };
   }
 
-  clear() {
+  clearHostname(hostname: string): void {
+    if (!hostname || hostname.length === 0) {
+      return;
+    }
+
+    if (this.cache.has(hostname)) {
+      this.cache.delete(hostname);
+      logger.debug(`Cleared DNS cache entry for ${hostname}`, {
+        label: 'DNSCache',
+      });
+    }
+  }
+
+  clear(hostname?: string): void {
+    if (hostname && hostname.length > 0) {
+      this.clearHostname(hostname);
+      return;
+    }
+
     this.cache.clear();
     this.stats.hits = 0;
     this.stats.misses = 0;
