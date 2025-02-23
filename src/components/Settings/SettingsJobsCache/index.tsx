@@ -22,6 +22,7 @@ import type {
 import type { JobId } from '@server/lib/settings';
 import axios from 'axios';
 import cronstrue from 'cronstrue/i18n';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { Fragment, useReducer, useState } from 'react';
 import type { MessageDescriptor } from 'react-intl';
 import { FormattedRelativeTime, useIntl } from 'react-intl';
@@ -322,10 +323,15 @@ const SettingsJobs = () => {
   };
 
   const formatAge = (milliseconds: number): string => {
-    const seconds = Math.floor(milliseconds / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}m ${remainingSeconds}s`;
+    const duration = intervalToDuration({
+      start: 0,
+      end: milliseconds,
+    });
+
+    return formatDuration(duration, {
+      format: ['minutes', 'seconds'],
+      zero: false,
+    });
   };
 
   return (
@@ -698,53 +704,6 @@ const SettingsJobs = () => {
             </tr>
           </Table.TBody>
         </Table>
-        {/* <Table>
-          <thead>
-            <tr>
-              <Table.TH>
-                {intl.formatMessage(messages.dnscacheglobalsize)}
-              </Table.TH>
-              <Table.TH>
-                {intl.formatMessage(messages.dnscacheglobalhits)}
-              </Table.TH>
-              <Table.TH>
-                {intl.formatMessage(messages.dnscacheglobalmisses)}
-              </Table.TH>
-              <Table.TH>
-                {intl.formatMessage(messages.dnscacheglobalhitrate)}
-              </Table.TH>
-              <Table.TH>
-                {intl.formatMessage(messages.dnscacheglobalfailures)}
-              </Table.TH>
-              <Table.TH>
-                {intl.formatMessage(messages.dnscacheglobalipv4fallbacks)}
-              </Table.TH>
-            </tr>
-          </thead>
-          <Table.TBody>
-            {Object.entries(cacheData?.dnsCache.stats || {}).map(
-              ([key, value]) => (
-                <tr>
-                  <Table.TD>{hostname}</Table.TD>
-                  <Table.TD>{data.activeAddress}</Table.TD>
-                  <Table.TD>{intl.formatNumber(data.hits)}</Table.TD>
-                  <Table.TD>{intl.formatNumber(data.misses)}</Table.TD>
-                  <Table.TD>{formatAge(data.age)}</Table.TD>
-                  <Table.TD>{intl.formatNumber(data.networkErrors)}</Table.TD>
-                  <Table.TD alignText="right">
-                    <Button
-                      buttonType="danger"
-                      onClick={() => flushDnsCache(hostname)}
-                    >
-                      <TrashIcon />
-                      <span>{intl.formatMessage(messages.flushdnscache)}</span>
-                    </Button>
-                  </Table.TD>
-                </tr>
-              )
-            )}
-          </Table.TBody>
-        </Table> */}
       </div>
       <div className="break-words">
         <h3 className="heading">{intl.formatMessage(messages.imagecache)}</h3>
