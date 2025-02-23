@@ -194,7 +194,6 @@ const SettingsJobs = () => {
       refreshInterval: 10000,
     }
   );
-  console.log(cacheData);
 
   const [jobModalState, dispatch] = useReducer(jobModalReducer, {
     isOpen: false,
