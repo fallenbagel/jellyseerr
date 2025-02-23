@@ -152,7 +152,7 @@ class DnsCacheManager {
                     },
                     activeAddress: Array.isArray(addr)
                       ? addr[0]?.address || ''
-                      : addr || '',
+                      : addr,
                     family: Array.isArray(addr)
                       ? addr[0]?.family || 4
                       : fam || 4,
