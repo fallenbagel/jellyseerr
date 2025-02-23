@@ -210,7 +210,9 @@ const UserList = () => {
     username: Yup.string().required(
       intl.formatMessage(messages.validationUsername)
     ),
-    email: Yup.string().email(intl.formatMessage(messages.validationEmail)),
+    email: Yup.string()
+      .required()
+      .email(intl.formatMessage(messages.validationEmail)),
     password: Yup.lazy((value) =>
       !value
         ? Yup.string()
@@ -388,6 +390,7 @@ const UserList = () => {
                   <div className="form-row">
                     <label htmlFor="email" className="text-label">
                       {intl.formatMessage(messages.email)}
+                      <span className="label-required">*</span>
                     </label>
                     <div className="form-input-area">
                       <div className="form-input-field">

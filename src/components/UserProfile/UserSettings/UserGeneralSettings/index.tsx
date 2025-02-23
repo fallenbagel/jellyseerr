@@ -100,7 +100,9 @@ const UserGeneralSettings = () => {
 
   const UserGeneralSettingsSchema = Yup.object().shape({
     email:
-      user?.id === 1
+      // email is required for everybody except non-admin jellyfin users
+      user?.id === 1 ||
+      (user?.userType !== UserType.JELLYFIN && user?.userType !== UserType.EMBY)
         ? Yup.string()
             .email(intl.formatMessage(messages.validationemailformat))
             .required(intl.formatMessage(messages.validationemailrequired))
