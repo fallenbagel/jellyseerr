@@ -64,18 +64,10 @@ class DnsCacheManager {
   };
   private hardTtlMs: number;
   private maxRetries: number;
-  private testMode: boolean;
-  private forceIpv4InTest: boolean;
   private originalDnsLookup: typeof dns.lookup;
   private originalPromisify: any;
 
-  constructor(
-    maxSize = 500,
-    hardTtlMs = 300000,
-    maxRetries = 3,
-    testMode = false,
-    forceIpv4InTest = true
-  ) {
+  constructor(maxSize = 500, hardTtlMs = 300000, maxRetries = 3) {
     this.originalDnsLookup = dns.lookup;
     this.originalPromisify = this.originalDnsLookup.__promisify__;
 
@@ -87,13 +79,6 @@ class DnsCacheManager {
     this.lookupAsync = dns.promises.lookup;
     this.resolver = new dns.promises.Resolver();
     this.maxRetries = maxRetries;
-    this.testMode = testMode;
-    this.forceIpv4InTest = forceIpv4InTest;
-
-    // When Cypress testing always prefer IPv4
-    if (testMode && forceIpv4InTest) {
-      dns.setDefaultResultOrder('ipv4first');
-    }
   }
 
   public initialize(): void {
@@ -273,9 +258,8 @@ class DnsCacheManager {
       };
     }
 
-    // Force IPv4 in cypress testing if configured
-    const shouldForceIpv4 =
-      forceIpv4 || (this.testMode && this.forceIpv4InTest);
+    // force ipv4 if configured
+    const shouldForceIpv4 = forceIpv4;
 
     const cached = this.cache.get(hostname);
     if (cached) {
@@ -720,8 +704,7 @@ class DnsCacheManager {
           .filter((a) => a.family === 6)
           .map((a) => a.address);
 
-        const preferIpv4 =
-          this.testMode || getSettings().network.forceIpv4First;
+        const preferIpv4 = getSettings().network.forceIpv4First;
 
         let activeAddress: string;
         let family: number;
@@ -775,7 +758,7 @@ class DnsCacheManager {
       throw new Error('No addresses resolved');
     }
 
-    const preferIpv4 = this.testMode || getSettings().network.forceIpv4First;
+    const preferIpv4 = getSettings().network.forceIpv4First;
     let activeAddress: string;
     let family: number;
 
@@ -950,18 +933,6 @@ class DnsCacheManager {
     this.stats.ipv4Fallbacks = 0;
     logger.debug('DNS cache cleared', { label: 'DNSCache' });
   }
-
-  setTestMode(enabled: boolean) {
-    this.testMode = enabled;
-    if (enabled && this.forceIpv4InTest) {
-      dns.setDefaultResultOrder('ipv4first');
-    }
-
-    logger.debug(`DNS cache test mode ${enabled ? 'enabled' : 'disabled'}`, {
-      label: 'DNSCache',
-      forceIpv4: this.forceIpv4InTest,
-    });
-  }
 }
 
 export const dnsCache = new DnsCacheManager();
@@ -1005,34 +976,4 @@ if (typeof global.fetch === 'function') {
       throw error;
     }
   } as typeof global.fetch;
-}
-
-// Initialize for Cypress testing
-export function initializeDnsCacheForTesting() {
-  dnsCache.clear();
-
-  dnsCache.setTestMode(true);
-
-  const servicesToPrewarm = [
-    'api.themoviedb.org',
-    'metadata.provider.plex.tv',
-    'image.tmdb.org',
-  ];
-
-  Promise.all(
-    servicesToPrewarm.map((hostname) =>
-      dnsCache.lookup(hostname, 0, true).catch((err) => {
-        logger.warn(`Failed to prewarm cache for ${hostname}: ${err.message}`, {
-          label: 'DNSCache',
-        });
-      })
-    )
-  ).then(() => {
-    logger.info('DNS cache prewarmed for testing environment', {
-      label: 'DNSCache',
-      entries: dnsCache.getCacheEntries(),
-    });
-  });
-
-  return dnsCache;
 }
