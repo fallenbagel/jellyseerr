@@ -8,7 +8,7 @@ import RequestModal from '@app/components/RequestModal';
 import ErrorCard from '@app/components/TitleCard/ErrorCard';
 import Placeholder from '@app/components/TitleCard/Placeholder';
 import { useIsTouch } from '@app/hooks/useIsTouch';
-import { Permission, useUser } from '@app/hooks/useUser';
+import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { withProperties } from '@app/utils/typeHelpers';
@@ -373,42 +373,44 @@ const TitleCard = ({
                   : intl.formatMessage(globalMessages.tvshow)}
               </div>
             </div>
-            {showDetail && currentStatus !== MediaStatus.BLACKLISTED && (
-              <div className="flex flex-col gap-1">
-                {toggleWatchlist ? (
-                  <Button
-                    buttonType={'ghost'}
-                    className="z-40"
-                    buttonSize={'sm'}
-                    onClick={onClickWatchlistBtn}
-                  >
-                    <StarIcon className={'h-3 text-amber-300'} />
-                  </Button>
-                ) : (
-                  <Button
-                    className="z-40"
-                    buttonSize={'sm'}
-                    onClick={onClickDeleteWatchlistBtn}
-                  >
-                    <MinusCircleIcon className={'h-3'} />
-                  </Button>
-                )}
-                {showHideButton &&
-                  currentStatus !== MediaStatus.PROCESSING &&
-                  currentStatus !== MediaStatus.AVAILABLE &&
-                  currentStatus !== MediaStatus.PARTIALLY_AVAILABLE &&
-                  currentStatus !== MediaStatus.PENDING && (
+            {showDetail &&
+              currentStatus !== MediaStatus.BLACKLISTED &&
+              user?.userType !== UserType.PLEX && (
+                <div className="flex flex-col gap-1">
+                  {toggleWatchlist ? (
                     <Button
                       buttonType={'ghost'}
                       className="z-40"
                       buttonSize={'sm'}
-                      onClick={() => setShowBlacklistModal(true)}
+                      onClick={onClickWatchlistBtn}
                     >
-                      <EyeSlashIcon className={'h-3'} />
+                      <StarIcon className={'h-3 text-amber-300'} />
+                    </Button>
+                  ) : (
+                    <Button
+                      className="z-40"
+                      buttonSize={'sm'}
+                      onClick={onClickDeleteWatchlistBtn}
+                    >
+                      <MinusCircleIcon className={'h-3'} />
                     </Button>
                   )}
-              </div>
-            )}
+                  {showHideButton &&
+                    currentStatus !== MediaStatus.PROCESSING &&
+                    currentStatus !== MediaStatus.AVAILABLE &&
+                    currentStatus !== MediaStatus.PARTIALLY_AVAILABLE &&
+                    currentStatus !== MediaStatus.PENDING && (
+                      <Button
+                        buttonType={'ghost'}
+                        className="z-40"
+                        buttonSize={'sm'}
+                        onClick={() => setShowBlacklistModal(true)}
+                      >
+                        <EyeSlashIcon className={'h-3'} />
+                      </Button>
+                    )}
+                </div>
+              )}
             {showDetail &&
               showHideButton &&
               currentStatus == MediaStatus.BLACKLISTED && (

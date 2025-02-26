@@ -28,7 +28,7 @@ import Season from '@app/components/TvDetails/Season';
 import useDeepLinks from '@app/hooks/useDeepLinks';
 import useLocale from '@app/hooks/useLocale';
 import useSettings from '@app/hooks/useSettings';
-import { Permission, useUser } from '@app/hooks/useUser';
+import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import Error from '@app/pages/_error';
 import { sortCrewPriority } from '@app/utils/creditHelpers';
@@ -636,42 +636,45 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
                 </Button>
               </Tooltip>
             )}
-          {data?.mediaInfo?.status !== MediaStatus.BLACKLISTED && (
-            <>
-              {toggleWatchlist ? (
-                <Tooltip content={intl.formatMessage(messages.addtowatchlist)}>
-                  <Button
-                    buttonType={'ghost'}
-                    className="z-40 mr-2"
-                    buttonSize={'md'}
-                    onClick={onClickWatchlistBtn}
+          {data?.mediaInfo?.status !== MediaStatus.BLACKLISTED &&
+            user?.userType !== UserType.PLEX && (
+              <>
+                {toggleWatchlist ? (
+                  <Tooltip
+                    content={intl.formatMessage(messages.addtowatchlist)}
                   >
-                    {isUpdating ? (
-                      <Spinner className="h-3" />
-                    ) : (
-                      <StarIcon className={'h-3 text-amber-300'} />
-                    )}
-                  </Button>
-                </Tooltip>
-              ) : (
-                <Tooltip
-                  content={intl.formatMessage(messages.removefromwatchlist)}
-                >
-                  <Button
-                    className="z-40 mr-2"
-                    buttonSize={'md'}
-                    onClick={onClickDeleteWatchlistBtn}
+                    <Button
+                      buttonType={'ghost'}
+                      className="z-40 mr-2"
+                      buttonSize={'md'}
+                      onClick={onClickWatchlistBtn}
+                    >
+                      {isUpdating ? (
+                        <Spinner className="h-3" />
+                      ) : (
+                        <StarIcon className={'h-3 text-amber-300'} />
+                      )}
+                    </Button>
+                  </Tooltip>
+                ) : (
+                  <Tooltip
+                    content={intl.formatMessage(messages.removefromwatchlist)}
                   >
-                    {isUpdating ? (
-                      <Spinner className="h-3" />
-                    ) : (
-                      <MinusCircleIcon className={'h-3'} />
-                    )}
-                  </Button>
-                </Tooltip>
-              )}
-            </>
-          )}
+                    <Button
+                      className="z-40 mr-2"
+                      buttonSize={'md'}
+                      onClick={onClickDeleteWatchlistBtn}
+                    >
+                      {isUpdating ? (
+                        <Spinner className="h-3" />
+                      ) : (
+                        <MinusCircleIcon className={'h-3'} />
+                      )}
+                    </Button>
+                  </Tooltip>
+                )}
+              </>
+            )}
           <PlayButton links={mediaLinks} />
           <RequestButton
             mediaType="tv"
