@@ -97,7 +97,7 @@ When adding new UI text, please try to adhere to the following guidelines:
 
 ## Translation
 
-We use [Weblate](https://jellyseerr.borgcube.de/projects/jellyseerr/jellyseerr-frontend/) for our translations, and your help with localizing Overseerr would be greatly appreciated! If your language is not listed below, please [open a feature request](https://github.com/fallenbagel/jellyseerr/issues/new/choose).
+We use [Weblate](https://jellyseerr.borgcube.de/projects/jellyseerr/jellyseerr-frontend/) for our translations, and your help with localizing Jellyseerr would be greatly appreciated! If your language is not listed below, please [open a feature request](https://github.com/fallenbagel/jellyseerr/issues/new/choose).
 
 <a href="https://jellyseerr.borgcube.de/engage/jellysseerr/"><img src="https://jellyseerr.borgcube.de/widget/jellyseerr/multi-auto.svg" alt="Translation status" /></a>
 

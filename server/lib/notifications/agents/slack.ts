@@ -188,7 +188,7 @@ class SlackAgent
         type: 'actions',
         elements: [
           {
-            action_id: 'open-in-overseerr',
+            action_id: 'open-in-jellyseerr',
             type: 'button',
             url,
             text: {
