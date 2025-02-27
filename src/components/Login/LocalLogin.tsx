@@ -75,7 +75,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
       {({ errors, touched, isSubmitting, isValid }) => {
         return (
           <>
-            <Form>
+            <Form data-form-type="login">
               <div>
                 <h2 className="mb-6 -mt-1 text-center text-lg font-bold text-neutral-200">
                   {intl.formatMessage(messages.loginwithapp, {
@@ -94,6 +94,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                       type="text"
                       inputMode="email"
                       data-testid="email"
+                      data-form-type="username,email"
                       className="!bg-gray-700/80 placeholder:text-gray-400"
                     />
                   </div>
@@ -113,6 +114,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                       placeholder={intl.formatMessage(messages.password)}
                       autoComplete="current-password"
                       data-testid="password"
+                      data-form-type="password"
                       className="!bg-gray-700/80 placeholder:text-gray-400"
                       data-1pignore="false"
                       data-lpignore="false"
