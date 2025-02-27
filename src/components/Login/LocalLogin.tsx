@@ -113,10 +113,10 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                       placeholder={intl.formatMessage(messages.password)}
                       autoComplete="current-password"
                       data-testid="password"
+                      className="!bg-gray-700/80 placeholder:text-gray-400"
                       data-1pignore="false"
                       data-lpignore="false"
                       data-bwignore="false"
-                      className="!bg-gray-700/80 placeholder:text-gray-400"
                     />
                   </div>
                   <div className="flex">
