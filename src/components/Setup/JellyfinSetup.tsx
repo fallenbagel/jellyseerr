@@ -199,6 +199,7 @@ function JellyfinSetup({
                         mediaServerFormatValues
                       )}
                       autoComplete="off"
+                      data-form-type="other"
                       data-1pignore="true"
                       data-lpignore="true"
                       data-bwignore="true"
@@ -287,6 +288,7 @@ function JellyfinSetup({
                   type="text"
                   placeholder={intl.formatMessage(messages.email)}
                   autoComplete="off"
+                  data-form-type="other"
                   data-1pignore="true"
                   data-lpignore="true"
                   data-bwignore="true"
@@ -307,6 +309,7 @@ function JellyfinSetup({
                   type="text"
                   placeholder={intl.formatMessage(messages.username)}
                   autoComplete="off"
+                  data-form-type="other"
                   data-1pignore="true"
                   data-lpignore="true"
                   data-bwignore="true"
@@ -327,6 +330,7 @@ function JellyfinSetup({
                   type="password"
                   placeholder={intl.formatMessage(messages.password)}
                   autoComplete="off"
+                  data-form-type="other"
                   data-1pignore="true"
                   data-lpignore="true"
                   data-bwignore="true"

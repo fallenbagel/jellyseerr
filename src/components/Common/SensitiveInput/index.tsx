@@ -26,6 +26,7 @@ const SensitiveInput = ({ as = 'input', ...props }: SensitiveInputProps) => {
     <>
       <Component
         autoComplete="off"
+        data-form-type="other"
         data-1pignore="true"
         data-lpignore="true"
         data-bwignore="true"

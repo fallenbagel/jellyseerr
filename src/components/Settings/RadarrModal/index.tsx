@@ -383,6 +383,7 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
                         name="name"
                         type="text"
                         autoComplete="off"
+                        data-form-type="other"
                         data-1pignore="true"
                         data-lpignore="true"
                         data-bwignore="true"
