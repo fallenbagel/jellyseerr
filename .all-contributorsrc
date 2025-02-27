@@ -94,7 +94,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/345752?v=4",
       "profile": "https://github.com/jab416171",
       "contributions": [
-        "doc"
+        "doc",
+        "code"
       ]
     },
     {
@@ -617,6 +618,87 @@
       "name": "Michael Thomas",
       "avatar_url": "https://avatars.githubusercontent.com/u/18223295?v=4",
       "profile": "http://michaelt.xyz",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "j0srisk",
+      "name": "Joseph Risk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18372584?v=4",
+      "profile": "http://josephrisk.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Loetwiek",
+      "name": "Loetwiek",
+      "avatar_url": "https://avatars.githubusercontent.com/u/79059734?v=4",
+      "profile": "https://github.com/Loetwiek",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Fuochi",
+      "name": "Fuochi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4720478?v=4",
+      "profile": "https://github.com/Fuochi",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "demrich",
+      "name": "David Emrich",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30092389?v=4",
+      "profile": "https://github.com/demrich",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "maxnatamo",
+      "name": "Max T. Kristiansen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5898152?v=4",
+      "profile": "https://maxtrier.dk",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "DamsDev1",
+      "name": "Damien Fajole",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60252259?v=4",
+      "profile": "https://damsdev.me",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "AhmedNSidd",
+      "name": "Ahmed Siddiqui",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36286128?v=4",
+      "profile": "https://github.com/AhmedNSidd",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "JackW6809",
+      "name": "JackOXI",
+      "avatar_url": "https://avatars.githubusercontent.com/u/53652452?v=4",
+      "profile": "https://github.com/JackW6809",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "StancuFlorin",
+      "name": "Stancu Florin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1199404?v=4",
+      "profile": "http://indicus.ro",
       "contributions": [
         "code"
       ]

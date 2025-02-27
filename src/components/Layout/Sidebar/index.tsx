@@ -1,3 +1,4 @@
+import Badge from '@app/components/Common/Badge';
 import UserWarnings from '@app/components/Layout/UserWarnings';
 import VersionStatus from '@app/components/Layout/VersionStatus';
 import useClickOutside from '@app/hooks/useClickOutside';
@@ -18,7 +19,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Fragment, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
 export const menuMessages = defineMessages('components.Layout.Sidebar', {
@@ -35,6 +36,10 @@ export const menuMessages = defineMessages('components.Layout.Sidebar', {
 interface SidebarProps {
   open?: boolean;
   setClosed: () => void;
+  pendingRequestsCount: number;
+  openIssuesCount: number;
+  revalidateIssueCount: () => void;
+  revalidateRequestsCount: () => void;
 }
 
 interface SidebarLinkProps {
@@ -114,12 +119,34 @@ const SidebarLinks: SidebarLinkProps[] = [
   },
 ];
 
-const Sidebar = ({ open, setClosed }: SidebarProps) => {
+const Sidebar = ({
+  open,
+  setClosed,
+  pendingRequestsCount,
+  openIssuesCount,
+  revalidateIssueCount,
+  revalidateRequestsCount,
+}: SidebarProps) => {
   const navRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const intl = useIntl();
   const { hasPermission } = useUser();
   useClickOutside(navRef, () => setClosed());
+
+  useEffect(() => {
+    if (openIssuesCount) {
+      revalidateIssueCount();
+    }
+
+    if (pendingRequestsCount) {
+      revalidateRequestsCount();
+    }
+  }, [
+    revalidateIssueCount,
+    revalidateRequestsCount,
+    pendingRequestsCount,
+    openIssuesCount,
+  ]);
 
   return (
     <>
@@ -253,18 +280,48 @@ const Sidebar = ({ open, setClosed }: SidebarProps) => {
                       href={sidebarLink.href}
                       as={sidebarLink.as}
                       className={`group flex items-center rounded-md px-2 py-2 text-lg font-medium leading-6 text-white transition duration-150 ease-in-out focus:outline-none
-                            ${
-                              router.pathname.match(sidebarLink.activeRegExp)
-                                ? 'bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500'
-                                : 'hover:bg-gray-700 focus:bg-gray-700'
-                            }
-                          `}
+                              ${
+                                router.pathname.match(sidebarLink.activeRegExp)
+                                  ? 'bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500'
+                                  : 'hover:bg-gray-700 focus:bg-gray-700'
+                              }
+                            `}
                       data-testid={sidebarLink.dataTestId}
                     >
                       {sidebarLink.svgIcon}
                       {intl.formatMessage(
                         menuMessages[sidebarLink.messagesKey]
                       )}
+                      {sidebarLink.messagesKey === 'requests' &&
+                        pendingRequestsCount > 0 &&
+                        hasPermission(Permission.MANAGE_REQUESTS) && (
+                          <div className="ml-auto flex">
+                            <Badge
+                              className={`rounded-md bg-gradient-to-br ${
+                                router.pathname.match(sidebarLink.activeRegExp)
+                                  ? 'border-indigo-600 from-indigo-700 to-purple-700'
+                                  : 'border-indigo-500 from-indigo-600 to-purple-600'
+                              }`}
+                            >
+                              {pendingRequestsCount}
+                            </Badge>
+                          </div>
+                        )}
+                      {sidebarLink.messagesKey === 'issues' &&
+                        openIssuesCount > 0 &&
+                        hasPermission(Permission.MANAGE_ISSUES) && (
+                          <div className="ml-auto flex">
+                            <Badge
+                              className={`rounded-md bg-gradient-to-br ${
+                                router.pathname.match(sidebarLink.activeRegExp)
+                                  ? 'border-indigo-600 from-indigo-700 to-purple-700'
+                                  : 'border-indigo-500 from-indigo-600 to-purple-600'
+                              }`}
+                            >
+                              {openIssuesCount}
+                            </Badge>
+                          </div>
+                        )}
                     </Link>
                   );
                 })}

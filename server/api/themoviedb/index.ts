@@ -259,6 +259,7 @@ class TheMovieDb extends ExternalAPI {
           language,
           append_to_response:
             'credits,external_ids,videos,keywords,release_dates,watch/providers',
+          include_video_language: language + ', en',
         },
         43200
       );
@@ -283,6 +284,7 @@ class TheMovieDb extends ExternalAPI {
           language,
           append_to_response:
             'aggregate_credits,credits,external_ids,keywords,videos,content_ratings,watch/providers',
+          include_video_language: language + ', en',
         },
         43200
       );

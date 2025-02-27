@@ -399,6 +399,10 @@ const UserList = () => {
                           name="email"
                           type="text"
                           inputMode="email"
+                          autoComplete="off"
+                          data-1pignore="true"
+                          data-lpignore="true"
+                          data-bwignore="true"
                         />
                       </div>
                       {errors.email &&

@@ -238,6 +238,10 @@ const NotificationsDiscord = () => {
                     name="botUsername"
                     type="text"
                     placeholder={settings.currentSettings.applicationTitle}
+                    autoComplete="off"
+                    data-1pignore="true"
+                    data-lpignore="true"
+                    data-bwignore="true"
                   />
                 </div>
                 {errors.botUsername &&

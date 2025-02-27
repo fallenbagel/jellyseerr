@@ -872,6 +872,10 @@ const SettingsPlex = ({ onComplete }: SettingsPlexProps) => {
                         id="tautulliPort"
                         name="tautulliPort"
                         className="short"
+                        autoComplete="off"
+                        data-1pignore="true"
+                        data-lpignore="true"
+                        data-bwignore="true"
                       />
                       {errors.tautulliPort &&
                         touched.tautulliPort &&
@@ -909,6 +913,10 @@ const SettingsPlex = ({ onComplete }: SettingsPlexProps) => {
                           inputMode="url"
                           id="tautulliUrlBase"
                           name="tautulliUrlBase"
+                          autoComplete="off"
+                          data-1pignore="true"
+                          data-lpignore="true"
+                          data-bwignore="true"
                         />
                       </div>
                       {errors.tautulliUrlBase &&
@@ -929,7 +937,6 @@ const SettingsPlex = ({ onComplete }: SettingsPlexProps) => {
                           as="field"
                           id="tautulliApiKey"
                           name="tautulliApiKey"
-                          autoComplete="one-time-code"
                         />
                       </div>
                       {errors.tautulliApiKey &&
@@ -950,6 +957,10 @@ const SettingsPlex = ({ onComplete }: SettingsPlexProps) => {
                           inputMode="url"
                           id="tautulliExternalUrl"
                           name="tautulliExternalUrl"
+                          autoComplete="off"
+                          data-1pignore="true"
+                          data-lpignore="true"
+                          data-bwignore="true"
                         />
                       </div>
                       {errors.tautulliExternalUrl &&
