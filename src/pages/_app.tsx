@@ -217,8 +217,7 @@ CoreApp.getInitialProps = async (initialProps) => {
   if (ctx.res) {
     // Check if app is initialized and redirect if necessary
     const res = await fetch(
-      `http://localhost:${
-        process.env.PORT || 5055
+      `http://localhost:${process.env.PORT || 5055
       }${API_BASE}/api/v1/settings/public`
     );
     if (!res.ok) throw new Error();
@@ -237,8 +236,7 @@ CoreApp.getInitialProps = async (initialProps) => {
       try {
         // Attempt to get the user by running a request to the local api
         const res = await fetch(
-          `http://localhost:${
-            process.env.PORT || 5055
+          `http://localhost:${process.env.PORT || 5055
           }${API_BASE}/api/v1/auth/me`,
           {
             headers:
