@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ExternalAPI from '@server/api/externalapi';
 import { ApiErrorCode } from '@server/constants/error';
+import { MediaServerType } from '@server/constants/server';
 import availabilitySync from '@server/lib/availabilitySync';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { ApiError } from '@server/types/error';
 import { getAppVersion } from '@server/utils/appVersion';
@@ -92,14 +94,22 @@ export interface JellyfinLibraryItemExtended extends JellyfinLibraryItem {
   DateCreated?: string;
 }
 
+export interface JellyfinItemsReponse {
+  Items: JellyfinLibraryItemExtended[];
+  TotalRecordCount: number;
+  StartIndex: number;
+}
+
 class JellyfinAPI extends ExternalAPI {
   private userId?: string;
+  private mediaServerType: MediaServerType;
 
   constructor(
     jellyfinHost: string,
     authToken?: string | null,
     deviceId?: string | null
   ) {
+    const settings = getSettings();
     let authHeaderVal: string;
     if (authToken) {
       authHeaderVal = `MediaBrowser Client="Jellyseerr", Device="Jellyseerr", DeviceId="${deviceId}", Version="${getAppVersion()}", Token="${authToken}"`;
@@ -116,6 +126,8 @@ class JellyfinAPI extends ExternalAPI {
         },
       }
     );
+
+    this.mediaServerType = settings.main.mediaServerType;
   }
 
   public async login(
@@ -296,18 +308,15 @@ class JellyfinAPI extends ExternalAPI {
 
   public async getLibraryContents(id: string): Promise<JellyfinLibraryItem[]> {
     try {
-      const libraryItemsResponse = await this.get<any>(
-        `/Users/${this.userId}/Items`,
-        {
-          SortBy: 'SortName',
-          SortOrder: 'Ascending',
-          IncludeItemTypes: 'Series,Movie,Others',
-          Recursive: 'true',
-          StartIndex: '0',
-          ParentId: id,
-          collapseBoxSetItems: 'false',
-        }
-      );
+      const libraryItemsResponse = await this.get<any>(`/Items`, {
+        SortBy: 'SortName',
+        SortOrder: 'Ascending',
+        IncludeItemTypes: 'Series,Movie,Others',
+        Recursive: 'true',
+        StartIndex: '0',
+        ParentId: id,
+        collapseBoxSetItems: 'false',
+      });
 
       return libraryItemsResponse.Items.filter(
         (item: JellyfinLibraryItem) => item.LocationType !== 'Virtual'
@@ -324,13 +333,22 @@ class JellyfinAPI extends ExternalAPI {
 
   public async getRecentlyAdded(id: string): Promise<JellyfinLibraryItem[]> {
     try {
-      const itemResponse = await this.get<any>(
-        `/Users/${this.userId}/Items/Latest`,
-        {
-          Limit: '12',
-          ParentId: id,
-        }
-      );
+      const endpoint =
+        this.mediaServerType === MediaServerType.JELLYFIN
+          ? `/Items/Latest`
+          : `/Users/${this.userId}/Items/Latest`;
+
+      const baseParams = {
+        Limit: '12',
+        ParentId: id,
+      };
+
+      const params =
+        this.mediaServerType === MediaServerType.JELLYFIN
+          ? { ...baseParams, userId: this.userId ?? `Me` }
+          : baseParams;
+
+      const itemResponse = await this.get<any>(endpoint, params);
 
       return itemResponse;
     } catch (e) {
@@ -347,11 +365,12 @@ class JellyfinAPI extends ExternalAPI {
     id: string
   ): Promise<JellyfinLibraryItemExtended | undefined> {
     try {
-      const itemResponse = await this.get<any>(
-        `/Users/${this.userId}/Items/${id}`
-      );
+      const itemResponse = await this.get<JellyfinItemsReponse>(`/Items`, {
+        ids: id,
+        fields: 'ProviderIds,MediaSources,Width,Height,IsHD,DateCreated',
+      });
 
-      return itemResponse;
+      return itemResponse.Items?.[0];
     } catch (e) {
       if (availabilitySync.running) {
         if (e.cause?.status === 500) {
