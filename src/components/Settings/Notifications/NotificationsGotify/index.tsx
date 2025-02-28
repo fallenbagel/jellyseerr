@@ -17,9 +17,11 @@ const messages = defineMessages(
     agentenabled: 'Enable Agent',
     url: 'Server URL',
     token: 'Application Token',
+    priority: 'Priority',
     validationUrlRequired: 'You must provide a valid URL',
     validationUrlTrailingSlash: 'URL must not end in a trailing slash',
     validationTokenRequired: 'You must provide an application token',
+    validationPriorityRequired: 'You must set a priority number',
     gotifysettingssaved: 'Gotify notification settings saved successfully!',
     gotifysettingsfailed: 'Gotify notification settings failed to save.',
     toastGotifyTestSending: 'Sending Gotify test notification…',
@@ -65,6 +67,15 @@ const NotificationsGotify = () => {
         .required(intl.formatMessage(messages.validationTokenRequired)),
       otherwise: Yup.string().nullable(),
     }),
+    priority: Yup.string().when('enabled', {
+      is: true,
+      then: Yup.string()
+        .nullable()
+        .min(0)
+        .max(9)
+        .required(intl.formatMessage(messages.validationPriorityRequired)),
+      otherwise: Yup.string().nullable(),
+    }),
   });
 
   if (!data && !error) {
@@ -78,6 +89,7 @@ const NotificationsGotify = () => {
         types: data?.types,
         url: data?.options.url,
         token: data?.options.token,
+        priority: data?.options.priority,
       }}
       validationSchema={NotificationsGotifySchema}
       onSubmit={async (values) => {
@@ -93,6 +105,7 @@ const NotificationsGotify = () => {
               options: {
                 url: values.url,
                 token: values.token,
+                priority: Number(values.priority),
               },
             }),
           });
@@ -147,6 +160,7 @@ const NotificationsGotify = () => {
                   options: {
                     url: values.url,
                     token: values.token,
+                    priority: Number(values.priority),
                   },
                 }),
               }
@@ -213,6 +227,30 @@ const NotificationsGotify = () => {
                   touched.token &&
                   typeof errors.token === 'string' && (
                     <div className="error">{errors.token}</div>
+                  )}
+              </div>
+            </div>
+            <div className="form-row">
+              <label htmlFor="priority" className="text-label">
+                {intl.formatMessage(messages.priority)}
+                <span className="label-required">*</span>
+              </label>
+              <div className="form-input-area">
+                <Field
+                  id="priority"
+                  name="priority"
+                  type="text"
+                  inputMode="numeric"
+                  className="short"
+                  autoComplete="off"
+                  data-1pignore="true"
+                  data-lpignore="true"
+                  data-bwignore="true"
+                />
+                {errors.priority &&
+                  touched.priority &&
+                  typeof errors.priority === 'string' && (
+                    <div className="error">{errors.priority}</div>
                   )}
               </div>
             </div>

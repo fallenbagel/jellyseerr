@@ -30,7 +30,12 @@ class GotifyAgent
   public shouldSend(): boolean {
     const settings = this.getSettings();
 
-    if (settings.enabled && settings.options.url && settings.options.token) {
+    if (
+      settings.enabled &&
+      settings.options.url &&
+      settings.options.token &&
+      settings.options.priority
+    ) {
       return true;
     }
 
@@ -42,7 +47,8 @@ class GotifyAgent
     payload: NotificationPayload
   ): GotifyPayload {
     const { applicationUrl, applicationTitle } = getSettings().main;
-    let priority = 0;
+    const settings = this.getSettings();
+    const priority = settings.options.priority;
 
     const title = payload.event
       ? `${payload.event} - ${payload.subject}`
@@ -88,7 +94,7 @@ class GotifyAgent
       }  `;
 
       if (type == Notification.ISSUE_CREATED) {
-        priority = 1;
+        //priority = 1;
       }
     }
 
