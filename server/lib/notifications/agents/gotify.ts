@@ -48,7 +48,7 @@ class GotifyAgent
   ): GotifyPayload {
     const { applicationUrl, applicationTitle } = getSettings().main;
     const settings = this.getSettings();
-    const priority = settings.options.priority;
+    const priority = settings.options.priority ?? 1;
 
     const title = payload.event
       ? `${payload.event} - ${payload.subject}`
@@ -92,10 +92,6 @@ class GotifyAgent
       message += `\n**Issue Status:** ${
         payload.issue.status === IssueStatus.OPEN ? 'Open' : 'Resolved'
       }  `;
-
-      if (type == Notification.ISSUE_CREATED) {
-        //priority = 1;
-      }
     }
 
     for (const extra of payload.extra ?? []) {
