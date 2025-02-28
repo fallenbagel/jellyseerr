@@ -139,7 +139,8 @@
         "types": 0,
         "options": {
           "url": "",
-          "token": ""
+          "token": "",
+          "priority": 0
         }
       }
     }

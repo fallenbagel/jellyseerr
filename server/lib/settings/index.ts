@@ -255,6 +255,7 @@ export interface NotificationAgentGotify extends NotificationAgentConfig {
   options: {
     url: string;
     token: string;
+    priority: number;
   };
 }
 
@@ -464,6 +465,7 @@ class Settings {
             options: {
               url: '',
               token: '',
+              priority: 0,
             },
           },
         },
