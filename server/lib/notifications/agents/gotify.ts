@@ -48,7 +48,7 @@ class GotifyAgent
   ): GotifyPayload {
     const { applicationUrl, applicationTitle } = getSettings().main;
     const settings = this.getSettings();
-    const priority = settings.options.priority;
+    const priority = settings.options.priority ?? 1;
 
     const title = payload.event
       ? `${payload.event} - ${payload.subject}`
