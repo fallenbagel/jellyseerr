@@ -271,7 +271,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
 
     const deviceId =
       user?.jellyfinDeviceId ??
-      Buffer.from(`BOT_overseerr_${body.username ?? ''}`).toString('base64');
+      Buffer.from(`BOT_jellyseerr_${body.username ?? ''}`).toString('base64');
 
     // First we need to attempt to log the user in to jellyfin
     const jellyfinserver = new JellyfinAPI(hostname ?? '', undefined, deviceId);
