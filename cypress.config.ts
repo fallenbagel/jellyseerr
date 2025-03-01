@@ -1,11 +1,8 @@
 import { defineConfig } from 'cypress';
 
-
-
 export default defineConfig({
   projectId: 'xkm1b4',
   e2e: {
-    // TODO I think this would need to be updated, but I'm not a cypress expert
     baseUrl: 'http://localhost:5055',
     experimentalSessionAndOrigin: true,
   },
