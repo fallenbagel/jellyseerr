@@ -16,8 +16,9 @@ export const getServerSideProps: GetServerSideProps<MoviePageProps> = async (
   ctx
 ) => {
   const res = await fetch(
-    `http://localhost:${process.env.PORT || 5055
-    }${API_BASE}/api/v1/movie/${ctx.query.movieId}`,
+    `http://localhost:${process.env.PORT || 5055}${API_BASE}/api/v1/movie/${
+      ctx.query.movieId
+    }`,
     {
       headers: ctx.req?.headers?.cookie
         ? { cookie: ctx.req.headers.cookie }
