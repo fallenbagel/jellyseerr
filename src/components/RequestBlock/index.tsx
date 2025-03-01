@@ -20,6 +20,7 @@ import type { MediaRequest } from '@server/entity/MediaRequest';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
+import { mutate } from 'swr';
 
 const messages = defineMessages('components.RequestBlock', {
   seasons: '{seasonCount, plural, one {Season} other {Seasons}}',
@@ -59,6 +60,7 @@ const RequestBlock = ({ request, onUpdate }: RequestBlockProps) => {
 
     if (onUpdate) {
       onUpdate();
+      mutate('/api/v1/request/count');
     }
     setIsUpdating(false);
   };
@@ -72,6 +74,7 @@ const RequestBlock = ({ request, onUpdate }: RequestBlockProps) => {
 
     if (onUpdate) {
       onUpdate();
+      mutate('/api/v1/request/count');
     }
 
     setIsUpdating(false);

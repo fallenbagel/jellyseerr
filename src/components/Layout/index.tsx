@@ -10,6 +10,7 @@ import { useUser } from '@app/hooks/useUser';
 import { ArrowLeftIcon, Bars3BottomLeftIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -22,6 +23,18 @@ const Layout = ({ children }: LayoutProps) => {
   const router = useRouter();
   const { currentSettings } = useSettings();
   const { setLocale } = useLocale();
+  const { data: requestResponse, mutate: revalidateRequestsCount } = useSWR(
+    '/api/v1/request/count',
+    {
+      revalidateOnMount: true,
+    }
+  );
+  const { data: issueResponse, mutate: revalidateIssueCount } = useSWR(
+    '/api/v1/issue/count',
+    {
+      revalidateOnMount: true,
+    }
+  );
 
   useEffect(() => {
     if (setLocale && user) {
@@ -55,10 +68,21 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="absolute top-0 h-64 w-full bg-gradient-to-bl from-gray-800 to-gray-900">
         <div className="relative inset-0 h-full w-full bg-gradient-to-t from-gray-900 to-transparent" />
       </div>
-
-      <Sidebar open={isSidebarOpen} setClosed={() => setSidebarOpen(false)} />
+      <Sidebar
+        open={isSidebarOpen}
+        setClosed={() => setSidebarOpen(false)}
+        pendingRequestsCount={requestResponse?.pending ?? 0}
+        openIssuesCount={issueResponse?.open ?? 0}
+        revalidateIssueCount={() => revalidateIssueCount()}
+        revalidateRequestsCount={() => revalidateRequestsCount()}
+      />
       <div className="sm:hidden">
-        <MobileMenu />
+        <MobileMenu
+          pendingRequestsCount={requestResponse?.pending ?? 0}
+          openIssuesCount={issueResponse?.open ?? 0}
+          revalidateIssueCount={() => revalidateIssueCount()}
+          revalidateRequestsCount={() => revalidateRequestsCount()}
+        />
       </div>
 
       <div className="relative mb-16 flex w-0 min-w-0 flex-1 flex-col lg:ml-64">

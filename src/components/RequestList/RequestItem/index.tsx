@@ -27,7 +27,7 @@ import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { FormattedRelativeTime, useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 
 const messages = defineMessages('components.RequestList.RequestItem', {
   seasons: '{seasonCount, plural, one {Season} other {Seasons}}',
@@ -69,6 +69,7 @@ const RequestItemError = ({
     });
     if (!res.ok) throw new Error();
     revalidateList();
+    mutate('/api/v1/request/count');
   };
 
   const { mediaUrl: plexUrl, mediaUrl4k: plexUrl4k } = useDeepLinks({
@@ -334,6 +335,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
 
     if (data) {
       revalidate();
+      mutate('/api/v1/request/count');
     }
   };
 
@@ -344,6 +346,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
     if (!res.ok) throw new Error();
 
     revalidateList();
+    mutate('/api/v1/request/count');
   };
 
   const deleteMediaFile = async () => {
@@ -453,7 +456,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
                 src={
                   title.posterPath
                     ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${title.posterPath}`
-                    : '/images/overseerr_poster_not_found.png'
+                    : '/images/jellyseerr_poster_not_found.png'
                 }
                 alt=""
                 sizes="100vw"

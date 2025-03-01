@@ -119,6 +119,8 @@ const ServerInstance = ({
             <h3 className="truncate font-medium leading-5 text-white">
               <a
                 href={serviceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="transition duration-300 hover:text-white hover:underline"
               >
                 {name}
@@ -147,6 +149,8 @@ const ServerInstance = ({
             </span>
             <a
               href={internalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="transition duration-300 hover:text-white hover:underline"
             >
               {internalUrl}
@@ -159,7 +163,12 @@ const ServerInstance = ({
             {profileName}
           </p>
         </div>
-        <a href={serviceUrl} className="opacity-50 hover:opacity-100">
+        <a
+          href={serviceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="opacity-50 hover:opacity-100"
+        >
           {isSonarr ? (
             <SonarrLogo className="h-10 w-10 flex-shrink-0" />
           ) : (

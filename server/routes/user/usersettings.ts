@@ -119,27 +119,9 @@ userSettingsRoutes.post<
     }
 
     const oldEmail = user.email;
-    const oldUsername = user.username;
     user.username = req.body.username;
-    if (user.jellyfinUsername) {
+    if (user.userType !== UserType.PLEX) {
       user.email = req.body.email || user.jellyfinUsername || user.email;
-    }
-    // Edge case for local users, because they have no Jellyfin username to fall back on
-    // if the email is not provided
-    if (user.userType === UserType.LOCAL) {
-      if (req.body.email) {
-        user.email = req.body.email;
-        if (
-          !user.username &&
-          user.email !== oldEmail &&
-          !oldEmail.includes('@')
-        ) {
-          user.username = oldEmail;
-        }
-      } else if (req.body.username) {
-        user.email = oldUsername || user.email;
-        user.username = req.body.username;
-      }
     }
 
     const existingUser = await userRepository.findOne({
@@ -437,7 +419,7 @@ userSettingsRoutes.post<{ username: string; password: string }>(
 
     const hostname = getHostname();
     const deviceId = Buffer.from(
-      `BOT_overseerr_${req.user.username ?? ''}`
+      `BOT_jellyseerr_${req.user.username ?? ''}`
     ).toString('base64');
 
     const jellyfinserver = new JellyfinAPI(hostname, undefined, deviceId);

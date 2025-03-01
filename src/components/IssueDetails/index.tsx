@@ -33,7 +33,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { FormattedRelativeTime, useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
 
 const messages = defineMessages('components.IssueDetails', {
@@ -155,6 +155,7 @@ const IssueDetails = () => {
         autoDismiss: true,
       });
       revalidateIssue();
+      mutate('/api/v1/issue/count');
     } catch (e) {
       addToast(intl.formatMessage(messages.toaststatusupdatefailed), {
         appearance: 'error',
@@ -169,6 +170,7 @@ const IssueDetails = () => {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error();
+      mutate('/api/v1/issue/count');
 
       addToast(intl.formatMessage(messages.toastissuedeleted), {
         appearance: 'success',
@@ -240,7 +242,7 @@ const IssueDetails = () => {
             src={
               data.posterPath
                 ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${data.posterPath}`
-                : '/images/overseerr_poster_not_found.png'
+                : '/images/jellyseerr_poster_not_found.png'
             }
             alt=""
             sizes="100vw"

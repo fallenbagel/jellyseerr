@@ -80,6 +80,7 @@ const RequestCardError = ({ requestData }: RequestCardErrorProps) => {
     if (!res.ok) throw new Error();
     mutate('/api/v1/media?filter=allavailable&take=20&sort=mediaAdded');
     mutate('/api/v1/request?filter=all&take=10&sort=modified&skip=0');
+    mutate('/api/v1/request/count');
   };
 
   return (
@@ -271,6 +272,7 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
 
     if (data) {
       revalidate();
+      mutate('/api/v1/request/count');
     }
   };
 
@@ -280,6 +282,7 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
     });
     if (!res.ok) throw new Error();
     mutate('/api/v1/request?filter=all&take=10&sort=modified&skip=0');
+    mutate('/api/v1/request/count');
   };
 
   const retryRequest = async () => {
@@ -618,7 +621,7 @@ const RequestCard = ({ request, onTitleData }: RequestCardProps) => {
             src={
               title.posterPath
                 ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${title.posterPath}`
-                : '/images/overseerr_poster_not_found.png'
+                : '/images/jellyseerr_poster_not_found.png'
             }
             alt=""
             sizes="100vw"

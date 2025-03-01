@@ -41,9 +41,9 @@ import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 
-const API_SPEC_PATH = path.join(__dirname, '../overseerr-api.yml');
+const API_SPEC_PATH = path.join(__dirname, '../jellyseerr-api.yml');
 
-logger.info(`Starting Overseerr version ${getAppVersion()}`);
+logger.info(`Starting Jellyseerr version ${getAppVersion()}`);
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();

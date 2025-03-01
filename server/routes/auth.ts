@@ -157,7 +157,7 @@ authRoutes.post('/plex', async (req, res, next) => {
           });
         } else {
           logger.info(
-            'Sign-in attempt from Plex user with access to the media server; creating new Overseerr user',
+            'Sign-in attempt from Plex user with access to the media server; creating new Jellyseerr user',
             {
               label: 'API',
               ip: req.ip,
@@ -611,7 +611,7 @@ authRoutes.post('/local', async (req, res, next) => {
       .getOne();
 
     if (!user || !(await user.passwordMatch(body.password))) {
-      logger.warn('Failed sign-in attempt using invalid Overseerr password', {
+      logger.warn('Failed sign-in attempt using invalid Jellyseerr password', {
         label: 'API',
         ip: req.ip,
         email: body.email,
@@ -701,7 +701,7 @@ authRoutes.post('/local', async (req, res, next) => {
     return res.status(200).json(user?.filter() ?? {});
   } catch (e) {
     logger.error(
-      'Something went wrong authenticating with Overseerr password',
+      'Something went wrong authenticating with Jellyseerr password',
       {
         label: 'API',
         errorMessage: e.message,

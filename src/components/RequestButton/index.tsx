@@ -15,6 +15,7 @@ import type Media from '@server/entity/Media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { mutate } from 'swr';
 
 const messages = defineMessages('components.RequestButton', {
   viewrequest: 'View Request',
@@ -101,6 +102,7 @@ const RequestButton = ({
 
     if (data) {
       onUpdate();
+      mutate('/api/v1/request/count');
     }
   };
 
@@ -123,6 +125,7 @@ const RequestButton = ({
     );
 
     onUpdate();
+    mutate('/api/v1/request/count');
   };
 
   const buttons: ButtonOption[] = [];

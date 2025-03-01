@@ -25,6 +25,10 @@ const SensitiveInput = ({ as = 'input', ...props }: SensitiveInputProps) => {
   return (
     <>
       <Component
+        autoComplete="off"
+        data-1pignore="true"
+        data-lpignore="true"
+        data-bwignore="true"
         {...componentProps}
         className={`rounded-l-only ${componentProps.className ?? ''}`}
         type={

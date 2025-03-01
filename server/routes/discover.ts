@@ -837,7 +837,8 @@ discoverRoutes.get<Record<string, unknown>, WatchlistResponse>(
       select: ['id', 'plexToken'],
     });
 
-    if (activeUser) {
+    if (activeUser && !activeUser?.plexToken) {
+      // Non-Plex users can only see their own watchlist
       const [result, total] = await getRepository(Watchlist).findAndCount({
         where: { requestedBy: { id: activeUser?.id } },
         relations: {
@@ -866,6 +867,7 @@ discoverRoutes.get<Record<string, unknown>, WatchlistResponse>(
       });
     }
 
+    // List watchlist from Plex
     const plexTV = new PlexTvAPI(activeUser.plexToken);
 
     const watchlist = await plexTV.getWatchlist({ offset });

@@ -1,3 +1,4 @@
+import Badge from '@app/components/Common/Badge';
 import { menuMessages } from '@app/components/Layout/Sidebar';
 import useClickOutside from '@app/hooks/useClickOutside';
 import { Permission, useUser } from '@app/hooks/useUser';
@@ -26,8 +27,15 @@ import {
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { cloneElement, useRef, useState } from 'react';
+import { cloneElement, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+
+interface MobileMenuProps {
+  pendingRequestsCount: number;
+  openIssuesCount: number;
+  revalidateIssueCount: () => void;
+  revalidateRequestsCount: () => void;
+}
 
 interface MenuLink {
   href: string;
@@ -41,7 +49,12 @@ interface MenuLink {
   dataTestId?: string;
 }
 
-const MobileMenu = () => {
+const MobileMenu = ({
+  pendingRequestsCount,
+  openIssuesCount,
+  revalidateIssueCount,
+  revalidateRequestsCount,
+}: MobileMenuProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const intl = useIntl();
   const [isOpen, setIsOpen] = useState(false);
@@ -139,6 +152,21 @@ const MobileMenu = () => {
       })
   );
 
+  useEffect(() => {
+    if (openIssuesCount) {
+      revalidateIssueCount();
+    }
+
+    if (pendingRequestsCount) {
+      revalidateRequestsCount();
+    }
+  }, [
+    revalidateIssueCount,
+    revalidateRequestsCount,
+    pendingRequestsCount,
+    openIssuesCount,
+  ]);
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
       <Transition
@@ -159,7 +187,7 @@ const MobileMenu = () => {
             <Link
               key={`mobile-menu-link-${link.href}`}
               href={link.href}
-              className={`flex items-center space-x-2 ${
+              className={`flex items-center ${
                 isActive ? 'text-indigo-500' : ''
               }`}
               onKeyDown={(e) => {
@@ -174,7 +202,25 @@ const MobileMenu = () => {
               {cloneElement(isActive ? link.svgIconSelected : link.svgIcon, {
                 className: 'h-5 w-5',
               })}
-              <span>{link.content}</span>
+              <span className="ml-2">{link.content}</span>
+              {link.href === '/requests' &&
+                pendingRequestsCount > 0 &&
+                hasPermission(Permission.MANAGE_REQUESTS) && (
+                  <div className="ml-auto flex">
+                    <Badge className="rounded-md border-indigo-500 bg-gradient-to-br from-indigo-600 to-purple-600">
+                      {pendingRequestsCount}
+                    </Badge>
+                  </div>
+                )}
+              {link.href === '/issues' &&
+                openIssuesCount > 0 &&
+                hasPermission(Permission.MANAGE_ISSUES) && (
+                  <div className="ml-auto flex">
+                    <Badge className="rounded-md border-indigo-500 bg-gradient-to-br from-indigo-600 to-purple-600">
+                      {openIssuesCount}
+                    </Badge>
+                  </div>
+                )}
             </Link>
           );
         })}
@@ -190,7 +236,7 @@ const MobileMenu = () => {
                 <Link
                   key={`mobile-menu-link-${link.href}`}
                   href={link.href}
-                  className={`flex flex-col items-center space-y-1 ${
+                  className={`relative flex flex-col items-center space-y-1 ${
                     isActive ? 'text-indigo-500' : ''
                   }`}
                 >
@@ -200,6 +246,23 @@ const MobileMenu = () => {
                       className: 'h-6 w-6',
                     }
                   )}
+                  {link.href === '/requests' &&
+                    pendingRequestsCount > 0 &&
+                    hasPermission(Permission.MANAGE_REQUESTS) && (
+                      <div className="absolute left-3 bottom-3">
+                        <Badge
+                          className={`bg-gradient-to-br ${
+                            router.pathname.match(link.activeRegExp)
+                              ? 'border-indigo-600 from-indigo-700 to-purple-700'
+                              : 'border-indigo-500 from-indigo-600 to-purple-600'
+                          } flex h-4 w-4 items-center justify-center !px-[9px] !py-[9px] text-[9px]`}
+                        >
+                          {pendingRequestsCount > 99
+                            ? '99+'
+                            : pendingRequestsCount}
+                        </Badge>
+                      </div>
+                    )}
                 </Link>
               );
             })}

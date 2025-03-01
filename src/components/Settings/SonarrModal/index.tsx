@@ -415,6 +415,10 @@ const SonarrModal = ({ onClose, sonarr, onSave }: SonarrModalProps) => {
                         id="name"
                         name="name"
                         type="text"
+                        autoComplete="off"
+                        data-1pignore="true"
+                        data-lpignore="true"
+                        data-bwignore="true"
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setIsValidated(false);
                           setFieldValue('name', e.target.value);
@@ -508,7 +512,6 @@ const SonarrModal = ({ onClose, sonarr, onSave }: SonarrModalProps) => {
                         as="field"
                         id="apiKey"
                         name="apiKey"
-                        autoComplete="one-time-code"
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setIsValidated(false);
                           setFieldValue('apiKey', e.target.value);

@@ -14,6 +14,7 @@ type AirDateBadgeProps = {
 const AirDateBadge = ({ airDate }: AirDateBadgeProps) => {
   const WEEK = 1000 * 60 * 60 * 24 * 8;
   const intl = useIntl();
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const dAirDate = new Date(airDate);
   const nowDate = new Date();
   const alreadyAired = dAirDate.getTime() < nowDate.getTime();
@@ -38,7 +39,7 @@ const AirDateBadge = ({ airDate }: AirDateBadgeProps) => {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
-          timeZone: 'UTC',
+          timeZone,
         })}
       </Badge>
       {showRelative && (
