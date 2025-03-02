@@ -55,6 +55,16 @@ export type SortOptions =
   | 'first_air_date.asc'
   | 'first_air_date.desc';
 
+export interface TmdbCertificationResponse {
+  certifications: {
+    [country: string]: {
+      certification: string;
+      meaning?: string;
+      order?: number;
+    }[];
+  };
+}
+
 interface DiscoverMovieOptions {
   page?: number;
   includeAdult?: boolean;
@@ -74,6 +84,10 @@ interface DiscoverMovieOptions {
   sortBy?: SortOptions;
   watchRegion?: string;
   watchProviders?: string;
+  certification?: string;
+  certificationGte?: string;
+  certificationLte?: string;
+  certificationCountry?: string;
 }
 
 interface DiscoverTvOptions {
@@ -96,6 +110,10 @@ interface DiscoverTvOptions {
   watchRegion?: string;
   watchProviders?: string;
   withStatus?: string; // Returning Series: 0 Planned: 1 In Production: 2 Ended: 3 Cancelled: 4 Pilot: 5
+  certification?: string;
+  certificationGte?: string;
+  certificationLte?: string;
+  certificationCountry?: string;
 }
 
 class TheMovieDb extends ExternalAPI {
@@ -454,6 +472,10 @@ class TheMovieDb extends ExternalAPI {
     voteCountLte,
     watchProviders,
     watchRegion,
+    certification,
+    certificationGte,
+    certificationLte,
+    certificationCountry,
   }: DiscoverMovieOptions = {}): Promise<TmdbSearchMovieResponse> => {
     try {
       const defaultFutureDate = new Date(
@@ -499,6 +521,10 @@ class TheMovieDb extends ExternalAPI {
         'vote_count.lte': voteCountLte || '',
         watch_region: watchRegion || '',
         with_watch_providers: watchProviders || '',
+        certification: certification || '',
+        'certification.gte': certificationGte || '',
+        'certification.lte': certificationLte || '',
+        certification_country: certificationCountry || '',
       });
 
       return data;
@@ -527,6 +553,10 @@ class TheMovieDb extends ExternalAPI {
     watchProviders,
     watchRegion,
     withStatus,
+    certification,
+    certificationGte,
+    certificationLte,
+    certificationCountry,
   }: DiscoverTvOptions = {}): Promise<TmdbSearchTvResponse> => {
     try {
       const defaultFutureDate = new Date(
@@ -575,6 +605,10 @@ class TheMovieDb extends ExternalAPI {
         with_watch_providers: watchProviders || '',
         watch_region: watchRegion || '',
         with_status: withStatus || '',
+        certification: certification || '',
+        'certification.gte': certificationGte || '',
+        'certification.lte': certificationLte || '',
+        certification_country: certificationCountry || '',
       });
 
       return data;
@@ -941,6 +975,35 @@ class TheMovieDb extends ExternalAPI {
       throw new Error(`[TMDB] Failed to fetch TV genres: ${e.message}`);
     }
   }
+
+  public getMovieCertifications =
+    async (): Promise<TmdbCertificationResponse> => {
+      try {
+        const data = await this.get<TmdbCertificationResponse>(
+          '/certification/movie/list',
+          {},
+          604800 // 7 days
+        );
+
+        return data;
+      } catch (e) {
+        throw new Error(`[TMDB] Failed to fetch movie certifications: ${e}`);
+      }
+    };
+
+  public getTvCertifications = async (): Promise<TmdbCertificationResponse> => {
+    try {
+      const data = await this.get<TmdbCertificationResponse>(
+        '/certification/tv/list',
+        {},
+        604800 // 7 days
+      );
+
+      return data;
+    } catch (e) {
+      throw new Error(`[TMDB] Failed to fetch TV certifications: ${e.message}`);
+    }
+  };
 
   public async getKeywordDetails({
     keywordId,

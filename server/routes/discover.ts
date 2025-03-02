@@ -72,6 +72,11 @@ const QueryFilterOptions = z.object({
   watchProviders: z.coerce.string().optional(),
   watchRegion: z.coerce.string().optional(),
   status: z.coerce.string().optional(),
+  certification: z.coerce.string().optional(),
+  certificationGte: z.coerce.string().optional(),
+  certificationLte: z.coerce.string().optional(),
+  certificationCountry: z.coerce.string().optional(),
+  certificationMode: z.enum(['exact', 'range']).optional(),
 });
 
 export type FilterOptions = z.infer<typeof QueryFilterOptions>;
@@ -80,8 +85,11 @@ discoverRoutes.get('/movies', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
 
   try {
-    const query = QueryFilterOptions.parse(req.query);
+    const fullQuery = QueryFilterOptions.parse(req.query);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { certificationMode, ...query } = fullQuery;
     const keywords = query.keywords;
+
     const data = await tmdb.getDiscoverMovies({
       page: Number(query.page),
       sortBy: query.sortBy as SortOptions,
@@ -104,6 +112,10 @@ discoverRoutes.get('/movies', async (req, res, next) => {
       voteCountLte: query.voteCountLte,
       watchProviders: query.watchProviders,
       watchRegion: query.watchRegion,
+      certification: query.certification,
+      certificationGte: query.certificationGte,
+      certificationLte: query.certificationLte,
+      certificationCountry: query.certificationCountry,
     });
 
     const media = await Media.getRelatedMedia(
@@ -362,7 +374,9 @@ discoverRoutes.get('/tv', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
 
   try {
-    const query = QueryFilterOptions.parse(req.query);
+    const fullQuery = QueryFilterOptions.parse(req.query);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { certificationMode, ...query } = fullQuery;
     const keywords = query.keywords;
     const data = await tmdb.getDiscoverTv({
       page: Number(query.page),
@@ -387,6 +401,10 @@ discoverRoutes.get('/tv', async (req, res, next) => {
       watchProviders: query.watchProviders,
       watchRegion: query.watchRegion,
       withStatus: query.status,
+      certification: query.certification,
+      certificationGte: query.certificationGte,
+      certificationLte: query.certificationLte,
+      certificationCountry: query.certificationCountry,
     });
 
     const media = await Media.getRelatedMedia(
