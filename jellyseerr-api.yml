@@ -1961,10 +1961,10 @@ components:
       properties:
         certification:
           type: string
-          example: "PG-13"
+          example: 'PG-13'
         meaning:
           type: string
-          example: "Some material may be inappropriate for children under 13."
+          example: 'Some material may be inappropriate for children under 13.'
           nullable: true
         order:
           type: number
@@ -1985,11 +1985,11 @@ components:
       example:
         certifications:
           US:
-            - certification: "G"
-              meaning: "All ages admitted"
+            - certification: 'G'
+              meaning: 'All ages admitted'
               order: 1
-            - certification: "PG"
-              meaning: "Some material may not be suitable for children under 10."
+            - certification: 'PG'
+              meaning: 'Some material may not be suitable for children under 10.'
               order: 2
   securitySchemes:
     cookieAuth:
@@ -2000,7 +2000,6 @@ components:
       type: apiKey
       in: header
       name: X-Api-Key
-
 
 paths:
   /status:
@@ -7242,7 +7241,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  status: 
+                  status:
                     type: number
                     example: 500
                   message:
@@ -7250,7 +7249,7 @@ paths:
                     example: Unable to retrieve movie certifications.
   /certifications/tv:
     get:
-      summary: Get TV certifications  
+      summary: Get TV certifications
       description: Returns list of TV show certifications from TMDB.
       tags:
         - other
@@ -7263,7 +7262,7 @@ paths:
           content:
             application/json:
               schema:
-                 $ref: '#/components/schemas/CertificationResponse'
+                $ref: '#/components/schemas/CertificationResponse'
         '500':
           description: Unable to retrieve TV certifications
           content:
