@@ -83,12 +83,6 @@ app
       net.setDefaultAutoSelectFamily(false);
     }
 
-    if (settings.network.dnsServers.trim() !== '') {
-      dns.setServers(
-        settings.network.dnsServers.split(',').map((server) => server.trim())
-      );
-    }
-
     // Register HTTP proxy
     if (settings.network.proxy.enabled) {
       await createCustomProxyAgent(settings.network.proxy);

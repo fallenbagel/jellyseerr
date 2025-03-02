@@ -940,8 +940,6 @@
   "components.Settings.SettingsNetwork.csrfProtection": "Enable CSRF Protection",
   "components.Settings.SettingsNetwork.csrfProtectionHoverTip": "Do NOT enable this setting unless you understand what you are doing!",
   "components.Settings.SettingsNetwork.csrfProtectionTip": "Set external API access to read-only (requires HTTPS)",
-  "components.Settings.SettingsNetwork.dnsServers": "Custom DNS Servers",
-  "components.Settings.SettingsNetwork.dnsServersTip": "Comma-separated list of custom DNS servers, e.g. \"1.1.1.1,[2606:4700:4700::1111]\"",
   "components.Settings.SettingsNetwork.docs": "documentation",
   "components.Settings.SettingsNetwork.forceIpv4First": "Force IPv4 Resolution First",
   "components.Settings.SettingsNetwork.forceIpv4FirstTip": "Force Jellyseerr to resolve IPv4 addresses first instead of IPv6",

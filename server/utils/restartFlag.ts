@@ -18,8 +18,7 @@ class RestartFlag {
       this.networkSettings.csrfProtection !== networkSettings.csrfProtection ||
       this.networkSettings.trustProxy !== networkSettings.trustProxy ||
       this.networkSettings.proxy.enabled !== networkSettings.proxy.enabled ||
-      this.networkSettings.forceIpv4First !== networkSettings.forceIpv4First ||
-      this.networkSettings.dnsServers !== networkSettings.dnsServers
+      this.networkSettings.forceIpv4First !== networkSettings.forceIpv4First
     );
   }
 }
