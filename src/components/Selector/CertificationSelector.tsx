@@ -1,7 +1,7 @@
 import { SmallLoadingSpinner } from '@app/components/Common/LoadingSpinner';
 import defineMessages from '@app/utils/defineMessages';
 import type { Region } from '@server/lib/settings';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import AsyncSelect from 'react-select/async';
 import useSWR from 'swr';
@@ -81,12 +81,15 @@ const CertificationSelector: React.FC<CertificationSelectorProps> = ({
   const { data: regionsData } = useSWR<Region[]>('/api/v1/regions');
 
   // Get the country name from its code
-  const getCountryName = (countryCode: string): string => {
-    const region = regionsData?.find(
-      (region) => region.iso_3166_1 === countryCode
-    );
-    return region?.name || countryCode;
-  };
+  const getCountryName = useCallback(
+    (countryCode: string): string => {
+      const region = regionsData?.find(
+        (region) => region.iso_3166_1 === countryCode
+      );
+      return region?.name || countryCode;
+    },
+    [regionsData]
+  );
 
   useEffect(() => {
     if (certificationCountry && regionsData) {
@@ -95,7 +98,7 @@ const CertificationSelector: React.FC<CertificationSelectorProps> = ({
         label: getCountryName(certificationCountry),
       });
     }
-  }, [certificationCountry, regionsData]);
+  }, [certificationCountry, regionsData, getCountryName]);
 
   useEffect(() => {
     if (!certificationData || !certificationCountry) return;
