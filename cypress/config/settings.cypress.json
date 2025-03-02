@@ -24,7 +24,6 @@
     "partialRequestsEnabled": true,
     "enableSpecialEpisodes": false,
     "forceIpv4First": false,
-    "dnsServers": "",
     "locale": "en"
   },
   "plex": {

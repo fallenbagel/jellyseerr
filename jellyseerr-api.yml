@@ -194,9 +194,6 @@ components:
         forceIpv4First:
           type: boolean
           example: false
-        dnsServers:
-          type: string
-          example: '1.1.1.1'
         trustProxy:
           type: boolean
           example: true
