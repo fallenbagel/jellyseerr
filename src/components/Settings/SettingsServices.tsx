@@ -247,8 +247,6 @@ const SettingsServices = () => {
     rule: null,
   });
 
-  console.log(radarrData, sonarrData, rules);
-
   const deleteServer = async () => {
     const res = await fetch(
       `/api/v1/settings/${deleteServerModal.type}/${deleteServerModal.serverId}`,
