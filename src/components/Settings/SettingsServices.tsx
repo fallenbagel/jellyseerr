@@ -528,7 +528,7 @@ const SettingsServices = () => {
             <div className="flex h-full w-full items-center justify-center">
               <Button
                 buttonType="ghost"
-                disabled={!radarrData?.length || !sonarrData?.length}
+                disabled={!radarrData?.length && !sonarrData?.length}
                 onClick={() =>
                   setOverrideRuleModal({
                     open: true,
