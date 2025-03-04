@@ -11,28 +11,57 @@ on:
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox, edge]
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - name: Pnpm Setup
         uses: pnpm/action-setup@v4
         with:
           version: 9
-      - name: Cypress run
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      # Unblock Cypress (Fix potential issues with downloading Cypress binary)
+      - name: Unblock Cypress
+        run: |
+          echo Downloading Cypress
+          CYPRESS_DOWNLOAD_MIRROR=https://cy-cdn.currents.dev npx cypress install --force
+
+          echo Verifying Cypress
+          npx cypress verify
+
+          echo Cypress Cache Info
+          npx cypress cache list
+          npx cypress cache path
+
+      - name: Run Cypress Tests and Send Data to Sorry Cypress
         uses: cypress-io/github-action@v6
+        continue-on-error: true
         with:
+          install: false
           build: pnpm cypress:build
           start: pnpm start
           wait-on: 'http://localhost:5055'
+          browser: ${{ matrix.browser }}
+          config-file: cypress.config.js
           record: true
+          command: |
+            npx cypress-cloud run --parallel --browser ${{ matrix.browser }} --key ${{ secrets.SORRY_CYPRESS_RECORD_KEY }} --ci-build-id Run#${{ github.run_id }}-${{ matrix.browser }}
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_RECORD_KEY: ${{ secrets.SORRY_CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_MIGRATIONS: true
-          # Fix test titles in cypress dashboard
-          COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
-          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+          SORRY_CYPRESS_DIRECTOR_URL: ${{ secrets.SORRY_CYPRESS_DIRECTOR_URL }}
+          COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
+          COMMIT_INFO_SHA: ${{ github.event.pull_request.head.sha }}
