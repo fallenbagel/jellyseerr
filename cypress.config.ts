@@ -1,9 +1,15 @@
 import { defineConfig } from 'cypress';
+import cloudPlugin from 'cypress-cloud/plugin';
 
 export default defineConfig({
   projectId: 'jellyseerr',
   e2e: {
     baseUrl: 'http://localhost:5055',
+    specPattern: 'cypress/e2e/**/*.cy.{js,ts}',
+    setupNodeEvents(on, config) {
+      cloudPlugin(on, config);
+      return config;
+    },
     experimentalSessionAndOrigin: true,
   },
   env: {
