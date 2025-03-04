@@ -17,6 +17,7 @@ export const UserContext = ({ initialUser, children }: UserContextProps) => {
   const { user, error, revalidate } = useUser({ initialData: initialUser });
   const router = useRouter();
   const routing = useRef(false);
+  const API_BASE = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
   useEffect(() => {
     revalidate();
@@ -29,7 +30,7 @@ export const UserContext = ({ initialUser, children }: UserContextProps) => {
       !routing.current
     ) {
       routing.current = true;
-      location.href = '/login';
+      location.href = `${API_BASE}/login`;
     }
   }, [router, user, error]);
 
