@@ -124,7 +124,7 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
         {({ errors, touched, isSubmitting, isValid }) => {
           return (
             <>
-              <Form>
+              <Form data-form-type="login">
                 <div>
                   <h2 className="mb-6 -mt-1 text-center text-lg font-bold text-neutral-200">
                     {intl.formatMessage(messages.loginwithapp, {
@@ -140,6 +140,7 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
                         type="text"
                         placeholder={intl.formatMessage(messages.username)}
                         className="!bg-gray-700/80 placeholder:text-gray-400"
+                        data-form-type="username"
                       />
                     </div>
                     {errors.username && touched.username && (
@@ -157,6 +158,10 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
                         autoComplete="current-password"
                         placeholder={intl.formatMessage(messages.password)}
                         className="!bg-gray-700/80 placeholder:text-gray-400"
+                        data-form-type="password"
+                        data-1pignore="false"
+                        data-lpignore="false"
+                        data-bwignore="false"
                       />
                     </div>
                     <div className="flex">
