@@ -47,7 +47,7 @@ jobs:
 
       - name: Run Cypress Tests and Send Data to Sorry Cypress
         uses: cypress-io/github-action@v6
-        continue-on-error: true
+        continue-on-error: false
         with:
           install: false
           build: pnpm cypress:build
