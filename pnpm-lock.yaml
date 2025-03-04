@@ -346,8 +346,8 @@ importers:
         specifier: 0.3.0
         version: 0.3.0
       cypress:
-        specifier: 14.0.3
-        version: 14.0.3
+        specifier: 14.1.0
+        version: 14.1.0
       cz-conventional-changelog:
         specifier: 3.3.0
         version: 3.3.0(@types/node@22.10.5)(typescript@4.9.5)
@@ -4544,8 +4544,8 @@ packages:
   cy-mobile-commands@0.3.0:
     resolution: {integrity: sha512-Bj5P2ylw88hPqolLu68xWB6euVH5uNt8zyh+Ju8sBukGv39mWZxpjp6LtnUX/LK/YMthwvILYHhvr9SG1TP+4w==}
 
-  cypress@14.0.3:
-    resolution: {integrity: sha512-yIdvobANw3kS+KF/t5vwjjPNufBA8ux7iQHaWxPTkUw2yCKI72m9mKM24eOwE84Wk4ALPsSvEcGbDrwgmhr4RA==}
+  cypress@14.1.0:
+    resolution: {integrity: sha512-pPPj8Uu9NwjaaiXAEcjYZZmgsq6v9Zs1Nw6a+zRF+ANgYSNhH4S32SjFRsvMcuOHR/8dp4GBJhBPqIPSs+TxaA==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
 
@@ -15083,7 +15083,7 @@ snapshots:
 
   cy-mobile-commands@0.3.0: {}
 
-  cypress@14.0.3:
+  cypress@14.1.0:
     dependencies:
       '@cypress/request': 3.0.7
       '@cypress/xvfb': 1.2.4(supports-color@8.1.1)
