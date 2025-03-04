@@ -146,7 +146,7 @@
     "commitizen": "4.3.0",
     "copyfiles": "2.4.1",
     "cy-mobile-commands": "0.3.0",
-    "cypress": "12.7.0",
+    "cypress": "14.0.3",
     "cz-conventional-changelog": "3.3.0",
     "eslint": "8.35.0",
     "eslint-config-next": "^14.2.4",
