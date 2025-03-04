@@ -57,7 +57,7 @@ jobs:
           config-file: cypress.config.js
           record: true
           command: |
-            npx cypress-cloud run --parallel --browser ${{ matrix.browser }} --key ${{ secrets.SORRY_CYPRESS_RECORD_KEY }} --ci-build-id Run#${{ github.run_id }}-${{ matrix.browser }}
+            pnpm exec cypress-cloud run --parallel --browser ${{ matrix.browser }} --key ${{ secrets.SORRY_CYPRESS_RECORD_KEY }} --ci-build-id Run#${{ github.run_id }}-${{ matrix.browser }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.SORRY_CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
