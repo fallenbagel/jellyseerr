@@ -65,3 +65,5 @@ jobs:
           SORRY_CYPRESS_DIRECTOR_URL: ${{ secrets.SORRY_CYPRESS_DIRECTOR_URL }}
           COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
           COMMIT_INFO_SHA: ${{ github.event.pull_request.head.sha }}
+          CYPRESS_RUN_BINARY: $(which firefox)
+          CYPRESS_FIREFOX_FORCE_SPAWN: 1
