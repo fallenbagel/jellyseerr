@@ -107,6 +107,18 @@ interface WatchlistResponse {
   };
 }
 
+interface GqlWatchlistResponse {
+  data: {
+    user: {
+      watchlist: {
+        nodes: {
+          id: string;
+        }[];
+      };
+    };
+  };
+}
+
 interface MetadataResponse {
   MediaContainer: {
     Metadata: {
@@ -357,6 +369,91 @@ class PlexTvAPI extends ExternalAPI {
         items: [],
       };
     }
+  }
+
+  public async getUserWatchlist(uuid: string): Promise<{
+    items: PlexWatchlistItem[];
+  }> {
+    try {
+      const response = await this.post<GqlWatchlistResponse>(
+        '',
+        {
+          query: `query GetWatchlistHub($uuid: ID = "", $first: PaginationInt!, $after: String) {
+                      user(id: $uuid) {
+                          watchlist(first: $first, after: $after) {
+                              nodes {
+                                  ...itemFields
+                              }
+                              pageInfo {
+                                  hasNextPage
+                                  endCursor
+                              }
+                          }
+                      }
+                  }
+
+                  fragment itemFields on MetadataItem {
+                      id
+                  }`,
+          variables: {
+            uuid: uuid,
+            first: 20,
+          },
+        },
+        {},
+        undefined,
+        {},
+        'https://community.plex.tv/api'
+      );
+
+      // the rest of this is basically copied from getWatchlist()
+      const watchlistDetails = await Promise.all(
+        (response.data.user.watchlist.nodes ?? []).map(
+          async (watchlistItem) => {
+            const detailedResponse = await this.getRolling<MetadataResponse>(
+              `/library/metadata/${watchlistItem.id}`,
+              {},
+              undefined,
+              {},
+              'https://metadata.provider.plex.tv'
+            );
+
+            const metadata = detailedResponse.MediaContainer.Metadata[0];
+
+            const tmdbString = metadata.Guid.find((guid) =>
+              guid.id.startsWith('tmdb')
+            );
+            const tvdbString = metadata.Guid.find((guid) =>
+              guid.id.startsWith('tvdb')
+            );
+
+            return {
+              ratingKey: metadata.ratingKey,
+              // This should always be set? But I guess it also cannot be?
+              // We will filter out the 0's afterwards
+              tmdbId: tmdbString ? Number(tmdbString.id.split('//')[1]) : 0,
+              tvdbId: tvdbString
+                ? Number(tvdbString.id.split('//')[1])
+                : undefined,
+              title: metadata.title,
+              type: metadata.type,
+            };
+          }
+        )
+      );
+
+      const filteredList = watchlistDetails.filter((detail) => detail.tmdbId);
+
+      return {
+        items: filteredList,
+      };
+    } catch (e) {
+      logger.error('Plex GraphQL call failed', { errorMessage: e.message });
+    }
+
+    return {
+      items: [],
+    };
   }
 
   public async pingToken() {
