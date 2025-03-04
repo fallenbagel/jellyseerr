@@ -147,6 +147,7 @@
     "copyfiles": "2.4.1",
     "cy-mobile-commands": "0.3.0",
     "cypress": "12.7.0",
+    "cypress-cloud": "^1.13.0",
     "cz-conventional-changelog": "3.3.0",
     "eslint": "8.35.0",
     "eslint-config-next": "^14.2.4",
