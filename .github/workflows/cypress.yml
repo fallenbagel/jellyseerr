@@ -47,6 +47,12 @@ jobs:
       
       - name: Install Firefox
         run: sudo apt-get update && sudo apt-get install -y firefox
+      
+      - name: Verify Firefox
+        run: |
+          which firefox
+          firefox --version
+          echo "Firefox binary location: $(which firefox)"
 
       - name: Run Cypress Tests and Send Data to Sorry Cypress
         uses: cypress-io/github-action@v6
