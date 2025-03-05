@@ -44,6 +44,9 @@ jobs:
           echo Cypress Cache Info
           npx cypress cache list
           npx cypress cache path
+      
+      - name: Install Firefox
+        run: sudo apt-get update && sudo apt-get install -y firefox
 
       - name: Run Cypress Tests and Send Data to Sorry Cypress
         uses: cypress-io/github-action@v6
@@ -66,6 +69,8 @@ jobs:
           COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
           COMMIT_INFO_SHA: ${{ github.event.pull_request.head.sha }}
           CYPRESS_FIREFOX_FORCE_SPAWN: 1
+          FIREFOX_BIN: /usr/bin/firefox
+          MOZ_HEADLESS: 1
       
       - name: Upload video files
         uses: actions/upload-artifact@v4
