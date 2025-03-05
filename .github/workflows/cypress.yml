@@ -68,7 +68,7 @@ jobs:
           CYPRESS_FIREFOX_FORCE_SPAWN: 1
       
       - name: Upload video files
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-videos ${{ matrix.containers }}
           path: |
