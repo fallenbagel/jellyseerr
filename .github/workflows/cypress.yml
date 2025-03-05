@@ -48,12 +48,6 @@ jobs:
       - name: Install Firefox
         run: sudo apt-get update && sudo apt-get install -y firefox
       
-      - name: Verify Firefox
-        run: |
-          which firefox
-          firefox --version
-          echo "Firefox binary location: $(which firefox)"
-
       - name: Create Symlink for Firefox
         run: |
           sudo ln -sf /snap/bin/firefox /usr/bin/firefox
