@@ -1387,5 +1387,9 @@
   "components.Login.adminerror": "Musíte se přihlásit administrátorským účtem.",
   "components.Login.description": "Protože je toto Vaše první přihlášení do {applicationName}, musíte přidat platnou emailovou adresu.",
   "components.Settings.jellyfinSettingsFailure": "Něco se pokazilo při ukládání nastavení {mediaServerName}.",
-  "components.Settings.timeout": "Časový limit"
+  "components.Settings.timeout": "Časový limit",
+  "components.Selector.ended": "Ukončeno",
+  "components.Selector.returningSeries": "Vracející se seriál",
+  "components.Settings.SettingsJobsCache.usersavatars": "Uživatelské avatary",
+  "i18n.specials": "Speciály"
 }
