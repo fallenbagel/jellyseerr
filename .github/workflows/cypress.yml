@@ -75,7 +75,7 @@ jobs:
           COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
           COMMIT_INFO_SHA: ${{ github.event.pull_request.head.sha }}
           CYPRESS_FIREFOX_FORCE_SPAWN: 1
-          FIREFOX_BIN: /usr/bin/firefox
+          FIREFOX_BIN: /snap/bin/firefox
           MOZ_HEADLESS: 1
       
       - name: Upload video files
