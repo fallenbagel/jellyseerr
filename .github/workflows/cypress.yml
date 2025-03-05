@@ -39,7 +39,7 @@ jobs:
       - name: Upload video files
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-videos ${{ matrix.browser }}
+          name: cypress-videos
           path: |
             cypress/videos
             cypress/screenshots
