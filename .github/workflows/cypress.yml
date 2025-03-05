@@ -54,6 +54,11 @@ jobs:
           firefox --version
           echo "Firefox binary location: $(which firefox)"
 
+      - name: Create Symlink for Firefox
+        run: |
+          sudo ln -sf /snap/bin/firefox /usr/bin/firefox
+          ls -l /usr/bin/firefox 
+
       - name: Run Cypress Tests and Send Data to Sorry Cypress
         uses: cypress-io/github-action@v6
         continue-on-error: true
