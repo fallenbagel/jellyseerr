@@ -66,3 +66,11 @@ jobs:
           COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
           COMMIT_INFO_SHA: ${{ github.event.pull_request.head.sha }}
           CYPRESS_FIREFOX_FORCE_SPAWN: 1
+      
+      - name: Upload video files
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-videos ${{ matrix.containers }}
+          path: |
+            cypress/videos
+            cypress/screenshots
