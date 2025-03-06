@@ -17,6 +17,9 @@ class OverrideRule {
   @Column({ type: 'int', nullable: true })
   public sonarrServiceId?: number;
 
+  @Column({ type: 'int', nullable: true })
+  public lidarrServiceId?: number;
+
   @Column({ nullable: true })
   public users?: string;
 

@@ -806,7 +806,7 @@
   "components.Settings.serverpresetLoad": "Drück den Knopf, um verfügbare Server zu laden",
   "components.Settings.serverpresetManualMessage": "Manuelle Konfiguration",
   "components.Settings.serverpresetRefreshing": "Rufe Server ab …",
-  "components.Settings.videoServiceSettingsDescription": "Konfiguriere unten deine {serverType}-Server. Du kannst mehrere {serverType}-Server verbinden, aber nur zwei davon können als Standard markiert werden (ein Nicht-4K- und ein 4K-Server). Administratoren können den Server überschreiben, auf dem neue Anfragen vor der Genehmigung verarbeitet werden.",
+  "components.Settings.serviceSettingsDescription": "Konfiguriere unten deine {serverType}-Server. Du kannst mehrere {serverType}-Server verbinden, aber nur zwei davon können als Standard markiert werden (ein Nicht-4K- und ein 4K-Server). Administratoren können den Server überschreiben, auf dem neue Anfragen vor der Genehmigung verarbeitet werden.",
   "components.Settings.services": "Dienstleistungen",
   "components.Settings.settingUpPlexDescription": "Um Plex einzurichten, können die Daten manuell eintragen oder einen Server ausgewählt werden, welcher von <RegisterPlexTVLink>plex.tv</RegisterPlexTVLink> abgerufen wurde. Drück den Knopf rechts neben dem Dropdown-Menü, um die Liste der verfügbaren Server abzurufen.",
   "components.Settings.sonarrsettings": "Sonarr-Einstellungen",
