@@ -693,7 +693,7 @@
   "components.NotificationTypeSelector.notificationTypes": "Meldingtypes",
   "components.UserProfile.UserSettings.UserPasswordChange.noPasswordSetOwnAccount": "Er is voor jouw account momenteel geen wachtwoord ingesteld. Stel hieronder een wachtwoord in om aanmelden als \"lokale gebruiker\" (met je e-mailadres) in te schakelen.",
   "components.UserProfile.UserSettings.UserPasswordChange.noPasswordSet": "Deze gebruikersaccount heeft momenteel geen wachtwoord ingesteld. Configureer hieronder een wachtwoord zodat deze account in staat is om zich aan te melden als een \"lokale gebruiker\".",
-  "components.Settings.videoServiceSettingsDescription": "Stel je {serverType}-server(s) hieronder in. Je kunt meerdere {serverType}-servers verbinden, maar slechts twee ervan kunnen als standaard worden gemarkeerd (één niet-4K en één 4K). Beheerders kunnen vóór goedkeuring de server aanpassen die voor nieuwe aanvragen gebruikt wordt.",
+  "components.Settings.serviceSettingsDescription": "Stel je {serverType}-server(s) hieronder in. Je kunt meerdere {serverType}-servers verbinden, maar slechts twee ervan kunnen als standaard worden gemarkeerd (één niet-4K en één 4K). Beheerders kunnen vóór goedkeuring de server aanpassen die voor nieuwe aanvragen gebruikt wordt.",
   "components.Settings.noDefaultServer": "Ten minste één {serverType} server moet als standaard worden gemarkeerd om {mediaType}verzoeken te kunnen verwerken.",
   "components.Settings.noDefaultNon4kServer": "Als je slechts één enkele {serverType} server hebt voor zowel niet-4K als 4K-inhoud (of als je alleen 4K-inhoud downloadt), dan moet je {serverType} server <strong>NIET</strong> aangeduid worden als een 4K-server.",
   "components.Settings.mediaTypeSeries": "serie",
