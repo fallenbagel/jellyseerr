@@ -3,16 +3,16 @@ import logger from '@server/logger';
 import { Router } from 'express';
 
 const router = Router();
-const fanartImageProxy = new ImageProxy('fanart', 'http://assets.fanart.tv/', {
+const tadbImageProxy = new ImageProxy('tadb', 'https://r2.theaudiodb.com', {
   rateLimitOptions: {
-    maxRPS: 50,
+    maxRPS: 25,
   },
 });
 
 router.get('/*', async (req, res) => {
   const imagePath = req.path;
   try {
-    const imageData = await fanartImageProxy.getImage(imagePath);
+    const imageData = await tadbImageProxy.getImage(imagePath);
 
     res.writeHead(200, {
       'Content-Type': `image/${imageData.meta.extension}`,
@@ -28,7 +28,7 @@ router.get('/*', async (req, res) => {
       imagePath,
       errorMessage: e.message,
     });
-    res.status(500).end();
+    res.status(500).send();
   }
 });
 
