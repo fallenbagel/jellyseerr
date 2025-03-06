@@ -26,16 +26,14 @@ const isMovie = (
   media: MovieDetails | TvDetails | MusicDetails | null
 ): media is MovieDetails => {
   if (!media) return false;
-  return (
-    (media as MovieDetails).title !== undefined && !('artistName' in media)
-  );
+  return 'title' in media && !('artist' in media);
 };
 
 const isMusic = (
   media: MovieDetails | TvDetails | MusicDetails | null
 ): media is MusicDetails => {
   if (!media) return false;
-  return (media as MusicDetails).artistId !== undefined;
+  return 'artist' in media && typeof media.artist?.name === 'string';
 };
 
 const BlacklistModal = ({
@@ -74,7 +72,7 @@ const BlacklistModal = ({
 
   const getTitle = () => {
     if (isMusic(data)) {
-      return `${data.artist.artistName} - ${data.title}`;
+      return `${data.artist.name} - ${data.title}`;
     }
     return isMovie(data) ? data.title : data?.name;
   };
@@ -90,7 +88,7 @@ const BlacklistModal = ({
 
   const getBackdrop = () => {
     if (isMusic(data)) {
-      return data.artist.images?.find((img) => img.CoverType === 'Fanart')?.Url;
+      return data.artistBackdrop;
     }
     return `https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${data?.backdropPath}`;
   };

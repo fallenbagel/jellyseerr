@@ -144,7 +144,7 @@ const CreateIssueModal = ({
                 <div>
                   {intl.formatMessage(messages.toastSuccessCreate, {
                     title: isMusic(data)
-                      ? `${data.artist.artistName} - ${data.title}`
+                      ? `${data.artist.name} - ${data.title}`
                       : isMovie(data)
                       ? data.title
                       : data.name,
@@ -187,7 +187,7 @@ const CreateIssueModal = ({
             subTitle={
               data &&
               (isMusic(data)
-                ? `${data.artist.artistName} - ${data.title}`
+                ? `${data.artist.name} - ${data.title}`
                 : isMovie(data)
                 ? data.title
                 : data.name)
@@ -199,11 +199,11 @@ const CreateIssueModal = ({
             backdrop={
               data
                 ? isMusic(data)
-                  ? data.images?.find((image) => image.CoverType === 'Cover')
-                      ?.Url ?? '/images/overseerr_poster_not_found.png'
+                  ? data.posterPath ||
+                    '/images/jellyseerr_poster_not_found_square.png'
                   : data.backdropPath
                   ? `https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${data.backdropPath}`
-                  : '/images/overseerr_poster_not_found.png'
+                  : '/images/jellyseerr_poster_not_found.png'
                 : undefined
             }
           >
