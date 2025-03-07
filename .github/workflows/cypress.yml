@@ -36,3 +36,10 @@ jobs:
           # Fix test titles in cypress dashboard
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+      - name: Upload video files
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: |
+            cypress/videos
+            cypress/screenshots

@@ -4,6 +4,7 @@ export default defineConfig({
   projectId: 'xkm1b4',
   e2e: {
     baseUrl: 'http://localhost:5055',
+    video: true,
     experimentalSessionAndOrigin: true,
   },
   env: {

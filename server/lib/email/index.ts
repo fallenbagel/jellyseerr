@@ -50,6 +50,7 @@ class PreparedEmail extends Email {
       },
       send: true,
       transport: transport,
+      preview: false,
     });
   }
 }
