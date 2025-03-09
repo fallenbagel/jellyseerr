@@ -1,5 +1,6 @@
 import JellyfinAPI from '@server/api/jellyfin';
 import PlexTvAPI from '@server/api/plextv';
+import { ExtendedPlexUser } from '@server/api/plextv';
 import TautulliAPI from '@server/api/tautulli';
 import { MediaType } from '@server/constants/media';
 import { MediaServerType } from '@server/constants/server';
@@ -451,50 +452,48 @@ router.post(
       const settings = getSettings();
       const userRepository = getRepository(User);
       const body = req.body as { plexIds: string[] } | undefined;
+      const getEmail = (plexUser: ExtendedPlexUser): string =>
+        plexUser.email ? plexUser.email.toLowerCase() : `${plexUser.id}@plex.local`;
 
-      // taken from auth.ts
       const mainUser = await userRepository.findOneOrFail({
         select: { id: true, plexToken: true },
         where: { id: 1 },
       });
-      const mainPlexTv = new PlexTvAPI(mainUser.plexToken ?? '');
 
+      const mainPlexTv = new PlexTvAPI(mainUser.plexToken ?? '');
       const plexUsersResponse = await mainPlexTv.getUsers();
       const createdUsers: User[] = [];
-      for (const rawUser of plexUsersResponse.MediaContainer.User) {
-        const account = rawUser.$;
 
-        if (account.email) {
+      for (const rawUser of plexUsersResponse.MediaContainer.User) {
+        const account = rawUser.$ as ExtendedPlexUser;
+        // Import user even if they don't have an email set
+        if (account.email || account.home === "1") {
           const user = await userRepository
             .createQueryBuilder('user')
             .where('user.plexId = :id', { id: account.id })
-            .orWhere('user.email = :email', {
-              email: account.email.toLowerCase(),
-            })
+            .orWhere('user.email = :email', { email: getEmail(account) })
             .getOne();
 
           if (user) {
-            // Update the user's avatar with their Plex thumbnail, in case it changed
-            user.avatar = account.thumb;
-            user.email = account.email;
-            user.plexUsername = account.username;
-
-            // In case the user was previously a local account
+            user.avatar = account.thumb ?? '';
+            user.email = getEmail(account);
+            user.plexUsername = account.username || account.title;
             if (user.userType === UserType.LOCAL) {
               user.userType = UserType.PLEX;
-              user.plexId = parseInt(account.id);
+              user.plexId = parseInt(account.id, 10);
             }
             await userRepository.save(user);
           } else if (!body || body.plexIds.includes(account.id)) {
-            if (await mainPlexTv.checkUserAccess(parseInt(account.id))) {
+            if (await mainPlexTv.checkUserAccess(parseInt(account.id, 10))) {
               const newUser = new User({
-                plexUsername: account.username,
-                email: account.email,
+                plexUsername: account.username || account.title,
+                email: getEmail(account),
                 permissions: settings.main.defaultPermissions,
-                plexId: parseInt(account.id),
+                plexId: parseInt(account.id, 10),
                 plexToken: '',
-                avatar: account.thumb,
+                avatar: account.thumb ?? '',
                 userType: UserType.PLEX,
+                isFamilyProfile: account.home === "1",
               });
               await userRepository.save(newUser);
               createdUsers.push(newUser);
@@ -688,14 +687,14 @@ router.get<{ id: string }, UserWatchDataResponse>(
               (record) =>
                 (!!media.ratingKey &&
                   parseInt(media.ratingKey) ===
-                    (record.media_type === 'movie'
-                      ? record.rating_key
-                      : record.grandparent_rating_key)) ||
+                  (record.media_type === 'movie'
+                    ? record.rating_key
+                    : record.grandparent_rating_key)) ||
                 (!!media.ratingKey4k &&
                   parseInt(media.ratingKey4k) ===
-                    (record.media_type === 'movie'
-                      ? record.rating_key
-                      : record.grandparent_rating_key))
+                  (record.media_type === 'movie'
+                    ? record.rating_key
+                    : record.grandparent_rating_key))
             ),
         ]
       );
