@@ -3812,6 +3812,11 @@ paths:
           required: false
           schema:
             type: string
+        - in: query
+          name: includeIds
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: A JSON array of all users

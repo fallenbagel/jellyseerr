@@ -32,7 +32,14 @@ const router = Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    const pageSize = req.query.take ? Number(req.query.take) : 10;
+    const includeIds = [
+      ...new Set(
+        req.query.includeIds ? req.query.includeIds.toString().split(',') : []
+      ),
+    ];
+    const pageSize = req.query.take
+      ? Number(req.query.take)
+      : Math.max(10, includeIds.length);
     const skip = req.query.skip ? Number(req.query.skip) : 0;
     const q = req.query.q ? req.query.q.toString().toLowerCase() : '';
     let query = getRepository(User).createQueryBuilder('user');
@@ -42,6 +49,10 @@ router.get('/', async (req, res, next) => {
         'LOWER(user.username) LIKE :q OR LOWER(user.email) LIKE :q OR LOWER(user.plexUsername) LIKE :q OR LOWER(user.jellyfinUsername) LIKE :q',
         { q: `%${q}%` }
       );
+    }
+
+    if (includeIds.length > 0) {
+      query.andWhereInIds(includeIds);
     }
 
     switch (req.query.sort) {
@@ -84,6 +95,7 @@ router.get('/', async (req, res, next) => {
     const [users, userCount] = await query
       .take(pageSize)
       .skip(skip)
+      .distinct(true)
       .getManyAndCount();
 
     return res.status(200).json({
