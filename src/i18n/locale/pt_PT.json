@@ -1211,5 +1211,14 @@
   "components.Discover.emptywatchlist": "Mídia adicionadas à sua <PlexWatchlistSupportLink>Lista Para Assistir do Plex</PlexWatchlistSupportLink> aparecerão aqui.",
   "components.RequestList.RequestItem.unknowntitle": "Título Desconhecido",
   "components.Selector.searchGenres": "Selecione os gêneros…",
-  "components.Selector.searchKeywords": "Pesquisar palavras-chave…"
+  "components.Selector.searchKeywords": "Pesquisar palavras-chave…",
+  "component.BlacklistBlock.blacklistdate": "Data de inclusão na lista negra",
+  "components.Blacklist.blacklistsettings": "Definições da lista negra",
+  "component.BlacklistBlock.blacklistedby": "Colocado na lista negra por",
+  "component.BlacklistModal.blacklisting": "Lista negra",
+  "components.Blacklist.blacklistNotFoundError": "<strong>{title}2</strong> não está na lista negra.",
+  "components.Blacklist.blacklistSettingsDescription": "Faça a gestão dos conteúdos multimédia colocados na lista negra.",
+  "components.Blacklist.blacklistdate": "data",
+  "components.Blacklist.blacklistedby": "{date} por {user}",
+  "components.Blacklist.mediaName": "Nome"
 }
