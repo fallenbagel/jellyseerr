@@ -60,22 +60,24 @@ router.get('/', async (req, res, next) => {
         query = query.orderBy('user.updatedAt', 'DESC');
         break;
       case 'displayname':
-        query = query.orderBy(
-          `CASE WHEN (user.username IS NULL OR user.username = '') THEN (
-             CASE WHEN (user.plexUsername IS NULL OR user.plexUsername = '') THEN (
-               CASE WHEN (user.jellyfinUsername IS NULL OR user.jellyfinUsername = '') THEN
-                 "user"."email"
-               ELSE
-                 LOWER(user.jellyfinUsername)
-               END)
-             ELSE
-               LOWER(user.jellyfinUsername)
-             END)
-           ELSE
-             LOWER(user.username)
-           END`,
-          'ASC'
-        );
+        query = query
+          .addSelect(
+            `CASE WHEN (user.username IS NULL OR user.username = '') THEN (
+              CASE WHEN (user.plexUsername IS NULL OR user.plexUsername = '') THEN (
+                CASE WHEN (user.jellyfinUsername IS NULL OR user.jellyfinUsername = '') THEN
+                  "user"."email"
+                ELSE
+                  LOWER(user.jellyfinUsername)
+                END)
+              ELSE
+                LOWER(user.jellyfinUsername)
+              END)
+            ELSE
+              LOWER(user.username)
+            END`,
+            'displayname_sort_key'
+          )
+          .orderBy('displayname_sort_key', 'ASC');
         break;
       case 'requests':
         query = query
