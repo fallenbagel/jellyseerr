@@ -31,7 +31,7 @@ if (typeof window !== 'undefined') {
 
     const headers = {
       ...(init?.headers || {}),
-      ...(csrfToken ? { 'XSRF-TOKEN': csrfToken } : {}),
+      ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}),
     };
 
     const newInit: RequestInit = {

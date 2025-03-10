@@ -127,18 +127,18 @@ const OverrideRuleTiles = ({
           })
       );
       setKeywords(keywords);
-      const users = await Promise.all(
-        rules
-          .map((rule) => rule.users?.split(','))
-          .flat()
-          .filter((userId) => userId)
-          .map(async (userId) => {
-            const res = await fetch(`/api/v1/user/${userId}`);
-            if (!res.ok) throw new Error();
-            const user: User = await res.json();
-            return user;
-          })
-      );
+      const allUsersFromRules = rules
+        .map((rule) => rule.users)
+        .filter((users) => users)
+        .join(',');
+      if (allUsersFromRules) {
+        const res = await fetch(
+          `/api/v1/user?includeIds=${encodeURIComponent(allUsersFromRules)}`
+        );
+        if (!res.ok) throw new Error();
+        const users: User[] = (await res.json()).results;
+        setUsers(users);
+      }
       setUsers(users);
     })();
   }, [rules]);

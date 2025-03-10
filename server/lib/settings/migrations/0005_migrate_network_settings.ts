@@ -10,7 +10,6 @@ const migrateNetworkSettings = (settings: any): AllSettings => {
     csrfProtection: settings.main.csrfProtection ?? false,
     trustProxy: settings.main.trustProxy ?? false,
     forceIpv4First: settings.main.forceIpv4First ?? false,
-    dnsServers: settings.main.dnsServers ?? '',
     proxy: settings.main.proxy ?? {
       enabled: false,
       hostname: '',
@@ -25,7 +24,6 @@ const migrateNetworkSettings = (settings: any): AllSettings => {
   delete settings.main.csrfProtection;
   delete settings.main.trustProxy;
   delete settings.main.forceIpv4First;
-  delete settings.main.dnsServers;
   delete settings.main.proxy;
   return newSettings;
 };

@@ -137,7 +137,6 @@ export interface MainSettings {
 export interface NetworkSettings {
   csrfProtection: boolean;
   forceIpv4First: boolean;
-  dnsServers: string;
   trustProxy: boolean;
   proxy: ProxySettings;
 }
@@ -510,7 +509,6 @@ class Settings {
         csrfProtection: false,
         trustProxy: false,
         forceIpv4First: false,
-        dnsServers: '',
         proxy: {
           enabled: false,
           hostname: '',

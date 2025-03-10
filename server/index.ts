@@ -28,7 +28,7 @@ import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
-import csurf from 'csurf';
+import { doubleCsrf } from 'csrf-csrf';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
@@ -81,12 +81,6 @@ app
     ) {
       dns.setDefaultResultOrder('ipv4first');
       net.setDefaultAutoSelectFamily(false);
-    }
-
-    if (settings.network.dnsServers.trim() !== '') {
-      dns.setServers(
-        settings.network.dnsServers.split(',').map((server) => server.trim())
-      );
     }
 
     // Register HTTP proxy
@@ -168,18 +162,23 @@ app
       }
     });
     if (settings.network.csrfProtection) {
-      server.use(
-        csurf({
-          cookie: {
-            httpOnly: true,
-            sameSite: true,
-            secure: !dev,
-          },
-        })
-      );
+      const { doubleCsrfProtection, generateToken } = doubleCsrf({
+        getSecret: () => settings.clientId,
+        cookieName: 'XSRF-TOKEN',
+        cookieOptions: {
+          httpOnly: true,
+          sameSite: 'strict',
+          secure: !dev,
+        },
+        size: 64,
+        ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
+      });
+
+      server.use(doubleCsrfProtection);
+
       server.use((req, res, next) => {
-        res.cookie('XSRF-TOKEN', req.csrfToken(), {
-          sameSite: true,
+        res.cookie('XSRF-TOKEN', generateToken(req, res), {
+          sameSite: 'strict',
           secure: !dev,
         });
         next();

@@ -1375,5 +1375,8 @@
   "i18n.addToBlacklist": "Додати в чорний список",
   "i18n.blacklist": "Чорний список",
   "i18n.removeFromBlacklistSuccess": "<strong>{title}</strong>було успішно видалено з чорного списку.",
-  "i18n.blacklisted": "У чорному списку"
+  "i18n.blacklisted": "У чорному списку",
+  "components.Settings.SettingsJobsCache.usersavatars": "Аватар користувача",
+  "components.PermissionEdit.manageblacklist": "Керувати чорним списком",
+  "components.Settings.Notifications.validationWebhookRoleId": "Ви повинні надати дійсний ідентифікатор ролі Discord"
 }

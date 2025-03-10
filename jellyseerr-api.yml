@@ -194,9 +194,6 @@ components:
         forceIpv4First:
           type: boolean
           example: false
-        dnsServers:
-          type: string
-          example: '1.1.1.1'
         trustProxy:
           type: boolean
           example: true
@@ -3812,6 +3809,11 @@ paths:
             default: created
         - in: query
           name: q
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: includeIds
           required: false
           schema:
             type: string
