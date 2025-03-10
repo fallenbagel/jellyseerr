@@ -281,8 +281,6 @@
   "components.RequestBlock.profilechanged": "Kvalitetsprofil",
   "components.RegionSelector.regionServerDefault": "Standard {{region}}",
   "components.RegionSelector.regionDefault": "Alle Regioner",
-  "components.PlexLoginButton.signinwithplex": "Logg inn",
-  "components.PlexLoginButton.signingin": "Logger inn…",
   "components.PersonDetails.lifespan": "{birthdate} – {deathdate}",
   "components.PersonDetails.crewmember": "Stab",
   "components.PersonDetails.birthdate": "Født {birthdate}",
