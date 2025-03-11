@@ -1,3 +1,4 @@
+import csurf from '@dr.pogodin/csurf';
 import PlexAPI from '@server/api/plexapi';
 import dataSource, { getRepository, isPgsql } from '@server/datasource';
 import DiscoverSlider from '@server/entity/DiscoverSlider';
@@ -28,7 +29,6 @@ import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
-import { doubleCsrf } from 'csrf-csrf';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
@@ -162,23 +162,18 @@ app
       }
     });
     if (settings.network.csrfProtection) {
-      const { doubleCsrfProtection, generateToken } = doubleCsrf({
-        getSecret: () => settings.clientId,
-        cookieName: 'XSRF-TOKEN',
-        cookieOptions: {
-          httpOnly: true,
-          sameSite: 'strict',
-          secure: !dev,
-        },
-        size: 64,
-        ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
-      });
-
-      server.use(doubleCsrfProtection);
-
+      server.use(
+        csurf({
+          cookie: {
+            httpOnly: true,
+            sameSite: true,
+            secure: !dev,
+          },
+        })
+      );
       server.use((req, res, next) => {
-        res.cookie('XSRF-TOKEN', generateToken(req, res), {
-          sameSite: 'strict',
+        res.cookie('XSRF-TOKEN', req.csrfToken(), {
+          sameSite: true,
           secure: !dev,
         });
         next();
