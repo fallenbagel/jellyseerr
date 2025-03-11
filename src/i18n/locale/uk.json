@@ -1367,5 +1367,11 @@
   "i18n.blacklisted": "У чорному списку",
   "components.Settings.SettingsJobsCache.usersavatars": "Аватар користувача",
   "components.PermissionEdit.manageblacklist": "Керувати чорним списком",
-  "components.Settings.Notifications.validationWebhookRoleId": "Ви повинні надати дійсний ідентифікатор ролі Discord"
+  "components.Settings.Notifications.validationWebhookRoleId": "Ви повинні надати дійсний ідентифікатор ролі Discord",
+  "components.Settings.OverrideRuleModal.service": "Сервіс",
+  "components.Settings.SettingsNetwork.docs": "документація",
+  "components.Settings.SettingsNetwork.network": "Мережа",
+  "components.Settings.SettingsNetwork.networksettings": "Налаштування мережі",
+  "components.Settings.SettingsNetwork.toastSettingsFailure": "Під час збереження налаштувань сталася помилка.",
+  "components.Settings.SettingsNetwork.toastSettingsSuccess": "Налаштування успішно збережено!"
 }
