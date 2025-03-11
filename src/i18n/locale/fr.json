@@ -1264,7 +1264,7 @@
   "components.UserProfile.plexwatchlist": "Watchlist Plex",
   "components.Settings.syncJellyfin": "Synchroniser les bibliothèques",
   "components.TitleCard.watchlistDeleted": "<strong>{title}</strong> a été retiré de votre watchlist avec succès !",
-  "components.IssueModal.issueSubtitles": "Sous-titre",
+  "components.IssueModal.issueSubtitles": "Sous-titres",
   "components.Login.emailtooltip": "L'adresse ne nécessite pas d'être associée avec votre instance {mediaServerName}.",
   "components.Settings.Notifications.NotificationsPushover.deviceDefault": "Appareil par défaut",
   "components.Settings.Notifications.userEmailRequired": "E-mail utilisateur requis",
@@ -1308,7 +1308,7 @@
   "components.Login.validationPortRequired": "Vous devez fournir un numéro de port valide",
   "components.Login.validationUrlBaseLeadingSlash": "L'URL de base doit avoir une barre oblique initiale",
   "components.Login.validationUrlTrailingSlash": "L'URL ne doit pas se terminer par une barre oblique finale",
-  "components.MovieDetails.watchlistError": "Une erreur s'est produite, réessayez.",
+  "components.MovieDetails.watchlistError": "Une erreur s'est produite. Merci de réessayez.",
   "components.MovieDetails.watchlistSuccess": "<strong>{title}</strong> a été ajouté à la liste de surveillance avec succès!",
   "components.Settings.invalidurlerror": "Impossible de se connecter au serveur {mediaServerName}.",
   "components.Settings.jellyfinForgotPasswordUrl": "URL de mot de passe oublié",
@@ -1413,5 +1413,6 @@
   "components.Settings.OverrideRuleTile.settings": "Paramètres",
   "components.Settings.OverrideRuleTile.tags": "Étiquettes",
   "components.Settings.OverrideRuleTile.users": "Utilisateurs",
-  "components.Settings.SettingsNetwork.docs": "documentation"
+  "components.Settings.SettingsNetwork.docs": "documentation",
+  "components.Selector.searchUsers": "Sélectionner un utilisateur…"
 }
