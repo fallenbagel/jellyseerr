@@ -629,7 +629,9 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                 )}
               </>
             )}
-          <PlayButton links={mediaLinks} />
+          <div className="z-20">
+            <PlayButton links={mediaLinks} />
+          </div>
           <RequestButton
             mediaType="movie"
             media={data.mediaInfo}
