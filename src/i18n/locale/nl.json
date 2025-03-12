@@ -949,7 +949,7 @@
   "components.Settings.RadarrModal.released": "Uitgebracht",
   "components.Settings.RadarrModal.announced": "Aangekondigd",
   "components.Settings.Notifications.enableMentions": "Vermeldingen inschakelen",
-  "components.Settings.Notifications.NotificationsGotify.agentenabled": "Dienst inschakelen",
+  "components.Settings.Notifications.NotificationsGotify.agentenabled": "Notificatietype inschakelen",
   "components.Settings.Notifications.NotificationsGotify.gotifysettingssaved": "Instellingen voor meldingen Gotify opgeslagen!",
   "components.Settings.Notifications.NotificationsGotify.token": "Toepassingstoken",
   "i18n.importing": "Importeren…",
