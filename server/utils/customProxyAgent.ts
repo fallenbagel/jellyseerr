@@ -8,8 +8,9 @@ export default async function createCustomProxyAgent(
 ) {
   const defaultAgent = new Agent({ keepAliveTimeout: 5000 });
 
-  const skipUrl = (url: string) => {
-    const hostname = new URL(url).hostname;
+  const skipUrl = (url: string | URL) => {
+    const hostname =
+      typeof url === 'string' ? new URL(url).hostname : url.hostname;
 
     if (proxySettings.bypassLocalAddresses && isLocalAddress(hostname)) {
       return true;
@@ -38,8 +39,7 @@ export default async function createCustomProxyAgent(
     dispatch: Dispatcher['dispatch']
   ): Dispatcher['dispatch'] => {
     return (opts, handler) => {
-      const url = opts.origin?.toString();
-      return url && skipUrl(url)
+      return opts.origin && skipUrl(opts.origin)
         ? defaultAgent.dispatch(opts, handler)
         : dispatch(opts, handler);
     };
@@ -60,13 +60,10 @@ export default async function createCustomProxyAgent(
         ':' +
         proxySettings.port,
       token,
-      interceptors: {
-        Client: [noProxyInterceptor],
-      },
       keepAliveTimeout: 5000,
     });
 
-    setGlobalDispatcher(proxyAgent);
+    setGlobalDispatcher(proxyAgent.compose(noProxyInterceptor));
   } catch (e) {
     logger.error('Failed to connect to the proxy: ' + e.message, {
       label: 'Proxy',
@@ -95,7 +92,11 @@ export default async function createCustomProxyAgent(
 }
 
 function isLocalAddress(hostname: string) {
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+  if (
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '::1'
+  ) {
     return true;
   }
 
