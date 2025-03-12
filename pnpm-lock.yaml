@@ -41,6 +41,9 @@ importers:
       '@tanem/react-nprogress':
         specifier: 5.0.30
         version: 5.0.30(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/ua-parser-js':
+        specifier: ^0.7.36
+        version: 0.7.39
       '@types/wink-jaro-distance':
         specifier: ^2.0.2
         version: 2.0.2
@@ -206,6 +209,9 @@ importers:
       typeorm:
         specifier: 0.3.11
         version: 0.3.11(pg@8.11.0)(sqlite3@5.1.7)(ts-node@10.9.1(@swc/core@1.6.5(@swc/helpers@0.5.11))(@types/node@22.10.5)(typescript@4.9.5))
+      ua-parser-js:
+        specifier: ^1.0.35
+        version: 1.0.40
       undici:
         specifier: ^7.3.0
         version: 7.3.0
@@ -3411,6 +3417,9 @@ packages:
 
   '@types/triple-beam@1.3.5':
     resolution: {integrity: sha512-6WaYesThRMCl19iryMYP7/x2OVgCtbIVflDGFpWnb9irXI3UjYE4AzmYuiUKY1AJstGijoY+MgUszMgRxIYTYw==}
+
+  '@types/ua-parser-js@0.7.39':
+    resolution: {integrity: sha512-P/oDfpofrdtF5xw433SPALpdSchtJmY7nsJItf8h3KXqOslkbySh8zq4dSWXH2oTjRvJ5PczVEoCZPow6GicLg==}
 
   '@types/unist@2.0.10':
     resolution: {integrity: sha512-IfYcSBWE3hLpBg8+X2SEa8LVkJdJEkT2Ese2aaLs3ptGdVtABxndrMaxuFlQ1qdFf9Q5rDvDpxI3WwgvKFAsQA==}
@@ -9223,6 +9232,10 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  ua-parser-js@1.0.40:
+    resolution: {integrity: sha512-z6PJ8Lml+v3ichVojCiB8toQJBuwR42ySM4ezjXIqXK3M0HczmKQ3LF4rhU55PfD99KEEXQG6yb7iOMyvYuHew==}
+    hasBin: true
+
   uc.micro@2.1.0:
     resolution: {integrity: sha512-ARDJmphmdvUk6Glw7y9DQ2bFkKBHwQHLi2lsaH6PPmz/Ka9sFOBsBluozhDltWmnv9u/cF6Rt87znRTPV+yp/A==}
 
@@ -13777,6 +13790,8 @@ snapshots:
       '@types/serve-static': 1.15.7
 
   '@types/triple-beam@1.3.5': {}
+
+  '@types/ua-parser-js@0.7.39': {}
 
   '@types/unist@2.0.10': {}
 
@@ -20671,6 +20686,8 @@ snapshots:
   typescript@4.9.5: {}
 
   typescript@5.5.2: {}
+
+  ua-parser-js@1.0.40: {}
 
   uc.micro@2.1.0:
     optional: true
