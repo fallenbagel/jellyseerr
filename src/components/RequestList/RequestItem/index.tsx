@@ -17,9 +17,10 @@ import {
   TrashIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid';
-import { MediaRequestStatus } from '@server/constants/media';
+import { MediaRequestStatus, MediaType } from '@server/constants/media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
 import type { NonFunctionProperties } from '@server/interfaces/api/common';
+import type { RadarrSettings, SonarrSettings } from '@server/lib/settings';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
 import Link from 'next/link';
@@ -293,9 +294,16 @@ const RequestItemError = ({
 interface RequestItemProps {
   request: NonFunctionProperties<MediaRequest> & { profileName?: string };
   revalidateList: () => void;
+  radarrData?: RadarrSettings[];
+  sonarrData?: SonarrSettings[];
 }
 
-const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
+const RequestItem = ({
+  request,
+  revalidateList,
+  radarrData,
+  sonarrData,
+}: RequestItemProps) => {
   const settings = useSettings();
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -389,6 +397,23 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
     iOSPlexUrl: requestData?.media?.iOSPlexUrl,
     iOSPlexUrl4k: requestData?.media?.iOSPlexUrl4k,
   });
+
+  const serviceExists = () => {
+    if (title?.mediaInfo) {
+      if (title?.mediaInfo.mediaType === MediaType.MOVIE) {
+        return (
+          radarrData?.find((radarr) => radarr.id === request.serverId) !==
+          undefined
+        );
+      } else {
+        return (
+          sonarrData?.find((sonarr) => sonarr.id === request.serverId) !==
+          undefined
+        );
+      }
+    }
+    return false;
+  };
 
   if (!title && !error) {
     return (
@@ -697,28 +722,30 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
             )}
           {requestData.status !== MediaRequestStatus.PENDING &&
             hasPermission(Permission.MANAGE_REQUESTS) && (
-              <>
-                <ConfirmButton
-                  onClick={() => deleteRequest()}
-                  confirmText={intl.formatMessage(globalMessages.areyousure)}
-                  className="w-full"
-                >
-                  <TrashIcon />
-                  <span>{intl.formatMessage(messages.deleterequest)}</span>
-                </ConfirmButton>
-                <ConfirmButton
-                  onClick={() => deleteMediaFile()}
-                  confirmText={intl.formatMessage(globalMessages.areyousure)}
-                  className="w-full"
-                >
-                  <TrashIcon />
-                  <span>
-                    {intl.formatMessage(messages.removearr, {
-                      arr: request.type === 'movie' ? 'Radarr' : 'Sonarr',
-                    })}
-                  </span>
-                </ConfirmButton>
-              </>
+              <ConfirmButton
+                onClick={() => deleteRequest()}
+                confirmText={intl.formatMessage(globalMessages.areyousure)}
+                className="w-full"
+              >
+                <TrashIcon />
+                <span>{intl.formatMessage(messages.deleterequest)}</span>
+              </ConfirmButton>
+            )}
+          {hasPermission(Permission.MANAGE_REQUESTS) &&
+            title?.mediaInfo?.serviceId &&
+            serviceExists() && (
+              <ConfirmButton
+                onClick={() => deleteMediaFile()}
+                confirmText={intl.formatMessage(globalMessages.areyousure)}
+                className="w-full"
+              >
+                <TrashIcon />
+                <span>
+                  {intl.formatMessage(messages.removearr, {
+                    arr: request.type === 'movie' ? 'Radarr' : 'Sonarr',
+                  })}
+                </span>
+              </ConfirmButton>
             )}
           {requestData.status === MediaRequestStatus.PENDING &&
             hasPermission(Permission.MANAGE_REQUESTS) && (
