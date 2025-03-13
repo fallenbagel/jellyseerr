@@ -450,23 +450,6 @@ const RequestItem = ({
     return false;
   };
 
-  const serviceExists = () => {
-    if (title?.mediaInfo) {
-      if (title?.mediaInfo.mediaType === MediaType.MOVIE) {
-        return (
-          radarrData?.find((radarr) => radarr.id === request.serverId) !==
-          undefined
-        );
-      } else {
-        return (
-          sonarrData?.find((sonarr) => sonarr.id === request.serverId) !==
-          undefined
-        );
-      }
-    }
-    return false;
-  };
-
   const title =
     useProgressiveCovers<MovieDetails | TvDetails | MusicDetails>(
       requestData?.type === 'music' && titleData && isMusic(titleData)
@@ -850,11 +833,11 @@ const RequestItem = ({
                 <span>
                   {intl.formatMessage(messages.removearr, {
                     arr:
-                        request.type === 'music'
-                          ? 'Lidarr'
-                          : request.type === 'movie'
-                          ? 'Radarr'
-                          : 'Sonarr',
+                      request.type === 'music'
+                        ? 'Lidarr'
+                        : request.type === 'movie'
+                        ? 'Radarr'
+                        : 'Sonarr',
                   })}
                 </span>
               </ConfirmButton>
