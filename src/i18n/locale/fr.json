@@ -707,7 +707,7 @@
   "components.RequestModal.QuotaDisplay.seasonlimit": "{limit, plural, one {saison} other {saisons}}",
   "components.LanguageSelector.originalLanguageDefault": "Toutes les langues",
   "components.LanguageSelector.languageServerDefault": "({language}) par défaut",
-  "i18n.tvshow": "Séries",
+  "i18n.tvshow": "Série",
   "i18n.test": "Tester",
   "i18n.save": "Sauvegarder les changements",
   "i18n.request4k": "Demander en 4K",
@@ -1414,5 +1414,8 @@
   "components.Settings.OverrideRuleTile.tags": "Étiquettes",
   "components.Settings.OverrideRuleTile.users": "Utilisateurs",
   "components.Settings.SettingsNetwork.docs": "documentation",
-  "components.Selector.searchUsers": "Sélectionner un utilisateur…"
+  "components.Selector.searchUsers": "Sélectionner un utilisateur…",
+  "components.Settings.SettingsNetwork.networkDisclaimer": "Les paramètres réseau de votre conteneur/système doivent être utilisés à la place de ces paramètres. Consultez la documentation pour plus d'informations.",
+  "components.Settings.SettingsMain.enableSpecialEpisodes": "Autoriser les demandes d'épisodes spéciaux",
+  "components.Settings.SettingsUsers.loginMethods": "Méthodes de connexion"
 }
