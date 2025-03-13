@@ -12,7 +12,6 @@ info:
 
     Additionally, if forward authentication is enabled, Jellyseerr will authenticate as the email set in the `X-Forwarded-User` header.
 
-    Additionally, if forward authentication is enabled, Jellyseerr will authenticate as the email set in the `X-Forwarded-User` header.
 tags:
   - name: public
     description: Public API endpoints requiring no authentication.
