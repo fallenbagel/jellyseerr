@@ -17,19 +17,32 @@ const AirDateBadge = ({ airDate }: AirDateBadgeProps) => {
   const dAirDate = new Date(airDate);
   const nowDate = new Date();
   const alreadyAired = dAirDate.getTime() < nowDate.getTime();
-
   const compareWeek = new Date(
     alreadyAired ? Date.now() - WEEK : Date.now() + WEEK
   );
-
   let showRelative = false;
-
   if (
     (alreadyAired && dAirDate.getTime() > compareWeek.getTime()) ||
     (!alreadyAired && dAirDate.getTime() < compareWeek.getTime())
   ) {
     showRelative = true;
   }
+
+  const airDateStartOfDay = new Date(
+    dAirDate.getFullYear(),
+    dAirDate.getMonth(),
+    dAirDate.getDate()
+  ).getTime();
+
+  const nowStartOfDay = new Date(
+    nowDate.getFullYear(),
+    nowDate.getMonth(),
+    nowDate.getDate()
+  ).getTime();
+
+  const diffInDays = Math.round(
+    (airDateStartOfDay - nowStartOfDay) / (1000 * 60 * 60 * 24)
+  );
 
   return (
     <div className="flex items-center space-x-2">
@@ -48,17 +61,9 @@ const AirDateBadge = ({ airDate }: AirDateBadgeProps) => {
             {
               relativeTime: (
                 <FormattedRelativeTime
-                  value={
-                    (new Date(
-                      dAirDate.getFullYear(),
-                      dAirDate.getMonth(),
-                      dAirDate.getDate()
-                    ).getTime() -
-                      Date.now()) /
-                    1000
-                  }
+                  value={diffInDays}
+                  unit="day"
                   numeric="auto"
-                  updateIntervalInSeconds={1}
                 />
               ),
             }
