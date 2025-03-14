@@ -758,7 +758,7 @@
   "components.RequestModal.AdvancedRequester.selecttags": "Sélectionner les tags",
   "components.RequestModal.AdvancedRequester.notagoptions": "Aucun tag.",
   "components.UserProfile.UserSettings.UserNotificationSettings.pgpPublicKeyTip": "Chiffrer les emails en utilisant <OpenPgpLink>OpenPGP</OpenPgpLink>",
-  "components.UserProfile.UserSettings.UserPasswordChange.noPasswordSetOwnAccount": "Votre compte n’a actuellement pas de mot de passe. Configurez un mot de passe ci-dessous pour activer la connexion en tant qu’ \"utilisateur local\" en utilisant votre adresse e-mail.",
+  "components.UserProfile.UserSettings.UserPasswordChange.noPasswordSetOwnAccount": "Votre compte n’a actuellement aucun mot de passe. Configurez un mot de passe ci-dessous pour activer la connexion en tant qu’ \"utilisateur local\" en utilisant votre adresse e-mail.",
   "components.UserProfile.UserSettings.UserPasswordChange.noPasswordSet": "Ce compte utilisateur n’a actuellement pas de mot de passe. Configurez un mot de passe ci-dessous pour permettre à ce compte de se connecter en tant \"qu’utilisateur local.\"",
   "components.UserProfile.UserSettings.UserNotificationSettings.validationPgpPublicKey": "Vous devez fournir une clé publique PGP valide",
   "components.UserProfile.UserSettings.UserNotificationSettings.telegramsettingssaved": "Paramètres de notification Telegram enregistrés avec succès !",
@@ -1477,5 +1477,13 @@
   "components.UserProfile.UserSettings.LinkJellyfinModal.usernameRequired": "Vous devez fournir un nom d'utilisateur",
   "components.UserProfile.UserSettings.UserLinkedAccountsSettings.deleteFailed": "Impossible de supprimer le compte associé.",
   "components.UserProfile.UserSettings.UserLinkedAccountsSettings.errorUnknown": "Une erreur inconnue est survenue",
-  "components.UserProfile.UserSettings.UserNotificationSettings.validationTelegramMessageThreadId": "L'identifiant du fil de discussion doit être un nombre entier positif"
+  "components.UserProfile.UserSettings.UserNotificationSettings.validationTelegramMessageThreadId": "L'identifiant du fil de discussion doit être un nombre entier positif",
+  "components.UserProfile.UserSettings.UserLinkedAccountsSettings.linkedAccounts": "Comptes liés",
+  "components.UserProfile.UserSettings.UserLinkedAccountsSettings.noLinkedAccounts": "Vous n'avez pas de comptes externes liés à votre compte.",
+  "components.UserProfile.UserSettings.menuLinkedAccounts": "Comptes liés",
+  "components.Settings.OverrideRuleModal.create": "Créer une règle",
+  "components.Settings.OverrideRuleModal.createrule": "Nouvelle règle de remplacement",
+  "components.UserProfile.UserSettings.UserLinkedAccountsSettings.noPermissionDescription": "Vous n'avez pas la permission de modifier les comptes liés de cet utilisateur.",
+  "components.UserProfile.UserSettings.UserLinkedAccountsSettings.plexErrorExists": "Ce compte est déjà lié à un utilisateur Plex",
+  "components.UserProfile.UserSettings.UserLinkedAccountsSettings.plexErrorUnauthorized": "Impossible de se connecter à Plex en utilisant vos identifiants"
 }
