@@ -48,7 +48,15 @@ const AirDateBadge = ({ airDate }: AirDateBadgeProps) => {
             {
               relativeTime: (
                 <FormattedRelativeTime
-                  value={(dAirDate.getTime() - Date.now()) / 1000}
+                  value={
+                    (new Date(
+                      dAirDate.getFullYear(),
+                      dAirDate.getMonth(),
+                      dAirDate.getDate()
+                    ).getTime() -
+                      Date.now()) /
+                    1000
+                  }
                   numeric="auto"
                   updateIntervalInSeconds={1}
                 />
