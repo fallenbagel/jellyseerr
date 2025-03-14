@@ -28,20 +28,8 @@ const AirDateBadge = ({ airDate }: AirDateBadgeProps) => {
     showRelative = true;
   }
 
-  const airDateStartOfDay = new Date(
-    dAirDate.getFullYear(),
-    dAirDate.getMonth(),
-    dAirDate.getDate()
-  ).getTime();
-
-  const nowStartOfDay = new Date(
-    nowDate.getFullYear(),
-    nowDate.getMonth(),
-    nowDate.getDate()
-  ).getTime();
-
   const diffInDays = Math.round(
-    (airDateStartOfDay - nowStartOfDay) / (1000 * 60 * 60 * 24)
+    (dAirDate.getTime() - nowDate.getTime()) / (1000 * 60 * 60 * 24)
   );
 
   return (
