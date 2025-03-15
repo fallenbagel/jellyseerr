@@ -1,3 +1,6 @@
+import CoverArtArchive from '@server/api/coverartarchive';
+import ListenBrainzAPI from '@server/api/listenbrainz';
+import MusicBrainz from '@server/api/musicbrainz';
 import TheMovieDb from '@server/api/themoviedb';
 import {
   MediaRequestStatus,
@@ -174,6 +177,72 @@ export class MediaSubscriber implements EntitySubscriberInterface<Media> {
     }
   }
 
+  private async notifyAvailableMusic(entity: Media, dbEntity: Media) {
+    if (
+      entity.status === MediaStatus.AVAILABLE &&
+      dbEntity.status !== MediaStatus.AVAILABLE
+    ) {
+      if (entity.mediaType === MediaType.MUSIC) {
+        const requestRepository = getRepository(MediaRequest);
+        const relatedRequests = await requestRepository.find({
+          where: {
+            media: {
+              id: entity.id,
+            },
+            status: Not(MediaRequestStatus.DECLINED),
+          },
+        });
+
+        if (relatedRequests.length > 0 && entity.mbId) {
+          const listenbrainz = new ListenBrainzAPI();
+          const coverArt = CoverArtArchive.getInstance();
+          const musicbrainz = new MusicBrainz();
+
+          try {
+            const album = await listenbrainz.getAlbum(entity.mbId);
+            const coverArtResponse = await coverArt.getCoverArt(entity.mbId);
+            const coverArtUrl =
+              coverArtResponse.images[0]?.thumbnails?.['250'] ?? '';
+            const artistId =
+              album.release_group_metadata?.artist?.artists[0]?.artist_mbid;
+            const artistWiki = artistId
+              ? await musicbrainz.getArtistWikipediaExtract({
+                  artistMbid: artistId,
+                })
+              : null;
+
+            relatedRequests.forEach((request) => {
+              notificationManager.sendNotification(
+                Notification.MEDIA_AVAILABLE,
+                {
+                  event: 'Album Request Now Available',
+                  notifyAdmin: false,
+                  notifySystem: true,
+                  notifyUser: request.requestedBy,
+                  subject: `${album.release_group_metadata.release_group.name} by ${album.release_group_metadata.artist.name}`,
+                  message: truncate(artistWiki?.content ?? '', {
+                    length: 500,
+                    separator: /\s/,
+                    omission: '…',
+                  }),
+                  media: entity,
+                  image: coverArtUrl,
+                  request,
+                }
+              );
+            });
+          } catch (e) {
+            logger.error('Something went wrong sending media notification(s)', {
+              label: 'Notifications',
+              errorMessage: e.message,
+              mediaId: entity.id,
+            });
+          }
+        }
+      }
+    }
+  }
+
   private async updateChildRequestStatus(event: Media, is4k: boolean) {
     const requestRepository = getRepository(MediaRequest);
 
@@ -195,6 +264,13 @@ export class MediaSubscriber implements EntitySubscriberInterface<Media> {
   public beforeUpdate(event: UpdateEvent<Media>): void {
     if (!event.entity) {
       return;
+    }
+
+    if (
+      event.entity.mediaType === MediaType.MUSIC &&
+      event.entity.status === MediaStatus.AVAILABLE
+    ) {
+      this.notifyAvailableMusic(event.entity as Media, event.databaseEntity);
     }
 
     if (
