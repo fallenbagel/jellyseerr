@@ -28,6 +28,7 @@ export interface RadarrMovie {
   qualityProfileId: number;
   added: string;
   hasFile: boolean;
+  tags: number[];
 }
 
 class RadarrAPI extends ServarrBase<{ movieId: number }> {
@@ -104,7 +105,7 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
           minimumAvailability: options.minimumAvailability,
           tmdbId: options.tmdbId,
           year: options.year,
-          tags: options.tags,
+          tags: Array.from(new Set([...movie.tags, ...options.tags])),
           rootFolderPath: options.rootFolderPath,
           monitored: options.monitored,
           addOptions: {

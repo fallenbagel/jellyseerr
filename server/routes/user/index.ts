@@ -184,13 +184,15 @@ router.post<
     endpoint: string;
     p256dh: string;
     auth: string;
+    userAgent: string;
   }
 >('/registerPushSubscription', async (req, res, next) => {
   try {
     const userPushSubRepository = getRepository(UserPushSubscription);
 
     const existingSubs = await userPushSubRepository.find({
-      where: { auth: req.body.auth },
+      relations: { user: true },
+      where: { auth: req.body.auth, user: { id: req.user?.id } },
     });
 
     if (existingSubs.length > 0) {
@@ -205,6 +207,7 @@ router.post<
       auth: req.body.auth,
       endpoint: req.body.endpoint,
       p256dh: req.body.p256dh,
+      userAgent: req.body.userAgent,
       user: req.user,
     });
 
@@ -218,6 +221,79 @@ router.post<
     next({ status: 500, message: 'Failed to register subscription.' });
   }
 });
+
+router.get<{ userId: number }>(
+  '/:userId/pushSubscriptions',
+  async (req, res, next) => {
+    try {
+      const userPushSubRepository = getRepository(UserPushSubscription);
+
+      const userPushSubs = await userPushSubRepository.find({
+        relations: { user: true },
+        where: { user: { id: req.params.userId } },
+      });
+
+      return res.status(200).json(userPushSubs);
+    } catch (e) {
+      next({ status: 404, message: 'User subscriptions not found.' });
+    }
+  }
+);
+
+router.get<{ userId: number; key: string }>(
+  '/:userId/pushSubscription/:key',
+  async (req, res, next) => {
+    try {
+      const userPushSubRepository = getRepository(UserPushSubscription);
+
+      const userPushSub = await userPushSubRepository.findOneOrFail({
+        relations: {
+          user: true,
+        },
+        where: {
+          user: { id: req.params.userId },
+          p256dh: req.params.key,
+        },
+      });
+
+      return res.status(200).json(userPushSub);
+    } catch (e) {
+      next({ status: 404, message: 'User subscription not found.' });
+    }
+  }
+);
+
+router.delete<{ userId: number; key: string }>(
+  '/:userId/pushSubscription/:key',
+  async (req, res, next) => {
+    try {
+      const userPushSubRepository = getRepository(UserPushSubscription);
+
+      const userPushSub = await userPushSubRepository.findOneOrFail({
+        relations: {
+          user: true,
+        },
+        where: {
+          user: { id: req.params.userId },
+          p256dh: req.params.key,
+        },
+      });
+
+      await userPushSubRepository.remove(userPushSub);
+      return res.status(204).send();
+    } catch (e) {
+      logger.error('Something went wrong deleting the user push subcription', {
+        label: 'API',
+        key: req.params.key,
+        errorMessage: e.message,
+      });
+      return next({
+        status: 500,
+        message: 'User push subcription not found',
+      });
+    }
+  }
+);
 
 router.get<{ id: string }>('/:id', async (req, res, next) => {
   try {

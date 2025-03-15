@@ -14,7 +14,9 @@ export const getServerSideProps: GetServerSideProps<TvPageProps> = async (
   ctx
 ) => {
   const res = await fetch(
-    `http://localhost:${process.env.PORT || 5055}/api/v1/tv/${ctx.query.tvId}`,
+    `http://${process.env.HOST || 'localhost'}:${
+      process.env.PORT || 5055
+    }/api/v1/tv/${ctx.query.tvId}`,
     {
       headers: ctx.req?.headers?.cookie
         ? { cookie: ctx.req.headers.cookie }
