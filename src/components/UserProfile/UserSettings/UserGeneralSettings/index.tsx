@@ -415,7 +415,7 @@ const UserGeneralSettings = () => {
                   </span>
                 </label>
                 <div className="form-input-area">
-                  <div className="form-input-field">
+                  <div className="form-input-field relative z-30">
                     <RegionSelector
                       name="discoverRegion"
                       value={values.discoverRegion ?? ''}
@@ -451,7 +451,7 @@ const UserGeneralSettings = () => {
                   </span>
                 </label>
                 <div className="form-input-area">
-                  <div className="form-input-field">
+                  <div className="form-input-field relative z-20">
                     <RegionSelector
                       name="streamingRegion"
                       value={values.streamingRegion || ''}
