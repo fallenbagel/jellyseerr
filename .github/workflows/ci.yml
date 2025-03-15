@@ -98,6 +98,8 @@ jobs:
           push: true
           build-args: |
             COMMIT_TAG=${{ github.sha }}
+            BUILD_VERSION=develop
+            BUILD_DATE=${{ github.event.repository.updated_at }}
           outputs: |
             type=image,push-by-digest=true,name=fallenbagel/jellyseerr,push=true
             type=image,push-by-digest=true,name=ghcr.io/${{ env.OWNER_LC }}/jellyseerr,push=true
