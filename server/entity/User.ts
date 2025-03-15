@@ -119,6 +119,9 @@ export class User {
   @Column({ nullable: true })
   public tvQuotaDays?: number;
 
+  @Column({ type: 'boolean', default: false })
+  isFamilyProfile!: boolean;
+
   @OneToOne(() => UserSettings, (settings) => settings.user, {
     cascade: true,
     eager: true,
@@ -274,15 +277,15 @@ export class User {
 
     const movieQuotaUsed = movieQuotaLimit
       ? await requestRepository.count({
-          where: {
-            requestedBy: {
-              id: this.id,
-            },
-            createdAt: AfterDate(movieDate),
-            type: MediaType.MOVIE,
-            status: Not(MediaRequestStatus.DECLINED),
+        where: {
+          requestedBy: {
+            id: this.id,
           },
-        })
+          createdAt: AfterDate(movieDate),
+          type: MediaType.MOVIE,
+          status: Not(MediaRequestStatus.DECLINED),
+        },
+      })
       : 0;
 
     const tvQuotaLimit = !canBypass
@@ -298,31 +301,31 @@ export class User {
     const tvQuotaStartDate = tvDate.toJSON();
     const tvQuotaUsed = tvQuotaLimit
       ? (
-          await requestRepository
-            .createQueryBuilder('request')
-            .leftJoin('request.seasons', 'seasons')
-            .leftJoin('request.requestedBy', 'requestedBy')
-            .where('request.type = :requestType', {
-              requestType: MediaType.TV,
-            })
-            .andWhere('requestedBy.id = :userId', {
-              userId: this.id,
-            })
-            .andWhere('request.createdAt > :date', {
-              date: tvQuotaStartDate,
-            })
-            .andWhere('request.status != :declinedStatus', {
-              declinedStatus: MediaRequestStatus.DECLINED,
-            })
-            .addSelect((subQuery) => {
-              return subQuery
-                .select('COUNT(season.id)', 'seasonCount')
-                .from(SeasonRequest, 'season')
-                .leftJoin('season.request', 'parentRequest')
-                .where('parentRequest.id = request.id');
-            }, 'seasonCount')
-            .getMany()
-        ).reduce((sum: number, req: MediaRequest) => sum + req.seasonCount, 0)
+        await requestRepository
+          .createQueryBuilder('request')
+          .leftJoin('request.seasons', 'seasons')
+          .leftJoin('request.requestedBy', 'requestedBy')
+          .where('request.type = :requestType', {
+            requestType: MediaType.TV,
+          })
+          .andWhere('requestedBy.id = :userId', {
+            userId: this.id,
+          })
+          .andWhere('request.createdAt > :date', {
+            date: tvQuotaStartDate,
+          })
+          .andWhere('request.status != :declinedStatus', {
+            declinedStatus: MediaRequestStatus.DECLINED,
+          })
+          .addSelect((subQuery) => {
+            return subQuery
+              .select('COUNT(season.id)', 'seasonCount')
+              .from(SeasonRequest, 'season')
+              .leftJoin('season.request', 'parentRequest')
+              .where('parentRequest.id = request.id');
+          }, 'seasonCount')
+          .getMany()
+      ).reduce((sum: number, req: MediaRequest) => sum + req.seasonCount, 0)
       : 0;
 
     return {

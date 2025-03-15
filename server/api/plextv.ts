@@ -32,6 +32,15 @@ interface PlexUser {
   entitlements: string[];
 }
 
+export interface ExtendedPlexUser {
+  id: string;
+  title: string;
+  username: string;
+  email?: string;
+  thumb?: string;
+  home?: string;
+}
+
 interface ConnectionResponse {
   $: {
     protocol: string;
