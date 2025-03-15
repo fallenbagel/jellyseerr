@@ -16,6 +16,7 @@ const messages = defineMessages('components.Settings.Notifications', {
   validationSmtpHostRequired: 'You must provide a valid hostname or IP address',
   validationSmtpPortRequired: 'You must provide a valid port number',
   agentenabled: 'Enable Agent',
+  embedImage: 'Embed Image',
   userEmailRequired: 'Require user email',
   emailsender: 'Sender Address',
   smtpHost: 'SMTP Host',
@@ -126,6 +127,7 @@ const NotificationsEmail = () => {
     <Formik
       initialValues={{
         enabled: data.enabled,
+        embedImage: data.embedImage,
         userEmailRequired: data.options.userEmailRequired,
         emailFrom: data.options.emailFrom,
         smtpHost: data.options.smtpHost,
@@ -154,6 +156,7 @@ const NotificationsEmail = () => {
             },
             body: JSON.stringify({
               enabled: values.enabled,
+              embedImage: values.embedImage,
               options: {
                 userEmailRequired: values.userEmailRequired,
                 emailFrom: values.emailFrom,
@@ -212,6 +215,7 @@ const NotificationsEmail = () => {
                 },
                 body: JSON.stringify({
                   enabled: true,
+                  embedImage: values.embedImage,
                   options: {
                     emailFrom: values.emailFrom,
                     smtpHost: values.smtpHost,
@@ -260,6 +264,14 @@ const NotificationsEmail = () => {
               </label>
               <div className="form-input-area">
                 <Field type="checkbox" id="enabled" name="enabled" />
+              </div>
+            </div>
+            <div className="form-row">
+              <label htmlFor="embedImage" className="checkbox-label">
+                {intl.formatMessage(messages.embedImage)}
+              </label>
+              <div className="form-input-area">
+                <Field type="checkbox" id="embedImage" name="embedImage" />
               </div>
             </div>
             <div className="form-row">
