@@ -1,3 +1,4 @@
+import BlacklistedTagsBadge from '@app/components/BlacklistedTagsBadge';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
@@ -78,22 +79,33 @@ const BlacklistBlock = ({
       <div className="flex items-center justify-between">
         <div className="mr-6 min-w-0 flex-1 flex-col items-center text-sm leading-5">
           <div className="white mb-1 flex flex-nowrap">
-            <Tooltip content={intl.formatMessage(messages.blacklistedby)}>
-              <UserIcon className="mr-1.5 h-5 w-5 min-w-0 flex-shrink-0" />
-            </Tooltip>
-            <span className="w-40 truncate md:w-auto">
-              <Link
-                href={
-                  data.user.id === user?.id
-                    ? '/profile'
-                    : `/users/${data.user.id}`
-                }
-              >
-                <span className="font-semibold text-gray-100 transition duration-300 hover:text-white hover:underline">
-                  {data.user.displayName}
+            {data.user ? (
+              <>
+                <Tooltip content={intl.formatMessage(messages.blacklistedby)}>
+                  <UserIcon className="mr-1.5 h-5 w-5 min-w-0 flex-shrink-0" />
+                </Tooltip>
+                <span className="w-40 truncate md:w-auto">
+                  <Link
+                    href={
+                      data.user.id === user?.id
+                        ? '/profile'
+                        : `/users/${data.user.id}`
+                    }
+                  >
+                    <span className="font-semibold text-gray-100 transition duration-300 hover:text-white hover:underline">
+                      {data.user.displayName}
+                    </span>
+                  </Link>
                 </span>
-              </Link>
-            </span>
+              </>
+            ) : data.blacklistedTags ? (
+              <>
+                <span className="w-40 truncate md:w-auto">
+                  {intl.formatMessage(messages.blacklistedby)}:&nbsp;
+                </span>
+                <BlacklistedTagsBadge data={data} />
+              </>
+            ) : null}
           </div>
         </div>
         <div className="ml-2 flex flex-shrink-0 flex-wrap">
