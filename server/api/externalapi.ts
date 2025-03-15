@@ -109,7 +109,8 @@ class ExternalAPI {
     data?: Record<string, unknown>,
     params?: Record<string, string>,
     ttl?: number,
-    config?: RequestInit
+    config?: RequestInit,
+    overwriteBaseUrl?: string
   ): Promise<T> {
     const headers = { ...this.defaultHeaders, ...config?.headers };
     const cacheKey = this.serializeCacheKey(endpoint, {
@@ -123,7 +124,7 @@ class ExternalAPI {
       return cachedItem;
     }
 
-    const url = this.formatUrl(endpoint, params);
+    const url = this.formatUrl(endpoint, params, overwriteBaseUrl);
     const response = await this.fetch(url, {
       method: 'POST',
       ...config,

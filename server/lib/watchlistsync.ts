@@ -17,28 +17,27 @@ class WatchlistSync {
   public async syncWatchlist() {
     const userRepository = getRepository(User);
 
-    // Get users who actually have plex tokens
+    // taken from auth.ts
+    const mainUser = await userRepository.findOneOrFail({
+      select: { id: true, plexToken: true },
+      where: { id: 1 },
+    });
+
     const users = await userRepository
       .createQueryBuilder('user')
       .addSelect('user.plexToken')
+      .addSelect('user.avatar') // used for janky workaround to get uuid
       .leftJoinAndSelect('user.settings', 'settings')
-      .where("user.plexToken != ''")
       .getMany();
 
+    // TODO: We should probably check UserType so we don't do this for non-plex users
+
     for (const user of users) {
-      await this.syncUserWatchlist(user);
+      await this.syncUserWatchlist(user, mainUser.plexToken ?? '');
     }
   }
 
-  private async syncUserWatchlist(user: User) {
-    if (!user.plexToken) {
-      logger.warn('Skipping user watchlist sync for user without plex token', {
-        label: 'Plex Watchlist Sync',
-        user: user.displayName,
-      });
-      return;
-    }
-
+  private async syncUserWatchlist(user: User, mainPlexToken: string) {
     if (
       !user.hasPermission(
         [
@@ -60,9 +59,26 @@ class WatchlistSync {
       return;
     }
 
-    const plexTvApi = new PlexTvAPI(user.plexToken);
+    // token sync if the user has a token, else fallback to GraphQL sync using the main user's token
+    const plexTvApi = user.plexToken
+      ? new PlexTvAPI(user.plexToken)
+      : new PlexTvAPI(mainPlexToken);
 
-    const response = await plexTvApi.getWatchlist({ size: 20 });
+    const uuidMatch = user.avatar.match(
+      /https:\/\/plex\.tv\/users\/(\w+)\/avatar/
+    );
+    if (!uuidMatch) {
+      logger.warn('Failed to extract uuid for GraphQL sync', {
+        label: 'Watchlist Sync',
+        user: user.displayName,
+        avatarUrl: user.avatar,
+      });
+      return;
+    }
+
+    const response = user.plexToken
+      ? await plexTvApi.getWatchlist()
+      : await plexTvApi.getUserWatchlist(uuidMatch[1]);
 
     const mediaItems = await Media.getRelatedMedia(
       user,
