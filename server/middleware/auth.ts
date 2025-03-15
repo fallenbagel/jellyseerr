@@ -10,9 +10,9 @@ export const checkUser: Middleware = async (req, _res, next) => {
   const settings = getSettings();
   let user: User | undefined | null;
 
-  if (req.header('X-API-Key') === settings.main.apiKey) {
-    const userRepository = getRepository(User);
+  const userRepository = getRepository(User);
 
+  if (req.header('X-API-Key') === settings.main.apiKey) {
     let userId = 1; // Work on original administrator account
 
     // If a User ID is provided, we will act on that user's behalf
@@ -21,9 +21,14 @@ export const checkUser: Middleware = async (req, _res, next) => {
     }
 
     user = await userRepository.findOne({ where: { id: userId } });
+  } else if (
+    settings.main.enableForwardAuth === true &&
+    req.header('X-Forwarded-User')
+  ) {
+    user = await userRepository.findOne({
+      where: { email: req.header('X-Forwarded-User') },
+    });
   } else if (req.session?.userId) {
-    const userRepository = getRepository(User);
-
     user = await userRepository.findOne({
       where: { id: req.session.userId },
     });

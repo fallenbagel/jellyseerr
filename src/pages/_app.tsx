@@ -15,6 +15,7 @@ import { Permission, useUser } from '@app/hooks/useUser';
 import '@app/styles/globals.css';
 import '@app/utils/fetchOverride';
 import { polyfillIntl } from '@app/utils/polyfillIntl';
+import { getAuthHeaders } from '@app/utils/serverSidePropsHelpers';
 import { MediaServerType } from '@server/constants/server';
 import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
 import type { AppInitialProps, AppProps } from 'next/app';
@@ -262,10 +263,7 @@ CoreApp.getInitialProps = async (initialProps) => {
         const res = await fetch(
           `http://localhost:${process.env.PORT || 5055}/api/v1/auth/me`,
           {
-            headers:
-              ctx.req && ctx.req.headers.cookie
-                ? { cookie: ctx.req.headers.cookie }
-                : undefined,
+            headers: getAuthHeaders(ctx),
           }
         );
         if (!res.ok) throw new Error();
