@@ -50,6 +50,8 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   partialRequestsEnabled: 'Allow Partial Series Requests',
   enableSpecialEpisodes: 'Allow Special Episodes Requests',
   locale: 'Display Language',
+  moviesOnly: 'Movies Only Mode',
+  moviesOnlyTip: 'Hide all TV series content throughout the application',
 });
 
 const SettingsMain = () => {
@@ -135,6 +137,7 @@ const SettingsMain = () => {
             partialRequestsEnabled: data?.partialRequestsEnabled,
             enableSpecialEpisodes: data?.enableSpecialEpisodes,
             cacheImages: data?.cacheImages,
+            moviesOnly: data?.moviesOnly,
           }}
           enableReinitialize
           validationSchema={MainSettingsSchema}
@@ -156,6 +159,7 @@ const SettingsMain = () => {
                   partialRequestsEnabled: values.partialRequestsEnabled,
                   enableSpecialEpisodes: values.enableSpecialEpisodes,
                   cacheImages: values.cacheImages,
+                  moviesOnly: values.moviesOnly,
                 }),
               });
               if (!res.ok) throw new Error();
@@ -421,6 +425,27 @@ const SettingsMain = () => {
                           'enableSpecialEpisodes',
                           !values.enableSpecialEpisodes
                         );
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="moviesOnly" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.moviesOnly)}
+                    </span>
+                    <SettingsBadge badgeType="experimental" />
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.moviesOnlyTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      type="checkbox"
+                      id="moviesOnly"
+                      name="moviesOnly"
+                      onChange={() => {
+                        setFieldValue('moviesOnly', !values.moviesOnly);
                       }}
                     />
                   </div>

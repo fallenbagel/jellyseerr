@@ -29,6 +29,7 @@ const defaultSettings = {
   locale: 'en',
   emailEnabled: false,
   newPlexLogin: true,
+  moviesOnly: false,
 };
 
 export const SettingsContext = React.createContext<SettingsContextProps>({

@@ -15,6 +15,7 @@ import StudioSlider from '@app/components/Discover/StudioSlider';
 import TvGenreSlider from '@app/components/Discover/TvGenreSlider';
 import MediaSlider from '@app/components/MediaSlider';
 import { encodeURIExtraParams } from '@app/hooks/useDiscover';
+import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
@@ -55,6 +56,7 @@ const Discover = () => {
   const intl = useIntl();
   const { hasPermission } = useUser();
   const { addToast } = useToasts();
+  const { currentSettings } = useSettings();
   const {
     data: discoverData,
     error: discoverError,
@@ -62,6 +64,7 @@ const Discover = () => {
   } = useSWR<DiscoverSlider[]>('/api/v1/settings/discover');
   const [sliders, setSliders] = useState<Partial<DiscoverSlider>[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+  const moviesOnly = currentSettings.moviesOnly;
 
   // We need to sync the state here so that we can modify the changes locally without commiting
   // anything to the server until the user decides to save the changes
@@ -216,6 +219,17 @@ const Discover = () => {
         </>
       )}
       {(isEditing ? sliders : discoverData)?.map((slider, index) => {
+        // Skip TV-related sliders if moviesOnly is enabled
+        if (
+          moviesOnly &&
+          (slider.type === DiscoverSliderType.POPULAR_TV ||
+            slider.type === DiscoverSliderType.TV_GENRES ||
+            slider.type === DiscoverSliderType.UPCOMING_TV ||
+            slider.type === DiscoverSliderType.NETWORKS)
+        ) {
+          return null;
+        }
+
         let sliderComponent: React.ReactNode;
 
         switch (slider.type) {
@@ -276,7 +290,7 @@ const Discover = () => {
             );
             break;
           case DiscoverSliderType.TV_GENRES:
-            sliderComponent = <TvGenreSlider />;
+            sliderComponent = moviesOnly ? null : <TvGenreSlider />;
             break;
           case DiscoverSliderType.UPCOMING_TV:
             sliderComponent = (
@@ -290,7 +304,7 @@ const Discover = () => {
             );
             break;
           case DiscoverSliderType.NETWORKS:
-            sliderComponent = <NetworkSlider />;
+            sliderComponent = moviesOnly ? null : <NetworkSlider />;
             break;
           case DiscoverSliderType.TMDB_MOVIE_KEYWORD:
             sliderComponent = (
@@ -407,63 +421,55 @@ const Discover = () => {
             break;
         }
 
-        if (isEditing) {
-          return (
-            <DiscoverSliderEdit
-              key={`discover-slider-${slider.id}-edit`}
-              slider={slider}
-              onDelete={async () => {
-                const newSliders = await mutate();
+        return isEditing ? (
+          <DiscoverSliderEdit
+            key={`slider-${slider.id}`}
+            slider={slider}
+            onDelete={() => {
+              const newSliders = sliders.filter((s) => s.id !== slider.id);
+              setSliders(newSliders);
+            }}
+            onEnable={() => {
+              const tempSliders = [...sliders];
+              tempSliders[index].enabled = !tempSliders[index].enabled;
+              setSliders(tempSliders);
+            }}
+            onPositionUpdate={(updatedItemId, position, hasClickedArrows) => {
+              const originalPosition = sliders.findIndex(
+                (item) => item.id === updatedItemId
+              );
+              const originalItem = sliders[originalPosition];
 
-                if (newSliders) {
-                  setSliders(newSliders);
-                }
-              }}
-              onEnable={() => {
-                const tempSliders = sliders.slice();
-                tempSliders[index].enabled = !tempSliders[index].enabled;
-                setSliders(tempSliders);
-              }}
-              onPositionUpdate={(updatedItemId, position, hasClickedArrows) => {
-                const originalPosition = sliders.findIndex(
-                  (item) => item.id === updatedItemId
-                );
-                const originalItem = sliders[originalPosition];
+              const tempSliders = [...sliders];
 
-                const tempSliders = sliders.slice();
+              tempSliders.splice(originalPosition, 1);
+              hasClickedArrows
+                ? tempSliders.splice(
+                    position === 'Above' ? index - 1 : index + 1,
+                    0,
+                    originalItem
+                  )
+                : tempSliders.splice(
+                    position === 'Above' && index > originalPosition
+                      ? Math.max(index - 1, 0)
+                      : index,
+                    0,
+                    originalItem
+                  );
 
-                tempSliders.splice(originalPosition, 1);
-                hasClickedArrows
-                  ? tempSliders.splice(
-                      position === 'Above' ? index - 1 : index + 1,
-                      0,
-                      originalItem
-                    )
-                  : tempSliders.splice(
-                      position === 'Above' && index > originalPosition
-                        ? Math.max(index - 1, 0)
-                        : index,
-                      0,
-                      originalItem
-                    );
-
-                setSliders(tempSliders);
-              }}
-              disableUpButton={index === 0}
-              disableDownButton={index === sliders.length - 1}
-            >
-              {sliderComponent}
-            </DiscoverSliderEdit>
-          );
-        }
-
-        if (!slider.enabled) {
-          return null;
-        }
-
-        return (
-          <div key={`discover-slider-${slider.id}`}>{sliderComponent}</div>
-        );
+              setSliders(tempSliders);
+            }}
+            disableUpButton={index === 0}
+            disableDownButton={index === sliders.length - 1}
+          >
+            {sliderComponent}
+          </DiscoverSliderEdit>
+        ) : // Skip rendering if slider is disabled or if it's a TV-related slider in Movies Only mode
+        slider.enabled && sliderComponent ? (
+          <div key={`slider-${slider.id}`} className="slider-container">
+            {sliderComponent}
+          </div>
+        ) : null;
       })}
     </>
   );

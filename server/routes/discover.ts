@@ -1,7 +1,10 @@
 import PlexTvAPI from '@server/api/plextv';
 import type { SortOptions } from '@server/api/themoviedb';
 import TheMovieDb from '@server/api/themoviedb';
-import type { TmdbKeyword } from '@server/api/themoviedb/interfaces';
+import type {
+  TmdbKeyword,
+  TmdbTvResult,
+} from '@server/api/themoviedb/interfaces';
 import { MediaType } from '@server/constants/media';
 import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';
@@ -360,6 +363,15 @@ discoverRoutes.get('/movies/upcoming', async (req, res, next) => {
 
 discoverRoutes.get('/tv', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
+  const settings = getSettings();
+
+  // If moviesOnly mode is enabled, return 404
+  if (settings.main.moviesOnly) {
+    return next({
+      status: 404,
+      message: 'TV series are disabled in movies only mode',
+    });
+  }
 
   try {
     const query = QueryFilterOptions.parse(req.query);
@@ -368,6 +380,7 @@ discoverRoutes.get('/tv', async (req, res, next) => {
       page: Number(query.page),
       sortBy: query.sortBy as SortOptions,
       language: req.locale ?? query.language,
+      originalLanguage: query.language,
       genre: query.genre,
       network: query.network ? Number(query.network) : undefined,
       firstAirDateLte: query.firstAirDateLte
@@ -376,7 +389,6 @@ discoverRoutes.get('/tv', async (req, res, next) => {
       firstAirDateGte: query.firstAirDateGte
         ? new Date(query.firstAirDateGte).toISOString().split('T')[0]
         : undefined,
-      originalLanguage: query.language,
       keywords,
       withRuntimeGte: query.withRuntimeGte,
       withRuntimeLte: query.withRuntimeLte,
@@ -435,6 +447,15 @@ discoverRoutes.get<{ language: string }>(
   '/tv/language/:language',
   async (req, res, next) => {
     const tmdb = createTmdbWithRegionLanguage(req.user);
+    const settings = getSettings();
+
+    // If moviesOnly mode is enabled, return 404
+    if (settings.main.moviesOnly) {
+      return next({
+        status: 404,
+        message: 'TV series are disabled in movies only mode',
+      });
+    }
 
     try {
       const languages = await tmdb.getLanguages();
@@ -491,6 +512,15 @@ discoverRoutes.get<{ genreId: string }>(
   '/tv/genre/:genreId',
   async (req, res, next) => {
     const tmdb = createTmdbWithRegionLanguage(req.user);
+    const settings = getSettings();
+
+    // If moviesOnly mode is enabled, return 404
+    if (settings.main.moviesOnly) {
+      return next({
+        status: 404,
+        message: 'TV series are disabled in movies only mode',
+      });
+    }
 
     try {
       const genres = await tmdb.getTvGenres({
@@ -548,7 +578,16 @@ discoverRoutes.get<{ genreId: string }>(
 discoverRoutes.get<{ networkId: string }>(
   '/tv/network/:networkId',
   async (req, res, next) => {
-    const tmdb = new TheMovieDb();
+    const tmdb = createTmdbWithRegionLanguage(req.user);
+    const settings = getSettings();
+
+    // If moviesOnly mode is enabled, return 404
+    if (settings.main.moviesOnly) {
+      return next({
+        status: 404,
+        message: 'TV series are disabled in movies only mode',
+      });
+    }
 
     try {
       const network = await tmdb.getNetwork(Number(req.params.networkId));
@@ -595,18 +634,21 @@ discoverRoutes.get<{ networkId: string }>(
 
 discoverRoutes.get('/tv/upcoming', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
+  const settings = getSettings();
 
-  const now = new Date();
-  const offset = now.getTimezoneOffset();
-  const date = new Date(now.getTime() - offset * 60 * 1000)
-    .toISOString()
-    .split('T')[0];
+  // If moviesOnly mode is enabled, return 404
+  if (settings.main.moviesOnly) {
+    return next({
+      status: 404,
+      message: 'TV series are disabled in movies only mode',
+    });
+  }
 
   try {
     const data = await tmdb.getDiscoverTv({
       page: Number(req.query.page),
       language: (req.query.language as string) ?? req.locale,
-      firstAirDateGte: date,
+      firstAirDateGte: new Date().toISOString().split('T')[0],
     });
 
     const media = await Media.getRelatedMedia(
@@ -641,6 +683,8 @@ discoverRoutes.get('/tv/upcoming', async (req, res, next) => {
 
 discoverRoutes.get('/trending', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
+  const settings = getSettings();
+  const moviesOnly = settings.main.moviesOnly;
 
   try {
     const data = await tmdb.getAllTrending({
@@ -653,11 +697,16 @@ discoverRoutes.get('/trending', async (req, res, next) => {
       data.results.map((result) => result.id)
     );
 
+    // Filter out TV series if moviesOnly is enabled
+    const filteredResults = moviesOnly
+      ? data.results.filter((result) => result.media_type !== 'tv')
+      : data.results;
+
     return res.status(200).json({
       page: data.page,
       totalPages: data.total_pages,
-      totalResults: data.total_results,
-      results: data.results.map((result) =>
+      totalResults: moviesOnly ? filteredResults.length : data.total_results,
+      results: filteredResults.map((result) =>
         isMovie(result)
           ? mapMovieResult(
               result,
@@ -687,6 +736,53 @@ discoverRoutes.get('/trending', async (req, res, next) => {
     return next({
       status: 500,
       message: 'Unable to retrieve trending items.',
+    });
+  }
+});
+
+discoverRoutes.get('/trending/tv', async (req, res, next) => {
+  const tmdb = createTmdbWithRegionLanguage(req.user);
+  const settings = getSettings();
+
+  // If moviesOnly mode is enabled, return 404
+  if (settings.main.moviesOnly) {
+    return next({
+      status: 404,
+      message: 'TV series are disabled in movies only mode',
+    });
+  }
+
+  try {
+    const data = await tmdb.getTvTrending({
+      page: Number(req.query.page),
+    });
+
+    const media = await Media.getRelatedMedia(
+      req.user,
+      data.results.map((result: { id: number }) => result.id)
+    );
+
+    return res.status(200).json({
+      page: data.page,
+      totalPages: data.total_pages,
+      totalResults: data.total_results,
+      results: data.results.map((result: TmdbTvResult) =>
+        mapTvResult(
+          result,
+          media.find(
+            (med) => med.tmdbId === result.id && med.mediaType === MediaType.TV
+          )
+        )
+      ),
+    });
+  } catch (e) {
+    logger.debug('Something went wrong retrieving trending TV series', {
+      label: 'API',
+      errorMessage: e.message,
+    });
+    return next({
+      status: 500,
+      message: 'Unable to retrieve trending TV series.',
     });
   }
 });
@@ -784,6 +880,15 @@ discoverRoutes.get<{ language: string }, GenreSliderItem[]>(
   '/genreslider/tv',
   async (req, res, next) => {
     const tmdb = new TheMovieDb();
+    const settings = getSettings();
+
+    // If moviesOnly mode is enabled, return 404
+    if (settings.main.moviesOnly) {
+      return next({
+        status: 404,
+        message: 'TV series are disabled in movies only mode',
+      });
+    }
 
     try {
       const mappedGenres: GenreSliderItem[] = [];
@@ -831,6 +936,8 @@ discoverRoutes.get<Record<string, unknown>, WatchlistResponse>(
     const itemsPerPage = 20;
     const page = Number(req.query.page) ?? 1;
     const offset = (page - 1) * itemsPerPage;
+    const settings = getSettings();
+    const moviesOnly = settings.main.moviesOnly;
 
     const activeUser = await userRepository.findOne({
       where: { id: req.user?.id },
@@ -839,7 +946,7 @@ discoverRoutes.get<Record<string, unknown>, WatchlistResponse>(
 
     if (activeUser && !activeUser?.plexToken) {
       // Non-Plex users can only see their own watchlist
-      const [result, total] = await getRepository(Watchlist).findAndCount({
+      let [result, total] = await getRepository(Watchlist).findAndCount({
         where: { requestedBy: { id: activeUser?.id } },
         relations: {
           /*requestedBy: true,media:true*/
@@ -848,6 +955,13 @@ discoverRoutes.get<Record<string, unknown>, WatchlistResponse>(
         take: itemsPerPage,
         skip: offset,
       });
+
+      // Filter out TV series if moviesOnly is enabled
+      if (moviesOnly) {
+        result = result.filter((item) => item.mediaType !== 'tv');
+        total = result.length;
+      }
+
       if (total) {
         return res.json({
           page: page,
@@ -872,11 +986,18 @@ discoverRoutes.get<Record<string, unknown>, WatchlistResponse>(
 
     const watchlist = await plexTV.getWatchlist({ offset });
 
+    // Filter out TV series if moviesOnly is enabled
+    const filteredItems = moviesOnly
+      ? watchlist.items.filter((item) => item.type !== 'show')
+      : watchlist.items;
+
     return res.json({
       page,
-      totalPages: Math.ceil(watchlist.totalSize / itemsPerPage),
-      totalResults: watchlist.totalSize,
-      results: watchlist.items.map((item) => ({
+      totalPages: Math.ceil(
+        (moviesOnly ? filteredItems.length : watchlist.totalSize) / itemsPerPage
+      ),
+      totalResults: moviesOnly ? filteredItems.length : watchlist.totalSize,
+      results: filteredItems.map((item) => ({
         id: item.tmdbId,
         ratingKey: item.ratingKey,
         title: item.title,

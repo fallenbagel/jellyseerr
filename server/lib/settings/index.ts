@@ -132,6 +132,7 @@ export interface MainSettings {
   partialRequestsEnabled: boolean;
   enableSpecialEpisodes: boolean;
   locale: string;
+  moviesOnly: boolean;
 }
 
 export interface NetworkSettings {
@@ -169,6 +170,7 @@ interface FullPublicSettings extends PublicSettings {
   emailEnabled: boolean;
   userEmailRequired: boolean;
   newPlexLogin: boolean;
+  moviesOnly: boolean;
 }
 
 export interface NotificationAgentConfig {
@@ -353,6 +355,7 @@ class Settings {
         partialRequestsEnabled: true,
         enableSpecialEpisodes: false,
         locale: 'en',
+        moviesOnly: false,
       },
       plex: {
         name: '',
@@ -612,6 +615,7 @@ class Settings {
       userEmailRequired:
         this.data.notifications.agents.email.options.userEmailRequired,
       newPlexLogin: this.data.main.newPlexLogin,
+      moviesOnly: this.data.main.moviesOnly,
     };
   }
 

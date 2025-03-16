@@ -2,6 +2,7 @@ import TheMovieDb from '@server/api/themoviedb';
 import type { TmdbSearchMultiResponse } from '@server/api/themoviedb/interfaces';
 import Media from '@server/entity/Media';
 import { findSearchProvider } from '@server/lib/search';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { mapSearchResults } from '@server/models/Search';
 import { Router } from 'express';
@@ -12,6 +13,7 @@ searchRoutes.get('/', async (req, res, next) => {
   const queryString = req.query.query as string;
   const searchProvider = findSearchProvider(queryString.toLowerCase());
   let results: TmdbSearchMultiResponse;
+  const settings = getSettings();
 
   try {
     if (searchProvider) {
@@ -31,6 +33,15 @@ searchRoutes.get('/', async (req, res, next) => {
         page: Number(req.query.page),
         language: (req.query.language as string) ?? req.locale,
       });
+    }
+
+    // Filter out TV series if moviesOnly setting is enabled
+    if (settings.main.moviesOnly) {
+      results.results = results.results.filter(
+        (result) => result.media_type !== 'tv'
+      );
+      // Adjust total results count
+      results.total_results = results.results.length;
     }
 
     const media = await Media.getRelatedMedia(

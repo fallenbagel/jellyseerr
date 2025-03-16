@@ -2,6 +2,7 @@ import Badge from '@app/components/Common/Badge';
 import UserWarnings from '@app/components/Layout/UserWarnings';
 import VersionStatus from '@app/components/Layout/VersionStatus';
 import useClickOutside from '@app/hooks/useClickOutside';
+import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
@@ -131,6 +132,7 @@ const Sidebar = ({
   const router = useRouter();
   const intl = useIntl();
   const { hasPermission } = useUser();
+  const { currentSettings } = useSettings();
   useClickOutside(navRef, () => setClosed());
 
   useEffect(() => {
@@ -147,6 +149,23 @@ const Sidebar = ({
     pendingRequestsCount,
     openIssuesCount,
   ]);
+
+  // Filter out TV series link if moviesOnly is enabled
+  const filteredSidebarLinks = SidebarLinks.filter((link) => {
+    // Filter out TV series link if moviesOnly is enabled
+    if (link.messagesKey === 'browsetv' && currentSettings.moviesOnly) {
+      return false;
+    }
+
+    // Filter based on permissions
+    if (link.requiredPermission) {
+      return hasPermission(link.requiredPermission, {
+        type: link.permissionType ?? 'and',
+      });
+    }
+
+    return true;
+  });
 
   return (
     <>
@@ -198,13 +217,7 @@ const Sidebar = ({
                       </span>
                     </div>
                     <nav className="mt-10 flex-1 space-y-4 px-4">
-                      {SidebarLinks.filter((link) =>
-                        link.requiredPermission
-                          ? hasPermission(link.requiredPermission, {
-                              type: link.permissionType ?? 'and',
-                            })
-                          : true
-                      ).map((sidebarLink) => {
+                      {filteredSidebarLinks.map((sidebarLink) => {
                         return (
                           <Link
                             key={`mobile-${sidebarLink.messagesKey}`}
@@ -267,13 +280,7 @@ const Sidebar = ({
                 </span>
               </div>
               <nav className="mt-8 flex-1 space-y-4 px-4">
-                {SidebarLinks.filter((link) =>
-                  link.requiredPermission
-                    ? hasPermission(link.requiredPermission, {
-                        type: link.permissionType ?? 'and',
-                      })
-                    : true
-                ).map((sidebarLink) => {
+                {filteredSidebarLinks.map((sidebarLink) => {
                   return (
                     <Link
                       key={`desktop-${sidebarLink.messagesKey}`}
