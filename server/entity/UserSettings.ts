@@ -31,7 +31,10 @@ export class UserSettings {
   public locale?: string;
 
   @Column({ nullable: true })
-  public region?: string;
+  public discoverRegion?: string;
+
+  @Column({ nullable: true })
+  public streamingRegion?: string;
 
   @Column({ nullable: true })
   public originalLanguage?: string;

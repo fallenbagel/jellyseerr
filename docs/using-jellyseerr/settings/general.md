@@ -58,9 +58,9 @@ You should enable this if you are having issues with loading images directly fro
 
 Set the default display language for Jellyseerr. Users can override this setting in their user settings.
 
-## Discover Region & Discover Language
+## Discover Region, Discover Language & Streaming Region
 
-These settings filter content shown on the "Discover" home page based on regional availability and original language, respectively. Users can override these global settings by configuring these same options in their user settings.
+These settings filter content shown on the "Discover" home page based on regional availability and original language, respectively. The Streaming Region filters the available streaming providers on the media page. Users can override these global settings by configuring these same options in their user settings.
 
 ## Hide Available Media
 

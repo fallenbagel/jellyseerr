@@ -143,9 +143,11 @@ components:
       properties:
         locale:
           type: string
-        region:
+        discoverRegion:
           type: string
         originalLanguage:
+          type: string
+        streamingRegion:
           type: string
     MainSettings:
       type: object

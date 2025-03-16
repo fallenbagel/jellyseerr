@@ -35,7 +35,7 @@ Users can override the [global display language](/using-jellyseerr/settings/gene
 
 ### Discover Region & Discover Language
 
-Users can override the [global filter settings](/using-jellyseerr/settings/general#discover-region--discover-language) to suit their own preferences.
+Users can override the [global filter settings](/using-jellyseerr/settings/general#discover-region-discover-language--streaming-region) to suit their own preferences.
 
 ### Movie Request Limit & Series Request Limit
 

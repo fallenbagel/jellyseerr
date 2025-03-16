@@ -5,7 +5,8 @@ export interface UserSettingsGeneralResponse {
   email?: string;
   discordId?: string;
   locale?: string;
-  region?: string;
+  discoverRegion?: string;
+  streamingRegion?: string;
   originalLanguage?: string;
   movieQuotaLimit?: number;
   movieQuotaDays?: number;

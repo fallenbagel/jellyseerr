@@ -222,14 +222,14 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
     });
   }
 
-  const region = user?.settings?.region
-    ? user.settings.region
-    : settings.currentSettings.region
-    ? settings.currentSettings.region
+  const discoverRegion = user?.settings?.discoverRegion
+    ? user.settings.discoverRegion
+    : settings.currentSettings.discoverRegion
+    ? settings.currentSettings.discoverRegion
     : 'US';
 
   const releases = data.releases.results.find(
-    (r) => r.iso_3166_1 === region
+    (r) => r.iso_3166_1 === discoverRegion
   )?.release_dates;
 
   // Release date types:
@@ -282,9 +282,15 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
     );
   }
 
+  const streamingRegion = user?.settings?.streamingRegion
+    ? user.settings.streamingRegion
+    : settings.currentSettings.streamingRegion
+    ? settings.currentSettings.streamingRegion
+    : 'US';
   const streamingProviders =
-    data?.watchProviders?.find((provider) => provider.iso_3166_1 === region)
-      ?.flatrate ?? [];
+    data?.watchProviders?.find(
+      (provider) => provider.iso_3166_1 === streamingRegion
+    )?.flatrate ?? [];
 
   function getAvalaibleMediaServerName() {
     if (settings.currentSettings.mediaServerType === MediaServerType.EMBY) {

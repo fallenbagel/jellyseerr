@@ -57,7 +57,8 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         email: user.email,
         discordId: user.settings?.discordId,
         locale: user.settings?.locale,
-        region: user.settings?.region,
+        discoverRegion: user.settings?.discoverRegion,
+        streamingRegion: user.settings?.streamingRegion,
         originalLanguage: user.settings?.originalLanguage,
         movieQuotaLimit: user.movieQuotaLimit,
         movieQuotaDays: user.movieQuotaDays,
@@ -147,7 +148,8 @@ userSettingsRoutes.post<
         user: req.user,
         discordId: req.body.discordId,
         locale: req.body.locale,
-        region: req.body.region,
+        discoverRegion: req.body.discoverRegion,
+        streamingRegion: req.body.streamingRegion,
         originalLanguage: req.body.originalLanguage,
         watchlistSyncMovies: req.body.watchlistSyncMovies,
         watchlistSyncTv: req.body.watchlistSyncTv,
@@ -155,7 +157,8 @@ userSettingsRoutes.post<
     } else {
       user.settings.discordId = req.body.discordId;
       user.settings.locale = req.body.locale;
-      user.settings.region = req.body.region;
+      user.settings.discoverRegion = req.body.discoverRegion;
+      user.settings.streamingRegion = req.body.streamingRegion;
       user.settings.originalLanguage = req.body.originalLanguage;
       user.settings.watchlistSyncMovies = req.body.watchlistSyncMovies;
       user.settings.watchlistSyncTv = req.body.watchlistSyncTv;
@@ -167,7 +170,8 @@ userSettingsRoutes.post<
       username: savedUser.username,
       discordId: savedUser.settings?.discordId,
       locale: savedUser.settings?.locale,
-      region: savedUser.settings?.region,
+      discoverRegion: savedUser.settings?.discoverRegion,
+      streamingRegion: savedUser.settings?.streamingRegion,
       originalLanguage: savedUser.settings?.originalLanguage,
       watchlistSyncMovies: savedUser.settings?.watchlistSyncMovies,
       watchlistSyncTv: savedUser.settings?.watchlistSyncTv,

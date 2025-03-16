@@ -31,10 +31,12 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   apikey: 'API Key',
   applicationTitle: 'Application Title',
   applicationurl: 'Application URL',
-  region: 'Discover Region',
-  regionTip: 'Filter content by regional availability',
+  discoverRegion: 'Discover Region',
+  discoverRegionTip: 'Filter content by regional availability',
   originallanguage: 'Discover Language',
   originallanguageTip: 'Filter content by original language',
+  streamingRegion: 'Streaming Region',
+  streamingRegionTip: 'Show streaming sites by regional availability',
   toastApiKeySuccess: 'New API key generated successfully!',
   toastApiKeyFailure: 'Something went wrong while generating a new API key.',
   toastSettingsSuccess: 'Settings saved successfully!',
@@ -152,8 +154,9 @@ const SettingsMain = () => {
             csrfProtection: data?.csrfProtection,
             hideAvailable: data?.hideAvailable,
             locale: data?.locale ?? 'en',
-            region: data?.region,
+            discoverRegion: data?.discoverRegion,
             originalLanguage: data?.originalLanguage,
+            streamingRegion: data?.streamingRegion,
             partialRequestsEnabled: data?.partialRequestsEnabled,
             trustProxy: data?.trustProxy,
             cacheImages: data?.cacheImages,
@@ -181,7 +184,8 @@ const SettingsMain = () => {
                   csrfProtection: values.csrfProtection,
                   hideAvailable: values.hideAvailable,
                   locale: values.locale,
-                  region: values.region,
+                  discoverRegion: values.discoverRegion,
+                  streamingRegion: values.streamingRegion,
                   originalLanguage: values.originalLanguage,
                   partialRequestsEnabled: values.partialRequestsEnabled,
                   trustProxy: values.trustProxy,
@@ -402,17 +406,17 @@ const SettingsMain = () => {
                   </div>
                 </div>
                 <div className="form-row">
-                  <label htmlFor="region" className="text-label">
-                    <span>{intl.formatMessage(messages.region)}</span>
+                  <label htmlFor="discoverRegion" className="text-label">
+                    <span>{intl.formatMessage(messages.discoverRegion)}</span>
                     <span className="label-tip">
-                      {intl.formatMessage(messages.regionTip)}
+                      {intl.formatMessage(messages.discoverRegionTip)}
                     </span>
                   </label>
                   <div className="form-input-area">
                     <div className="form-input-field">
                       <RegionSelector
-                        value={values.region ?? ''}
-                        name="region"
+                        value={values.discoverRegion ?? ''}
+                        name="discoverRegion"
                         onChange={setFieldValue}
                       />
                     </div>
@@ -430,6 +434,25 @@ const SettingsMain = () => {
                       <LanguageSelector
                         setFieldValue={setFieldValue}
                         value={values.originalLanguage}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="streamingRegion" className="text-label">
+                    <span>{intl.formatMessage(messages.streamingRegion)}</span>
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.streamingRegionTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field">
+                      <RegionSelector
+                        value={values.streamingRegion || 'US'}
+                        name="streamingRegion"
+                        onChange={setFieldValue}
+                        regionType="streaming"
+                        disableAll
                       />
                     </div>
                   </div>

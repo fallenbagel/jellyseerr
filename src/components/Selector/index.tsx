@@ -374,7 +374,11 @@ export const WatchProviderSelector = ({
   const { currentSettings } = useSettings();
   const [showMore, setShowMore] = useState(false);
   const [watchRegion, setWatchRegion] = useState(
-    region ? region : currentSettings.region ? currentSettings.region : 'US'
+    region
+      ? region
+      : currentSettings.discoverRegion
+      ? currentSettings.discoverRegion
+      : 'US'
   );
   const [activeProvider, setActiveProvider] = useState<number[]>(
     activeProviders ?? []
