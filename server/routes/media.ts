@@ -219,6 +219,8 @@ mediaRoutes.delete(
       const media = await mediaRepository.findOneOrFail({
         where: { id: Number(req.params.id) },
       });
+      const isMovie = media.mediaType === MediaType.MOVIE;
+      const is4k = media.serviceUrl4k !== undefined;
       let serviceSettings;
       if (media.mediaType === MediaType.MOVIE) {
         const is4k = media.serviceUrl4k !== undefined;
