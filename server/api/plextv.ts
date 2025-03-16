@@ -378,6 +378,7 @@ class PlexTvAPI extends ExternalAPI {
       logger.error('Failed to ping token', {
         label: 'Plex Refresh Token',
         errorMessage: e.message,
+        errorCause: e.cause,
       });
     }
   }
