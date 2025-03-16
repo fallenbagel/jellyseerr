@@ -404,6 +404,34 @@ class AvailabilitySync {
             });
           }
 
+          if (
+            !showExists &&
+            (media.status === MediaStatus.AVAILABLE ||
+              media.status === MediaStatus.PARTIALLY_AVAILABLE ||
+              media.seasons.some(
+                (season) => season.status === MediaStatus.AVAILABLE
+              ) ||
+              media.seasons.some(
+                (season) => season.status === MediaStatus.PARTIALLY_AVAILABLE
+              ))
+          ) {
+            await this.mediaUpdater(media, false, mediaServerType);
+          }
+
+          if (
+            !showExists4k &&
+            (media.status4k === MediaStatus.AVAILABLE ||
+              media.status4k === MediaStatus.PARTIALLY_AVAILABLE ||
+              media.seasons.some(
+                (season) => season.status4k === MediaStatus.AVAILABLE
+              ) ||
+              media.seasons.some(
+                (season) => season.status4k === MediaStatus.PARTIALLY_AVAILABLE
+              ))
+          ) {
+            await this.mediaUpdater(media, true, mediaServerType);
+          }
+
           // TODO: Figure out how to run seasonUpdater for each season
 
           if ([...finalSeasons.values()].includes(false)) {
@@ -422,22 +450,6 @@ class AvailabilitySync {
               true,
               mediaServerType
             );
-          }
-
-          if (
-            !showExists &&
-            (media.status === MediaStatus.AVAILABLE ||
-              media.status === MediaStatus.PARTIALLY_AVAILABLE)
-          ) {
-            await this.mediaUpdater(media, false, mediaServerType);
-          }
-
-          if (
-            !showExists4k &&
-            (media.status4k === MediaStatus.AVAILABLE ||
-              media.status4k === MediaStatus.PARTIALLY_AVAILABLE)
-          ) {
-            await this.mediaUpdater(media, true, mediaServerType);
           }
         }
       }
@@ -466,6 +478,10 @@ class AvailabilitySync {
       { status: MediaStatus.PARTIALLY_AVAILABLE },
       { status4k: MediaStatus.AVAILABLE },
       { status4k: MediaStatus.PARTIALLY_AVAILABLE },
+      { seasons: { status: MediaStatus.AVAILABLE } },
+      { seasons: { status: MediaStatus.PARTIALLY_AVAILABLE } },
+      { seasons: { status4k: MediaStatus.AVAILABLE } },
+      { seasons: { status4k: MediaStatus.PARTIALLY_AVAILABLE } },
     ];
 
     let mediaPage: Media[];
