@@ -51,7 +51,7 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   enableSpecialEpisodes: 'Allow Special Episodes Requests',
   locale: 'Display Language',
   moviesOnly: 'Movies Only Mode',
-  moviesOnlyTip: 'Hide all TV series content throughout the application',
+  moviesOnlyTip: 'Hide all TV series content for all users',
 });
 
 const SettingsMain = () => {
