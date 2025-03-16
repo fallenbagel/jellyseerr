@@ -365,7 +365,6 @@ discoverRoutes.get('/tv', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
   const settings = getSettings();
 
-  // If moviesOnly mode is enabled, return 404
   if (settings.main.moviesOnly) {
     return next({
       status: 404,
@@ -449,7 +448,6 @@ discoverRoutes.get<{ language: string }>(
     const tmdb = createTmdbWithRegionLanguage(req.user);
     const settings = getSettings();
 
-    // If moviesOnly mode is enabled, return 404
     if (settings.main.moviesOnly) {
       return next({
         status: 404,
@@ -514,7 +512,6 @@ discoverRoutes.get<{ genreId: string }>(
     const tmdb = createTmdbWithRegionLanguage(req.user);
     const settings = getSettings();
 
-    // If moviesOnly mode is enabled, return 404
     if (settings.main.moviesOnly) {
       return next({
         status: 404,
@@ -581,7 +578,6 @@ discoverRoutes.get<{ networkId: string }>(
     const tmdb = createTmdbWithRegionLanguage(req.user);
     const settings = getSettings();
 
-    // If moviesOnly mode is enabled, return 404
     if (settings.main.moviesOnly) {
       return next({
         status: 404,
@@ -636,7 +632,6 @@ discoverRoutes.get('/tv/upcoming', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
   const settings = getSettings();
 
-  // If moviesOnly mode is enabled, return 404
   if (settings.main.moviesOnly) {
     return next({
       status: 404,
@@ -744,7 +739,6 @@ discoverRoutes.get('/trending/tv', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
   const settings = getSettings();
 
-  // If moviesOnly mode is enabled, return 404
   if (settings.main.moviesOnly) {
     return next({
       status: 404,
@@ -882,7 +876,6 @@ discoverRoutes.get<{ language: string }, GenreSliderItem[]>(
     const tmdb = new TheMovieDb();
     const settings = getSettings();
 
-    // If moviesOnly mode is enabled, return 404
     if (settings.main.moviesOnly) {
       return next({
         status: 404,
