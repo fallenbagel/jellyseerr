@@ -58,11 +58,26 @@ All help is welcome and greatly appreciated! If you would like to contribute to 
 
    - Be sure to follow both the [code](#contributing-code) and [UI text](#ui-text-style) guidelines.
    - Should you need to update your fork, you can do so by rebasing from `upstream`:
+
      ```bash
      git fetch upstream
      git rebase upstream/develop
      git push origin BRANCH_NAME -f
      ```
+
+### Helm Chart  
+
+Tools Required:
+
+- [Helm](https://helm.sh/docs/intro/install/)  
+- [helm-docs](https://github.com/norwoodj/helm-docs)  
+
+Steps:
+
+1. Make the necessary changes.  
+2. Test your changes.  
+3. Update the `version` in `charts/jellyseerr-chart/Chart.yaml` following [Semantic Versioning (SemVer)](https://semver.org/).  
+4. Run the `helm-docs` command to regenerate the chart's README.
 
 ### Contributing Code
 

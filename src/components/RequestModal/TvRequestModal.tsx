@@ -217,7 +217,7 @@ const TvRequestModal = ({
           mediaType: 'tv',
           is4k,
           seasons: settings.currentSettings.partialRequestsEnabled
-            ? selectedSeasons
+            ? selectedSeasons.sort((a, b) => a - b)
             : getAllSeasons().filter(
                 (season) => !getAllRequestedSeasons().includes(season)
               ),
