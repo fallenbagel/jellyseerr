@@ -7,6 +7,7 @@ import { sliderTitles } from '@app/components/Discover/constants';
 import CreateSlider from '@app/components/Discover/CreateSlider';
 import GenreTag from '@app/components/GenreTag';
 import KeywordTag from '@app/components/KeywordTag';
+import useSettings from '@app/hooks/useSettings';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
@@ -63,6 +64,7 @@ const DiscoverSliderEdit = ({
 }: DiscoverSliderEditProps) => {
   const intl = useIntl();
   const { addToast } = useToasts();
+  const { currentSettings } = useSettings();
   const [isEditing, setIsEditing] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [hoverPosition, setHoverPosition] = useState<keyof typeof Position>(
@@ -175,6 +177,47 @@ const DiscoverSliderEdit = ({
         return 'Unknown Slider';
     }
   };
+
+  // Helper function to determine if a slider is TV-related
+  const isTvSlider = (sliderType?: DiscoverSliderType): boolean => {
+    return (
+      sliderType === DiscoverSliderType.POPULAR_TV ||
+      sliderType === DiscoverSliderType.TV_GENRES ||
+      sliderType === DiscoverSliderType.UPCOMING_TV ||
+      sliderType === DiscoverSliderType.NETWORKS ||
+      sliderType === DiscoverSliderType.TMDB_TV_KEYWORD ||
+      sliderType === DiscoverSliderType.TMDB_TV_GENRE ||
+      sliderType === DiscoverSliderType.TMDB_NETWORK ||
+      sliderType === DiscoverSliderType.TMDB_TV_STREAMING_SERVICES
+    );
+  };
+
+  // Helper function to determine if a slider is movie-related
+  const isMovieSlider = (sliderType?: DiscoverSliderType): boolean => {
+    return (
+      sliderType === DiscoverSliderType.POPULAR_MOVIES ||
+      sliderType === DiscoverSliderType.MOVIE_GENRES ||
+      sliderType === DiscoverSliderType.UPCOMING_MOVIES ||
+      sliderType === DiscoverSliderType.STUDIOS ||
+      sliderType === DiscoverSliderType.TMDB_MOVIE_KEYWORD ||
+      sliderType === DiscoverSliderType.TMDB_MOVIE_GENRE ||
+      sliderType === DiscoverSliderType.TMDB_STUDIO ||
+      sliderType === DiscoverSliderType.TMDB_MOVIE_STREAMING_SERVICES
+    );
+  };
+
+  // If in TV Only mode and this is a movie slider, don't render it
+  if (currentSettings.contentType === 'tv' && isMovieSlider(slider.type)) {
+    return null;
+  }
+
+  // If in Movies Only mode and this is a TV slider, don't render it
+  if (
+    (currentSettings.moviesOnly || currentSettings.contentType === 'movies') &&
+    isTvSlider(slider.type)
+  ) {
+    return null;
+  }
 
   return (
     <div

@@ -1,6 +1,7 @@
 import Badge from '@app/components/Common/Badge';
 import { menuMessages } from '@app/components/Layout/Sidebar';
 import useClickOutside from '@app/hooks/useClickOutside';
+import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { Transition } from '@headlessui/react';
 import {
@@ -59,6 +60,7 @@ const MobileMenu = ({
   const intl = useIntl();
   const [isOpen, setIsOpen] = useState(false);
   const { hasPermission } = useUser();
+  const { currentSettings } = useSettings();
   const router = useRouter();
   useClickOutside(ref, () => {
     setTimeout(() => {
@@ -144,13 +146,29 @@ const MobileMenu = ({
     },
   ];
 
-  const filteredLinks = menuLinks.filter(
-    (link) =>
-      !link.requiredPermission ||
-      hasPermission(link.requiredPermission, {
+  const filteredLinks = menuLinks.filter((link) => {
+    if (
+      link.href === '/discover/tv' &&
+      (currentSettings.moviesOnly || currentSettings.contentType === 'movies')
+    ) {
+      return false;
+    }
+
+    if (
+      link.href === '/discover/movies' &&
+      currentSettings.contentType === 'tv'
+    ) {
+      return false;
+    }
+
+    if (link.requiredPermission) {
+      return hasPermission(link.requiredPermission, {
         type: link.permissionType ?? 'and',
-      })
-  );
+      });
+    }
+
+    return true;
+  });
 
   useEffect(() => {
     if (openIssuesCount) {

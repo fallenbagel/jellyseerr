@@ -29,6 +29,8 @@ const defaultSettings = {
   locale: 'en',
   emailEnabled: false,
   newPlexLogin: true,
+  moviesOnly: false,
+  contentType: 'all' as 'all' | 'movies' | 'tv',
 };
 
 export const SettingsContext = React.createContext<SettingsContextProps>({
