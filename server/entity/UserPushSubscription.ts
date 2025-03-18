@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from './User';
 
 @Entity()
@@ -18,8 +24,14 @@ export class UserPushSubscription {
   @Column()
   public p256dh: string;
 
-  @Column({ unique: true })
+  @Column()
   public auth: string;
+
+  @Column({ nullable: true })
+  public userAgent: string;
+
+  @CreateDateColumn({ nullable: true })
+  public createdAt: Date;
 
   constructor(init?: Partial<UserPushSubscription>) {
     Object.assign(this, init);
