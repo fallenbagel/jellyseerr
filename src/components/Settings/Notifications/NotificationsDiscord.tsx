@@ -14,6 +14,7 @@ import * as Yup from 'yup';
 
 const messages = defineMessages('components.Settings.Notifications', {
   agentenabled: 'Enable Agent',
+  embedImage: 'Embed Image',
   botUsername: 'Bot Username',
   botAvatarUrl: 'Bot Avatar URL',
   webhookUrl: 'Webhook URL',
@@ -73,6 +74,7 @@ const NotificationsDiscord = () => {
     <Formik
       initialValues={{
         enabled: data.enabled,
+        embedImage: data.embedImage,
         types: data.types,
         botUsername: data?.options.botUsername,
         botAvatarUrl: data?.options.botAvatarUrl,
@@ -90,6 +92,7 @@ const NotificationsDiscord = () => {
             },
             body: JSON.stringify({
               enabled: values.enabled,
+              embedImage: values.embedImage,
               types: values.types,
               options: {
                 botUsername: values.botUsername,
@@ -148,6 +151,7 @@ const NotificationsDiscord = () => {
                 },
                 body: JSON.stringify({
                   enabled: true,
+                  embedImage: values.embedImage,
                   types: values.types,
                   options: {
                     botUsername: values.botUsername,
@@ -190,6 +194,14 @@ const NotificationsDiscord = () => {
               </label>
               <div className="form-input-area">
                 <Field type="checkbox" id="enabled" name="enabled" />
+              </div>
+            </div>
+            <div className="form-row">
+              <label htmlFor="embedImage" className="checkbox-label">
+                {intl.formatMessage(messages.embedImage)}
+              </label>
+              <div className="form-input-area">
+                <Field type="checkbox" id="embedImage" name="embedImage" />
               </div>
             </div>
             <div className="form-row">
