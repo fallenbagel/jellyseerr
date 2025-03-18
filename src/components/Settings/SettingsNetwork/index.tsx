@@ -45,6 +45,9 @@ const messages = defineMessages('components.Settings.SettingsNetwork', {
   forceIpv4First: 'Force IPv4 Resolution First',
   forceIpv4FirstTip:
     'Force Jellyseerr to resolve IPv4 addresses first instead of IPv6',
+  enableForwardAuth: 'Enable Proxy Forward Authentication',
+  enableForwardAuthTip:
+    'Authenticate as the user specified by the X-Forwarded-User header. Only enable when secured behind a trusted proxy.',
 });
 
 const SettingsNetwork = () => {
@@ -91,6 +94,7 @@ const SettingsNetwork = () => {
             csrfProtection: data?.csrfProtection,
             forceIpv4First: data?.forceIpv4First,
             trustProxy: data?.trustProxy,
+            enableForwardAuth: data?.enableForwardAuth,
             proxyEnabled: data?.proxy?.enabled,
             proxyHostname: data?.proxy?.hostname,
             proxyPort: data?.proxy?.port,
@@ -113,6 +117,7 @@ const SettingsNetwork = () => {
                   csrfProtection: values.csrfProtection,
                   forceIpv4First: values.forceIpv4First,
                   trustProxy: values.trustProxy,
+                  enableForwardAuth: values.enableForwardAuth,
                   proxy: {
                     enabled: values.proxyEnabled,
                     hostname: values.proxyHostname,
@@ -170,6 +175,30 @@ const SettingsNetwork = () => {
                       name="trustProxy"
                       onChange={() => {
                         setFieldValue('trustProxy', !values.trustProxy);
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="enableForwardAuth" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.enableForwardAuth)}
+                    </span>
+                    <SettingsBadge badgeType="advanced" className="mr-2" />
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.enableForwardAuthTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      type="checkbox"
+                      id="enableForwardAuth"
+                      name="enableForwardAuth"
+                      onChange={() => {
+                        setFieldValue(
+                          'enableForwardAuth',
+                          !values.enableForwardAuth
+                        );
                       }}
                     />
                   </div>

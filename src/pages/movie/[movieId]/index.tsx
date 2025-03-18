@@ -1,4 +1,5 @@
 import MovieDetails from '@app/components/MovieDetails';
+import { getAuthHeaders } from '@app/utils/serverSidePropsHelpers';
 import type { MovieDetails as MovieDetailsType } from '@server/models/Movie';
 import type { GetServerSideProps, NextPage } from 'next';
 
@@ -18,9 +19,7 @@ export const getServerSideProps: GetServerSideProps<MoviePageProps> = async (
       ctx.query.movieId
     }`,
     {
-      headers: ctx.req?.headers?.cookie
-        ? { cookie: ctx.req.headers.cookie }
-        : undefined,
+      headers: getAuthHeaders(ctx),
     }
   );
   if (!res.ok) throw new Error();
