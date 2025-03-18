@@ -152,8 +152,19 @@ const Sidebar = ({
 
   // Filter out TV series link if moviesOnly is enabled
   const filteredSidebarLinks = SidebarLinks.filter((link) => {
-    // Filter out TV series link if moviesOnly is enabled
-    if (link.messagesKey === 'browsetv' && currentSettings.moviesOnly) {
+    // Filter out TV series link if moviesOnly is enabled or contentType is 'movies'
+    if (
+      link.messagesKey === 'browsetv' &&
+      (currentSettings.moviesOnly || currentSettings.contentType === 'movies')
+    ) {
+      return false;
+    }
+
+    // Filter out Movies link if contentType is 'tv'
+    if (
+      link.messagesKey === 'browsemovies' &&
+      currentSettings.contentType === 'tv'
+    ) {
       return false;
     }
 

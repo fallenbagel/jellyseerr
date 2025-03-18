@@ -2,11 +2,13 @@ import Header from '@app/components/Common/Header';
 import ListView from '@app/components/Common/ListView';
 import PageTitle from '@app/components/Common/PageTitle';
 import useDiscover from '@app/hooks/useDiscover';
+import useSettings from '@app/hooks/useSettings';
 import globalMessages from '@app/i18n/globalMessages';
 import Error from '@app/pages/_error';
 import defineMessages from '@app/utils/defineMessages';
 import type { MovieResult } from '@server/models/Search';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
 const messages = defineMessages('components.Discover.DiscoverMovieGenre', {
@@ -16,6 +18,14 @@ const messages = defineMessages('components.Discover.DiscoverMovieGenre', {
 const DiscoverMovieGenre = () => {
   const router = useRouter();
   const intl = useIntl();
+  const { currentSettings } = useSettings();
+
+  // Redirect to TV genre page if in TV Only mode
+  useEffect(() => {
+    if (currentSettings.contentType === 'tv' && router.query.genreId) {
+      router.replace(`/discover/tv/genre/${router.query.genreId}`);
+    }
+  }, [currentSettings.contentType, router]);
 
   const {
     isLoadingInitialData,

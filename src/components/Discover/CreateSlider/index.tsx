@@ -4,6 +4,7 @@ import { sliderTitles } from '@app/components/Discover/constants';
 import MediaSlider from '@app/components/MediaSlider';
 import { WatchProviderSelector } from '@app/components/Selector';
 import { encodeURIExtraParams } from '@app/hooks/useDiscover';
+import useSettings from '@app/hooks/useSettings';
 import defineMessages from '@app/utils/defineMessages';
 import type {
   TmdbCompanySearchResponse,
@@ -30,6 +31,7 @@ const messages = defineMessages('components.Discover.CreateSlider', {
   providetmdbsearch: 'Provide a search query',
   providetmdbstudio: 'Provide TMDB Studio ID',
   providetmdbnetwork: 'Provide TMDB Network ID',
+  providetmdbstreamingservices: 'Select streaming services',
   addsuccess: 'Created new slider and saved discover customization settings.',
   addfail: 'Failed to create new slider.',
   editsuccess: 'Edited slider and saved discover customization settings.',
@@ -62,6 +64,7 @@ type CreateOption = {
 const CreateSlider = ({ onCreate, slider }: CreateSliderProps) => {
   const intl = useIntl();
   const { addToast } = useToasts();
+  const { currentSettings } = useSettings();
   const [resultCount, setResultCount] = useState(0);
   const [defaultDataValue, setDefaultDataValue] = useState<
     { label: string; value: number }[] | null
@@ -218,50 +221,96 @@ const CreateSlider = ({ onCreate, slider }: CreateSliderProps) => {
   };
 
   const options: CreateOption[] = [
-    {
-      type: DiscoverSliderType.TMDB_MOVIE_KEYWORD,
-      title: intl.formatMessage(sliderTitles.tmdbmoviekeyword),
-      dataUrl: '/api/v1/discover/movies',
-      params: 'keywords=$value',
-      titlePlaceholderText: intl.formatMessage(messages.slidernameplaceholder),
-      dataPlaceholderText: intl.formatMessage(messages.providetmdbkeywordid),
-    },
-    {
-      type: DiscoverSliderType.TMDB_TV_KEYWORD,
-      title: intl.formatMessage(sliderTitles.tmdbtvkeyword),
-      dataUrl: '/api/v1/discover/tv',
-      params: 'keywords=$value',
-      titlePlaceholderText: intl.formatMessage(messages.slidernameplaceholder),
-      dataPlaceholderText: intl.formatMessage(messages.providetmdbkeywordid),
-    },
-    {
-      type: DiscoverSliderType.TMDB_MOVIE_GENRE,
-      title: intl.formatMessage(sliderTitles.tmdbmoviegenre),
-      dataUrl: '/api/v1/discover/movies/genre/$value',
-      titlePlaceholderText: intl.formatMessage(messages.slidernameplaceholder),
-      dataPlaceholderText: intl.formatMessage(messages.providetmdbgenreid),
-    },
-    {
-      type: DiscoverSliderType.TMDB_TV_GENRE,
-      title: intl.formatMessage(sliderTitles.tmdbtvgenre),
-      dataUrl: '/api/v1/discover/tv/genre/$value',
-      titlePlaceholderText: intl.formatMessage(messages.slidernameplaceholder),
-      dataPlaceholderText: intl.formatMessage(messages.providetmdbgenreid),
-    },
-    {
-      type: DiscoverSliderType.TMDB_STUDIO,
-      title: intl.formatMessage(sliderTitles.tmdbstudio),
-      dataUrl: '/api/v1/discover/movies/studio/$value',
-      titlePlaceholderText: intl.formatMessage(messages.slidernameplaceholder),
-      dataPlaceholderText: intl.formatMessage(messages.providetmdbstudio),
-    },
-    {
-      type: DiscoverSliderType.TMDB_NETWORK,
-      title: intl.formatMessage(sliderTitles.tmdbnetwork),
-      dataUrl: '/api/v1/discover/tv/network/$value',
-      titlePlaceholderText: intl.formatMessage(messages.slidernameplaceholder),
-      dataPlaceholderText: intl.formatMessage(messages.providetmdbnetwork),
-    },
+    ...(currentSettings.contentType !== 'tv'
+      ? [
+          {
+            type: DiscoverSliderType.TMDB_MOVIE_KEYWORD,
+            title: intl.formatMessage(sliderTitles.tmdbmoviekeyword),
+            dataUrl: '/api/v1/discover/movies',
+            params: 'keywords=$value',
+            titlePlaceholderText: intl.formatMessage(
+              messages.slidernameplaceholder
+            ),
+            dataPlaceholderText: intl.formatMessage(
+              messages.providetmdbkeywordid
+            ),
+          },
+        ]
+      : []),
+    ...(!currentSettings.moviesOnly && currentSettings.contentType !== 'movies'
+      ? [
+          {
+            type: DiscoverSliderType.TMDB_TV_KEYWORD,
+            title: intl.formatMessage(sliderTitles.tmdbtvkeyword),
+            dataUrl: '/api/v1/discover/tv',
+            params: 'keywords=$value',
+            titlePlaceholderText: intl.formatMessage(
+              messages.slidernameplaceholder
+            ),
+            dataPlaceholderText: intl.formatMessage(
+              messages.providetmdbkeywordid
+            ),
+          },
+        ]
+      : []),
+    ...(currentSettings.contentType !== 'tv'
+      ? [
+          {
+            type: DiscoverSliderType.TMDB_MOVIE_GENRE,
+            title: intl.formatMessage(sliderTitles.tmdbmoviegenre),
+            dataUrl: '/api/v1/discover/movies/genre/$value',
+            titlePlaceholderText: intl.formatMessage(
+              messages.slidernameplaceholder
+            ),
+            dataPlaceholderText: intl.formatMessage(
+              messages.providetmdbgenreid
+            ),
+          },
+        ]
+      : []),
+    ...(!currentSettings.moviesOnly && currentSettings.contentType !== 'movies'
+      ? [
+          {
+            type: DiscoverSliderType.TMDB_TV_GENRE,
+            title: intl.formatMessage(sliderTitles.tmdbtvgenre),
+            dataUrl: '/api/v1/discover/tv/genre/$value',
+            titlePlaceholderText: intl.formatMessage(
+              messages.slidernameplaceholder
+            ),
+            dataPlaceholderText: intl.formatMessage(
+              messages.providetmdbgenreid
+            ),
+          },
+        ]
+      : []),
+    ...(currentSettings.contentType !== 'tv'
+      ? [
+          {
+            type: DiscoverSliderType.TMDB_STUDIO,
+            title: intl.formatMessage(sliderTitles.tmdbstudio),
+            dataUrl: '/api/v1/discover/movies/studio/$value',
+            titlePlaceholderText: intl.formatMessage(
+              messages.slidernameplaceholder
+            ),
+            dataPlaceholderText: intl.formatMessage(messages.providetmdbstudio),
+          },
+        ]
+      : []),
+    ...(!currentSettings.moviesOnly && currentSettings.contentType !== 'movies'
+      ? [
+          {
+            type: DiscoverSliderType.TMDB_NETWORK,
+            title: intl.formatMessage(sliderTitles.tmdbnetwork),
+            dataUrl: '/api/v1/discover/tv/network/$value',
+            titlePlaceholderText: intl.formatMessage(
+              messages.slidernameplaceholder
+            ),
+            dataPlaceholderText: intl.formatMessage(
+              messages.providetmdbnetwork
+            ),
+          },
+        ]
+      : []),
     {
       type: DiscoverSliderType.TMDB_SEARCH,
       title: intl.formatMessage(sliderTitles.tmdbsearch),
@@ -270,20 +319,36 @@ const CreateSlider = ({ onCreate, slider }: CreateSliderProps) => {
       titlePlaceholderText: intl.formatMessage(messages.slidernameplaceholder),
       dataPlaceholderText: intl.formatMessage(messages.providetmdbsearch),
     },
-    {
-      type: DiscoverSliderType.TMDB_MOVIE_STREAMING_SERVICES,
-      title: intl.formatMessage(sliderTitles.tmdbmoviestreamingservices),
-      dataUrl: '/api/v1/discover/movies',
-      params: 'watchRegion=$regionValue&watchProviders=$providersValue',
-      titlePlaceholderText: intl.formatMessage(messages.slidernameplaceholder),
-    },
-    {
-      type: DiscoverSliderType.TMDB_TV_STREAMING_SERVICES,
-      title: intl.formatMessage(sliderTitles.tmdbtvstreamingservices),
-      dataUrl: '/api/v1/discover/tv',
-      params: 'watchRegion=$regionValue&watchProviders=$providersValue',
-      titlePlaceholderText: intl.formatMessage(messages.slidernameplaceholder),
-    },
+    ...(currentSettings.contentType !== 'tv'
+      ? [
+          {
+            type: DiscoverSliderType.TMDB_MOVIE_STREAMING_SERVICES,
+            title: intl.formatMessage(sliderTitles.tmdbmoviestreamingservices),
+            dataUrl: '/api/v1/discover/movies/streaming/$value',
+            titlePlaceholderText: intl.formatMessage(
+              messages.slidernameplaceholder
+            ),
+            dataPlaceholderText: intl.formatMessage(
+              messages.providetmdbstreamingservices
+            ),
+          },
+        ]
+      : []),
+    ...(!currentSettings.moviesOnly && currentSettings.contentType !== 'movies'
+      ? [
+          {
+            type: DiscoverSliderType.TMDB_TV_STREAMING_SERVICES,
+            title: intl.formatMessage(sliderTitles.tmdbtvstreamingservices),
+            dataUrl: '/api/v1/discover/tv/streaming/$value',
+            titlePlaceholderText: intl.formatMessage(
+              messages.slidernameplaceholder
+            ),
+            dataPlaceholderText: intl.formatMessage(
+              messages.providetmdbstreamingservices
+            ),
+          },
+        ]
+      : []),
   ];
 
   return (

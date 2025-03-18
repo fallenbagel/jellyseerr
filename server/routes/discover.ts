@@ -81,6 +81,14 @@ export type FilterOptions = z.infer<typeof QueryFilterOptions>;
 
 discoverRoutes.get('/movies', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
+  const settings = getSettings();
+
+  if (settings.main.contentType === 'tv') {
+    return next({
+      status: 404,
+      message: 'Movies are disabled in TV only mode',
+    });
+  }
 
   try {
     const query = QueryFilterOptions.parse(req.query);
@@ -365,7 +373,7 @@ discoverRoutes.get('/tv', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
   const settings = getSettings();
 
-  if (settings.main.moviesOnly) {
+  if (settings.main.moviesOnly || settings.main.contentType === 'movies') {
     return next({
       status: 404,
       message: 'TV series are disabled in movies only mode',
@@ -448,7 +456,7 @@ discoverRoutes.get<{ language: string }>(
     const tmdb = createTmdbWithRegionLanguage(req.user);
     const settings = getSettings();
 
-    if (settings.main.moviesOnly) {
+    if (settings.main.moviesOnly || settings.main.contentType === 'movies') {
       return next({
         status: 404,
         message: 'TV series are disabled in movies only mode',
@@ -512,7 +520,7 @@ discoverRoutes.get<{ genreId: string }>(
     const tmdb = createTmdbWithRegionLanguage(req.user);
     const settings = getSettings();
 
-    if (settings.main.moviesOnly) {
+    if (settings.main.moviesOnly || settings.main.contentType === 'movies') {
       return next({
         status: 404,
         message: 'TV series are disabled in movies only mode',
@@ -578,7 +586,7 @@ discoverRoutes.get<{ networkId: string }>(
     const tmdb = createTmdbWithRegionLanguage(req.user);
     const settings = getSettings();
 
-    if (settings.main.moviesOnly) {
+    if (settings.main.moviesOnly || settings.main.contentType === 'movies') {
       return next({
         status: 404,
         message: 'TV series are disabled in movies only mode',
@@ -632,7 +640,7 @@ discoverRoutes.get('/tv/upcoming', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
   const settings = getSettings();
 
-  if (settings.main.moviesOnly) {
+  if (settings.main.moviesOnly || settings.main.contentType === 'movies') {
     return next({
       status: 404,
       message: 'TV series are disabled in movies only mode',
@@ -680,6 +688,7 @@ discoverRoutes.get('/trending', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
   const settings = getSettings();
   const moviesOnly = settings.main.moviesOnly;
+  const contentType = settings.main.contentType;
 
   try {
     const data = await tmdb.getAllTrending({
@@ -692,15 +701,25 @@ discoverRoutes.get('/trending', async (req, res, next) => {
       data.results.map((result) => result.id)
     );
 
-    // Filter out TV series if moviesOnly is enabled
-    const filteredResults = moviesOnly
-      ? data.results.filter((result) => result.media_type !== 'tv')
-      : data.results;
+    // Filter results based on content type setting
+    let filteredResults = data.results;
+
+    if (moviesOnly || contentType === 'movies') {
+      // Filter out TV shows in Movies Only mode
+      filteredResults = data.results.filter(
+        (result) => result.media_type !== 'tv'
+      );
+    } else if (contentType === 'tv') {
+      // Filter out movies in TV Only mode
+      filteredResults = data.results.filter(
+        (result) => result.media_type !== 'movie'
+      );
+    }
 
     return res.status(200).json({
       page: data.page,
       totalPages: data.total_pages,
-      totalResults: moviesOnly ? filteredResults.length : data.total_results,
+      totalResults: filteredResults.length,
       results: filteredResults.map((result) =>
         isMovie(result)
           ? mapMovieResult(
@@ -739,7 +758,7 @@ discoverRoutes.get('/trending/tv', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
   const settings = getSettings();
 
-  if (settings.main.moviesOnly) {
+  if (settings.main.moviesOnly || settings.main.contentType === 'movies') {
     return next({
       status: 404,
       message: 'TV series are disabled in movies only mode',
@@ -876,7 +895,7 @@ discoverRoutes.get<{ language: string }, GenreSliderItem[]>(
     const tmdb = new TheMovieDb();
     const settings = getSettings();
 
-    if (settings.main.moviesOnly) {
+    if (settings.main.moviesOnly || settings.main.contentType === 'movies') {
       return next({
         status: 404,
         message: 'TV series are disabled in movies only mode',

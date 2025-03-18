@@ -36,9 +36,18 @@ searchRoutes.get('/', async (req, res, next) => {
     }
 
     // Filter out TV series if moviesOnly setting is enabled
-    if (settings.main.moviesOnly) {
+    if (settings.main.moviesOnly || settings.main.contentType === 'movies') {
       results.results = results.results.filter(
         (result) => result.media_type !== 'tv'
+      );
+      // Adjust total results count
+      results.total_results = results.results.length;
+    }
+
+    // Filter out movies if contentType is set to 'tv'
+    if (settings.main.contentType === 'tv') {
+      results.results = results.results.filter(
+        (result) => result.media_type !== 'movie'
       );
       // Adjust total results count
       results.total_results = results.results.length;

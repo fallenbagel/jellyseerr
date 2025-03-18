@@ -52,6 +52,11 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   locale: 'Display Language',
   moviesOnly: 'Movies Only Mode',
   moviesOnlyTip: 'Hide all TV series content for all users',
+  contentType: 'Content Type',
+  contentTypeTip: 'Filter content by type across the application',
+  contentTypeAll: 'All',
+  contentTypeMovies: 'Movies Only',
+  contentTypeTV: 'TV Only',
 });
 
 const SettingsMain = () => {
@@ -138,6 +143,7 @@ const SettingsMain = () => {
             enableSpecialEpisodes: data?.enableSpecialEpisodes,
             cacheImages: data?.cacheImages,
             moviesOnly: data?.moviesOnly,
+            contentType: data?.contentType ?? 'all',
           }}
           enableReinitialize
           validationSchema={MainSettingsSchema}
@@ -159,7 +165,8 @@ const SettingsMain = () => {
                   partialRequestsEnabled: values.partialRequestsEnabled,
                   enableSpecialEpisodes: values.enableSpecialEpisodes,
                   cacheImages: values.cacheImages,
-                  moviesOnly: values.moviesOnly,
+                  moviesOnly: values.contentType === 'movies',
+                  contentType: values.contentType,
                 }),
               });
               if (!res.ok) throw new Error();
@@ -430,24 +437,63 @@ const SettingsMain = () => {
                   </div>
                 </div>
                 <div className="form-row">
-                  <label htmlFor="moviesOnly" className="checkbox-label">
+                  <label htmlFor="contentType" className="text-label">
                     <span className="mr-2">
-                      {intl.formatMessage(messages.moviesOnly)}
+                      {intl.formatMessage(messages.contentType)}
                     </span>
                     <SettingsBadge badgeType="experimental" />
                     <span className="label-tip">
-                      {intl.formatMessage(messages.moviesOnlyTip)}
+                      {intl.formatMessage(messages.contentTypeTip)}
                     </span>
                   </label>
                   <div className="form-input-area">
-                    <Field
-                      type="checkbox"
-                      id="moviesOnly"
-                      name="moviesOnly"
-                      onChange={() => {
-                        setFieldValue('moviesOnly', !values.moviesOnly);
-                      }}
-                    />
+                    <div className="flex items-center space-x-2 sm:space-x-5">
+                      <div className="flex items-center">
+                        <Field
+                          type="radio"
+                          id="contentTypeAll"
+                          name="contentType"
+                          value="all"
+                          className="h-4 w-4 border-gray-300 text-indigo-500 focus:ring-indigo-500"
+                        />
+                        <label
+                          htmlFor="contentTypeAll"
+                          className="ml-2 block text-sm text-gray-500 dark:text-gray-400"
+                        >
+                          {intl.formatMessage(messages.contentTypeAll)}
+                        </label>
+                      </div>
+                      <div className="flex items-center">
+                        <Field
+                          type="radio"
+                          id="contentTypeMovies"
+                          name="contentType"
+                          value="movies"
+                          className="h-4 w-4 border-gray-300 text-indigo-500 focus:ring-indigo-500"
+                        />
+                        <label
+                          htmlFor="contentTypeMovies"
+                          className="ml-2 block text-sm text-gray-500 dark:text-gray-400"
+                        >
+                          {intl.formatMessage(messages.contentTypeMovies)}
+                        </label>
+                      </div>
+                      <div className="flex items-center">
+                        <Field
+                          type="radio"
+                          id="contentTypeTV"
+                          name="contentType"
+                          value="tv"
+                          className="h-4 w-4 border-gray-300 text-indigo-500 focus:ring-indigo-500"
+                        />
+                        <label
+                          htmlFor="contentTypeTV"
+                          className="ml-2 block text-sm text-gray-500 dark:text-gray-400"
+                        >
+                          {intl.formatMessage(messages.contentTypeTV)}
+                        </label>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="actions">

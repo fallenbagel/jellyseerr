@@ -2,6 +2,7 @@ import Header from '@app/components/Common/Header';
 import ListView from '@app/components/Common/ListView';
 import PageTitle from '@app/components/Common/PageTitle';
 import useDiscover from '@app/hooks/useDiscover';
+import useSettings from '@app/hooks/useSettings';
 import globalMessages from '@app/i18n/globalMessages';
 import Error from '@app/pages/_error';
 import defineMessages from '@app/utils/defineMessages';
@@ -9,6 +10,7 @@ import type { ProductionCompany } from '@server/models/common';
 import type { MovieResult } from '@server/models/Search';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
 const messages = defineMessages('components.Discover.DiscoverStudio', {
@@ -18,6 +20,14 @@ const messages = defineMessages('components.Discover.DiscoverStudio', {
 const DiscoverMovieStudio = () => {
   const router = useRouter();
   const intl = useIntl();
+  const { currentSettings } = useSettings();
+
+  // Redirect to TV network page if in TV Only mode
+  useEffect(() => {
+    if (currentSettings.contentType === 'tv' && router.query.studioId) {
+      router.replace(`/discover/tv/network/${router.query.studioId}`);
+    }
+  }, [currentSettings.contentType, router]);
 
   const {
     isLoadingInitialData,

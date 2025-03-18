@@ -46,6 +46,7 @@ export interface PublicSettingsResponse {
   emailEnabled: boolean;
   newPlexLogin: boolean;
   moviesOnly: boolean;
+  contentType: 'all' | 'movies' | 'tv';
 }
 
 export interface CacheItem {
