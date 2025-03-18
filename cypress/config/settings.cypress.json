@@ -19,6 +19,8 @@
     "discoverRegion": "",
     "streamingRegion": "",
     "originalLanguage": "",
+    "blacklistedTags": "",
+    "blacklistedTagsLimit": 50,
     "trustProxy": false,
     "mediaServerType": 1,
     "partialRequestsEnabled": true,
