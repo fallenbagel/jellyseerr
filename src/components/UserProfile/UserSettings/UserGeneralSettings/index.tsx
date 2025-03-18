@@ -415,7 +415,7 @@ const UserGeneralSettings = () => {
                   </span>
                 </label>
                 <div className="form-input-area">
-                  <div className="form-input-field relative z-30">
+                  <div className="form-input-field relative z-[22]">
                     <RegionSelector
                       name="discoverRegion"
                       value={values.discoverRegion ?? ''}
@@ -433,7 +433,7 @@ const UserGeneralSettings = () => {
                   </span>
                 </label>
                 <div className="form-input-area">
-                  <div className="form-input-field">
+                  <div className="form-input-field relative z-[21]">
                     <LanguageSelector
                       setFieldValue={setFieldValue}
                       serverValue={currentSettings.originalLanguage}
