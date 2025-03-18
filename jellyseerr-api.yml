@@ -196,14 +196,7 @@ components:
         forceIpv4First:
           type: boolean
           example: false
-<<<<<<< HEAD:jellyseerr-api.yml
-        trustProxy:
-=======
-        dnsServers:
-          type: string
-          example: '1.1.1.1'
         enableForwardAuth:
->>>>>>> 37c0eda8 (feat: add forward-auth support):overseerr-api.yml
           type: boolean
           example: true
     PlexLibrary:
