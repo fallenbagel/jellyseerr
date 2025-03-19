@@ -22,8 +22,8 @@ const messages = defineMessages('components.Settings', {
   metadataSettings: 'Settings for metadata provider',
   clickTest: 'Click on the "Test" button to check connectivity with providers',
   notTested: 'Not Tested',
-  failed: 'Error',
-  ok: 'OK',
+  failed: 'Does not work',
+  operational: 'Operational',
   providerStatus: 'Provider Status',
   chooseProvider: 'Choose metadata providers for different content types',
   indexerSelection: 'Provider Selection',
@@ -34,7 +34,6 @@ const messages = defineMessages('components.Settings', {
   allChosenProvidersAreOperational: 'All chosen providers are operational',
 });
 
-// Types
 type ProviderStatus = 'ok' | 'not tested' | 'failed';
 
 interface ProviderResponse {
@@ -55,7 +54,6 @@ const SettingsMetadata = () => {
   const intl = useIntl();
   const { addToast } = useToasts();
   const [isTesting, setIsTesting] = useState(false);
-  // Valeurs par défaut pour les statuts
   const defaultStatus: ProviderResponse = {
     tmdb: 'not tested',
     tvdb: 'not tested',
@@ -64,22 +62,18 @@ const SettingsMetadata = () => {
   const [providerStatus, setProviderStatus] =
     useState<ProviderResponse>(defaultStatus);
 
-  // SWR hook pour récupérer les données
   const { data, error } = useSWR<MetadataSettings>(
     '/api/v1/settings/metadatas'
   );
 
-  // Tester la connexion avec les fournisseurs
   const testConnection = async (
     values: MetadataValues
   ): Promise<ProviderResponse> => {
-    // Déterminer quels indexeurs sont utilisés
     const useTmdb =
       values.tv === IndexerType.TMDB || values.anime === IndexerType.TMDB;
     const useTvdb =
       values.tv === IndexerType.TVDB || values.anime === IndexerType.TVDB;
 
-    // Préparer les données pour le test
     const testData = {
       tmdb: useTmdb,
       tvdb: useTvdb,
@@ -99,8 +93,6 @@ const SettingsMetadata = () => {
 
     const body = (await response.json()) as ProviderResponse;
 
-    // Créer un nouvel objet de statut en conservant 'not tested'
-    // pour les services que nous n'avons pas testés
     const newStatus: ProviderResponse = {
       tmdb: useTmdb ? body.tmdb : 'not tested',
       tvdb: useTvdb ? body.tvdb : 'not tested',
@@ -110,7 +102,6 @@ const SettingsMetadata = () => {
     return newStatus;
   };
 
-  // Sauvegarder les paramètres
   const saveSettings = async (
     values: MetadataValues
   ): Promise<MetadataSettings> => {
@@ -132,7 +123,6 @@ const SettingsMetadata = () => {
     return (await response.json()) as MetadataSettings;
   };
 
-  // Obtenir la classe CSS pour l'affichage du statut
   const getStatusClass = (status: ProviderStatus): string => {
     switch (status) {
       case 'ok':
@@ -144,11 +134,10 @@ const SettingsMetadata = () => {
     }
   };
 
-  // Obtenir le message à afficher pour le statut
   const getStatusMessage = (status: ProviderStatus): string => {
     switch (status) {
       case 'ok':
-        return intl.formatMessage(messages.ok);
+        return intl.formatMessage(messages.operational);
       case 'not tested':
         return intl.formatMessage(messages.notTested);
       case 'failed':
@@ -177,7 +166,6 @@ const SettingsMetadata = () => {
     }
   };
 
-  // Afficher un spinner pendant le chargement
   if (!data && !error) {
     return <LoadingSpinner />;
   }
@@ -292,7 +280,6 @@ const SettingsMetadata = () => {
 
                 <div className="actions">
                   <div className="flex justify-end">
-                    {/* Bouton de test */}
                     <span className="ml-3 inline-flex rounded-md shadow-sm">
                       <Button
                         buttonType="warning"
