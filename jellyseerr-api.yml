@@ -533,18 +533,6 @@ components:
               type: string
               enum: [tvdb, tmdb]
               example: 'tvdb'
-        providers:
-          type: object
-          properties:
-            tvdb:
-              type: object
-              properties:
-                apiKey:
-                  type: string
-                  example: '123456789'
-                pin:
-                  type: string
-                  example: '1234'
     TautulliSettings:
       type: object
       properties:
@@ -2631,6 +2619,19 @@ paths:
       description: Tests if the TVDB configuration is valid. Returns a list of available languages on success.
       tags:
         - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tmdb:
+                  type: boolean
+                  example: true
+                tvdb:
+                  type: boolean
+                  example: true
       responses:
         '200':
           description: Succesfully connected to TVDB

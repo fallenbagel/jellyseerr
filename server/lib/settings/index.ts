@@ -101,24 +101,11 @@ interface Quota {
 }
 
 export enum IndexerType {
-  TMDB,
-  TVDB,
+  TMDB = 'tmdb',
+  TVDB = 'tvdb',
 }
 
 export interface MetadataSettings {
-  settings: MetadataTypeSettings;
-  providers: ProviderSettings;
-}
-
-export interface TvdbSettings {
-  apiKey?: string;
-  pin?: string;
-}
-
-export interface ProviderSettings {
-  tvdb: TvdbSettings;
-}
-export interface MetadataTypeSettings {
   tv: IndexerType;
   anime: IndexerType;
 }
@@ -373,7 +360,6 @@ export interface AllSettings {
   notifications: NotificationSettings;
   jobs: Record<JobId, JobSettings>;
   network: NetworkSettings;
-  tvdb: TvdbSettings;
   metadataSettings: MetadataSettings;
 }
 
@@ -436,20 +422,8 @@ class Settings {
       },
       tautulli: {},
       metadataSettings: {
-        settings: {
-          tv: IndexerType.TMDB,
-          anime: IndexerType.TVDB,
-        },
-        providers: {
-          tvdb: {
-            apiKey: '',
-            pin: '',
-          },
-        },
-      },
-      tvdb: {
-        apiKey: '',
-        pin: '',
+        tv: IndexerType.TMDB,
+        anime: IndexerType.TVDB,
       },
       radarr: [],
       sonarr: [],
@@ -651,22 +625,6 @@ class Settings {
 
   set metadataSettings(data: MetadataSettings) {
     this.data.metadataSettings = data;
-  }
-
-  get tvdb(): TvdbSettings {
-    return this.data.tvdb;
-  }
-
-  set tvdb(data: TvdbSettings) {
-    this.data.tvdb = data;
-  }
-
-  get metadataType(): MetadataTypeSettings {
-    return this.data.metadataSettings.settings;
-  }
-
-  set metadataType(data: MetadataTypeSettings) {
-    this.data.metadataSettings.settings = data;
   }
 
   get radarr(): RadarrSettings[] {

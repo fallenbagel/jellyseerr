@@ -14,7 +14,6 @@ import type {
   TvdbTvDetails,
 } from '@server/api/tvdb/interfaces';
 import cacheManager, { type AvailableCacheIds } from '@server/lib/cache';
-import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 
 interface TvdbConfig {
@@ -45,12 +44,12 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
   private apiKey?: string;
   private pin?: string;
 
-  constructor(apiKey: string, pin?: string) {
+  constructor(pin?: string) {
     const finalConfig = { ...DEFAULT_CONFIG };
     super(
       finalConfig.baseUrl,
       {
-        apiKey: apiKey,
+        apiKey: '',
       },
       {
         nodeCache: cacheManager.getCache(finalConfig.cachePrefix).data,
@@ -60,28 +59,19 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
         },
       }
     );
-    this.apiKey = apiKey;
     this.pin = pin;
     this.tmdb = new TheMovieDb();
   }
 
   public static async getInstance(): Promise<Tvdb> {
     if (!this.instance) {
-      const settings = await getSettings();
-
-      if (!settings.tvdb.apiKey) {
-        throw new Error('TVDB API key is not set');
-      }
-
       try {
-        this.instance = new Tvdb(settings.tvdb.apiKey, settings.tvdb.pin);
+        this.instance = new Tvdb();
         await this.instance.login();
       } catch (error) {
         logger.error(`Failed to login to TVDB: ${error.message}`);
         throw new Error('TVDB API key is not set');
       }
-
-      this.instance = new Tvdb(settings.tvdb.apiKey, settings.tvdb.pin);
     }
 
     return this.instance;
