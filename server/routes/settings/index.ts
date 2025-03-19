@@ -1,6 +1,7 @@
 import JellyfinAPI from '@server/api/jellyfin';
 import PlexAPI from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
+import { ExtendedPlexUser } from '@server/api/plextv';
 import TautulliAPI from '@server/api/tautulli';
 import { ApiErrorCode } from '@server/constants/error';
 import { getRepository } from '@server/datasource';
@@ -471,6 +472,8 @@ settingsRoutes.get(
   async (req, res, next) => {
     const userRepository = getRepository(User);
     const qb = userRepository.createQueryBuilder('user');
+    const getEmail = (plexUser: ExtendedPlexUser): string =>
+      plexUser.email ? plexUser.email.toLowerCase() : `${plexUser.id}@plex.local`;
 
     try {
       const admin = await userRepository.findOneOrFail({
@@ -478,9 +481,13 @@ settingsRoutes.get(
         where: { id: 1 },
       });
       const plexApi = new PlexTvAPI(admin.plexToken ?? '');
-      const plexUsers = (await plexApi.getUsers()).MediaContainer.User.map(
-        (user) => user.$
-      ).filter((user) => user.email);
+      const plexUsers: ExtendedPlexUser[] = (await plexApi.getUsers())
+        .MediaContainer.User.map((user) => user.$ as ExtendedPlexUser)
+        .filter((user) => user.email || user.home === "1")
+        .map((user) => ({
+          ...user,
+          email: getEmail(user),
+        }));
 
       const unimportedPlexUsers: {
         id: string;
@@ -495,7 +502,7 @@ settingsRoutes.get(
           plexIds: plexUsers.map((plexUser) => plexUser.id),
         })
         .orWhere('user.email IN (:...plexEmails)', {
-          plexEmails: plexUsers.map((plexUser) => plexUser.email.toLowerCase()),
+          plexEmails: plexUsers.map((plexUser) => getEmail(plexUser)),
         })
         .getMany();
 
@@ -504,12 +511,18 @@ settingsRoutes.get(
           if (
             !existingUsers.find(
               (user) =>
-                user.plexId === parseInt(plexUser.id) ||
-                user.email === plexUser.email.toLowerCase()
+                user.plexId === parseInt(plexUser.id, 10) ||
+                user.email === getEmail(plexUser)
             ) &&
-            (await plexApi.checkUserAccess(parseInt(plexUser.id)))
+            (await plexApi.checkUserAccess(parseInt(plexUser.id, 10)))
           ) {
-            unimportedPlexUsers.push(plexUser);
+            unimportedPlexUsers.push({
+              id: plexUser.id,
+              title: plexUser.title,
+              username: plexUser.username || plexUser.title,
+              email: getEmail(plexUser),
+              thumb: plexUser.thumb ?? '',
+            });
           }
         })
       );
