@@ -27,6 +27,11 @@ const messages = defineMessages('components.Settings', {
   providerStatus: 'Provider Status',
   chooseProvider: 'Choose metadata providers for different content types',
   indexerSelection: 'Provider Selection',
+  tmdbProviderDoesnotWork:
+    'TMDB provider does not work, please select another provider',
+  tvdbProviderDoesnotWork:
+    'TVDB provider does not work, please select another provider',
+  allChosenProvidersAreOperational: 'All chosen providers are operational',
 });
 
 // Types
@@ -298,19 +303,40 @@ const SettingsMetadata = () => {
                           try {
                             const resp = await testConnection(values.metadata);
 
-                            if (
-                              resp.tvdb === 'failed' ||
-                              resp.tmdb === 'failed'
-                            ) {
-                              addToast('Test failed', { appearance: 'error' });
+                            if (resp.tvdb === 'failed') {
+                              addToast(
+                                intl.formatMessage(
+                                  messages.tvdbProviderDoesnotWork
+                                ),
+                                {
+                                  appearance: 'error',
+                                  autoDismiss: true,
+                                }
+                              );
+                            } else if (resp.tmdb === 'failed') {
+                              addToast(
+                                intl.formatMessage(
+                                  messages.tmdbProviderDoesnotWork
+                                ),
+                                {
+                                  appearance: 'error',
+                                  autoDismiss: true,
+                                }
+                              );
                             } else {
-                              addToast('Connection test successful', {
-                                appearance: 'success',
-                              });
+                              addToast(
+                                intl.formatMessage(
+                                  messages.allChosenProvidersAreOperational
+                                ),
+                                {
+                                  appearance: 'success',
+                                }
+                              );
                             }
                           } catch (e) {
                             addToast('Connection test failed', {
                               appearance: 'error',
+                              autoDismiss: true,
                             });
                           } finally {
                             setIsTesting(false);
