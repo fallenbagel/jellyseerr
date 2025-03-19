@@ -8,26 +8,28 @@ import {
 import logger from '@server/logger';
 import { Router } from 'express';
 
+function getTestResultString(testValue: number): string {
+  if (testValue === -1) return 'not tested';
+  if (testValue === 0) return 'failed';
+  return 'ok';
+}
+
 const metadataRoutes = Router();
 
 metadataRoutes.get('/', (_req, res) => {
   const settings = getSettings();
-
   res.status(200).json({
     metadata: {
-      tv: settings.metadataSettings.tv === IndexerType.TMDB ? 'tmdb' : 'tvdb',
-      anime:
-        settings.metadataSettings.anime === IndexerType.TMDB ? 'tmdb' : 'tvdb',
+      tv: settings.metadataSettings.tv,
+      anime: settings.metadataSettings.anime,
     },
   });
 });
 
 metadataRoutes.put('/', async (req, res) => {
   const settings = getSettings();
-
   const body = req.body as MetadataSettings;
 
-  // test indexers
   let tvdbTest = -1;
   let tmdbTest = -1;
 
@@ -59,15 +61,6 @@ metadataRoutes.put('/', async (req, res) => {
     });
   }
 
-  logger.info('Updated metadata settings', {
-    label: 'Metadata',
-    body: body,
-    tmdb: tmdbTest,
-    tvdb: tvdbTest,
-    tv: body.tv,
-    anime: body.anime,
-  });
-
   if (tvdbTest === 0 || tmdbTest === 0) {
     return res.status(500).json({
       tvdb: tvdbTest === 1 ? 'ok' : 'failed',
@@ -82,9 +75,8 @@ metadataRoutes.put('/', async (req, res) => {
   await settings.save();
 
   res.status(200).json({
-    tv: settings.metadataSettings.tv === IndexerType.TMDB ? 'tmdb' : 'tvdb',
-    anime:
-      settings.metadataSettings.anime === IndexerType.TMDB ? 'tmdb' : 'tvdb',
+    tv: settings.metadataSettings.tv === IndexerType.TMDB,
+    anime: settings.metadataSettings.anime === IndexerType.TMDB,
   });
 });
 
@@ -124,8 +116,8 @@ metadataRoutes.post('/test', async (req, res) => {
     }
 
     const response = {
-      tmdb: tmdbTest === -1 ? 'not tested' : tmdbTest === 0 ? 'failed' : 'ok',
-      tvdb: tvdbTest === -1 ? 'not tested' : tvdbTest === 0 ? 'failed' : 'ok',
+      tmdb: getTestResultString(tmdbTest),
+      tvdb: getTestResultString(tvdbTest),
     };
 
     return res.status(200).json(response);
@@ -135,12 +127,9 @@ metadataRoutes.post('/test', async (req, res) => {
       message: e.message,
     });
 
-    // if tmdbTest != -1 (tested) and tmdbTest === 1 (ok) then fail
-    // if tvdbTest != -1 (tested) and tvdbTest === 1 (ok) then fail
-    // if test === -1 = 'not tested' if test === 0 = 'failed' if test === 1 = 'ok'
     const response = {
-      tmdb: tmdbTest === -1 ? 'not tested' : tmdbTest === 0 ? 'failed' : 'ok',
-      tvdb: tvdbTest === -1 ? 'not tested' : tvdbTest === 0 ? 'failed' : 'ok',
+      tmdb: getTestResultString(tmdbTest),
+      tvdb: getTestResultString(tvdbTest),
     };
 
     return res.status(500).json(response);
