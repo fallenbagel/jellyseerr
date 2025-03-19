@@ -117,8 +117,6 @@ class JellyfinAPI extends ExternalAPI {
       authHeaderVal = `MediaBrowser Client="Jellyseerr", Device="Jellyseerr", DeviceId="${deviceId}", Version="${getAppVersion()}"`;
     }
 
-    const settings = getSettings();
-
     super(
       jellyfinHost,
       {},
