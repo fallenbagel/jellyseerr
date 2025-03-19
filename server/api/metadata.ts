@@ -10,17 +10,17 @@ export const getMetadataProvider = async (
   try {
     const settings = await getSettings();
 
-    if (!settings.tvdb.apiKey || mediaType == 'movie') {
+    if (mediaType == 'movie') {
       return new TheMovieDb();
     }
 
-    if (mediaType == 'tv' && settings.metadataType.tv == IndexerType.TVDB) {
+    if (mediaType == 'tv' && settings.metadataSettings.tv == IndexerType.TVDB) {
       return await Tvdb.getInstance();
     }
 
     if (
       mediaType == 'anime' &&
-      settings.metadataType.anime == IndexerType.TVDB
+      settings.metadataSettings.anime == IndexerType.TVDB
     ) {
       return await Tvdb.getInstance();
     }

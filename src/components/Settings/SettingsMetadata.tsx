@@ -1,10 +1,14 @@
+import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
+import MetadataSelector, {
+  IndexerType,
+} from '@app/components/MetadataSelector';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -13,90 +17,170 @@ import useSWR from 'swr';
 const messages = defineMessages('components.Settings', {
   general: 'General',
   settings: 'Settings',
-  apiKey: 'Api Key',
-  pin: 'Pin',
-  enableTip:
-    'Enable Tvdb (only for season and episode).' +
-    ' Due to a limitation of the api used, only English is available.',
+  seriesIndexer: 'Series Indexer',
+  animeIndexer: 'Anime Indexer',
+  metadataSettings: 'Settings for metadata provider',
+  clickTest: 'Click on the "Test" button to check connectivity with providers',
+  notTested: 'Not Tested',
+  failed: 'Error',
+  ok: 'OK',
+  providerStatus: 'Provider Status',
+  chooseProvider: 'Choose metadata providers for different content types',
+  indexerSelection: 'Provider Selection',
 });
 
-interface providerResponse {
-  tvdb: boolean;
-  tmdb: boolean;
+// Types
+type ProviderStatus = 'ok' | 'not tested' | 'failed';
+
+interface ProviderResponse {
+  tvdb: ProviderStatus;
+  tmdb: ProviderStatus;
 }
 
-enum indexerType {
-  TMDB,
-  TVDB,
+interface MetadataValues {
+  tv: IndexerType;
+  anime: IndexerType;
 }
 
-interface metadataSettings {
-  settings: metadataTypeSettings;
-  providers: providerSettings;
-}
-
-interface metadataTypeSettings {
-  tv: indexerType;
-  anime: indexerType;
-}
-
-interface providerSettings {
-  tvdb: tvdbSettings;
-}
-
-interface tvdbSettings {
-  apiKey: string;
-  pin: string;
+interface MetadataSettings {
+  metadata: MetadataValues;
 }
 
 const SettingsMetadata = () => {
   const intl = useIntl();
-  const [isTesting, setIsTesting] = useState(false);
-
   const { addToast } = useToasts();
+  const [isTesting, setIsTesting] = useState(false);
+  // Valeurs par défaut pour les statuts
+  const defaultStatus: ProviderResponse = {
+    tmdb: 'not tested',
+    tvdb: 'not tested',
+  };
 
-  const testConnection = async () => {
+  const [providerStatus, setProviderStatus] =
+    useState<ProviderResponse>(defaultStatus);
+
+  // SWR hook pour récupérer les données
+  const { data, error } = useSWR<MetadataSettings>(
+    '/api/v1/settings/metadatas'
+  );
+
+  // Tester la connexion avec les fournisseurs
+  const testConnection = async (
+    values: MetadataValues
+  ): Promise<ProviderResponse> => {
+    // Déterminer quels indexeurs sont utilisés
+    const useTmdb =
+      values.tv === IndexerType.TMDB || values.anime === IndexerType.TMDB;
+    const useTvdb =
+      values.tv === IndexerType.TVDB || values.anime === IndexerType.TVDB;
+
+    // Préparer les données pour le test
+    const testData = {
+      tmdb: useTmdb,
+      tvdb: useTvdb,
+    };
+
     const response = await fetch('/api/v1/settings/metadatas/test', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify(testData),
     });
 
-    const body = (await response.json()) as providerResponse;
-
     if (!response.ok) {
-      throw new Error('Failed to test Tvdb connection');
+      throw new Error('Failed to test connection');
     }
 
-    console.log(body);
+    const body = (await response.json()) as ProviderResponse;
+
+    // Créer un nouvel objet de statut en conservant 'not tested'
+    // pour les services que nous n'avons pas testés
+    const newStatus: ProviderResponse = {
+      tmdb: useTmdb ? body.tmdb : 'not tested',
+      tvdb: useTvdb ? body.tvdb : 'not tested',
+    };
+
+    setProviderStatus(newStatus);
+    return newStatus;
   };
 
+  // Sauvegarder les paramètres
   const saveSettings = async (
-    value: metadataSettings
-  ): Promise<metadataSettings> => {
+    values: MetadataValues
+  ): Promise<MetadataSettings> => {
     const response = await fetch('/api/v1/settings/metadatas', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(value),
+      body: JSON.stringify({
+        anime: values.anime,
+        tv: values.tv,
+      }),
     });
 
     if (!response.ok) {
       throw new Error('Failed to save Metadata settings');
     }
 
-    return (await response.json()) as metadataSettings;
+    return (await response.json()) as MetadataSettings;
   };
 
-  const { data, error } = useSWR<metadataSettings>(
-    '/api/v1/settings/metadatas'
-  );
+  // Obtenir la classe CSS pour l'affichage du statut
+  const getStatusClass = (status: ProviderStatus): string => {
+    switch (status) {
+      case 'ok':
+        return 'text-green-500';
+      case 'not tested':
+        return 'text-yellow-500';
+      case 'failed':
+        return 'text-red-500';
+    }
+  };
 
+  // Obtenir le message à afficher pour le statut
+  const getStatusMessage = (status: ProviderStatus): string => {
+    switch (status) {
+      case 'ok':
+        return intl.formatMessage(messages.ok);
+      case 'not tested':
+        return intl.formatMessage(messages.notTested);
+      case 'failed':
+        return intl.formatMessage(messages.failed);
+    }
+  };
+
+  const getBadgeType = (
+    status: ProviderStatus
+  ):
+    | 'default'
+    | 'primary'
+    | 'danger'
+    | 'warning'
+    | 'success'
+    | 'dark'
+    | 'light'
+    | undefined => {
+    switch (status) {
+      case 'ok':
+        return 'success';
+      case 'not tested':
+        return 'warning';
+      case 'failed':
+        return 'danger';
+    }
+  };
+
+  // Afficher un spinner pendant le chargement
   if (!data && !error) {
     return <LoadingSpinner />;
   }
+
+  const initialValues: MetadataValues = data?.metadata || {
+    tv: IndexerType.TMDB,
+    anime: IndexerType.TMDB,
+  };
 
   return (
     <>
@@ -106,107 +190,104 @@ const SettingsMetadata = () => {
           intl.formatMessage(globalMessages.settings),
         ]}
       />
+
       <div className="mb-6">
-        <h3 className="heading">{'Metadata'}</h3>
-        <p className="description">{'Settings for metadata indexer'}</p>
+        <h3 className="heading">Metadata</h3>
+        <p className="description">
+          {intl.formatMessage(messages.metadataSettings)}
+        </p>
       </div>
+
+      <div className="mb-6 rounded-lg bg-gray-800 p-4">
+        <h4 className="mb-3 text-lg font-medium">
+          {intl.formatMessage(messages.providerStatus)}
+        </h4>
+        <div className="flex flex-col space-y-3">
+          <div className="flex items-center">
+            <span className="mr-2 w-12">TMDB:</span>
+            <span className={`text-sm ${getStatusClass(providerStatus.tmdb)}`}>
+              <Badge badgeType={getBadgeType(providerStatus.tmdb)}>
+                {getStatusMessage(providerStatus.tmdb)}
+              </Badge>
+            </span>
+          </div>
+          <div className="flex items-center">
+            <span className="mr-2 w-12">TVDB:</span>
+            <span className={`text-sm ${getStatusClass(providerStatus.tvdb)}`}>
+              <Badge badgeType={getBadgeType(providerStatus.tvdb)}>
+                {getStatusMessage(providerStatus.tvdb)}
+              </Badge>
+            </span>
+          </div>
+        </div>
+      </div>
+
       <div className="section">
         <Formik
-          initialValues={{
-            settings: data?.settings ?? {
-              tv: indexerType.TMDB,
-              anime: indexerType.TMDB,
-            },
-            providers: data?.providers ?? {
-              tvdb: {
-                apiKey: '',
-                pin: '',
-              },
-            },
-          }}
+          initialValues={{ metadata: initialValues }}
           onSubmit={async (values) => {
             try {
-              await saveSettings(
-                data ?? {
-                  providers: {
-                    tvdb: {
-                      apiKey: '',
-                      pin: '',
-                    },
-                  },
-                  settings: {
-                    tv: indexerType.TMDB,
-                    anime: indexerType.TMDB,
-                  },
-                }
-              );
+              await saveSettings(values.metadata);
+
               if (data) {
-                data.providers = values.providers;
-                data.settings = values.settings;
+                data.metadata = values.metadata;
               }
+
+              addToast('Metadata settings saved', { appearance: 'success' });
             } catch (e) {
-              addToast('Failed to save Tvdb settings', { appearance: 'error' });
-              return;
+              addToast('Failed to save metadata settings', {
+                appearance: 'error',
+              });
             }
-            addToast('Tvdb settings saved', { appearance: 'success' });
           }}
         >
-          {({ isSubmitting, isValid, values }) => {
+          {({ isSubmitting, isValid, values, setFieldValue }) => {
             return (
               <Form className="section" data-testid="settings-main-form">
                 <div className="mb-6">
-                  <h2 className="heading">{'TVDB'}</h2>
-                  <p className="description">{'Settings for TVDB indexer'}</p>
-                </div>
-                <div className="form-row">
-                  <label htmlFor="trustProxy" className="checkbox-label">
-                    <span className="mr-2">
-                      {intl.formatMessage(messages.apiKey)}
-                    </span>
-
-                    <span className="label-tip">
-                      {intl.formatMessage(messages.enableTip)}
-                    </span>
-                  </label>
-                  <div className="form-input-area">
-                    <Field
-                      data-testid="tvdb-apiKey"
-                      type="text"
-                      id="apiKey"
-                      name="apiKey"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        values.providers.tvdb.apiKey = e.target.value;
-                      }}
-                    />
-                  </div>
-                  <div className="error"></div>
+                  <h2 className="heading">
+                    {intl.formatMessage(messages.indexerSelection)}
+                  </h2>
+                  <p className="description">
+                    {intl.formatMessage(messages.chooseProvider)}
+                  </p>
                 </div>
 
                 <div className="form-row">
-                  <label htmlFor="trustProxy" className="checkbox-label">
+                  <label htmlFor="tvIndexer" className="checkbox-label">
                     <span className="mr-2">
-                      {intl.formatMessage(messages.pin)}
-                    </span>
-                    <span className="label-tip">
-                      {intl.formatMessage(messages.enableTip)}
+                      {intl.formatMessage(messages.seriesIndexer)}
                     </span>
                   </label>
                   <div className="form-input-area">
-                    <Field
-                      data-testid="tvdb-pin"
-                      type="text"
-                      id="pin"
-                      name="pin"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        values.providers.tvdb.pin = e.target.value;
-                      }}
+                    <MetadataSelector
+                      value={values.metadata.tv}
+                      onChange={(value) => setFieldValue('metadata.tv', value)}
+                      isDisabled={isSubmitting}
                     />
                   </div>
-                  <div className="error"></div>
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="animeIndexer" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.animeIndexer)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <MetadataSelector
+                      value={values.metadata.anime}
+                      onChange={(value) =>
+                        setFieldValue('metadata.anime', value)
+                      }
+                      isDisabled={isSubmitting}
+                    />
+                  </div>
                 </div>
 
                 <div className="actions">
                   <div className="flex justify-end">
+                    {/* Bouton de test */}
                     <span className="ml-3 inline-flex rounded-md shadow-sm">
                       <Button
                         buttonType="warning"
@@ -215,17 +296,25 @@ const SettingsMetadata = () => {
                         onClick={async () => {
                           setIsTesting(true);
                           try {
-                            await testConnection();
-                            addToast('Tvdb connection successful', {
-                              appearance: 'success',
-                            });
+                            const resp = await testConnection(values.metadata);
+
+                            if (
+                              resp.tvdb === 'failed' ||
+                              resp.tmdb === 'failed'
+                            ) {
+                              addToast('Test failed', { appearance: 'error' });
+                            } else {
+                              addToast('Connection test successful', {
+                                appearance: 'success',
+                              });
+                            }
                           } catch (e) {
-                            addToast(
-                              'Tvdb connection error, check your credentials',
-                              { appearance: 'error' }
-                            );
+                            addToast('Connection test failed', {
+                              appearance: 'error',
+                            });
+                          } finally {
+                            setIsTesting(false);
                           }
-                          setIsTesting(false);
                         }}
                       >
                         <BeakerIcon />
@@ -236,12 +325,13 @@ const SettingsMetadata = () => {
                         </span>
                       </Button>
                     </span>
+
                     <span className="ml-3 inline-flex rounded-md shadow-sm">
                       <Button
-                        data-testid="tvbd-save-button"
+                        data-testid="metadata-save-button"
                         buttonType="primary"
                         type="submit"
-                        disabled={isSubmitting || !isValid}
+                        disabled={isSubmitting || !isValid || isTesting}
                       >
                         <ArrowDownOnSquareIcon />
                         <span>
