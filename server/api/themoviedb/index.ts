@@ -1,4 +1,5 @@
 import ExternalAPI from '@server/api/externalapi';
+import type { TvShowIndexer } from '@server/api/indexer';
 import cacheManager from '@server/lib/cache';
 import { sortBy } from 'lodash';
 import type {
@@ -98,7 +99,7 @@ interface DiscoverTvOptions {
   withStatus?: string; // Returning Series: 0 Planned: 1 In Production: 2 Ended: 3 Cancelled: 4 Pilot: 5
 }
 
-class TheMovieDb extends ExternalAPI {
+class TheMovieDb extends ExternalAPI implements TvShowIndexer {
   private discoverRegion?: string;
   private originalLanguage?: string;
   constructor({
@@ -309,6 +310,13 @@ class TheMovieDb extends ExternalAPI {
           append_to_response: 'external_ids',
         }
       );
+
+      data.episodes = data.episodes.map((episode) => {
+        if (episode.still_path) {
+          episode.still_path = `https://image.tmdb.org/t/p/original/${episode.still_path}`;
+        }
+        return episode;
+      });
 
       return data;
     } catch (e) {

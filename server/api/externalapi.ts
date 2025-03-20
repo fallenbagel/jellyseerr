@@ -1,5 +1,3 @@
-import { MediaServerType } from '@server/constants/server';
-import { getSettings } from '@server/lib/settings';
 import type { RateLimitOptions } from '@server/utils/rateLimit';
 import rateLimit from '@server/utils/rateLimit';
 import type NodeCache from 'node-cache';
@@ -10,7 +8,7 @@ const DEFAULT_TTL = 300;
 // 10 seconds default rolling buffer (in ms)
 const DEFAULT_ROLLING_BUFFER = 10000;
 
-interface ExternalAPIOptions {
+export interface ExternalAPIOptions {
   nodeCache?: NodeCache;
   headers?: Record<string, unknown>;
   rateLimit?: RateLimitOptions;
@@ -36,8 +34,6 @@ class ExternalAPI {
 
     const url = new URL(baseUrl);
 
-    const settings = getSettings();
-
     this.defaultHeaders = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -46,9 +42,7 @@ class ExternalAPI {
           `${url.username}:${url.password}`
         ).toString('base64')}`,
       }),
-      ...(settings.main.mediaServerType === MediaServerType.EMBY && {
-        'Accept-Encoding': 'gzip',
-      }),
+
       ...options.headers,
     };
 
