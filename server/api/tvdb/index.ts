@@ -8,6 +8,7 @@ import type {
   TmdbTvSeasonResult,
 } from '@server/api/themoviedb/interfaces';
 import type {
+  TvdbBaseResponse,
   TvdbEpisode,
   TvdbLoginResponse,
   TvdbSeasonDetails,
@@ -41,16 +42,13 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
   private static readonly DEFAULT_CACHE_TTL = 43200;
   private static readonly DEFAULT_LANGUAGE = 'eng';
   private token: string;
-  private apiKey?: string;
   private pin?: string;
 
   constructor(pin?: string) {
     const finalConfig = { ...DEFAULT_CONFIG };
     super(
       finalConfig.baseUrl,
-      {
-        apiKey: '',
-      },
+      {},
       {
         nodeCache: cacheManager.getCache(finalConfig.cachePrefix).data,
         rateLimit: {
@@ -77,6 +75,33 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     return this.instance;
   }
 
+  private async refreshToken(): Promise<void> {
+    try {
+      if (!this.token) {
+        await this.login();
+        return;
+      }
+
+      const base64Url = this.token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(Buffer.from(base64, 'base64').toString());
+
+      if (!payload.exp) {
+        await this.login();
+      }
+
+      const now = Math.floor(Date.now() / 1000);
+      const diff = payload.exp - now;
+
+      // refresh token 1 week before expiration
+      if (diff < 604800) {
+        await this.login();
+      }
+    } catch (error) {
+      this.handleError('Failed to refresh token', error);
+    }
+  }
+
   public async test(): Promise<void> {
     try {
       await this.login();
@@ -86,42 +111,39 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     }
   }
 
-  async handleRenewToken(): Promise<TvdbLoginResponse> {
-    throw new Error('Method not implemented.');
-  }
-
   async login(): Promise<TvdbLoginResponse> {
-    const response = await this.post<TvdbLoginResponse>('/login', {
-      apiKey: process.env.TVDB_API_KEY,
-    });
+    const response = await this.post<TvdbBaseResponse<TvdbLoginResponse>>(
+      '/login',
+      {
+        apiKey: process.env.TVDB_API_KEY,
+      }
+    );
 
-    this.defaultHeaders.Authorization = `Bearer ${response.token}`;
-    this.token = response.token;
+    this.defaultHeaders.Authorization = `Bearer ${response.data.token}`;
+    this.token = response.data.token;
 
-    return response;
+    return response.data;
   }
 
   public async getShowByTvdbId({
     tvdbId,
+    language,
   }: {
     tvdbId: number;
     language?: string;
   }): Promise<TmdbTvDetails> {
-    return await this.get<TmdbTvDetails>(
-      `/en/${tvdbId}`,
-      {},
-      Tvdb.DEFAULT_CACHE_TTL
-    );
+    return await this.tmdb.getTvShow({ tvId: tvdbId, language: language });
   }
 
   public async getTvShow({
     tvId,
-    language = Tvdb.DEFAULT_LANGUAGE,
+    language,
   }: {
     tvId: number;
     language?: string;
   }): Promise<TmdbTvDetails> {
     try {
+      await this.refreshToken();
       const tmdbTvShow = await this.tmdb.getTvShow({ tvId, language });
       const tvdbId = this.getTvdbIdFromTmdb(tmdbTvShow);
 
@@ -145,6 +167,8 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     seasonNumber: number;
     language?: string;
   }): Promise<TmdbSeasonWithEpisodes> {
+    await this.refreshToken();
+
     if (seasonNumber === 0) {
       return this.createEmptySeasonResponse(tvId);
     }
@@ -171,6 +195,8 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     tvdbId: ValidTvdbId
   ): Promise<TmdbTvDetails> {
     try {
+      await this.refreshToken();
+
       const tvdbData = await this.fetchTvdbShowData(tvdbId);
       const seasons = this.processSeasons(tvdbData);
 
@@ -181,20 +207,22 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
       return { ...tmdbTvShow, seasons };
     } catch (error) {
       logger.error(
-        `Failed to enrich TMDB show with TVDB data: ${error.message}`
+        `Failed to enrich TMDB show with TVDB data: ${error.message} token: ${this.token}`
       );
       return tmdbTvShow;
     }
   }
 
   private async fetchTvdbShowData(tvdbId: number): Promise<TvdbTvDetails> {
-    return await this.get<TvdbTvDetails>(
+    const resp = await this.get<TvdbBaseResponse<TvdbTvDetails>>(
       `/series/${tvdbId}/extended?meta=episodes`,
       {
         short: 'true',
       },
       Tvdb.DEFAULT_CACHE_TTL
     );
+
+    return resp.data;
   }
 
   private processSeasons(tvdbData: TvdbTvDetails): TmdbTvSeasonResult[] {
@@ -253,10 +281,12 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
       return this.createEmptySeasonResponse(tvId);
     }
 
-    const seasons = await this.get<TvdbSeasonDetails>(
+    const resp = await this.get<TvdbBaseResponse<TvdbSeasonDetails>>(
       `/series/${tvdbId}/episodes/official/${language}`,
       {}
     );
+
+    const seasons = resp.data;
 
     const episodes = this.processEpisodes(seasons, seasonNumber, tvId);
 
@@ -299,7 +329,9 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
       season_number: episode.seasonNumber,
       production_code: '',
       show_id: tvId,
-      still_path: episode.image || '',
+      still_path: episode.image
+        ? 'https://artworks.thetvdb.com' + episode.image
+        : '',
       vote_average: 1,
       vote_count: 1,
     };
