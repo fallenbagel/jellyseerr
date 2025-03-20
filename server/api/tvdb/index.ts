@@ -132,7 +132,29 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     tvdbId: number;
     language?: string;
   }): Promise<TmdbTvDetails> {
-    return await this.tmdb.getTvShow({ tvId: tvdbId, language: language });
+    try {
+      const tmdbTvShow = await this.tmdb.getShowByTvdbId({
+        tvdbId: tvdbId,
+        language,
+      });
+
+      try {
+        await this.refreshToken();
+
+        const validTvdbId = this.getTvdbIdFromTmdb(tmdbTvShow);
+
+        if (this.isValidTvdbId(validTvdbId)) {
+          return this.enrichTmdbShowWithTvdbData(tmdbTvShow, validTvdbId);
+        }
+
+        return tmdbTvShow;
+      } catch (error) {
+        return tmdbTvShow;
+      }
+    } catch (error) {
+      this.handleError('Failed to fetch TV show details', error);
+      throw error;
+    }
   }
 
   public async getTvShow({
@@ -143,18 +165,25 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     language?: string;
   }): Promise<TmdbTvDetails> {
     try {
-      await this.refreshToken();
       const tmdbTvShow = await this.tmdb.getTvShow({ tvId, language });
-      const tvdbId = this.getTvdbIdFromTmdb(tmdbTvShow);
 
-      if (this.isValidTvdbId(tvdbId)) {
-        return await this.enrichTmdbShowWithTvdbData(tmdbTvShow, tvdbId);
+      try {
+        await this.refreshToken();
+
+        const tvdbId = this.getTvdbIdFromTmdb(tmdbTvShow);
+
+        if (this.isValidTvdbId(tvdbId)) {
+          return await this.enrichTmdbShowWithTvdbData(tmdbTvShow, tvdbId);
+        }
+
+        return tmdbTvShow;
+      } catch (error) {
+        this.handleError('Failed to fetch TV show details', error);
+        return tmdbTvShow;
       }
-
-      return tmdbTvShow;
     } catch (error) {
       this.handleError('Failed to fetch TV show details', error);
-      throw error;
+      return this.tmdb.getTvShow({ tvId, language });
     }
   }
 
@@ -167,26 +196,32 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     seasonNumber: number;
     language?: string;
   }): Promise<TmdbSeasonWithEpisodes> {
-    await this.refreshToken();
-
     if (seasonNumber === 0) {
       return this.createEmptySeasonResponse(tvId);
     }
 
     try {
       const tmdbTvShow = await this.tmdb.getTvShow({ tvId, language });
-      const tvdbId = this.getTvdbIdFromTmdb(tmdbTvShow);
 
-      if (!this.isValidTvdbId(tvdbId)) {
+      try {
+        await this.refreshToken();
+
+        const tvdbId = this.getTvdbIdFromTmdb(tmdbTvShow);
+
+        if (!this.isValidTvdbId(tvdbId)) {
+          return await this.tmdb.getTvSeason({ tvId, seasonNumber, language });
+        }
+
+        return await this.getTvdbSeasonData(tvdbId, seasonNumber, tvId);
+      } catch (error) {
+        this.handleError('Failed to fetch TV season details', error);
         return await this.tmdb.getTvSeason({ tvId, seasonNumber, language });
       }
-
-      return await this.getTvdbSeasonData(tvdbId, seasonNumber, tvId);
     } catch (error) {
       logger.error(
         `[TVDB] Failed to fetch TV season details: ${error.message}`
       );
-      return await this.tmdb.getTvSeason({ tvId, seasonNumber, language });
+      throw error;
     }
   }
 
