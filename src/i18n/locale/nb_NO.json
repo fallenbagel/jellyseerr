@@ -1076,5 +1076,10 @@
   "components.Discover.emptywatchlist": "Matriale som du legger til via <PlexWatchlistSupportLink>Plex Watchlist</PlexWatchlistSupportLink> vil dukke opp her.",
   "components.UserProfile.emptywatchlist": "Matriale som du legger til via <PlexWatchlistSupportLink>Plex Watchlist</PlexWatchlistSupportLink> vil dukke opp her.",
   "components.RequestModal.SearchByNameModal.nomatches": "Vi klarte ikke å koble denne serien med et søkbart treff.",
-  "components.Settings.SettingsJobsCache.editJobScheduleCurrent": "Nåværende frekvens"
+  "components.Settings.SettingsJobsCache.editJobScheduleCurrent": "Nåværende frekvens",
+  "components.Settings.SettingsMain.generalsettings": "Generelle Innstillinger",
+  "components.Layout.UserWarnings.emailInvalid": "E-postadressen er ugyldig.",
+  "components.Layout.UserWarnings.emailRequired": "En e-postadresse er påkrevd.",
+  "components.Layout.UserWarnings.passwordRequired": "Et passord er påkrevd.",
+  "components.Settings.SettingsMain.general": "Generell"
 }
