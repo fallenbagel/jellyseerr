@@ -39,7 +39,7 @@ interface JellyfinMediaFolder {
 }
 
 export interface JellyfinLibrary {
-  type: 'show' | 'movie';
+  type: 'show' | 'movie' | 'music';
   key: string;
   title: string;
   agent: string;
@@ -49,7 +49,13 @@ export interface JellyfinLibraryItem {
   Name: string;
   Id: string;
   HasSubtitles: boolean;
-  Type: 'Movie' | 'Episode' | 'Season' | 'Series';
+  Type:
+    | 'Movie'
+    | 'Episode'
+    | 'Season'
+    | 'Series'
+    | 'MusicAlbum'
+    | 'MusicArtist';
   LocationType: 'FileSystem' | 'Offline' | 'Remote' | 'Virtual';
   SeriesName?: string;
   SeriesId?: string;
@@ -59,6 +65,8 @@ export interface JellyfinLibraryItem {
   IndexNumberEnd?: number;
   ParentIndexNumber?: number;
   MediaType: string;
+  AlbumId?: string;
+  ArtistId?: string;
 }
 
 export interface JellyfinMediaStream {
@@ -86,6 +94,9 @@ export interface JellyfinLibraryItemExtended extends JellyfinLibraryItem {
     Tmdb?: string;
     Imdb?: string;
     Tvdb?: string;
+    MusicBrainzReleaseGroup: string | undefined;
+    MusicBrainzAlbum?: string;
+    MusicBrainzArtistId?: string;
   };
   MediaSources?: JellyfinMediaSource[];
   Width?: number;
@@ -281,13 +292,7 @@ class JellyfinAPI extends ExternalAPI {
   }
 
   private mapLibraries(mediaFolders: JellyfinMediaFolder[]): JellyfinLibrary[] {
-    const excludedTypes = [
-      'music',
-      'books',
-      'musicvideos',
-      'homevideos',
-      'boxsets',
-    ];
+    const excludedTypes = ['books', 'musicvideos', 'homevideos', 'boxsets'];
 
     return mediaFolders
       .filter((Item: JellyfinMediaFolder) => {
@@ -300,7 +305,12 @@ class JellyfinAPI extends ExternalAPI {
         return <JellyfinLibrary>{
           key: Item.Id,
           title: Item.Name,
-          type: Item.CollectionType === 'movies' ? 'movie' : 'show',
+          type:
+            Item.CollectionType === 'movies'
+              ? 'movie'
+              : Item.CollectionType === 'tvshows'
+              ? 'show'
+              : 'music',
           agent: 'jellyfin',
         };
       });
@@ -311,7 +321,7 @@ class JellyfinAPI extends ExternalAPI {
       const libraryItemsResponse = await this.get<any>(`/Items`, {
         SortBy: 'SortName',
         SortOrder: 'Ascending',
-        IncludeItemTypes: 'Series,Movie,Others',
+        IncludeItemTypes: 'Series,Movie,MusicAlbum,MusicArtist,Others',
         Recursive: 'true',
         StartIndex: '0',
         ParentId: id,
