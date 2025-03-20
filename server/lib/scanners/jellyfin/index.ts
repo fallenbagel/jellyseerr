@@ -1,8 +1,12 @@
-import type { TvShowIndexer } from '@server/api/indexer';
 import type { JellyfinLibraryItem } from '@server/api/jellyfin';
 import JellyfinAPI from '@server/api/jellyfin';
+import { getMetadataProvider } from '@server/api/metadata';
 import TheMovieDb from '@server/api/themoviedb';
-import type { TmdbTvDetails } from '@server/api/themoviedb/interfaces';
+import { ANIME_KEYWORD_ID } from '@server/api/themoviedb/constants';
+import type {
+  TmdbKeyword,
+  TmdbTvDetails,
+} from '@server/api/themoviedb/interfaces';
 import { MediaStatus, MediaType } from '@server/constants/media';
 import { MediaServerType } from '@server/constants/server';
 import { getRepository } from '@server/datasource';
@@ -31,7 +35,6 @@ interface SyncStatus {
 class JellyfinScanner {
   private sessionId: string;
   private tmdb: TheMovieDb;
-  private tvShowIndexer: TvShowIndexer;
   private jfClient: JellyfinAPI;
   private items: JellyfinLibraryItem[] = [];
   private progress = 0;
@@ -195,6 +198,42 @@ class JellyfinScanner {
     }
   }
 
+  private async getTvShow({
+    tmdbId,
+    tvdbId,
+  }: {
+    tmdbId?: number;
+    tvdbId?: number;
+  }): Promise<TmdbTvDetails> {
+    let tvShow;
+
+    if (tmdbId) {
+      tvShow = await this.tmdb.getTvShow({
+        tvId: Number(tmdbId),
+      });
+    } else if (tvdbId) {
+      tvShow = await this.tmdb.getShowByTvdbId({
+        tvdbId: Number(tvdbId),
+      });
+    } else {
+      throw new Error('No ID provided');
+    }
+
+    const indexer = tvShow.keywords.results.some(
+      (keyword: TmdbKeyword) => keyword.id === ANIME_KEYWORD_ID
+    )
+      ? await getMetadataProvider('anime')
+      : await getMetadataProvider('tv');
+
+    if (!(indexer instanceof TheMovieDb)) {
+      tvShow = await indexer.getTvShow({
+        tvId: Number(tmdbId),
+      });
+    }
+
+    return tvShow;
+  }
+
   private async processShow(jellyfinitem: JellyfinLibraryItem) {
     const mediaRepository = getRepository(Media);
 
@@ -215,8 +254,8 @@ class JellyfinScanner {
 
       if (metadata.ProviderIds.Tmdb) {
         try {
-          tvShow = await this.tvShowIndexer.getTvShow({
-            tvId: Number(metadata.ProviderIds.Tmdb),
+          tvShow = await this.getTvShow({
+            tmdbId: Number(metadata.ProviderIds.Tmdb),
           });
         } catch {
           this.log('Unable to find TMDb ID for this title.', 'debug', {
@@ -226,8 +265,8 @@ class JellyfinScanner {
       }
       if (!tvShow && metadata.ProviderIds.Tvdb) {
         try {
-          tvShow = await this.tvShowIndexer.getShowByTvdbId({
-            tvdbId: Number(metadata.ProviderIds.Tvdb),
+          tvShow = await this.getTvShow({
+            tvdbId: Number(metadata.ProviderIds.Tmdb),
           });
         } catch {
           this.log('Unable to find TVDb ID for this title.', 'debug', {
