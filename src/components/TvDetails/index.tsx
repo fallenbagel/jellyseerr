@@ -35,6 +35,7 @@ import { sortCrewPriority } from '@app/utils/creditHelpers';
 import defineMessages from '@app/utils/defineMessages';
 import { refreshIntervalHelper } from '@app/utils/refreshIntervalHelper';
 import { Disclosure, Transition } from '@headlessui/react';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import {
   ArrowRightCircleIcon,
   CogIcon,
@@ -45,7 +46,6 @@ import {
   PlayIcon,
   StarIcon,
 } from '@heroicons/react/24/solid';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import type { RTRating } from '@server/api/rating/rottentomatoes';
 import { ANIME_KEYWORD_ID } from '@server/api/themoviedb/constants';
 import { IssueStatus } from '@server/constants/issue';
