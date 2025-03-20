@@ -35,7 +35,6 @@ const MetadataSelector = ({
 }: MetadataSelectorProps) => {
   const intl = useIntl();
 
-  // Options pour les sélecteurs d'indexeurs avec leurs logos
   const indexerOptions: IndexerOptionType[] = [
     {
       value: IndexerType.TMDB,
@@ -49,7 +48,6 @@ const MetadataSelector = ({
     },
   ];
 
-  // Style personnalisé pour inclure les icônes
   const customStyles: StylesConfig<IndexerOptionType, false> = {
     option: (base) => ({
       ...base,
@@ -63,7 +61,6 @@ const MetadataSelector = ({
     }),
   };
 
-  // Format personnalisé pour les options avec logo
   const formatOptionLabel = (option: IndexerOptionType) => (
     <div className="flex items-center">
       {option.icon}
