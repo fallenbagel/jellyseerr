@@ -1403,5 +1403,18 @@
   "components.Settings.Notifications.webhookRoleIdTip": "L'ID à mentionner dans le message du webhook. Laissez ce champ vide pour désactiver les mentions",
   "components.Settings.Notifications.webhookRoleId": "ID de rôle de notification",
   "components.Settings.SettingsJobsCache.plex-refresh-token": "Rafraîchir le token Plex",
-  "components.Settings.tip": "Conseil"
+  "components.Settings.tip": "Conseil",
+  "components.Settings.seriesIndexer": "Fournisseur pour les séries",
+  "components.Settings.animeIndexer": "Fournisseur pour les séries animé",
+  "components.Settings.metadataSettings": "Paramètres de métadonnées",
+  "components.Settings.clickTest": "Cliquez sur le bouton \"Test\" pour vérifier la connectivité avec les fournisseurs",
+  "components.Settings.notTested": "Non test",
+  "components.Settings.failed": "Non fonctionnel",
+  "components.Settings.operational": "Fonctionnel",
+  "components.Settings.providerStatus": "Statut des fournisseurs",
+  "components.Settings.chooseProvider": "Choisissez les fournisseurs de métadonnées pour différents types de contenu",
+  "components.Settings.indexerSelection": "Sélection de fournisseurs",
+  "components.Settings.tmdbProviderDoesnotWork": "Le fournisseur TMDB ne fonctionne pas, veuillez sélectionner un autre fournisseur",
+  "components.Settings.tvdbProviderDoesnotWork": "Le fournisseur TVDB ne fonctionne pas, veuillez sélectionner un autre fournisseur",
+  "components.Settings.allChosenProvidersAreOperational": "Tous les fournisseurs choisis sont opérationnels"
 }

@@ -7,10 +7,6 @@ export interface TvdbLoginResponse {
   token: string;
 }
 
-export interface TvdbLoginResponse extends TvdbBaseResponse<{ token: string }> {
-  data: { token: string };
-}
-
 interface TvDetailsAliases {
   language: string;
   name: string;
@@ -23,7 +19,7 @@ interface TvDetailsStatus {
   keepUpdated: boolean;
 }
 
-export interface TvdbTvDetails extends TvdbBaseResponse<TvdbTvDetails> {
+export interface TvdbTvDetails {
   id: number;
   name: string;
   slug: string;
@@ -116,7 +112,7 @@ export interface TvdbEpisode {
   year: string;
 }
 
-export interface TvdbSeasonDetails extends TvdbBaseResponse<TvdbSeasonDetails> {
+export interface TvdbSeasonDetails {
   id: number;
   seriesId: number;
   type: TvdbType;
@@ -141,8 +137,7 @@ export interface TvdbSeasonDetails extends TvdbBaseResponse<TvdbSeasonDetails> {
   firstAired: string;
 }
 
-export interface TvdbEpisodeTranslation
-  extends TvdbBaseResponse<TvdbEpisodeTranslation> {
+export interface TvdbEpisodeTranslation {
   name: string;
   overview: string;
   language: string;
