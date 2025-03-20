@@ -197,7 +197,7 @@ const SettingsMetadata = () => {
         </h4>
         <div className="flex flex-col space-y-3">
           <div className="flex items-center">
-            <span className="mr-2 w-12">TMDB:</span>
+            <span className="mr-2 w-12">TheMovieDB:</span>
             <span className={`text-sm ${getStatusClass(providerStatus.tmdb)}`}>
               <Badge badgeType={getBadgeType(providerStatus.tmdb)}>
                 {getStatusMessage(providerStatus.tmdb)}
@@ -205,7 +205,7 @@ const SettingsMetadata = () => {
             </span>
           </div>
           <div className="flex items-center">
-            <span className="mr-2 w-12">TVDB:</span>
+            <span className="mr-2 w-12">TheTVDB:</span>
             <span className={`text-sm ${getStatusClass(providerStatus.tvdb)}`}>
               <Badge badgeType={getBadgeType(providerStatus.tvdb)}>
                 {getStatusMessage(providerStatus.tvdb)}
