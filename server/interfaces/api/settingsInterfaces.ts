@@ -45,6 +45,7 @@ export interface PublicSettingsResponse {
   locale: string;
   emailEnabled: boolean;
   newPlexLogin: boolean;
+  maxSeasonsPerRequest?: number;
 }
 
 export interface CacheItem {

@@ -43,6 +43,11 @@ export class QuotaRestrictedError extends Error {}
 export class DuplicateMediaRequestError extends Error {}
 export class NoSeasonsAvailableError extends Error {}
 export class BlacklistedMediaError extends Error {}
+export class SeasonLimitError extends Error {
+  constructor(public seasonLimit: number) {
+    super(`Season limit of ${seasonLimit} exceeded`);
+  }
+}
 
 type MediaRequestOptions = {
   isAutoRequest?: boolean;
@@ -394,6 +399,18 @@ export class MediaRequest {
         requestedSeasons = requestedSeasons.filter((sn) => sn > 0);
       }
 
+      // Check if max seasons per request is set and enforce limit
+      if (
+        settings.main.maxSeasonsPerRequest &&
+        settings.main.maxSeasonsPerRequest > 0 &&
+        requestedSeasons.length > settings.main.maxSeasonsPerRequest &&
+        !user.hasPermission([Permission.MANAGE_REQUESTS, Permission.ADMIN], {
+          type: 'or',
+        })
+      ) {
+        throw new SeasonLimitError(settings.main.maxSeasonsPerRequest);
+      }
+
       let existingSeasons: number[] = [];
 
       // We need to check existing requests on this title to make sure we don't double up on seasons that were
@@ -666,7 +683,11 @@ export class MediaRequest {
       if (media[this.is4k ? 'status4k' : 'status'] === MediaStatus.AVAILABLE) {
         logger.warn(
           'Media became available before request was approved. Skipping approval notification',
-          { label: 'Media Request', requestId: this.id, mediaId: this.media.id }
+          {
+            label: 'Media Request',
+            requestId: this.id,
+            mediaId: this.media.id,
+          }
         );
         return;
       }

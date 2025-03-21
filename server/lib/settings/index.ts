@@ -132,6 +132,7 @@ export interface MainSettings {
   partialRequestsEnabled: boolean;
   enableSpecialEpisodes: boolean;
   locale: string;
+  maxSeasonsPerRequest?: number;
 }
 
 export interface NetworkSettings {
@@ -169,6 +170,7 @@ interface FullPublicSettings extends PublicSettings {
   emailEnabled: boolean;
   userEmailRequired: boolean;
   newPlexLogin: boolean;
+  maxSeasonsPerRequest?: number;
 }
 
 export interface NotificationAgentConfig {
@@ -612,6 +614,7 @@ class Settings {
       userEmailRequired:
         this.data.notifications.agents.email.options.userEmailRequired,
       newPlexLogin: this.data.main.newPlexLogin,
+      maxSeasonsPerRequest: this.data.main.maxSeasonsPerRequest,
     };
   }
 

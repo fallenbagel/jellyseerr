@@ -49,6 +49,10 @@ const messages = defineMessages('components.RequestModal', {
   autoapproval: 'Automatic Approval',
   requesterror: 'Something went wrong while submitting the request.',
   pendingapproval: 'Your request is pending approval.',
+  seasonsLimitError:
+    'You cannot request more than {limit} {limit, plural, one {season} other {seasons}} at a time.',
+  tooManySeasons:
+    'Too many seasons selected. You can request up to {limit} {limit, plural, one {season} other {seasons}} at a time.',
 });
 
 interface RequestModalProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -104,6 +108,30 @@ const TvRequestModal = ({
       return;
     }
 
+    // Determine which seasons are new (not in the current request)
+    const newSeasons = selectedSeasons.filter(
+      (sn) => !editingSeasons.includes(sn)
+    );
+
+    // Check if the number of new seasons exceeds the limit
+    if (
+      settings.currentSettings.maxSeasonsPerRequest &&
+      settings.currentSettings.maxSeasonsPerRequest > 0 &&
+      newSeasons.length > settings.currentSettings.maxSeasonsPerRequest &&
+      settings.currentSettings.partialRequestsEnabled &&
+      !hasPermission([Permission.MANAGE_REQUESTS, Permission.ADMIN], {
+        type: 'or',
+      })
+    ) {
+      addToast(
+        intl.formatMessage(messages.tooManySeasons, {
+          limit: settings.currentSettings.maxSeasonsPerRequest,
+        }),
+        { appearance: 'error', autoDismiss: true }
+      );
+      return;
+    }
+
     if (onUpdating) {
       onUpdating(true);
       mutate('/api/v1/request/count');
@@ -127,7 +155,23 @@ const TvRequestModal = ({
             seasons: selectedSeasons,
           }),
         });
-        if (!res.ok) throw new Error();
+        if (!res.ok) {
+          const errorMessage = await res.text();
+          // Check for season limit error
+          if (errorMessage.includes('Season limit of')) {
+            const limitMatch = errorMessage.match(
+              /Season limit of (\d+) exceeded/
+            );
+            const limit = limitMatch ? Number(limitMatch[1]) : 1;
+
+            addToast(
+              intl.formatMessage(messages.seasonsLimitError, { limit }),
+              { appearance: 'error', autoDismiss: true }
+            );
+            return;
+          }
+          throw new Error(errorMessage);
+        }
 
         if (alsoApproveRequest) {
           const res = await fetch(`/api/v1/request/${editRequest.id}/approve`, {
@@ -189,6 +233,25 @@ const TvRequestModal = ({
       return;
     }
 
+    // Check if the number of seasons exceeds the limit
+    if (
+      settings.currentSettings.maxSeasonsPerRequest &&
+      settings.currentSettings.maxSeasonsPerRequest > 0 &&
+      selectedSeasons.length > settings.currentSettings.maxSeasonsPerRequest &&
+      settings.currentSettings.partialRequestsEnabled &&
+      !hasPermission([Permission.MANAGE_REQUESTS, Permission.ADMIN], {
+        type: 'or',
+      })
+    ) {
+      addToast(
+        intl.formatMessage(messages.tooManySeasons, {
+          limit: settings.currentSettings.maxSeasonsPerRequest,
+        }),
+        { appearance: 'error', autoDismiss: true }
+      );
+      return;
+    }
+
     if (onUpdating) {
       onUpdating(true);
       mutate('/api/v1/request/count');
@@ -244,10 +307,21 @@ const TvRequestModal = ({
         );
       }
     } catch (e) {
-      addToast(intl.formatMessage(messages.requesterror), {
-        appearance: 'error',
-        autoDismiss: true,
-      });
+      // Check if response contains a season limit error message
+      if (e instanceof Error && e.message?.includes('Season limit of')) {
+        const limitMatch = e.message.match(/Season limit of (\d+) exceeded/);
+        const limit = limitMatch ? Number(limitMatch[1]) : 1;
+
+        addToast(intl.formatMessage(messages.seasonsLimitError, { limit }), {
+          appearance: 'error',
+          autoDismiss: true,
+        });
+      } else {
+        addToast(intl.formatMessage(messages.requesterror), {
+          appearance: 'error',
+          autoDismiss: true,
+        });
+      }
     } finally {
       if (onUpdating) {
         onUpdating(false);
