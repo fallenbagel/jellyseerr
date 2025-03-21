@@ -57,9 +57,9 @@ const PlexImportModal = ({ onCancel, onComplete }: PlexImportProps) => {
         }),
       });
       if (!res.ok) throw new Error();
-      const { data: createdUsers } = await res.json();
+      const createdUsers = await res.json();
 
-      if (!createdUsers.length) {
+      if (!Array.isArray(createdUsers) || createdUsers.length === 0) {
         throw new Error('No users were imported from Plex.');
       }
 
