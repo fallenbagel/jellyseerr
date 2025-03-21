@@ -5690,6 +5690,13 @@ paths:
             type: number
             nullable: true
             example: 1
+        - in: query
+          name: mediaType
+          schema:
+            type: string
+            enum: [movie, tv, all]
+            nullable: true
+            default: all
       responses:
         '200':
           description: Requests returned
