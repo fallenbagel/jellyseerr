@@ -47,10 +47,11 @@ class GotifyAgent
     const title = payload.event
       ? `${payload.event} - ${payload.subject}`
       : payload.subject;
-    let message = payload.message ?? '';
+
+    let message = payload.message ? `${payload.message}  \n\n` : '';
 
     if (payload.request) {
-      message += `\n\nRequested By: ${payload.request.requestedBy.displayName}`;
+      message += `\n**Requested By:** ${payload.request.requestedBy.displayName}  `;
 
       let status = '';
       switch (type) {
@@ -73,16 +74,18 @@ class GotifyAgent
       }
 
       if (status) {
-        message += `\nRequest Status: ${status}`;
+        message += `\n**Request Status:** ${status}  `;
       }
     } else if (payload.comment) {
-      message += `\nComment from ${payload.comment.user.displayName}:\n${payload.comment.message}`;
+      message += `\nComment from ${payload.comment.user.displayName}:\n${payload.comment.message}  `;
     } else if (payload.issue) {
-      message += `\n\nReported By: ${payload.issue.createdBy.displayName}`;
-      message += `\nIssue Type: ${IssueTypeName[payload.issue.issueType]}`;
-      message += `\nIssue Status: ${
+      message += `\n\n**Reported By:** ${payload.issue.createdBy.displayName}  `;
+      message += `\n**Issue Type:** ${
+        IssueTypeName[payload.issue.issueType]
+      }  `;
+      message += `\n**Issue Status:** ${
         payload.issue.status === IssueStatus.OPEN ? 'Open' : 'Resolved'
-      }`;
+      }  `;
 
       if (type == Notification.ISSUE_CREATED) {
         priority = 1;
@@ -90,12 +93,14 @@ class GotifyAgent
     }
 
     for (const extra of payload.extra ?? []) {
-      message += `\n\n**${extra.name}**\n${extra.value}`;
+      message += `\n\n**${extra.name}**\n${extra.value}  `;
     }
 
     if (applicationUrl && payload.media) {
       const actionUrl = `${applicationUrl}/${payload.media.mediaType}/${payload.media.tmdbId}`;
-      message += `\n\nOpen in ${applicationTitle}(${actionUrl})`;
+      const displayUrl =
+        actionUrl.length > 40 ? `${actionUrl.slice(0, 41)}...` : actionUrl;
+      message += `\n\n**Open in ${applicationTitle}:** [${displayUrl}](${actionUrl})  `;
     }
 
     return {
