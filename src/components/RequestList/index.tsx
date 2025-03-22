@@ -73,13 +73,14 @@ const RequestList = () => {
   } = useSWR<RequestResultsResponse>(
     `/api/v1/request?take=${currentPageSize}&skip=${
       pageIndex * currentPageSize
-    }&filter=${currentFilter}&mediaType=${currentMediaType
+    }&filter=${currentFilter}&mediaType=${
+      currentMediaType
     }&sort=${currentSort}&sortDirection=${currentSortDirection}${
       router.pathname.startsWith('/profile')
         ? `&requestedBy=${currentUser?.id}`
         : router.query.userId
-        ? `&requestedBy=${router.query.userId}`
-        : ''
+          ? `&requestedBy=${router.query.userId}`
+          : ''
     }`
   );
 

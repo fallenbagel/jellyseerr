@@ -155,11 +155,13 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
         case 'all':
           break;
         case 'movie':
-          query = query.andWhere('request.type = :type', { type: MediaType.MOVIE });
-          break;
+          query = query.andWhere('request.type = :type', {
+            type: MediaType.MOVIE,
+          });
         case 'tv':
-          query = query.andWhere('request.type = :type', { type: MediaType.TV });
-          break;
+          query = query.andWhere('request.type = :type', {
+            type: MediaType.TV,
+          });
       }
 
       const [requests, requestCount] = await query
