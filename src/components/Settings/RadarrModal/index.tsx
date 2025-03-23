@@ -5,6 +5,7 @@ import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import type { RadarrSettings } from '@server/lib/settings';
+import axios from 'axios';
 import { Field, Formik } from 'formik';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -154,24 +155,19 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
     }) => {
       setIsTesting(true);
       try {
-        const res = await fetch('/api/v1/settings/radarr/test', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+        const response = await axios.post<RadarrTestResponse>(
+          '/api/v1/settings/radarr/test',
+          {
             hostname,
             apiKey,
             port: Number(port),
             baseUrl,
             useSsl,
-          }),
-        });
-        if (!res.ok) throw new Error();
-        const data = await res.json();
+          }
+        );
 
         setIsValidated(true);
-        setTestResponse(data);
+        setTestResponse(response.data);
         if (initialLoad.current) {
           addToast(intl.formatMessage(messages.toastRadarrTestSuccess), {
             appearance: 'success',
@@ -264,23 +260,12 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
               tagRequests: values.tagRequests,
             };
             if (!radarr) {
-              const res = await fetch('/api/v1/settings/radarr', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(submission),
-              });
-              if (!res.ok) throw new Error();
+              await axios.post('/api/v1/settings/radarr', submission);
             } else {
-              const res = await fetch(`/api/v1/settings/radarr/${radarr.id}`, {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(submission),
-              });
-              if (!res.ok) throw new Error();
+              await axios.put(
+                `/api/v1/settings/radarr/${radarr.id}`,
+                submission
+              );
             }
 
             onSave();

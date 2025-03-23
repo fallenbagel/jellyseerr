@@ -7,6 +7,7 @@ import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import type { NetworkSettings } from '@server/lib/settings';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -104,28 +105,21 @@ const SettingsNetwork = () => {
           validationSchema={NetworkSettingsSchema}
           onSubmit={async (values) => {
             try {
-              const res = await fetch('/api/v1/settings/network', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
+              await axios.post('/api/v1/settings/network', {
+                csrfProtection: values.csrfProtection,
+                forceIpv4First: values.forceIpv4First,
+                trustProxy: values.trustProxy,
+                proxy: {
+                  enabled: values.proxyEnabled,
+                  hostname: values.proxyHostname,
+                  port: values.proxyPort,
+                  useSsl: values.proxySsl,
+                  user: values.proxyUser,
+                  password: values.proxyPassword,
+                  bypassFilter: values.proxyBypassFilter,
+                  bypassLocalAddresses: values.proxyBypassLocalAddresses,
                 },
-                body: JSON.stringify({
-                  csrfProtection: values.csrfProtection,
-                  forceIpv4First: values.forceIpv4First,
-                  trustProxy: values.trustProxy,
-                  proxy: {
-                    enabled: values.proxyEnabled,
-                    hostname: values.proxyHostname,
-                    port: values.proxyPort,
-                    useSsl: values.proxySsl,
-                    user: values.proxyUser,
-                    password: values.proxyPassword,
-                    bypassFilter: values.proxyBypassFilter,
-                    bypassLocalAddresses: values.proxyBypassLocalAddresses,
-                  },
-                }),
               });
-              if (!res.ok) throw new Error();
               mutate('/api/v1/settings/public');
               mutate('/api/v1/status');
 

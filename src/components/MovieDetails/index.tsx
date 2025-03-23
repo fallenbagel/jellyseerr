@@ -52,6 +52,7 @@ import { IssueStatus } from '@server/constants/issue';
 import { MediaStatus, MediaType } from '@server/constants/media';
 import { MediaServerType } from '@server/constants/server';
 import type { MovieDetails as MovieDetailsType } from '@server/models/Movie';
+import axios from 'axios';
 import { countries } from 'country-flag-icons';
 import 'country-flag-icons/3x2/flags.css';
 import { uniqBy } from 'lodash';
@@ -319,41 +320,31 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const onClickWatchlistBtn = async (): Promise<void> => {
     setIsUpdating(true);
 
-    const res = await fetch('/api/v1/watchlist', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    try {
+      const response = await axios.post('/api/v1/watchlist', {
         tmdbId: movie?.id,
         mediaType: MediaType.MOVIE,
         title: movie?.title,
-      }),
-    });
+      });
 
-    if (!res.ok) {
+      const data = await response.json();
+
+      if (data) {
+        addToast(
+          <span>
+            {intl.formatMessage(messages.watchlistSuccess, {
+              title: movie?.title,
+              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+            })}
+          </span>,
+          { appearance: 'success', autoDismiss: true }
+        );
+      }
+    } catch (e) {
       addToast(intl.formatMessage(messages.watchlistError), {
         appearance: 'error',
         autoDismiss: true,
       });
-
-      setIsUpdating(false);
-      return;
-    }
-
-    const data = await res.json();
-
-    if (data) {
-      addToast(
-        <span>
-          {intl.formatMessage(messages.watchlistSuccess, {
-            title: movie?.title,
-            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-          })}
-        </span>,
-        { appearance: 'success', autoDismiss: true }
-      );
     }
 
     setIsUpdating(false);
@@ -363,10 +354,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const onClickDeleteWatchlistBtn = async (): Promise<void> => {
     setIsUpdating(true);
     try {
-      const res = await fetch(`/api/v1/watchlist/${movie?.id}`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) throw new Error();
+      const res = await axios.delete(`/api/v1/watchlist/${movie?.id}`);
 
       if (res.status === 204) {
         addToast(
@@ -393,18 +381,11 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const onClickHideItemBtn = async (): Promise<void> => {
     setIsBlacklistUpdating(true);
 
-    const res = await fetch('/api/v1/blacklist', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        tmdbId: movie?.id,
-        mediaType: 'movie',
-        title: movie?.title,
-        user: user?.id,
-      }),
+    const res = await axios.post('/api/v1/blacklist', {
+      tmdbId: movie?.id,
+      mediaType: 'movie',
+      title: movie?.title,
+      user: user?.id,
     });
 
     if (res.status === 201) {

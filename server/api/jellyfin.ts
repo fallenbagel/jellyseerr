@@ -130,6 +130,8 @@ class JellyfinAPI extends ExternalAPI {
       {
         headers: {
           'X-Emby-Authorization': authHeaderVal,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
       }
     );
@@ -143,7 +145,7 @@ class JellyfinAPI extends ExternalAPI {
     ClientIP?: string
   ): Promise<JellyfinLoginResponse> {
     const authenticate = async (useHeaders: boolean) => {
-      const headers: { [key: string]: string } =
+      const headers =
         useHeaders && ClientIP ? { 'X-Forwarded-For': ClientIP } : {};
 
       return this.post<JellyfinLoginResponse>(
@@ -152,8 +154,6 @@ class JellyfinAPI extends ExternalAPI {
           Username,
           Pw: Password,
         },
-        {},
-        undefined,
         { headers }
       );
     };
@@ -315,15 +315,9 @@ class JellyfinAPI extends ExternalAPI {
 
   public async getLibraryContents(id: string): Promise<JellyfinLibraryItem[]> {
     try {
-      const libraryItemsResponse = await this.get<any>(`/Items`, {
-        SortBy: 'SortName',
-        SortOrder: 'Ascending',
-        IncludeItemTypes: 'Series,Movie,Others',
-        Recursive: 'true',
-        StartIndex: '0',
-        ParentId: id,
-        collapseBoxSetItems: 'false',
-      });
+      const libraryItemsResponse = await this.get<any>(
+        `/Items?SortBy=SortName&SortOrder=Ascending&IncludeItemTypes=Series,Movie,Others&Recursive=true&StartIndex=0&ParentId=${id}&collapseBoxSetItems=false`
+      );
 
       return libraryItemsResponse.Items.filter(
         (item: JellyfinLibraryItem) => item.LocationType !== 'Virtual'
@@ -344,18 +338,13 @@ class JellyfinAPI extends ExternalAPI {
         this.mediaServerType === MediaServerType.JELLYFIN
           ? `/Items/Latest`
           : `/Users/${this.userId}/Items/Latest`;
-
-      const baseParams = {
-        Limit: '12',
-        ParentId: id,
-      };
-
-      const params =
-        this.mediaServerType === MediaServerType.JELLYFIN
-          ? { ...baseParams, userId: this.userId ?? `Me` }
-          : baseParams;
-
-      const itemResponse = await this.get<any>(endpoint, params);
+      const itemResponse = await this.get<any>(
+        `${endpoint}?Limit=12&ParentId=${id}${
+          this.mediaServerType === MediaServerType.JELLYFIN
+            ? `&userId=${this.userId ?? 'Me'}`
+            : ''
+        }`
+      );
 
       return itemResponse;
     } catch (e) {
@@ -373,8 +362,10 @@ class JellyfinAPI extends ExternalAPI {
   ): Promise<JellyfinLibraryItemExtended | undefined> {
     try {
       const itemResponse = await this.get<JellyfinItemsReponse>(`/Items`, {
-        ids: id,
-        fields: 'ProviderIds,MediaSources,Width,Height,IsHD,DateCreated',
+        params: {
+          ids: id,
+          fields: 'ProviderIds,MediaSources,Width,Height,IsHD,DateCreated',
+        },
       });
 
       return itemResponse.Items?.[0];
@@ -414,10 +405,7 @@ class JellyfinAPI extends ExternalAPI {
   ): Promise<JellyfinLibraryItem[]> {
     try {
       const episodeResponse = await this.get<any>(
-        `/Shows/${seriesID}/Episodes`,
-        {
-          seasonId: seasonID,
-        }
+        `/Shows/${seriesID}/Episodes?seasonId=${seasonID}`
       );
 
       return episodeResponse.Items.filter(

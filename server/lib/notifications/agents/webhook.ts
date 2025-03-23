@@ -3,6 +3,7 @@ import { MediaStatus } from '@server/constants/media';
 import type { NotificationAgentWebhook } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import axios from 'axios';
 import { get } from 'lodash';
 import { hasNotificationType, Notification } from '..';
 import type { NotificationAgent, NotificationPayload } from './agent';
@@ -177,19 +178,17 @@ class WebhookAgent
     });
 
     try {
-      const response = await fetch(settings.options.webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(settings.options.authHeader
-            ? { Authorization: settings.options.authHeader }
-            : {}),
-        },
-        body: JSON.stringify(this.buildPayload(type, payload)),
-      });
-      if (!response.ok) {
-        throw new Error(response.statusText, { cause: response });
-      }
+      await axios.post(
+        settings.options.webhookUrl,
+        this.buildPayload(type, payload),
+        settings.options.authHeader
+          ? {
+              headers: {
+                Authorization: settings.options.authHeader,
+              },
+            }
+          : undefined
+      );
 
       return true;
     } catch (e) {
