@@ -23,6 +23,7 @@ import type {
 } from '@server/interfaces/api/blacklistInterfaces';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
+import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { ChangeEvent } from 'react';
@@ -238,9 +239,7 @@ const BlacklistedItem = ({ item, revalidateList }: BlacklistedItemProps) => {
   const removeFromBlacklist = async (tmdbId: number, title?: string) => {
     setIsUpdating(true);
 
-    const res = await fetch('/api/v1/blacklist/' + tmdbId, {
-      method: 'DELETE',
-    });
+    const res = await axios.delete(`/api/v1/blacklist/${tmdbId}`);
 
     if (res.status === 204) {
       addToast(

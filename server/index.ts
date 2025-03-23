@@ -24,7 +24,7 @@ import avatarproxy from '@server/routes/avatarproxy';
 import imageproxy from '@server/routes/imageproxy';
 import { appDataPermissions } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
-import createCustomProxyAgent from '@server/utils/customProxyAgent';
+// import createCustomProxyAgent from '@server/utils/customProxyAgent';
 import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
 import { TypeormStore } from 'connect-typeorm/out';
@@ -35,8 +35,6 @@ import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
 import session from 'express-session';
 import next from 'next';
-import dns from 'node:dns';
-import net from 'node:net';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
@@ -74,19 +72,19 @@ app
     const settings = await getSettings().load();
     restartFlag.initializeSettings(settings);
 
-    // Check if we force IPv4 first
-    if (
-      process.env.forceIpv4First === 'true' ||
-      settings.network.forceIpv4First
-    ) {
-      dns.setDefaultResultOrder('ipv4first');
-      net.setDefaultAutoSelectFamily(false);
-    }
+    // // Check if we force IPv4 first
+    // if (
+    //   process.env.forceIpv4First === 'true' ||
+    //   settings.network.forceIpv4First
+    // ) {
+    //   dns.setDefaultResultOrder('ipv4first');
+    //   net.setDefaultAutoSelectFamily(false);
+    // }
 
-    // Register HTTP proxy
-    if (settings.network.proxy.enabled) {
-      await createCustomProxyAgent(settings.network.proxy);
-    }
+    // // Register HTTP proxy
+    // if (settings.network.proxy.enabled) {
+    //   await createCustomProxyAgent(settings.network.proxy);
+    // }
 
     // Migrate library types
     if (

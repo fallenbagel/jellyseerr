@@ -5,6 +5,7 @@ import { User } from '@server/entity/User';
 import type { NotificationAgentTelegram } from '@server/lib/settings';
 import { getSettings, NotificationAgentKey } from '@server/lib/settings';
 import logger from '@server/logger';
+import axios from 'axios';
 import {
   hasNotificationType,
   Notification,
@@ -176,21 +177,11 @@ class TelegramAgent
       });
 
       try {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...notificationPayload,
-            chat_id: settings.options.chatId,
-            message_thread_id: settings.options.messageThreadId,
-            disable_notification: !!settings.options.sendSilently,
-          } as TelegramMessagePayload | TelegramPhotoPayload),
-        });
-        if (!response.ok) {
-          throw new Error(response.statusText, { cause: response });
-        }
+        await axios.post(endpoint, {
+          ...notificationPayload,
+          chat_id: settings.options.chatId,
+          disable_notification: !!settings.options.sendSilently,
+        } as TelegramMessagePayload | TelegramPhotoPayload);
       } catch (e) {
         let errorData;
         try {
@@ -228,23 +219,12 @@ class TelegramAgent
         });
 
         try {
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              ...notificationPayload,
-              chat_id: payload.notifyUser.settings.telegramChatId,
-              message_thread_id:
-                payload.notifyUser.settings.telegramMessageThreadId,
-              disable_notification:
-                !!payload.notifyUser.settings.telegramSendSilently,
-            } as TelegramMessagePayload | TelegramPhotoPayload),
-          });
-          if (!response.ok) {
-            throw new Error(response.statusText, { cause: response });
-          }
+          await axios.post(endpoint, {
+            ...notificationPayload,
+            chat_id: payload.notifyUser.settings.telegramChatId,
+            disable_notification:
+              !!payload.notifyUser.settings.telegramSendSilently,
+          } as TelegramMessagePayload | TelegramPhotoPayload);
         } catch (e) {
           let errorData;
           try {
@@ -293,21 +273,11 @@ class TelegramAgent
               });
 
               try {
-                const response = await fetch(endpoint, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    ...notificationPayload,
-                    chat_id: user.settings.telegramChatId,
-                    message_thread_id: user.settings.telegramMessageThreadId,
-                    disable_notification: !!user.settings?.telegramSendSilently,
-                  } as TelegramMessagePayload | TelegramPhotoPayload),
-                });
-                if (!response.ok) {
-                  throw new Error(response.statusText, { cause: response });
-                }
+                await axios.post(endpoint, {
+                  ...notificationPayload,
+                  chat_id: user.settings.telegramChatId,
+                  disable_notification: !!user.settings?.telegramSendSilently,
+                } as TelegramMessagePayload | TelegramPhotoPayload);
               } catch (e) {
                 let errorData;
                 try {

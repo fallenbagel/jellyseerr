@@ -8,6 +8,7 @@ import {
   ClockIcon,
 } from '@heroicons/react/24/outline';
 import { CogIcon, UserIcon } from '@heroicons/react/24/solid';
+import axios from 'axios';
 import type { LinkProps } from 'next/link';
 import Link from 'next/link';
 import { forwardRef, Fragment } from 'react';
@@ -38,13 +39,9 @@ const UserDropdown = () => {
   const { user, revalidate } = useUser();
 
   const logout = async () => {
-    const res = await fetch('/api/v1/auth/logout', {
-      method: 'POST',
-    });
-    if (!res.ok) throw new Error();
-    const data = await res.json();
+    const response = await axios.post('/api/v1/auth/logout');
 
-    if (data?.status === 'ok') {
+    if (response.data?.status === 'ok') {
       revalidate();
     }
   };

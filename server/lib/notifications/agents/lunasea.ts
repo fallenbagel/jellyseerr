@@ -3,6 +3,7 @@ import { MediaStatus } from '@server/constants/media';
 import type { NotificationAgentLunaSea } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import axios from 'axios';
 import { hasNotificationType, Notification } from '..';
 import type { NotificationAgent, NotificationPayload } from './agent';
 import { BaseAgent } from './agent';
@@ -100,23 +101,19 @@ class LunaSeaAgent
     });
 
     try {
-      const response = await fetch(settings.options.webhookUrl, {
-        method: 'POST',
-        headers: settings.options.profileName
+      await axios.post(
+        settings.options.webhookUrl,
+        this.buildPayload(type, payload),
+        settings.options.profileName
           ? {
-              'Content-Type': 'application/json',
+              headers: {
+                Authorization: `Basic ${Buffer.from(
+                  `${settings.options.profileName}:`
+                ).toString('base64')}`,
+              },
             }
-          : {
-              'Content-Type': 'application/json',
-              Authorization: `Basic ${Buffer.from(
-                `${settings.options.profileName}:`
-              ).toString('base64')}`,
-            },
-        body: JSON.stringify(this.buildPayload(type, payload)),
-      });
-      if (!response.ok) {
-        throw new Error(response.statusText, { cause: response });
-      }
+          : undefined
+      );
 
       return true;
     } catch (e) {
