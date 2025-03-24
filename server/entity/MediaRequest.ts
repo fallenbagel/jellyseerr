@@ -1556,6 +1556,21 @@ export class MediaRequest {
           });
         }
 
+        let qualityProfile = lidarrSettings.activeProfileId;
+        const metadataProfile = lidarrSettings.activeMetadataProfileId ?? 1;
+
+        if (this.profileId && this.profileId !== qualityProfile) {
+          qualityProfile = this.profileId;
+          logger.info(
+            `Request has an override quality profile ID: ${qualityProfile}`,
+            {
+              label: 'Media Request',
+              requestId: this.id,
+              mediaId: this.media.id,
+            }
+          );
+        }
+
         const artistPath = `${rootFolder}/${albumInfo.artist.artistName}`;
 
         const addAlbumPayload: LidarrAlbumOptions = {
@@ -1566,7 +1581,7 @@ export class MediaRequest {
           foreignAlbumId: albumInfo.foreignAlbumId,
           monitored: true,
           anyReleaseOk: true,
-          profileId: 1,
+          profileId: qualityProfile,
           duration: albumInfo.duration || 0,
           albumType: albumInfo.albumType,
           secondaryTypes: [],
@@ -1589,8 +1604,8 @@ export class MediaRequest {
             links: albumInfo.artist.links || [],
             images: albumInfo.artist.images || [],
             path: artistPath,
-            qualityProfileId: 1,
-            metadataProfileId: 2,
+            qualityProfileId: qualityProfile,
+            metadataProfileId: metadataProfile,
             monitored: true,
             monitorNewItems: 'none',
             rootFolderPath: rootFolder,
@@ -1619,10 +1634,6 @@ export class MediaRequest {
             };
 
             await mediaRepository.update({ id: this.media.id }, updateFields);
-
-            if (addAlbumPayload.addOptions.searchForNewAlbum) {
-              await lidarr.searchOnAdd(result.id);
-            }
           })
           .catch(async (error) => {
             const requestRepository = getRepository(MediaRequest);
