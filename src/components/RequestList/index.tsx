@@ -66,6 +66,13 @@ const RequestList = () => {
   const pageIndex = page - 1;
   const updateQueryParams = useUpdateQueryParams({ page: page.toString() });
 
+  const { data: radarrData } = useSWR<RadarrSettings[]>(
+    hasPermission(Permission.ADMIN) ? '/api/v1/settings/radarr' : null,
+  );
+  const { data: sonarrData } = useSWR<SonarrSettings[]>(
+    hasPermission(Permission.ADMIN) ? '/api/v1/settings/sonarr' : null,
+  );
+
   const {
     data,
     error,
@@ -81,7 +88,7 @@ const RequestList = () => {
         : router.query.userId
           ? `&requestedBy=${router.query.userId}`
           : ''
-    }`
+    }`,
   );
 
   // Restore last set filter values on component mount
@@ -115,7 +122,7 @@ const RequestList = () => {
         currentSort,
         currentSortDirection,
         currentPageSize,
-      })
+      }),
     );
   }, [
     currentFilter,
@@ -269,7 +276,7 @@ const RequestList = () => {
                 buttonSize="md"
                 onClick={() =>
                   setCurrentSortDirection(
-                    currentSortDirection === 'asc' ? 'desc' : 'asc'
+                    currentSortDirection === 'asc' ? 'desc' : 'asc',
                   )
                 }
               >
