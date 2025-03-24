@@ -12,24 +12,36 @@ import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { ApiError } from '@server/types/error';
+import { getHostname } from '@server/utils/getHostname';
 import {
-  createIdTokenSchema,
   fetchOIDCTokenData,
   getOIDCRedirectUrl,
   getOIDCUserInfo,
   getOIDCWellknownConfiguration,
-  tryGetUserIdentifiers,
-  validateUserClaims,
   type FullUserInfo,
 } from '@server/utils/oidc';
-import { getHostname } from '@server/utils/getHostname';
+import { randomBytes } from 'crypto';
 import * as EmailValidator from 'email-validator';
 import { Router } from 'express';
-import net from 'net';
-import { randomBytes } from 'crypto';
 import gravatarUrl from 'gravatar-url';
-import { jwtDecode } from "jwt-decode";
-import { In } from 'typeorm';
+import net from 'net';
+
+// decodeJwt helper
+function decodeJwt<T>(token: string): T {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    throw new Error('Invalid token');
+  }
+}
 
 const authRoutes = Router();
 
@@ -853,7 +865,7 @@ authRoutes.get('/oidc-callback', async (req, res, next) => {
 
   logger.debug('OIDC Callback Started:', {
     query: req.query,
-    cookies: req.cookies
+    cookies: req.cookies,
   });
 
   if (!oidcLogin) {
@@ -872,7 +884,7 @@ authRoutes.get('/oidc-callback', async (req, res, next) => {
       logger.warn('Invalid OIDC state parameter', {
         cookieState,
         state,
-        ip: req.ip
+        ip: req.ip,
       });
       throw new Error('Invalid state parameter');
     }
@@ -892,22 +904,25 @@ authRoutes.get('/oidc-callback', async (req, res, next) => {
       throw new Error(`Token error: ${tokenResponse.error}`);
     }
 
-    const decoded = jwtDecode<IdTokenClaims>(tokenResponse.id_token);
-    const userInfo = await getOIDCUserInfo(wellKnownInfo, tokenResponse.access_token);
+    const decoded = decodeJwt<IdTokenClaims>(tokenResponse.id_token);
+    const userInfo = await getOIDCUserInfo(
+      wellKnownInfo,
+      tokenResponse.access_token
+    );
     const fullUserInfo: FullUserInfo = { ...decoded, ...userInfo };
 
     logger.debug('OIDC User Info Merged:', {
       email: fullUserInfo.email,
       name: fullUserInfo.name,
-      sub: fullUserInfo.sub
+      sub: fullUserInfo.sub,
     });
 
     // Find or create user
     let user = await userRepository.findOne({
       where: [
         { email: fullUserInfo.email?.toLowerCase() },
-        { oidcId: fullUserInfo.sub }
-      ]
+        { oidcId: fullUserInfo.sub },
+      ],
     });
 
     if (!user) {
@@ -916,16 +931,17 @@ authRoutes.get('/oidc-callback', async (req, res, next) => {
         email: fullUserInfo.email,
         oidcId: fullUserInfo.sub,
         username: fullUserInfo.preferred_username || fullUserInfo.name,
-        permissions: await userRepository.count() === 0
-          ? Permission.ADMIN
-          : settings.main.defaultPermissions,
+        permissions:
+          (await userRepository.count()) === 0
+            ? Permission.ADMIN
+            : settings.main.defaultPermissions,
         avatar: fullUserInfo.picture || gravatarUrl(fullUserInfo.email || ''),
-        userType: UserType.OIDC
+        userType: UserType.OIDC,
       });
       logger.info('Creating new user from OIDC login', {
         label: 'Auth',
         email: user.email,
-        oidcId: user.oidcId
+        oidcId: user.oidcId,
       });
     } else {
       // Update existing user
@@ -938,7 +954,7 @@ authRoutes.get('/oidc-callback', async (req, res, next) => {
       logger.info('Updating existing user from OIDC login', {
         label: 'Auth',
         email: user.email,
-        oidcId: user.oidcId
+        oidcId: user.oidcId,
       });
     }
 
@@ -954,12 +970,12 @@ authRoutes.get('/oidc-callback', async (req, res, next) => {
     logger.error('OIDC Callback Error:', {
       message: error.message,
       stack: error.stack,
-      ip: req.ip
+      ip: req.ip,
     });
 
     return next({
       status: 500,
-      message: 'OIDC authentication failed: ' + error.message
+      message: 'OIDC authentication failed: ' + error.message,
     });
   }
 });

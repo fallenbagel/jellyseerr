@@ -2,30 +2,32 @@ import type {
   IdTokenClaims,
   OidcProviderMetadata,
   OidcStandardClaims,
-  OidcTokenResponse,
   OidcTokenErrorResponse,
-  OidcTokenSuccessResponse,
+  OidcTokenResponse,
 } from '@server/interfaces/api/oidcInterfaces';
 import { getSettings } from '@server/lib/settings';
-import axios from 'axios';
 import type { Request } from 'express';
 import * as yup from 'yup';
 
 /** Fetch the oidc configuration blob */
 export async function getOIDCWellknownConfiguration(domain: string) {
-  // remove trailing slash from url if it exists and add /.well-known/openid-configuration path
   const wellKnownUrl = new URL(
     domain.replace(/\/$/, '') + '/.well-known/openid-configuration'
   ).toString();
 
-  const wellKnownInfo: OidcProviderMetadata = await axios
-    .get(wellKnownUrl, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then((r) => r.data);
+  const response = await fetch(wellKnownUrl, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch OIDC configuration: ${response.statusText}`
+    );
+  }
+
+  const wellKnownInfo: OidcProviderMetadata = await response.json();
   return wellKnownInfo;
 }
 
@@ -74,35 +76,45 @@ export async function fetchOIDCTokenData(
     console.log('OIDC Token Request:', {
       endpoint: wellKnownInfo.token_endpoint,
       redirect_uri: callbackUrl.toString(),
-      client_id: oidc.clientId
+      client_id: oidc.clientId,
     });
 
-    const response = await axios.post<OidcTokenResponse>(
-      wellKnownInfo.token_endpoint,
-      formData
-    );
+    const response = await fetch(wellKnownInfo.token_endpoint, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: OidcTokenResponse = await response.json();
 
     // Type guard to check if response is success or error
-    const isErrorResponse = (data: OidcTokenResponse): data is OidcTokenErrorResponse => {
+    const isErrorResponse = (
+      data: OidcTokenResponse
+    ): data is OidcTokenErrorResponse => {
       return 'error' in data;
     };
 
-    if (isErrorResponse(response.data)) {
-      console.error('OIDC Token Error Response:', response.data);
-      throw new Error(response.data.error_description || response.data.error);
+    if (isErrorResponse(data)) {
+      console.error('OIDC Token Error Response:', data);
+      throw new Error(data.error_description || data.error);
     }
 
     console.log('OIDC Token Success:', {
       status: response.status,
-      hasIdToken: !!response.data.id_token,
-      hasAccessToken: !!response.data.access_token
+      hasIdToken: !!data.id_token,
+      hasAccessToken: !!data.access_token,
     });
 
-    return response.data;
+    return data;
   } catch (error) {
     console.error('OIDC Token Error:', {
       error: error.message,
-      response: error.response?.data
     });
     throw error;
   }
@@ -114,26 +126,31 @@ export async function getOIDCUserInfo(
 ) {
   try {
     console.log('OIDC UserInfo Request:', {
-      endpoint: wellKnownInfo.userinfo_endpoint
+      endpoint: wellKnownInfo.userinfo_endpoint,
     });
 
-    const response = await axios.get(wellKnownInfo.userinfo_endpoint, {
+    const response = await fetch(wellKnownInfo.userinfo_endpoint, {
       headers: {
         Authorization: `Bearer ${authToken}`,
         Accept: 'application/json',
       },
     });
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
     console.log('OIDC UserInfo Response:', {
       status: response.status,
-      claims: Object.keys(response.data)
+      claims: Object.keys(data),
     });
 
-    return response.data;
+    return data;
   } catch (error) {
     console.error('OIDC UserInfo Error:', {
       error: error.message,
-      response: error.response?.data
     });
     throw error;
   }

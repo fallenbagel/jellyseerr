@@ -1,26 +1,30 @@
 import PopupWindow from '@app/utils/popupWindow';
-import axios from 'axios';
 
 export async function processCallback(params: URLSearchParams) {
-  return await axios
-    .get('/api/v1/auth/oidc-callback', { params })
-    .then((r) => ({
+  try {
+    const response = await fetch(
+      `/api/v1/auth/oidc-callback?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      const data = await response.json();
+      return {
+        type: 'error',
+        message: data.message || response.statusText,
+      };
+    }
+
+    const data = await response.json();
+    return {
       type: 'success',
-      message: r.data,
-    }))
-    .catch((e) => {
-      if (e.response && e.response.data && e.response.data.message) {
-        return {
-          type: 'error',
-          message: e.response.data.message,
-        };
-      } else {
-        return {
-          type: 'error',
-          message: e.message,
-        };
-      }
-    });
+      message: data,
+    };
+  } catch (e) {
+    return {
+      type: 'error',
+      message: e.message,
+    };
+  }
 }
 
 class OIDCAuth extends PopupWindow {

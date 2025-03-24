@@ -31,7 +31,28 @@
 - Mobile-friendly design, for when you need to approve requests on the go!
 - Support for watchlisting & blacklisting media.
 
-With more features on the way! Check out our [issue tracker](https://github.com/fallenbagel/jellyseerr/issues) to see the features which have already been requested.
+### Single Sign-On (SSO) Support
+
+When configuring SSO, please note:
+
+- For OpenID Configuration URL:
+
+  - Remove `/.well-known/openid-configuration` from the URL
+  - Example: Use `https://auth.example.com` instead of `https://auth.example.com/.well-known/openid-configuration`
+
+- For Redirect URIs:
+
+  - Must end with `/login/oidc/callback`
+  - Example: `http://jellyseerr.example.com/login/oidc/callback`
+
+- Account Matching:
+
+  - Users are matched to existing Jellyseerr accounts based on email address
+  - If an SSO user's email matches an existing Jellyseerr account, they will be logged in as that user
+  - Example: If a Jellyseerr admin account uses `admin@example.com` and an SSO user with the same email logs in, they will receive admin privileges
+  - Consider this when setting up SSO to ensure proper access control
+
+    With more features on the way! Check out our [issue tracker](https://github.com/fallenbagel/jellyseerr/issues) to see the features which have already been requested.
 
 ## Getting Started
 
