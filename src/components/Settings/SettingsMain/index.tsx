@@ -50,6 +50,9 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   partialRequestsEnabled: 'Allow Partial Series Requests',
   enableSpecialEpisodes: 'Allow Special Episodes Requests',
   locale: 'Display Language',
+  youtubeUrl: 'YouTube URL',
+  validationUrl: 'You must provide a valid URL',
+  validationUrlTrailingSlash: 'URL must not end in a trailing slash',
 });
 
 const SettingsMain = () => {
@@ -81,10 +84,10 @@ const SettingsMain = () => {
         (value) => !value || !value.endsWith('/')
       ),
     youtubeUrl: Yup.string()
-      .url('Must be a valid URL')
+      .url(intl.formatMessage(messages.validationUrl))
       .test(
         'no-trailing-slash',
-        'URL must not end in a trailing slash',
+        intl.formatMessage(messages.validationUrlTrailingSlash),
         (value) => !value || !value.endsWith('/')
       ),
   });
@@ -436,7 +439,7 @@ const SettingsMain = () => {
                 </div>
                 <div className="form-row">
                   <label htmlFor="youtubeUrl" className="text-label">
-                    {'YouTube URL'}
+                    {intl.formatMessage(messages.youtubeUrl)}
                   </label>
                   <div className="form-input-area">
                     <div className="form-input-field">
