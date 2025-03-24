@@ -29,6 +29,7 @@ import { ApiError } from '@server/types/error';
 import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
 import { getHostname } from '@server/utils/getHostname';
+import { getOIDCWellknownConfiguration } from '@server/utils/oidc';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import fs from 'fs';
@@ -69,13 +70,36 @@ settingsRoutes.get('/main', (req, res, next) => {
   res.status(200).json(filteredMainSettings(req.user, settings.main));
 });
 
-settingsRoutes.post('/main', async (req, res) => {
+settingsRoutes.post('/main', isAuthenticated(Permission.ADMIN), async (req, res, next) => {
   const settings = getSettings();
 
-  settings.main = merge(settings.main, req.body);
-  await settings.save();
+  try {
+    // Update main settings
+    if (req.body.oidc) {
+      settings.main.oidc = {
+        ...settings.main.oidc,
+        ...req.body.oidc
+      };
+      settings.main.oidcLogin = req.body.oidcLogin ?? settings.main.oidcLogin;
+    }
 
-  return res.status(200).json(settings.main);
+    await settings.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Settings saved successfully'
+    });
+  } catch (error) {
+    logger.error('Failed to save settings:', {
+      label: 'Settings',
+      error: error.message
+    });
+
+    return next({
+      status: 500,
+      message: 'Failed to save settings'
+    });
+  }
 });
 
 settingsRoutes.get('/network', (req, res) => {
@@ -805,6 +829,55 @@ settingsRoutes.get('/about', async (req, res) => {
     tz: process.env.TZ,
     appDataPath: appDataPath(),
   } as SettingsAboutResponse);
+});
+
+settingsRoutes.post(
+  '/oidc',
+  isAuthenticated(Permission.ADMIN),
+  async (req, res, next) => {
+    const settings = getSettings();
+
+    try {
+      // Validate the provider URL works
+      await getOIDCWellknownConfiguration(req.body.providerUrl);
+
+      // Update OIDC settings
+      settings.main.oidc = {
+        ...settings.main.oidc,
+        providerName: req.body.providerName,
+        providerUrl: req.body.providerUrl,
+        clientId: req.body.clientId,
+        clientSecret: req.body.clientSecret,
+        userIdentifier: req.body.identificationClaims,
+        requiredClaims: req.body.requiredClaims,
+        scopes: req.body.scopes || 'openid profile email',
+        matchJellyfinUsername: req.body.matchMediaServerUsername,
+        automaticLogin: req.body.automaticLogin
+      };
+
+      // Enable OIDC login
+      settings.main.oidcLogin = true;
+
+      await settings.save();
+
+      logger.info('OIDC settings updated successfully', { label: 'Settings' });
+
+      return res.status(200).json({
+        success: true,
+        message: 'OIDC settings saved successfully'
+      });
+
+    } catch (error) {
+      logger.error('Failed to save OIDC settings:', {
+        label: 'Settings',
+        error: error.message,
+      });
+
+      return next({
+        status: 500,
+        message: 'Failed to save OIDC settings'
+      });
+    }
 });
 
 export default settingsRoutes;

@@ -140,6 +140,9 @@ export class User {
 
   public warnings: string[] = [];
 
+  @Column({ nullable: true })
+  public oidcId?: string;
+
   constructor(init?: Partial<User>) {
     Object.assign(this, init);
   }

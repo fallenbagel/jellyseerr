@@ -29,6 +29,9 @@ const defaultSettings = {
   locale: 'en',
   emailEnabled: false,
   newPlexLogin: true,
+  oidcLogin: false,
+  oidcProviderName: 'OpenID Connect',
+  oidcAutomaticLogin: false
 };
 
 export const SettingsContext = React.createContext<SettingsContextProps>({

@@ -8,6 +8,7 @@ import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import JellyfinLogin from '@app/components/Login/JellyfinLogin';
 import LocalLogin from '@app/components/Login/LocalLogin';
 import PlexLoginButton from '@app/components/Login/PlexLoginButton';
+import OidcLogin from '@app/components/Login/OidcLogin';
 import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
 import defineMessages from '@app/utils/defineMessages';
@@ -27,6 +28,8 @@ const messages = defineMessages('components.Login', {
   signinwithplex: 'Use your Plex account',
   signinwithjellyfin: 'Use your {mediaServerName} account',
   signinwithoverseerr: 'Use your {applicationTitle} account',
+  useoidcaccount: 'Use your {OIDCProvider} account',
+  authprocessing: 'Authentication in progress...',
   orsigninwith: 'Or sign in with',
 });
 
@@ -122,7 +125,8 @@ const Login = () => {
 
   const loginFormVisible =
     (isJellyfin && settings.currentSettings.mediaServerLogin) ||
-    settings.currentSettings.localLogin;
+    settings.currentSettings.localLogin ||
+    settings.currentSettings.oidcLogin;
   const additionalLoginOptions = [
     settings.currentSettings.mediaServerLogin &&
       (settings.currentSettings.mediaServerType === MediaServerType.PLEX ? (
@@ -161,6 +165,17 @@ const Login = () => {
           </Button>
         ))
       )),
+    // Add OIDC Login option
+    settings.currentSettings.oidcLogin && (
+      <OidcLogin
+        key="oidc"
+        revalidate={revalidate}
+        hasError={!!error}
+        onError={setError}
+        isProcessing={isProcessing}
+        setProcessing={setProcessing}
+      />
+    ),
   ].filter((o): o is JSX.Element => !!o);
 
   return (

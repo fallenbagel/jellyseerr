@@ -5,16 +5,31 @@ import { MediaServerType, ServerType } from '@server/constants/server';
 import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
+import type { IdTokenClaims } from '@server/interfaces/api/oidcInterfaces';
 import { startJobs } from '@server/job/schedule';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { ApiError } from '@server/types/error';
+import {
+  createIdTokenSchema,
+  fetchOIDCTokenData,
+  getOIDCRedirectUrl,
+  getOIDCUserInfo,
+  getOIDCWellknownConfiguration,
+  tryGetUserIdentifiers,
+  validateUserClaims,
+  type FullUserInfo,
+} from '@server/utils/oidc';
 import { getHostname } from '@server/utils/getHostname';
 import * as EmailValidator from 'email-validator';
 import { Router } from 'express';
 import net from 'net';
+import { randomBytes } from 'crypto';
+import gravatarUrl from 'gravatar-url';
+import { jwtDecode } from "jwt-decode";
+import { In } from 'typeorm';
 
 const authRoutes = Router();
 
@@ -794,6 +809,176 @@ authRoutes.post('/reset-password/:guid', async (req, res, next) => {
   });
 
   return res.status(200).json({ status: 'ok' });
+});
+
+authRoutes.get('/oidc-login', async (req, res, next) => {
+  const settings = getSettings();
+
+  if (!settings.main.oidcLogin) {
+    return next({
+      status: 403,
+      message: 'OpenID Connect sign-in is disabled.',
+    });
+  }
+
+  const state = randomBytes(32).toString('hex');
+  let redirectUrl;
+
+  try {
+    redirectUrl = await getOIDCRedirectUrl(req, state);
+  } catch (err) {
+    logger.info('Failed OIDC login attempt', {
+      cause: 'Failed to fetch OIDC redirect url',
+      ip: req.ip,
+      errorMessage: err.message,
+    });
+    return next({
+      status: 500,
+      message: 'Configuration error.',
+    });
+  }
+
+  res.cookie('oidc-state', state, {
+    maxAge: 60000,
+    httpOnly: true,
+    secure: req.protocol === 'https',
+  });
+  return res.redirect(redirectUrl);
+});
+
+authRoutes.get('/oidc-callback', async (req, res, next) => {
+  const settings = getSettings();
+  const { oidcLogin, oidc } = settings.main;
+  const userRepository = getRepository(User);
+
+  logger.debug('OIDC Callback Started:', {
+    query: req.query,
+    cookies: req.cookies
+  });
+
+  if (!oidcLogin) {
+    return next({
+      status: 403,
+      message: 'OpenID Connect sign-in is disabled.',
+    });
+  }
+
+  try {
+    // Validate state parameter
+    const cookieState = req.cookies['oidc-state'];
+    const state = req.query.state as string;
+
+    if (!state || cookieState !== state) {
+      logger.warn('Invalid OIDC state parameter', {
+        cookieState,
+        state,
+        ip: req.ip
+      });
+      throw new Error('Invalid state parameter');
+    }
+    res.clearCookie('oidc-state');
+
+    // Get and validate authorization code
+    const code = req.query.code as string;
+    if (!code) {
+      logger.warn('Missing OIDC authorization code', { ip: req.ip });
+      throw new Error('Missing authorization code');
+    }
+
+    const wellKnownInfo = await getOIDCWellknownConfiguration(oidc.providerUrl);
+    const tokenResponse = await fetchOIDCTokenData(req, wellKnownInfo, code);
+
+    if ('error' in tokenResponse) {
+      throw new Error(`Token error: ${tokenResponse.error}`);
+    }
+
+    const decoded = jwtDecode<IdTokenClaims>(tokenResponse.id_token);
+    const userInfo = await getOIDCUserInfo(wellKnownInfo, tokenResponse.access_token);
+    const fullUserInfo: FullUserInfo = { ...decoded, ...userInfo };
+
+    logger.debug('OIDC User Info Merged:', {
+      email: fullUserInfo.email,
+      name: fullUserInfo.name,
+      sub: fullUserInfo.sub
+    });
+
+    // Find or create user
+    let user = await userRepository.findOne({
+      where: [
+        { email: fullUserInfo.email?.toLowerCase() },
+        { oidcId: fullUserInfo.sub }
+      ]
+    });
+
+    if (!user) {
+      // Create new user
+      user = new User({
+        email: fullUserInfo.email,
+        oidcId: fullUserInfo.sub,
+        username: fullUserInfo.preferred_username || fullUserInfo.name,
+        permissions: await userRepository.count() === 0
+          ? Permission.ADMIN
+          : settings.main.defaultPermissions,
+        avatar: fullUserInfo.picture || gravatarUrl(fullUserInfo.email || ''),
+        userType: UserType.OIDC
+      });
+      logger.info('Creating new user from OIDC login', {
+        label: 'Auth',
+        email: user.email,
+        oidcId: user.oidcId
+      });
+    } else {
+      // Update existing user
+      user.oidcId = fullUserInfo.sub;
+      user.email = fullUserInfo.email || user.email;
+      user.avatar = fullUserInfo.picture || user.avatar;
+      if (user.username === user.oidcId) {
+        user.username = fullUserInfo.preferred_username || fullUserInfo.name;
+      }
+      logger.info('Updating existing user from OIDC login', {
+        label: 'Auth',
+        email: user.email,
+        oidcId: user.oidcId
+      });
+    }
+
+    await userRepository.save(user);
+
+    // Set logged in session
+    if (req.session) {
+      req.session.userId = user.id;
+    }
+
+    return res.redirect('/');
+  } catch (error) {
+    logger.error('OIDC Callback Error:', {
+      message: error.message,
+      stack: error.stack,
+      ip: req.ip
+    });
+
+    return next({
+      status: 500,
+      message: 'OIDC authentication failed: ' + error.message
+    });
+  }
+});
+
+authRoutes.get('/oidc-logout', async (req, res, next) => {
+  const settings = getSettings();
+
+  if (!settings.main.oidcLogin || !settings.main.oidc.automaticLogin) {
+    return next({
+      status: 403,
+      message: 'OpenID Connect sign-in is disabled.',
+    });
+  }
+
+  const oidcEndpoints = await getOIDCWellknownConfiguration(
+    settings.main.oidc.providerUrl
+  );
+
+  return res.redirect(oidcEndpoints.end_session_endpoint);
 });
 
 export default authRoutes;

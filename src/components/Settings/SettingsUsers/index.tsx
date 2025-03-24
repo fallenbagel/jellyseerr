@@ -4,6 +4,9 @@ import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
 import PermissionEdit from '@app/components/PermissionEdit';
 import QuotaSelector from '@app/components/QuotaSelector';
+import OidcModal, {
+  oidcSettingsSchema,
+} from '@app/components/Settings/OidcModal';
 import useSettings from '@app/hooks/useSettings';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
@@ -15,6 +18,8 @@ import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR, { mutate } from 'swr';
 import * as yup from 'yup';
+import { useState } from 'react';
+import { CogIcon } from '@heroicons/react/24/solid';
 
 const messages = defineMessages('components.Settings.SettingsUsers', {
   users: 'Users',
@@ -30,6 +35,8 @@ const messages = defineMessages('components.Settings.SettingsUsers', {
   mediaServerLogin: 'Enable {mediaServerName} Sign-In',
   mediaServerLoginTip:
     'Allow users to sign in using their {mediaServerName} account',
+  oidcLogin: 'Enable OIDC Sign-In',
+  oidcLoginTip: 'Allow users to sign in using an OIDC identity provider',
   atLeastOneAuth: 'At least one authentication method must be selected.',
   newPlexLogin: 'Enable New {mediaServerName} Sign-In',
   newPlexLoginTip:
@@ -49,24 +56,46 @@ const SettingsUsers = () => {
     mutate: revalidate,
   } = useSWR<MainSettings>('/api/v1/settings/main');
   const settings = useSettings();
+  const [showOidcDialog, setShowOidcDialog] = useState<boolean>(false);
 
   const schema = yup
     .object()
     .shape({
       localLogin: yup.boolean(),
       mediaServerLogin: yup.boolean(),
+      oidcLogin: yup.boolean(),
+      oidc: yup.object().when('oidcLogin', {
+        is: true,
+        // Call the function with the intl object
+        then: () => oidcSettingsSchema(intl),
+      }),
     })
     .test({
       name: 'atLeastOneAuth',
       test: function (values) {
-        const isValid = ['localLogin', 'mediaServerLogin'].some(
+        const isValid = ['localLogin', 'mediaServerLogin', 'oidcLogin'].some(
           (field) => !!values[field]
         );
 
         if (isValid) return true;
         return this.createError({
-          path: 'localLogin | mediaServerLogin',
+          path: 'localLogin | mediaServerLogin | oidcLogin',
           message: intl.formatMessage(messages.atLeastOneAuth),
+        });
+      },
+    })
+    .test({
+      name: 'automaticLoginExclusive',
+      test: function (values) {
+        const isValid =
+          !values.oidcLogin ||
+          !values.oidc?.automaticLogin ||
+          !['localLogin', 'mediaServerLogin'].some((field) => !!values[field]);
+
+        if (isValid) return true;
+        return this.createError({
+          path: 'localLogin | mediaServerLogin | oidcLogin',
+          message: 'Only OIDC login may be enabled when automatic login is enabled.',
         });
       },
     });
@@ -106,6 +135,8 @@ const SettingsUsers = () => {
             localLogin: data?.localLogin,
             mediaServerLogin: data?.mediaServerLogin,
             newPlexLogin: data?.newPlexLogin,
+            oidcLogin: data?.oidcLogin,
+            oidc: data?.oidc ?? {},
             movieQuotaLimit: data?.defaultQuotas.movie.quotaLimit ?? 0,
             movieQuotaDays: data?.defaultQuotas.movie.quotaDays ?? 7,
             tvQuotaLimit: data?.defaultQuotas.tv.quotaLimit ?? 0,
@@ -125,6 +156,8 @@ const SettingsUsers = () => {
                   localLogin: values.localLogin,
                   mediaServerLogin: values.mediaServerLogin,
                   newPlexLogin: values.newPlexLogin,
+                  oidcLogin: values.oidcLogin,
+                  oidc: values.oidc,
                   defaultQuotas: {
                     movie: {
                       quotaLimit: values.movieQuotaLimit,
@@ -206,6 +239,24 @@ const SettingsUsers = () => {
                           )
                         }
                       />
+                      <div className="mt-4 flex">
+                        <div className="grow">
+                          <LabeledCheckbox
+                            id="oidcLogin"
+                            label={intl.formatMessage(messages.oidcLogin)}
+                            description={intl.formatMessage(messages.oidcLoginTip)}
+                            onChange={() => {
+                              const newValue = !values.oidcLogin;
+                              setFieldValue('oidcLogin', newValue);
+                              if (newValue) setShowOidcDialog(true);
+                            }}
+                          />
+                        </div>
+                        <CogIcon
+                          className="ml-4 w-8 cursor-pointer text-gray-400"
+                          onClick={() => setShowOidcDialog(true)}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -234,6 +285,26 @@ const SettingsUsers = () => {
                     />
                   </div>
                 </div>
+
+                {values.oidcLogin && values.oidc && showOidcDialog && (
+                  <OidcModal
+                    values={values.oidc}
+                    errors={errors.oidc}
+                    setFieldValue={(field, value) => {
+                      setFieldValue(`oidc.${field}`, value);
+                    }}
+                    mediaServerName={
+                      settings.currentSettings.mediaServerType === MediaServerType.JELLYFIN
+                        ? 'Jellyfin'
+                        : settings.currentSettings.mediaServerType === MediaServerType.EMBY
+                        ? 'Emby'
+                        : 'Plex'
+                    }
+                    onOk={() => setShowOidcDialog(false)}
+                    onClose={() => setFieldValue('oidcLogin', false)}
+                  />
+                )}
+
                 <div className="form-row">
                   <label htmlFor="applicationTitle" className="text-label">
                     {intl.formatMessage(messages.movieRequestLimitLabel)}
