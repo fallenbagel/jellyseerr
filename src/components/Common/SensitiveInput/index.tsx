@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 interface CustomInputProps extends React.ComponentProps<'input'> {
   as?: 'input';
-  'data-bwignore'?: boolean | string; // Add data-bwignore to the props type
 }
 
 interface CustomFieldProps extends React.ComponentProps<typeof Field> {
@@ -16,18 +15,13 @@ type SensitiveInputProps = CustomInputProps | CustomFieldProps;
 const SensitiveInput = ({ as = 'input', ...props }: SensitiveInputProps) => {
   const [isHidden, setHidden] = useState(true);
   const Component = as === 'input' ? 'input' : Field;
-
-  // Deconstruct to filter
-  const { 'data-bwignore': bwignore, ...filteredProps } = props;
-
   const componentProps =
     as === 'input'
-      ? filteredProps
+      ? props
       : {
-          ...filteredProps,
+          ...props,
           as: props.type === 'textarea' && !isHidden ? 'textarea' : undefined,
         };
-
   return (
     <>
       <Component
@@ -35,8 +29,6 @@ const SensitiveInput = ({ as = 'input', ...props }: SensitiveInputProps) => {
         data-form-type="other"
         data-1pignore="true"
         data-lpignore="true"
-        // Only include data-bwignore if it's not "false" always with the value "true"
-        {...(bwignore !== 'false' ? { 'data-bwignore': 'true' } : {})}
         {...componentProps}
         className={`rounded-l-only ${componentProps.className ?? ''}`}
         type={
