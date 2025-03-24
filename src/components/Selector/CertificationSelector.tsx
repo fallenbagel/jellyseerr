@@ -39,14 +39,14 @@ interface CertificationSelectorProps {
   showRange?: boolean;
 }
 
-const messages = defineMessages('components.CertificationSelector', {
-  certifications: 'Certifications',
+const messages = defineMessages('components.Selector.CertificationSelector', {
   selectCountry: 'Select a country',
   selectCertification: 'Select a certification',
   minRating: 'Minimum rating',
   maxRating: 'Maximum rating',
   noOptions: 'No options available',
   starttyping: 'Starting typing to search.',
+  errorLoading: 'Failed to load certifications',
 });
 
 const CertificationSelector: React.FC<CertificationSelectorProps> = ({
@@ -146,7 +146,11 @@ const CertificationSelector: React.FC<CertificationSelectorProps> = ({
   ]);
 
   if (certificationError) {
-    return <div className="text-red-500">Failed to load certifications</div>;
+    return (
+      <div className="text-red-500">
+        {intl.formatMessage(messages.errorLoading)}
+      </div>
+    );
   }
 
   if (certificationLoading || !certificationData) {

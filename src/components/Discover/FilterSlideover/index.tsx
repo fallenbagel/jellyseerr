@@ -44,9 +44,6 @@ const messages = defineMessages('components.Discover.FilterSlideover', {
   voteCount: 'Number of votes between {minValue} and {maxValue}',
   status: 'Status',
   certification: 'Content Rating',
-  exactCertification: 'Exact Rating',
-  certificationRange: 'Rating Range',
-  certificationCountry: 'Rating System',
 });
 
 type FilterSlideoverProps = {
@@ -198,7 +195,6 @@ const FilterSlideover = ({
         <span className="text-lg font-semibold">
           {intl.formatMessage(messages.certification)}
         </span>
-
         <USCertificationSelector
           type={type}
           certification={currentFilters.certification}

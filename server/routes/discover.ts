@@ -80,14 +80,15 @@ const QueryFilterOptions = z.object({
 });
 
 export type FilterOptions = z.infer<typeof QueryFilterOptions>;
+const ApiQuerySchema = QueryFilterOptions.omit({
+  certificationMode: true,
+});
 
 discoverRoutes.get('/movies', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
 
   try {
-    const fullQuery = QueryFilterOptions.parse(req.query);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { certificationMode, ...query } = fullQuery;
+    const query = ApiQuerySchema.parse(req.query);
     const keywords = query.keywords;
 
     const data = await tmdb.getDiscoverMovies({
@@ -374,9 +375,7 @@ discoverRoutes.get('/tv', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
 
   try {
-    const fullQuery = QueryFilterOptions.parse(req.query);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { certificationMode, ...query } = fullQuery;
+    const query = ApiQuerySchema.parse(req.query);
     const keywords = query.keywords;
     const data = await tmdb.getDiscoverTv({
       page: Number(query.page),
