@@ -161,7 +161,6 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
                         data-form-type="password"
                         data-1pignore="false"
                         data-lpignore="false"
-                        data-bwignore="false"
                       />
                     </div>
                     <div className="flex">
