@@ -185,14 +185,7 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
       setIsSyncing(false);
       revalidate();
     } catch (e) {
-      let errorData;
-      try {
-        errorData = await e.cause?.text();
-        errorData = JSON.parse(errorData);
-      } catch {
-        /* empty */
-      }
-      if (errorData?.message === 'SYNC_ERROR_GROUPED_FOLDERS') {
+      if (e?.response?.data?.message === 'SYNC_ERROR_GROUPED_FOLDERS') {
         toasts.addToast(
           intl.formatMessage(
             messages.jellyfinSyncFailedAutomaticGroupedFolders
@@ -202,7 +195,7 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
             appearance: 'warning',
           }
         );
-      } else if (errorData?.message === 'SYNC_ERROR_NO_LIBRARIES') {
+      } else if (e?.response?.data?.message === 'SYNC_ERROR_NO_LIBRARIES') {
         toasts.addToast(
           intl.formatMessage(messages.jellyfinSyncFailedNoLibrariesFound),
           {
@@ -488,14 +481,7 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
               }
             );
           } catch (e) {
-            let errorData;
-            try {
-              errorData = await e.cause?.text();
-              errorData = JSON.parse(errorData);
-            } catch {
-              /* empty */
-            }
-            if (errorData?.message === ApiErrorCode.InvalidUrl) {
+            if (e?.response?.data?.message === ApiErrorCode.InvalidUrl) {
               addToast(
                 intl.formatMessage(
                   messages.invalidurlerror,

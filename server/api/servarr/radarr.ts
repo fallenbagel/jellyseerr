@@ -214,20 +214,13 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
       }
       return response.data;
     } catch (e) {
-      let errorData;
-      try {
-        errorData = await e.cause?.text();
-        errorData = JSON.parse(errorData);
-      } catch {
-        /* empty */
-      }
       logger.error(
         'Failed to add movie to Radarr. This might happen if the movie already exists, in which case you can safely ignore this error.',
         {
           label: 'Radarr',
           errorMessage: e.message,
           options,
-          response: errorData,
+          response: e?.response?.data,
         }
       );
       throw new Error('Failed to add movie to Radarr');

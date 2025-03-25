@@ -65,17 +65,10 @@ class PushoverAgent
         attachment_type: contentType,
       };
     } catch (e) {
-      let errorData;
-      try {
-        errorData = await e.cause?.text();
-        errorData = JSON.parse(errorData);
-      } catch {
-        /* empty */
-      }
       logger.error('Error getting image payload', {
         label: 'Notifications',
         errorMessage: e.message,
-        response: errorData,
+        response: e?.response?.data,
       });
       return {};
     }

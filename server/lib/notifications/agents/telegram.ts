@@ -183,19 +183,12 @@ class TelegramAgent
           disable_notification: !!settings.options.sendSilently,
         } as TelegramMessagePayload | TelegramPhotoPayload);
       } catch (e) {
-        let errorData;
-        try {
-          errorData = await e.cause?.text();
-          errorData = JSON.parse(errorData);
-        } catch {
-          /* empty */
-        }
         logger.error('Error sending Telegram notification', {
           label: 'Notifications',
           type: Notification[type],
           subject: payload.subject,
           errorMessage: e.message,
-          response: errorData,
+          response: e?.response?.data,
         });
 
         return false;
@@ -226,20 +219,13 @@ class TelegramAgent
               !!payload.notifyUser.settings.telegramSendSilently,
           } as TelegramMessagePayload | TelegramPhotoPayload);
         } catch (e) {
-          let errorData;
-          try {
-            errorData = await e.cause?.text();
-            errorData = JSON.parse(errorData);
-          } catch {
-            /* empty */
-          }
           logger.error('Error sending Telegram notification', {
             label: 'Notifications',
             recipient: payload.notifyUser.displayName,
             type: Notification[type],
             subject: payload.subject,
             errorMessage: e.message,
-            response: errorData,
+            response: e?.response?.data,
           });
 
           return false;
@@ -279,20 +265,13 @@ class TelegramAgent
                   disable_notification: !!user.settings?.telegramSendSilently,
                 } as TelegramMessagePayload | TelegramPhotoPayload);
               } catch (e) {
-                let errorData;
-                try {
-                  errorData = await e.cause?.text();
-                  errorData = JSON.parse(errorData);
-                } catch {
-                  /* empty */
-                }
                 logger.error('Error sending Telegram notification', {
                   label: 'Notifications',
                   recipient: user.displayName,
                   type: Notification[type],
                   subject: payload.subject,
                   errorMessage: e.message,
-                  response: errorData,
+                  response: e?.response?.data,
                 });
 
                 return false;

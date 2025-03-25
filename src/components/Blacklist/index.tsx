@@ -239,9 +239,9 @@ const BlacklistedItem = ({ item, revalidateList }: BlacklistedItemProps) => {
   const removeFromBlacklist = async (tmdbId: number, title?: string) => {
     setIsUpdating(true);
 
-    const res = await axios.delete(`/api/v1/blacklist/${tmdbId}`);
+    try {
+      await axios.delete(`/api/v1/blacklist/${tmdbId}`);
 
-    if (res.status === 204) {
       addToast(
         <span>
           {intl.formatMessage(globalMessages.removeFromBlacklistSuccess, {
@@ -251,7 +251,7 @@ const BlacklistedItem = ({ item, revalidateList }: BlacklistedItemProps) => {
         </span>,
         { appearance: 'success', autoDismiss: true }
       );
-    } else {
+    } catch {
       addToast(intl.formatMessage(globalMessages.blacklistError), {
         appearance: 'error',
         autoDismiss: true,

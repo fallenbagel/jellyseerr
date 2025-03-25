@@ -309,19 +309,12 @@ class DiscordAgent
 
       return true;
     } catch (e) {
-      let errorData;
-      try {
-        errorData = await e.cause?.text();
-        errorData = JSON.parse(errorData);
-      } catch {
-        /* empty */
-      }
       logger.error('Error sending Discord notification', {
         label: 'Notifications',
         type: Notification[type],
         subject: payload.subject,
         errorMessage: e.message,
-        response: errorData,
+        response: e?.response?.data,
       });
 
       return false;

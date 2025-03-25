@@ -943,8 +943,6 @@
   "components.Settings.SettingsNetwork.csrfProtectionHoverTip": "Do NOT enable this setting unless you understand what you are doing!",
   "components.Settings.SettingsNetwork.csrfProtectionTip": "Set external API access to read-only (requires HTTPS)",
   "components.Settings.SettingsNetwork.docs": "documentation",
-  "components.Settings.SettingsNetwork.forceIpv4First": "Force IPv4 Resolution First",
-  "components.Settings.SettingsNetwork.forceIpv4FirstTip": "Force Jellyseerr to resolve IPv4 addresses first instead of IPv6",
   "components.Settings.SettingsNetwork.network": "Network",
   "components.Settings.SettingsNetwork.networkDisclaimer": "Network parameters from your container/system should be used instead of these settings. See the {docs} for more information.",
   "components.Settings.SettingsNetwork.networksettings": "Network Settings",

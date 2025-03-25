@@ -411,40 +411,44 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
   const onClickHideItemBtn = async (): Promise<void> => {
     setIsBlacklistUpdating(true);
 
-    const res = await axios.post('/api/v1/blacklist', {
-      tmdbId: tv?.id,
-      mediaType: 'tv',
-      title: tv?.name,
-      user: user?.id,
-    });
-
-    if (res.status === 201) {
-      addToast(
-        <span>
-          {intl.formatMessage(globalMessages.blacklistSuccess, {
-            title: tv?.name,
-            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-          })}
-        </span>,
-        { appearance: 'success', autoDismiss: true }
-      );
-
-      revalidate();
-    } else if (res.status === 412) {
-      addToast(
-        <span>
-          {intl.formatMessage(globalMessages.blacklistDuplicateError, {
-            title: tv?.name,
-            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-          })}
-        </span>,
-        { appearance: 'info', autoDismiss: true }
-      );
-    } else {
-      addToast(intl.formatMessage(globalMessages.blacklistError), {
-        appearance: 'error',
-        autoDismiss: true,
+    try {
+      const res = await axios.post('/api/v1/blacklist', {
+        tmdbId: tv?.id,
+        mediaType: 'tv',
+        title: tv?.name,
+        user: user?.id,
       });
+
+      if (res.status === 201) {
+        addToast(
+          <span>
+            {intl.formatMessage(globalMessages.blacklistSuccess, {
+              title: tv?.name,
+              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+            })}
+          </span>,
+          { appearance: 'success', autoDismiss: true }
+        );
+
+        revalidate();
+      }
+    } catch (e) {
+      if (e?.response?.status === 412) {
+        addToast(
+          <span>
+            {intl.formatMessage(globalMessages.blacklistDuplicateError, {
+              title: tv?.name,
+              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+            })}
+          </span>,
+          { appearance: 'info', autoDismiss: true }
+        );
+      } else {
+        addToast(intl.formatMessage(globalMessages.blacklistError), {
+          appearance: 'error',
+          autoDismiss: true,
+        });
+      }
     }
 
     setIsBlacklistUpdating(false);

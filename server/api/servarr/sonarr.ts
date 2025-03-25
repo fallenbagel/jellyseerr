@@ -266,18 +266,11 @@ class SonarrAPI extends ServarrBase<{
 
       return createdSeriesResponse.data;
     } catch (e) {
-      let errorData;
-      try {
-        errorData = await e.cause?.text();
-        errorData = JSON.parse(errorData);
-      } catch {
-        /* empty */
-      }
       logger.error('Something went wrong while adding a series to Sonarr.', {
         label: 'Sonarr API',
         errorMessage: e.message,
         options,
-        response: errorData,
+        response: e?.response?.data,
       });
       throw new Error('Failed to add series');
     }
