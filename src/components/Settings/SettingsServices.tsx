@@ -32,6 +32,7 @@ const messages = defineMessages('components.Settings', {
   default: 'Default',
   default4k: 'Default 4K',
   defaultAnime: 'Default Anime',
+  default4kAnime: 'Default 4K Anime',
   is4k: '4K',
   isAnime: 'Anime',
   address: 'Address',
