@@ -295,16 +295,9 @@ const UserList = () => {
               });
               setCreateModal({ isOpen: false });
             } catch (e) {
-              let errorData;
-              try {
-                errorData = await e.cause?.text();
-                errorData = JSON.parse(errorData);
-              } catch {
-                /* empty */
-              }
               addToast(
                 intl.formatMessage(
-                  errorData.errors?.includes('USER_EXISTS')
+                  e?.response?.data?.errors?.includes('USER_EXISTS')
                     ? messages.usercreatedfailedexisting
                     : messages.usercreatedfailed
                 ),

@@ -24,7 +24,6 @@ import avatarproxy from '@server/routes/avatarproxy';
 import imageproxy from '@server/routes/imageproxy';
 import { appDataPermissions } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
-// import createCustomProxyAgent from '@server/utils/customProxyAgent';
 import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
 import { TypeormStore } from 'connect-typeorm/out';
@@ -71,20 +70,6 @@ app
     // Load Settings
     const settings = await getSettings().load();
     restartFlag.initializeSettings(settings);
-
-    // // Check if we force IPv4 first
-    // if (
-    //   process.env.forceIpv4First === 'true' ||
-    //   settings.network.forceIpv4First
-    // ) {
-    //   dns.setDefaultResultOrder('ipv4first');
-    //   net.setDefaultAutoSelectFamily(false);
-    // }
-
-    // // Register HTTP proxy
-    // if (settings.network.proxy.enabled) {
-    //   await createCustomProxyAgent(settings.network.proxy);
-    // }
 
     // Migrate library types
     if (

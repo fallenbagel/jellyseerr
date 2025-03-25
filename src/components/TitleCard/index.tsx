@@ -173,14 +173,13 @@ const TitleCard = ({
     const topNode = cardRef.current;
 
     if (topNode) {
-      const res = await axios.post('/api/v1/blacklist', {
-        tmdbId: id,
-        mediaType,
-        title,
-        user: user?.id,
-      });
-
-      if (res.status === 201) {
+      try {
+        await axios.post('/api/v1/blacklist', {
+          tmdbId: id,
+          mediaType,
+          title,
+          user: user?.id,
+        });
         addToast(
           <span>
             {intl.formatMessage(globalMessages.blacklistSuccess, {
@@ -191,21 +190,23 @@ const TitleCard = ({
           { appearance: 'success', autoDismiss: true }
         );
         setCurrentStatus(MediaStatus.BLACKLISTED);
-      } else if (res.status === 412) {
-        addToast(
-          <span>
-            {intl.formatMessage(globalMessages.blacklistDuplicateError, {
-              title,
-              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-            })}
-          </span>,
-          { appearance: 'info', autoDismiss: true }
-        );
-      } else {
-        addToast(intl.formatMessage(globalMessages.blacklistError), {
-          appearance: 'error',
-          autoDismiss: true,
-        });
+      } catch (e) {
+        if (e?.response?.status === 412) {
+          addToast(
+            <span>
+              {intl.formatMessage(globalMessages.blacklistDuplicateError, {
+                title,
+                strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+              })}
+            </span>,
+            { appearance: 'info', autoDismiss: true }
+          );
+        } else {
+          addToast(intl.formatMessage(globalMessages.blacklistError), {
+            appearance: 'error',
+            autoDismiss: true,
+          });
+        }
       }
 
       setIsUpdating(false);

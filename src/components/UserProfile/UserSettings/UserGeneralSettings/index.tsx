@@ -197,14 +197,7 @@ const UserGeneralSettings = () => {
               appearance: 'success',
             });
           } catch (e) {
-            let errorData;
-            try {
-              errorData = await e.cause?.text();
-              errorData = JSON.parse(errorData);
-            } catch {
-              /* empty */
-            }
-            if (errorData?.message === ApiErrorCode.InvalidEmail) {
+            if (e?.response?.data?.message === ApiErrorCode.InvalidEmail) {
               if (values.email) {
                 addToast(
                   intl.formatMessage(messages.toastSettingsFailureEmail),

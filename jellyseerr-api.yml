@@ -191,9 +191,6 @@ components:
         csrfProtection:
           type: boolean
           example: false
-        forceIpv4First:
-          type: boolean
-          example: false
         trustProxy:
           type: boolean
           example: true

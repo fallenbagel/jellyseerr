@@ -327,9 +327,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
         title: movie?.title,
       });
 
-      const data = await response.json();
-
-      if (data) {
+      if (response.data) {
         addToast(
           <span>
             {intl.formatMessage(messages.watchlistSuccess, {
@@ -354,19 +352,17 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const onClickDeleteWatchlistBtn = async (): Promise<void> => {
     setIsUpdating(true);
     try {
-      const res = await axios.delete(`/api/v1/watchlist/${movie?.id}`);
+      await axios.delete(`/api/v1/watchlist/${movie?.id}`);
 
-      if (res.status === 204) {
-        addToast(
-          <span>
-            {intl.formatMessage(messages.watchlistDeleted, {
-              title: movie?.title,
-              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-            })}
-          </span>,
-          { appearance: 'info', autoDismiss: true }
-        );
-      }
+      addToast(
+        <span>
+          {intl.formatMessage(messages.watchlistDeleted, {
+            title: movie?.title,
+            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+          })}
+        </span>,
+        { appearance: 'info', autoDismiss: true }
+      );
     } catch (e) {
       addToast(intl.formatMessage(messages.watchlistError), {
         appearance: 'error',
@@ -381,14 +377,14 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const onClickHideItemBtn = async (): Promise<void> => {
     setIsBlacklistUpdating(true);
 
-    const res = await axios.post('/api/v1/blacklist', {
-      tmdbId: movie?.id,
-      mediaType: 'movie',
-      title: movie?.title,
-      user: user?.id,
-    });
+    try {
+      await axios.post('/api/v1/blacklist', {
+        tmdbId: movie?.id,
+        mediaType: 'movie',
+        title: movie?.title,
+        user: user?.id,
+      });
 
-    if (res.status === 201) {
       addToast(
         <span>
           {intl.formatMessage(globalMessages.blacklistSuccess, {
@@ -400,21 +396,23 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
       );
 
       revalidate();
-    } else if (res.status === 412) {
-      addToast(
-        <span>
-          {intl.formatMessage(globalMessages.blacklistDuplicateError, {
-            title: movie?.title,
-            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-          })}
-        </span>,
-        { appearance: 'info', autoDismiss: true }
-      );
-    } else {
-      addToast(intl.formatMessage(globalMessages.blacklistError), {
-        appearance: 'error',
-        autoDismiss: true,
-      });
+    } catch (e) {
+      if (e?.response?.status === 412) {
+        addToast(
+          <span>
+            {intl.formatMessage(globalMessages.blacklistDuplicateError, {
+              title: movie?.title,
+              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+            })}
+          </span>,
+          { appearance: 'info', autoDismiss: true }
+        );
+      } else {
+        addToast(intl.formatMessage(globalMessages.blacklistError), {
+          appearance: 'error',
+          autoDismiss: true,
+        });
+      }
     }
 
     setIsBlacklistUpdating(false);

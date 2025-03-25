@@ -65,7 +65,7 @@ const OverrideRuleTiles = ({
     for (const service of services) {
       const { hostname, port, apiKey, baseUrl, useSsl = false } = service;
       try {
-        const response = await axios.post(
+        const response = await axios.post<DVRTestResponse>(
           `/api/v1/settings/${
             radarrServices.includes(service as RadarrSettings)
               ? 'radarr'
