@@ -13,8 +13,7 @@ import { Field, Form, Formik } from 'formik';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useIntl } from 'react-intl';
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 import * as Yup from 'yup';
@@ -73,7 +72,8 @@ const messages = defineMessages(
   {
     agentenabled: 'Enable Agent',
     webhookUrl: 'Webhook URL',
-    webhookUrlTip: 'Test Notification URL is set to {testUrl} instead of the actual webhook URL.',
+    webhookUrlTip:
+      'Test Notification URL is set to {testUrl} instead of the actual webhook URL.',
     supportPlaceholders: 'Support URL Placeholders',
     supportPlaceholdersTip: 'Available Placeholders: {placeholders}',
     authheader: 'Authorization Header',
@@ -122,6 +122,7 @@ const NotificationsWebhook = () => {
             return true;
           }
           // eslint-disable-next-line no-useless-escape
+          // prettier-ignore
           const urlRegex = /^(https?:)?\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
           return urlRegex.test(value ?? '');
         }
@@ -245,7 +246,7 @@ const NotificationsWebhook = () => {
                     webhookUrl: values.webhookUrl,
                     jsonPayload: JSON.stringify(values.jsonPayload),
                     authHeader: values.authHeader,
-                    supportPlaceholders: values.supportPlaceholders ?? false
+                    supportPlaceholders: values.supportPlaceholders ?? false,
                   },
                 }),
               }
@@ -285,7 +286,7 @@ const NotificationsWebhook = () => {
             <div className="form-row">
               <label htmlFor="supportPlaceholders" className="checkbox-label">
                 <span className="mr-2">
-                {intl.formatMessage(messages.supportPlaceholders)}
+                  {intl.formatMessage(messages.supportPlaceholders)}
                 </span>
                 <SettingsBadge badgeType="experimental" />
                 <span className="label-tip">
@@ -296,7 +297,9 @@ const NotificationsWebhook = () => {
                         <ul className="ml-4 list-disc">
                           {placeholders.map((placeholder, index) => (
                             <li key={index}>
-                              <code className="bg-opacity-50">{placeholder}</code>
+                              <code className="bg-opacity-50">
+                                {placeholder}
+                              </code>
                             </li>
                           ))}
                         </ul>
@@ -310,8 +313,7 @@ const NotificationsWebhook = () => {
                   type="checkbox"
                   id="supportPlaceholders"
                   name="supportPlaceholders"
-                  onChange={
-                    (e: React.ChangeEvent<HTMLInputElement>) =>
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setFieldValue('supportPlaceholders', e.target.checked)
                   }
                 />
@@ -322,12 +324,12 @@ const NotificationsWebhook = () => {
                 {intl.formatMessage(messages.webhookUrl)}
                 <span className="label-required">*</span>
                 {values.supportPlaceholders && (
-                <div className="label-tip">
-                  {intl.formatMessage(messages.webhookUrlTip, {
-                    testUrl: '/test',
-                })}
-                </div>
-              )}
+                  <div className="label-tip">
+                    {intl.formatMessage(messages.webhookUrlTip, {
+                      testUrl: '/test',
+                    })}
+                  </div>
+                )}
               </label>
               <div className="form-input-area">
                 <div className="form-input-field">

@@ -179,14 +179,18 @@ class WebhookAgent
     let webhookUrl = settings.options.webhookUrl;
 
     if (settings.options.supportPlaceholders) {
-      const key = "requestedBy_username";
+      const key = 'requestedBy_username';
       const keymapValue = KeyMap[key];
-      let placeholderValue = type === Notification.TEST_NOTIFICATION
-        ? "test"
-        : typeof keymapValue === "function"
-        ? keymapValue(payload, type)
-        : get(payload, keymapValue) || "test";
-      webhookUrl = webhookUrl.replace(`{{${key}}}`, encodeURIComponent(placeholderValue));
+      const placeholderValue =
+        type === Notification.TEST_NOTIFICATION
+          ? 'test'
+          : typeof keymapValue === 'function'
+          ? keymapValue(payload, type)
+          : get(payload, keymapValue) || 'test';
+      webhookUrl = webhookUrl.replace(
+        `{{${key}}}`,
+        encodeURIComponent(placeholderValue)
+      );
     }
 
     try {
