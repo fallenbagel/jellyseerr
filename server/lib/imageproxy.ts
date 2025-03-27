@@ -160,10 +160,6 @@ class ImageProxy {
     this.headers = options.headers || null;
   }
 
-  public getHeaders(): HeadersInit | null {
-    return this.headers;
-  }
-
   public async getImage(
     path: string,
     fallbackPath?: string
