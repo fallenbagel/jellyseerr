@@ -13,7 +13,6 @@ import { isAuthenticated } from '@server/middleware/auth';
 import { checkAvatarChanged } from '@server/routes/avatarproxy';
 import { ApiError } from '@server/types/error';
 import { getHostname } from '@server/utils/getHostname';
-import { getUserAvatarUrl } from '@server/utils/imageHelpers';
 import * as EmailValidator from 'email-validator';
 import { Router } from 'express';
 import net from 'net';
@@ -217,6 +216,10 @@ authRoutes.post('/plex', async (req, res, next) => {
     });
   }
 });
+
+function getUserAvatarUrl(user: User): string {
+  return `/avatarproxy/${user.jellyfinUserId}?v=${user.avatarVersion}`;
+}
 
 authRoutes.post('/jellyfin', async (req, res, next) => {
   const settings = getSettings();

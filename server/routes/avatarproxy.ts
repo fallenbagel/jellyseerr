@@ -6,9 +6,9 @@ import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { getAppVersion } from '@server/utils/appVersion';
 import { getHostname } from '@server/utils/getHostname';
-import { computeImageHash } from '@server/utils/imageHelpers';
 import { Router } from 'express';
 import gravatarUrl from 'gravatar-url';
+import { createHash } from 'node:crypto';
 
 const router = Router();
 
@@ -38,6 +38,10 @@ function getJellyfinAvatarUrl(userId: string) {
   return settings.main.mediaServerType === MediaServerType.JELLYFIN
     ? `${getHostname()}/UserImage?UserId=${userId}`
     : `${getHostname()}/Users/${userId}/Images/Primary?quality=90`;
+}
+
+function computeImageHash(buffer: Buffer): string {
+  return createHash('sha256').update(buffer).digest('hex');
 }
 
 export async function checkAvatarChanged(
