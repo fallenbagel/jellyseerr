@@ -785,7 +785,7 @@
   "components.NotificationTypeSelector.issuecreatedDescription": "Bidali jakinarazpenak intzidentziak sortzen direnean.",
   "components.NotificationTypeSelector.issuereopenedDescription": "Bidali jakinarazpenak intzidentziak berriro irekitzen direnean.",
   "components.NotificationTypeSelector.issueresolvedDescription": "Bidali jakinarazpenak intzidentziak konpontzen direnean.",
-  "components.MovieDetails.watchlistError": "Zerbait gaizki joan da, saiatu berriro.",
+  "components.MovieDetails.watchlistError": "Zerbait gaizki joan da. Mesedez, saiatu berriro.",
   "components.MovieDetails.play4k": "Ikusi 4K-n {mediaServerName}-(e)n",
   "components.MovieDetails.rtaudiencescore": "Rotten Tomatoes audientzia puntuazioa",
   "components.MovieDetails.play": "Ikusi {mediaServerName}-(e)n",
@@ -1386,5 +1386,17 @@
   "components.Settings.SettingsMain.toastApiKeySuccess": "API gako berria ondo sortu da!",
   "components.TvDetails.episodeRuntime": "Atalaren iraupena",
   "components.Settings.Notifications.NotificationsGotify.gotifysettingssaved": "Gotify jakinarazpenen ezarpenak ondo gorde dira!",
-  "components.Settings.Notifications.NotificationsLunaSea.settingsSaved": "LunaSea jakinarazpenen ezarpenak ondo gorde dira!"
+  "components.Settings.Notifications.NotificationsLunaSea.settingsSaved": "LunaSea jakinarazpenen ezarpenak ondo gorde dira!",
+  "components.Settings.OverrideRuleModal.qualityprofile": "Kalitate profila",
+  "components.Settings.OverrideRuleModal.selectRootFolder": "Hautatu erro-karpeta",
+  "components.DiscoverTvUpcoming.upcomingtv": "Hurrengo telesailak",
+  "components.Login.loginwithapp": "Hasi saioa {appName}(r)ekin",
+  "components.Login.noadminerror": "Ez da administratzaile erabiltzailerik aurkitu zerbitzarian.",
+  "components.Login.orsigninwith": "Edo hasi saioa honekin",
+  "components.Selector.searchUsers": "Hautatu erabiltzaileak…",
+  "components.Settings.OverrideRuleModal.conditions": "Baldintzak",
+  "components.Settings.OverrideRuleModal.rootfolder": "Erro-karpeta",
+  "components.Settings.OverrideRuleModal.selectService": "Hautatu zerbitzua",
+  "components.Settings.OverrideRuleModal.selecttags": "Hautatu etiketak",
+  "components.Settings.OverrideRuleModal.service": "Zerbitzua"
 }
