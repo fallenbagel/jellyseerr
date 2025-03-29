@@ -435,7 +435,7 @@
   "components.RequestList.requests": "Prośby",
   "components.RequestModal.AdvancedRequester.animenote": "* Ta seria to anime.",
   "components.RequestModal.AdvancedRequester.requestas": "Poproś jako",
-  "components.RequestModal.QuotaDisplay.requestsremaining": "{remaining, plural, =0 {Brak} other {<strong>#</strong>}} {type} {remaining, plural, one {prośba} other {próśb}} remaining",
+  "components.RequestModal.QuotaDisplay.requestsremaining": "{remaining, plural, =0 {Brak} other {<strong>#</strong>}} {type} {remaining, plural, one {żądanie} other {żądań}} pozostało",
   "components.RequestModal.QuotaDisplay.requiredquota": "Aby przesłać prośbę o ten serial, musisz mieć co najmniej <strong>{seasons}</strong> {seasons, plural, one {prośbę} other {prośby}}.",
   "components.RequestModal.QuotaDisplay.allowedRequests": "Możesz przesyłać<strong>{limit}</strong> próśb {type} co <strong>{days}</strong> dni.",
   "components.RequestModal.QuotaDisplay.allowedRequestsUser": "Ten użytkownik może przeysłać <strong>{limit}</strong> próśb {type} co <strong>{days}</strong> dni.",
