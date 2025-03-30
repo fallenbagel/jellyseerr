@@ -29,6 +29,38 @@ export interface RadarrMovie {
   added: string;
   hasFile: boolean;
   tags: number[];
+  movieFile?: {
+    id: number;
+    movieId: number;
+    relativePath?: string;
+    path?: string;
+    size: number;
+    dateAdded: string;
+    sceneName?: string;
+    releaseGroup?: string;
+    edition?: string;
+    indexerFlags?: number;
+    mediaInfo: {
+      id: number;
+      audioBitrate: number;
+      audioChannels: number;
+      audioCodec?: string;
+      audioLanguages?: string;
+      audioStreamCount: number;
+      videoBitDepth: number;
+      videoBitrate: number;
+      videoCodec?: string;
+      videoFps: number;
+      videoDynamicRange?: string;
+      videoDynamicRangeType?: string;
+      resolution?: string;
+      runTime?: string;
+      scanType?: string;
+      subtitles?: string;
+    };
+    originalFilePath?: string;
+    qualityCutoffNotMet: boolean;
+  };
 }
 
 class RadarrAPI extends ServarrBase<{ movieId: number }> {
