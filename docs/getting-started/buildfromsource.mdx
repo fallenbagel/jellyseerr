@@ -255,7 +255,8 @@ To run jellyseerr as a service:
 1. Download the [Non-Sucking Service Manager](https://nssm.cc/download)
 2. Install NSSM:
 ```powershell
-nssm install Jellyseerr "C:\Program Files\nodejs\node.exe" ["C:\jellyseerr\dist\index.js"]
+nssm install Jellyseerr "C:\Program Files\nodejs\node.exe" "C:\jellyseerr\dist\index.js"
+nssm set Jellyseerr AppDirectory "C:\jellyseerr"
 nssm set Jellyseerr AppEnvironmentExtra NODE_ENV=production
 ```
 3. Start the service:

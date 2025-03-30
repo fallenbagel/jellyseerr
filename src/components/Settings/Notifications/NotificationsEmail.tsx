@@ -221,6 +221,7 @@ const NotificationsEmail = () => {
                     requireTls: values.encryption === 'opportunistic',
                     authUser: values.authUser,
                     authPass: values.authPass,
+                    allowSelfSigned: values.allowSelfSigned,
                     senderName: values.senderName,
                     pgpPrivateKey: values.pgpPrivateKey,
                     pgpPassword: values.pgpPassword,

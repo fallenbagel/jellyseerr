@@ -193,14 +193,34 @@ class ImageProxy {
   public async clearCachedImage(path: string) {
     // find cacheKey
     const cacheKey = this.getCacheKey(path);
+    const directory = join(this.getCacheDirectory(), cacheKey);
 
     try {
-      const directory = join(this.getCacheDirectory(), cacheKey);
+      await promises.access(directory);
+    } catch (e) {
+      if (e.code === 'ENOENT') {
+        logger.debug(
+          `Cache directory '${cacheKey}' does not exist; nothing to clear.`,
+          {
+            label: 'Image Cache',
+          }
+        );
+        return;
+      } else {
+        logger.error('Error checking cache directory existence', {
+          label: 'Image Cache',
+          message: e.message,
+        });
+        return;
+      }
+    }
+
+    try {
       const files = await promises.readdir(directory);
 
       await promises.rm(directory, { recursive: true });
 
-      logger.info(`Cleared ${files[0]} from cache 'avatar'`, {
+      logger.debug(`Cleared ${files[0]} from cache 'avatar'`, {
         label: 'Image Cache',
       });
     } catch (e) {

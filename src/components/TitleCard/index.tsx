@@ -373,11 +373,10 @@ const TitleCard = ({
                   : intl.formatMessage(globalMessages.tvshow)}
               </div>
             </div>
-            {showDetail &&
-              currentStatus !== MediaStatus.BLACKLISTED &&
-              user?.userType !== UserType.PLEX && (
-                <div className="flex flex-col gap-1">
-                  {toggleWatchlist ? (
+            {showDetail && currentStatus !== MediaStatus.BLACKLISTED && (
+              <div className="flex flex-col gap-1">
+                {user?.userType !== UserType.PLEX &&
+                  (toggleWatchlist ? (
                     <Button
                       buttonType={'ghost'}
                       className="z-40"
@@ -394,23 +393,23 @@ const TitleCard = ({
                     >
                       <MinusCircleIcon className={'h-3'} />
                     </Button>
+                  ))}
+                {showHideButton &&
+                  currentStatus !== MediaStatus.PROCESSING &&
+                  currentStatus !== MediaStatus.AVAILABLE &&
+                  currentStatus !== MediaStatus.PARTIALLY_AVAILABLE &&
+                  currentStatus !== MediaStatus.PENDING && (
+                    <Button
+                      buttonType={'ghost'}
+                      className="z-40"
+                      buttonSize={'sm'}
+                      onClick={() => setShowBlacklistModal(true)}
+                    >
+                      <EyeSlashIcon className={'h-3'} />
+                    </Button>
                   )}
-                  {showHideButton &&
-                    currentStatus !== MediaStatus.PROCESSING &&
-                    currentStatus !== MediaStatus.AVAILABLE &&
-                    currentStatus !== MediaStatus.PARTIALLY_AVAILABLE &&
-                    currentStatus !== MediaStatus.PENDING && (
-                      <Button
-                        buttonType={'ghost'}
-                        className="z-40"
-                        buttonSize={'sm'}
-                        onClick={() => setShowBlacklistModal(true)}
-                      >
-                        <EyeSlashIcon className={'h-3'} />
-                      </Button>
-                    )}
-                </div>
-              )}
+              </div>
+            )}
             {showDetail &&
               showHideButton &&
               currentStatus == MediaStatus.BLACKLISTED && (

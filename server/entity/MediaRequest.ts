@@ -999,7 +999,7 @@ export class MediaRequest {
                 radarrMovie.id,
               [this.is4k ? 'externalServiceSlug4k' : 'externalServiceSlug']:
                 radarrMovie.titleSlug,
-              [this.is4k ? 'serviceId4k' : 'serviceId']: radarrMovie?.id,
+              [this.is4k ? 'serviceId4k' : 'serviceId']: radarrSettings?.id,
             };
 
             await mediaRepository.update({ id: this.media.id }, updateFields);

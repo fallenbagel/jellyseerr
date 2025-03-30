@@ -10,6 +10,7 @@ import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
+import { checkAvatarChanged } from '@server/routes/avatarproxy';
 import { ApiError } from '@server/types/error';
 import { getHostname } from '@server/utils/getHostname';
 import * as EmailValidator from 'email-validator';
@@ -215,6 +216,10 @@ authRoutes.post('/plex', async (req, res, next) => {
   }
 });
 
+function getUserAvatarUrl(user: User): string {
+  return `/avatarproxy/${user.jellyfinUserId}?v=${user.avatarVersion}`;
+}
+
 authRoutes.post('/jellyfin', async (req, res, next) => {
   const settings = getSettings();
   const userRepository = getRepository(User);
@@ -337,12 +342,12 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
           jellyfinDeviceId: deviceId,
           jellyfinAuthToken: account.AccessToken,
           permissions: Permission.ADMIN,
-          avatar: `/avatarproxy/${account.User.Id}`,
           userType:
             body.serverType === MediaServerType.JELLYFIN
               ? UserType.JELLYFIN
               : UserType.EMBY,
         });
+        user.avatar = getUserAvatarUrl(user);
 
         await userRepository.save(user);
       } else {
@@ -369,7 +374,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
         user.jellyfinDeviceId = deviceId;
         user.jellyfinAuthToken = account.AccessToken;
         user.permissions = Permission.ADMIN;
-        user.avatar = `/avatarproxy/${account.User.Id}`;
+        user.avatar = getUserAvatarUrl(user);
         user.userType =
           body.serverType === MediaServerType.JELLYFIN
             ? UserType.JELLYFIN
@@ -418,7 +423,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       );
 
       user.userType = userType;
-      user.avatar = `/avatarproxy/${account.User.Id}`;
+      user.avatar = getUserAvatarUrl(user);
       user.jellyfinUsername = account.User.Name;
 
       if (
@@ -463,7 +468,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
         logger.info(
           `Sign in attempt from EmbyConnect user with access to the media server, linking users`
         );
-        user.avatar = `/avatarproxy/${account.User.Id}`;
+        user.avatar = getUserAvatarUrl(user);
         user.jellyfinUserId = account.User.Id;
         user.userType = UserType.EMBY;
         user.username = account.User.Name;
@@ -486,12 +491,12 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
           jellyfinUserId: account.User.Id,
           jellyfinDeviceId: deviceId,
           permissions: settings.main.defaultPermissions,
-          avatar: `/avatarproxy/${account.User.Id}`,
           userType:
             settings.main.mediaServerType === MediaServerType.JELLYFIN
               ? UserType.JELLYFIN
               : UserType.EMBY,
         });
+        user.avatar = getUserAvatarUrl(user);
 
         //initialize Jellyfin/Emby users with local login
         const passedExplicitPassword =
@@ -502,6 +507,27 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
         await userRepository.save(user);
       }
     }
+
+    if (user && user.jellyfinUserId) {
+      try {
+        const { changed } = await checkAvatarChanged(user);
+
+        if (changed) {
+          user.avatar = getUserAvatarUrl(user);
+          await userRepository.save(user);
+          logger.debug('Avatar updated during login', {
+            userId: user.id,
+            jellyfinUserId: user.jellyfinUserId,
+          });
+        }
+      } catch (error) {
+        logger.error('Error handling avatar during login', {
+          label: 'Auth',
+          errorMessage: error.message,
+        });
+      }
+    }
+
     // Set logged in session
     if (req.session) {
       req.session.userId = user?.id;

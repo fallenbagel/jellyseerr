@@ -118,7 +118,6 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                       className="!bg-gray-700/80 placeholder:text-gray-400"
                       data-1pignore="false"
                       data-lpignore="false"
-                      data-bwignore="false"
                     />
                   </div>
                   <div className="flex">
