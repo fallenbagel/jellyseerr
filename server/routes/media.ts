@@ -237,19 +237,6 @@ mediaRoutes.delete(
       }
 
       if (isMovie) {
-        // check if the movie exists
-        try {
-          await (service as RadarrAPI).getMovie({
-            id: parseInt(
-              is4k
-                ? (media.externalServiceSlug4k as string)
-                : (media.externalServiceSlug as string)
-            ),
-          });
-        } catch {
-          return res.status(204).send();
-        }
-        // remove the movie
         await (service as RadarrAPI).removeMovie(
           parseInt(
             is4k
@@ -264,13 +251,6 @@ mediaRoutes.delete(
         if (!tvdbId) {
           throw new Error('TVDB ID not found');
         }
-        // check if the series exists
-        try {
-          await (service as SonarrAPI).getSeriesByTvdbId(tvdbId);
-        } catch {
-          return res.status(204).send();
-        }
-        // remove the series
         await (service as SonarrAPI).removeSerie(tvdbId);
       }
 

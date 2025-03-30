@@ -242,10 +242,13 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
     if (tmdbId) {
       this.removeCache('/movie/lookup', {
         term: `tmdb:${tmdbId}`,
+        headers: this.defaultHeaders,
       });
     }
     if (externalId) {
-      this.removeCache(`/movie/${externalId}`);
+      this.removeCache(`/movie/${externalId}`, {
+        headers: this.defaultHeaders,
+      });
     }
   };
 }

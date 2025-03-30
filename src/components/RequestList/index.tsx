@@ -17,8 +17,6 @@ import {
   FunnelIcon,
 } from '@heroicons/react/24/solid';
 import type { RequestResultsResponse } from '@server/interfaces/api/requestInterfaces';
-import { Permission } from '@server/lib/permissions';
-import type { RadarrSettings, SonarrSettings } from '@server/lib/settings';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -53,7 +51,7 @@ const RequestList = () => {
   const { user } = useUser({
     id: Number(router.query.userId),
   });
-  const { user: currentUser, hasPermission } = useUser();
+  const { user: currentUser } = useUser();
   const [currentFilter, setCurrentFilter] = useState<Filter>(Filter.PENDING);
   const [currentSort, setCurrentSort] = useState<Sort>('added');
   const [currentSortDirection, setCurrentSortDirection] =
@@ -63,13 +61,6 @@ const RequestList = () => {
   const page = router.query.page ? Number(router.query.page) : 1;
   const pageIndex = page - 1;
   const updateQueryParams = useUpdateQueryParams({ page: page.toString() });
-
-  const { data: radarrData } = useSWR<RadarrSettings[]>(
-    hasPermission(Permission.ADMIN) ? '/api/v1/settings/radarr' : null
-  );
-  const { data: sonarrData } = useSWR<SonarrSettings[]>(
-    hasPermission(Permission.ADMIN) ? '/api/v1/settings/sonarr' : null
-  );
 
   const {
     data,
@@ -254,8 +245,6 @@ const RequestList = () => {
             <RequestItem
               request={request}
               revalidateList={() => revalidate()}
-              radarrData={radarrData}
-              sonarrData={sonarrData}
             />
           </div>
         );

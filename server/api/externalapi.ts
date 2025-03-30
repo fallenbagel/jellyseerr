@@ -289,7 +289,7 @@ class ExternalAPI {
     return data;
   }
 
-  protected removeCache(endpoint: string, options?: Record<string, string>) {
+  protected removeCache(endpoint: string, options?: Record<string, unknown>) {
     const cacheKey = this.serializeCacheKey(endpoint, {
       ...this.params,
       ...options,

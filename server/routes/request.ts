@@ -189,7 +189,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
       );
 
       // add profile names to the media requests, with undefined if not found
-      const requestsWithProfileNames = requests.map((r) => {
+      let mappedRequests = requests.map((r) => {
         switch (r.type) {
           case MediaType.MOVIE: {
             const profileName = radarrServers
@@ -212,6 +212,36 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
         }
       });
 
+      // add canRemove prop if user has permission
+      if (req.user?.hasPermission(Permission.MANAGE_REQUESTS)) {
+        mappedRequests = mappedRequests.map((r) => {
+          switch (r.type) {
+            case MediaType.MOVIE: {
+              return {
+                ...r,
+                // check if the radarr server for this request is configured
+                canRemove: radarrServers.some(
+                  (server) =>
+                    server.id ===
+                    (r.is4k ? r.media.serviceId4k : r.media.serviceId)
+                ),
+              };
+            }
+            case MediaType.TV: {
+              return {
+                ...r,
+                // check if the sonarr server for this request is configured
+                canRemove: sonarrServers.some(
+                  (server) =>
+                    server.id ===
+                    (r.is4k ? r.media.serviceId4k : r.media.serviceId)
+                ),
+              };
+            }
+          }
+        });
+      }
+
       return res.status(200).json({
         pageInfo: {
           pages: Math.ceil(requestCount / pageSize),
@@ -219,7 +249,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
           results: requestCount,
           page: Math.ceil(skip / pageSize) + 1,
         },
-        results: requestsWithProfileNames,
+        results: mappedRequests,
       });
     } catch (e) {
       next({ status: 500, message: e.message });
