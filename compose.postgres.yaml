@@ -1,0 +1,30 @@
+services:
+  jellyseerr:
+    image: ghcr.io/fallenbagel/jellyseerr:latest
+    ports:
+      - '5055:5055'
+    environment:
+      DB_TYPE: 'postgres'
+      DB_HOST: 'postgres'
+      DB_PORT: '5432'
+      DB_USER: 'jellyseerr'
+      DB_PASS: 'jellyseerr'
+      DB_NAME: 'jellyseerr'
+      DB_LOG_QUERIES: 'false'
+      DB_USE_SSL: 'false'
+    volumes:
+      - ./config:/app/config
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: jellyseerr
+      POSTGRES_PASSWORD: jellyseerr
+      POSTGRES_DB: jellyseerr
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+volumes:
+  postgres:
