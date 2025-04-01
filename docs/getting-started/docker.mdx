@@ -16,7 +16,6 @@ Refer to [Configuring Databases](/extending-jellyseerr/database-config#postgresq
 Be sure to replace `/path/to/appdata/config` in the below examples with a valid host directory path. If this volume mount is not configured correctly, your Jellyseerr settings/data will not be persisted when the container is recreated (e.g., when updating the image or rebooting your machine).
 
     The `TZ` environment variable value should also be set to the [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) of your time zone!
-
 :::
 
 import Tabs from '@theme/Tabs';
@@ -75,7 +74,6 @@ For details on how to use Docker Compose, please [review the official Compose do
 #### Installation:
 Define the `jellyseerr` service in your `compose.yaml` as follows:
 ```yaml
----
 services:
   jellyseerr:
     image: ghcr.io/fallenbagel/jellyseerr:latest
@@ -108,6 +106,39 @@ Then, restart all services defined in the Compose file:
 ```bash
 docker compose up -d
 ```
+
+#### Compose Setup Options
+Jellyseerr supports multiple Compose files for different environments:
+
+##### 🛠 Local Development
+Use for contributing or debugging with live reload and local source mapping.
+```bash
+docker compose -f compose.local.yml up
+```
+- Uses `Dockerfile.local`
+- Mounts local code and dependencies
+- Defaults to SQLite
+
+##### 📆 Production (SQLite)
+Simple production deployment using default database.
+```bash
+docker compose up -d
+```
+- Uses image from `ghcr.io`
+- Persists config to volume
+- No additional setup required
+
+##### 🛡 Production (PostgreSQL)
+Recommended for scalable or multi-user production setups.
+```bash
+docker compose -f compose.yml -f compose.postgres.yml up -d
+```
+- Enables external Postgres service
+- Persists data using named volume
+- Requires proper DB credentials via environment variables
+
+All files follow modern Compose spec and omit the deprecated `version:` key.
+
 :::tip
 You may alternatively use a third-party mechanism like [dockge](https://github.com/louislam/dockge) to manage your docker compose files.
 :::
@@ -162,7 +193,6 @@ docker compose up -d
 
   <TabItem value="docker-compose" label="Docker Compose">
 ```yaml
----
 services:
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
@@ -208,5 +238,4 @@ Docker on Windows works differently than it does on Linux; it runs Docker inside
 
 Named volumes, like in the example commands above, are automatically mounted inside the VM. Therefore the warning on the setup about the `/app/config` folder being incorrectly mounted page should be ignored.
 :::
-
 
