@@ -59,7 +59,7 @@ const Season = ({ seasonNumber, tvId }: SeasonProps) => {
                   <div className="relative aspect-video xl:h-32">
                     <Image
                       className="rounded-lg object-contain"
-                      src={`https://image.tmdb.org/t/p/original/${episode.stillPath}`}
+                      src={episode.stillPath}
                       alt=""
                       fill
                     />

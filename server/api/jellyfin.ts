@@ -130,6 +130,9 @@ class JellyfinAPI extends ExternalAPI {
       {
         headers: {
           'X-Emby-Authorization': authHeaderVal,
+          ...(settings.main.mediaServerType === MediaServerType.EMBY && {
+            'Accept-Encoding': 'gzip',
+          }),
         },
       }
     );
