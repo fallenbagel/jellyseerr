@@ -86,6 +86,7 @@ export interface JellyfinLibraryItemExtended extends JellyfinLibraryItem {
     Tmdb?: string;
     Imdb?: string;
     Tvdb?: string;
+    AniDB?: string;
   };
   MediaSources?: JellyfinMediaSource[];
   Width?: number;
