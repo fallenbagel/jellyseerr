@@ -369,18 +369,14 @@ class SonarrAPI extends ServarrBase<{
     if (tvdbId) {
       this.removeCache('/series/lookup', {
         term: `tvdb:${tvdbId}`,
-        headers: this.defaultHeaders,
       });
     }
     if (externalId) {
-      this.removeCache(`/series/${externalId}`, {
-        headers: this.defaultHeaders,
-      });
+      this.removeCache(`/series/${externalId}`);
     }
     if (title) {
       this.removeCache('/series/lookup', {
         term: title,
-        headers: this.defaultHeaders,
       });
     }
   };
