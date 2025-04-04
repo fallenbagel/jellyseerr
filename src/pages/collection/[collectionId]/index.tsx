@@ -1,4 +1,5 @@
 import CollectionDetails from '@app/components/CollectionDetails';
+import { getAuthHeaders } from '@app/utils/serverSidePropsHelpers';
 import type { Collection } from '@server/models/Collection';
 import type { GetServerSideProps, NextPage } from 'next';
 
@@ -18,9 +19,7 @@ export const getServerSideProps: GetServerSideProps<
       process.env.PORT || 5055
     }/api/v1/collection/${ctx.query.collectionId}`,
     {
-      headers: ctx.req?.headers?.cookie
-        ? { cookie: ctx.req.headers.cookie }
-        : undefined,
+      headers: getAuthHeaders(ctx),
     }
   );
   if (!res.ok) throw new Error();
