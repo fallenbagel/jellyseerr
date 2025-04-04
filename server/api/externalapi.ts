@@ -3,6 +3,7 @@ import { getSettings } from '@server/lib/settings';
 import type { RateLimitOptions } from '@server/utils/rateLimit';
 import rateLimit from '@server/utils/rateLimit';
 import type NodeCache from 'node-cache';
+import querystring from 'querystring';
 
 // 5 minute default TTL (in seconds)
 const DEFAULT_TTL = 300;
@@ -111,7 +112,10 @@ class ExternalAPI {
     ttl?: number,
     config?: RequestInit
   ): Promise<T> {
-    const headers = { ...this.defaultHeaders, ...config?.headers };
+    const headers = new Headers({
+      ...this.defaultHeaders,
+      ...(config?.headers || {}),
+    });
     const cacheKey = this.serializeCacheKey(endpoint, {
       config: { ...this.params, ...params },
       headers,
@@ -124,12 +128,24 @@ class ExternalAPI {
     }
 
     const url = this.formatUrl(endpoint, params);
+
+    const isFormUrlEncoded = headers
+      .get('Content-Type')
+      ?.includes('application/x-www-form-urlencoded');
+
+    const body = data
+      ? isFormUrlEncoded
+        ? querystring.stringify(data as Record<string, string>)
+        : JSON.stringify(data)
+      : undefined;
+
     const response = await this.fetch(url, {
       method: 'POST',
       ...config,
       headers,
-      body: data ? JSON.stringify(data) : undefined,
+      body: body,
     });
+
     if (!response.ok) {
       const text = await response.text();
       throw new Error(
