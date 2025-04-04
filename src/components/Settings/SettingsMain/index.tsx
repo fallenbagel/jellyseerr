@@ -50,6 +50,9 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   partialRequestsEnabled: 'Allow Partial Series Requests',
   enableSpecialEpisodes: 'Allow Special Episodes Requests',
   locale: 'Display Language',
+  youtubeUrl: 'YouTube URL',
+  validationUrl: 'You must provide a valid URL',
+  validationUrlTrailingSlash: 'URL must not end in a trailing slash',
 });
 
 const SettingsMain = () => {
@@ -78,6 +81,13 @@ const SettingsMain = () => {
       .test(
         'no-trailing-slash',
         intl.formatMessage(messages.validationApplicationUrlTrailingSlash),
+        (value) => !value || !value.endsWith('/')
+      ),
+    youtubeUrl: Yup.string()
+      .url(intl.formatMessage(messages.validationUrl))
+      .test(
+        'no-trailing-slash',
+        intl.formatMessage(messages.validationUrlTrailingSlash),
         (value) => !value || !value.endsWith('/')
       ),
   });
@@ -135,6 +145,7 @@ const SettingsMain = () => {
             partialRequestsEnabled: data?.partialRequestsEnabled,
             enableSpecialEpisodes: data?.enableSpecialEpisodes,
             cacheImages: data?.cacheImages,
+            youtubeUrl: data?.youtubeUrl,
           }}
           enableReinitialize
           validationSchema={MainSettingsSchema}
@@ -156,6 +167,7 @@ const SettingsMain = () => {
                   partialRequestsEnabled: values.partialRequestsEnabled,
                   enableSpecialEpisodes: values.enableSpecialEpisodes,
                   cacheImages: values.cacheImages,
+                  youtubeUrl: values.youtubeUrl,
                 }),
               });
               if (!res.ok) throw new Error();
@@ -423,6 +435,26 @@ const SettingsMain = () => {
                         );
                       }}
                     />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="youtubeUrl" className="text-label">
+                    {intl.formatMessage(messages.youtubeUrl)}
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field">
+                      <Field
+                        id="youtubeUrl"
+                        name="youtubeUrl"
+                        type="text"
+                        inputMode="url"
+                      />
+                    </div>
+                    {errors.youtubeUrl &&
+                      touched.youtubeUrl &&
+                      typeof errors.youtubeUrl === 'string' && (
+                        <div className="error">{errors.youtubeUrl}</div>
+                      )}
                   </div>
                 </div>
                 <div className="actions">
