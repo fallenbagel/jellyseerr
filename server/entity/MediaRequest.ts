@@ -1571,6 +1571,40 @@ export class MediaRequest {
           );
         }
 
+        const tags = this.tags ?? albumInfo.artist.tags ?? [];
+
+        if (lidarrSettings.tagRequests) {
+          let userTag = (await lidarr.getTags()).find((v) =>
+            v.label.startsWith(this.requestedBy.id + ' - ')
+          );
+          if (!userTag) {
+            logger.info(`Requester has no active tag. Creating new`, {
+              label: 'Media Request',
+              requestId: this.id,
+              mediaId: this.media.id,
+              userId: this.requestedBy.id,
+              newTag:
+                this.requestedBy.id + ' - ' + this.requestedBy.displayName,
+            });
+            userTag = await lidarr.createTag({
+              label: this.requestedBy.id + ' - ' + this.requestedBy.displayName,
+            });
+          }
+          if (userTag.id) {
+            if (!tags.find((v) => v === userTag?.id)) {
+              tags.push(userTag.id);
+            }
+          } else {
+            logger.warn(`Requester has no tag and failed to add one`, {
+              label: 'Media Request',
+              requestId: this.id,
+              mediaId: this.media.id,
+              userId: this.requestedBy.id,
+              lidarrServer: lidarrSettings.hostname + ':' + lidarrSettings.port,
+            });
+          }
+        }
+
         const artistPath = `${rootFolder}/${albumInfo.artist.artistName}`;
 
         const addAlbumPayload: LidarrAlbumOptions = {
@@ -1612,7 +1646,7 @@ export class MediaRequest {
             genres: albumInfo.artist.genres || [],
             cleanName: albumInfo.artist.cleanName,
             sortName: albumInfo.artist.sortName,
-            tags: albumInfo.artist.tags || [],
+            tags: tags, // Apply the tags to the artist
             added: albumInfo.artist.added || new Date().toISOString(),
             ratings: albumInfo.artist.ratings,
             id: albumInfo.artist.id,
