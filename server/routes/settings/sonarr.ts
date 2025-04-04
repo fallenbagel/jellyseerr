@@ -24,7 +24,11 @@ sonarrRoutes.post('/', async (req, res) => {
   // and are the default
   if (req.body.isDefault) {
     settings.sonarr
-      .filter((sonarrInstance) => sonarrInstance.is4k === req.body.is4k)
+      .filter(
+        (sonarrInstance) =>
+          sonarrInstance.is4k === req.body.is4k &&
+          sonarrInstance.isAnime === req.body.isAnime
+      )
       .forEach((sonarrInstance) => {
         sonarrInstance.isDefault = false;
       });
@@ -91,7 +95,11 @@ sonarrRoutes.put<{ id: string }>('/:id', async (req, res) => {
   // and are the default
   if (req.body.isDefault) {
     settings.sonarr
-      .filter((sonarrInstance) => sonarrInstance.is4k === req.body.is4k)
+      .filter(
+        (sonarrInstance) =>
+          sonarrInstance.is4k === req.body.is4k &&
+          sonarrInstance.isAnime === req.body.isAnime
+      )
       .forEach((sonarrInstance) => {
         sonarrInstance.isDefault = false;
       });

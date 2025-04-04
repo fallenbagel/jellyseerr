@@ -20,8 +20,10 @@ type OptionType = {
 const messages = defineMessages('components.Settings.RadarrModal', {
   createradarr: 'Add New Radarr Server',
   create4kradarr: 'Add New 4K Radarr Server',
+  createAnimeradarr: 'Add New Anime Radarr Server',
   editradarr: 'Edit Radarr Server',
   edit4kradarr: 'Edit 4K Radarr Server',
+  editAnimeradarr: 'Edit Anime Radarr Server',
   validationNameRequired: 'You must provide a server name',
   validationHostnameRequired: 'You must provide a valid hostname or IP address',
   validationPortRequired: 'You must provide a valid port number',
@@ -35,6 +37,7 @@ const messages = defineMessages('components.Settings.RadarrModal', {
   add: 'Add Server',
   defaultserver: 'Default Server',
   default4kserver: 'Default 4K Server',
+  defaultAnimeserver: 'Default Anime Server',
   servername: 'Server Name',
   hostname: 'Hostname or IP Address',
   port: 'Port',
@@ -47,6 +50,7 @@ const messages = defineMessages('components.Settings.RadarrModal', {
   rootfolder: 'Root Folder',
   minimumAvailability: 'Minimum Availability',
   server4k: '4K Server',
+  serverAnime: 'Anime Server',
   selectQualityProfile: 'Select quality profile',
   selectRootFolder: 'Select root folder',
   selectMinimumAvailability: 'Select minimum availability',
@@ -232,6 +236,7 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
           tags: radarr?.tags ?? [],
           isDefault: radarr?.isDefault ?? false,
           is4k: radarr?.is4k ?? false,
+          isAnime: radarr?.isAnime ?? false,
           externalUrl: radarr?.externalUrl,
           syncEnabled: radarr?.syncEnabled ?? false,
           enableSearch: !radarr?.preventSearch,
@@ -255,6 +260,7 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
               activeProfileName: profileName,
               activeDirectory: values.rootFolder,
               is4k: values.is4k,
+              isAnime: values.isAnime,
               minimumAvailability: values.minimumAvailability,
               tags: values.tags,
               isDefault: values.isDefault,
@@ -341,12 +347,18 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
               title={
                 !radarr
                   ? intl.formatMessage(
-                      values.is4k
+                      values.isAnime
+                        ? messages.createAnimeradarr
+                        : values.is4k
                         ? messages.create4kradarr
                         : messages.createradarr
                     )
                   : intl.formatMessage(
-                      values.is4k ? messages.edit4kradarr : messages.editradarr
+                      values.isAnime
+                        ? messages.editAnimeradarr
+                        : values.is4k
+                        ? messages.edit4kradarr
+                        : messages.editradarr
                     )
               }
             >
@@ -354,7 +366,9 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
                 <div className="form-row">
                   <label htmlFor="isDefault" className="checkbox-label">
                     {intl.formatMessage(
-                      values.is4k
+                      values.isAnime
+                        ? messages.defaultAnimeserver
+                        : values.is4k
                         ? messages.default4kserver
                         : messages.defaultserver
                     )}
@@ -369,6 +383,14 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
                   </label>
                   <div className="form-input-area">
                     <Field type="checkbox" id="is4k" name="is4k" />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="isAnime" className="checkbox-label">
+                    {intl.formatMessage(messages.serverAnime)}
+                  </label>
+                  <div className="form-input-area">
+                    <Field type="checkbox" id="isAnime" name="isAnime" />
                   </div>
                 </div>
                 <div className="form-row">

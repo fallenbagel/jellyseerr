@@ -24,7 +24,12 @@ radarrRoutes.post('/', async (req, res) => {
   // and are the default
   if (req.body.isDefault) {
     settings.radarr
-      .filter((radarrInstance) => radarrInstance.is4k === req.body.is4k)
+      .filter(
+        (radarrInstance) =>
+          radarrInstance.is4k === req.body.is4k &&
+          radarrInstance.isAnime &&
+          req.body.isAnime
+      )
       .forEach((radarrInstance) => {
         radarrInstance.isDefault = false;
       });
@@ -92,7 +97,11 @@ radarrRoutes.put<{ id: string }, RadarrSettings, RadarrSettings>(
     // and are the default
     if (req.body.isDefault) {
       settings.radarr
-        .filter((radarrInstance) => radarrInstance.is4k === req.body.is4k)
+        .filter(
+          (radarrInstance) =>
+            radarrInstance.is4k === req.body.is4k &&
+            radarrInstance.isAnime === req.body.isAnime
+        )
         .forEach((radarrInstance) => {
           radarrInstance.isDefault = false;
         });
