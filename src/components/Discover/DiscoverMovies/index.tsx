@@ -9,6 +9,7 @@ import {
 } from '@app/components/Discover/constants';
 import FilterSlideover from '@app/components/Discover/FilterSlideover';
 import useDiscover from '@app/hooks/useDiscover';
+import useSettings from '@app/hooks/useSettings';
 import { useUpdateQueryParams } from '@app/hooks/useUpdateQueryParams';
 import Error from '@app/pages/_error';
 import defineMessages from '@app/utils/defineMessages';
@@ -16,7 +17,7 @@ import { BarsArrowDownIcon, FunnelIcon } from '@heroicons/react/24/solid';
 import type { SortOptions as TMDBSortOptions } from '@server/api/themoviedb';
 import type { MovieResult } from '@server/models/Search';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const messages = defineMessages('components.Discover.DiscoverMovies', {
@@ -48,6 +49,14 @@ const DiscoverMovies = () => {
   const intl = useIntl();
   const router = useRouter();
   const updateQueryParams = useUpdateQueryParams({});
+  const { currentSettings } = useSettings();
+
+  // Redirect to TV discover page if in TV Only mode
+  useEffect(() => {
+    if (currentSettings.contentType === 'tv') {
+      router.replace('/discover/tv');
+    }
+  }, [currentSettings.contentType, router]);
 
   const preparedFilters = prepareFilterValues(router.query);
 
