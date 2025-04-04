@@ -16,6 +16,7 @@ import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import type { MainSettings } from '@server/lib/settings';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -84,10 +85,7 @@ const SettingsMain = () => {
 
   const regenerate = async () => {
     try {
-      const res = await fetch('/api/v1/settings/main/regenerate', {
-        method: 'POST',
-      });
-      if (!res.ok) throw new Error();
+      await axios.post('/api/v1/settings/main/regenerate');
 
       revalidate();
       addToast(intl.formatMessage(messages.toastApiKeySuccess), {
@@ -140,25 +138,18 @@ const SettingsMain = () => {
           validationSchema={MainSettingsSchema}
           onSubmit={async (values) => {
             try {
-              const res = await fetch('/api/v1/settings/main', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  applicationTitle: values.applicationTitle,
-                  applicationUrl: values.applicationUrl,
-                  hideAvailable: values.hideAvailable,
-                  locale: values.locale,
-                  discoverRegion: values.discoverRegion,
-                  streamingRegion: values.streamingRegion,
-                  originalLanguage: values.originalLanguage,
-                  partialRequestsEnabled: values.partialRequestsEnabled,
-                  enableSpecialEpisodes: values.enableSpecialEpisodes,
-                  cacheImages: values.cacheImages,
-                }),
+              await axios.post('/api/v1/settings/main', {
+                applicationTitle: values.applicationTitle,
+                applicationUrl: values.applicationUrl,
+                hideAvailable: values.hideAvailable,
+                locale: values.locale,
+                discoverRegion: values.discoverRegion,
+                streamingRegion: values.streamingRegion,
+                originalLanguage: values.originalLanguage,
+                partialRequestsEnabled: values.partialRequestsEnabled,
+                enableSpecialEpisodes: values.enableSpecialEpisodes,
+                cacheImages: values.cacheImages,
               });
-              if (!res.ok) throw new Error();
               mutate('/api/v1/settings/public');
               mutate('/api/v1/status');
 

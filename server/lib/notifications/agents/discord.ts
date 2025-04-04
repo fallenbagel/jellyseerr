@@ -4,6 +4,7 @@ import { User } from '@server/entity/User';
 import type { NotificationAgentDiscord } from '@server/lib/settings';
 import { getSettings, NotificationAgentKey } from '@server/lib/settings';
 import logger from '@server/logger';
+import axios from 'axios';
 import {
   hasNotificationType,
   Notification,
@@ -297,39 +298,23 @@ class DiscordAgent
         userMentions.push(`<@&${settings.options.webhookRoleId}>`);
       }
 
-      const response = await fetch(settings.options.webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: settings.options.botUsername
-            ? settings.options.botUsername
-            : getSettings().main.applicationTitle,
-          avatar_url: settings.options.botAvatarUrl,
-          embeds: [this.buildEmbed(type, payload)],
-          content: userMentions.join(' '),
-        } as DiscordWebhookPayload),
-      });
-      if (!response.ok) {
-        throw new Error(response.statusText, { cause: response });
-      }
+      await axios.post(settings.options.webhookUrl, {
+        username: settings.options.botUsername
+          ? settings.options.botUsername
+          : getSettings().main.applicationTitle,
+        avatar_url: settings.options.botAvatarUrl,
+        embeds: [this.buildEmbed(type, payload)],
+        content: userMentions.join(' '),
+      } as DiscordWebhookPayload);
 
       return true;
     } catch (e) {
-      let errorData;
-      try {
-        errorData = await e.cause?.text();
-        errorData = JSON.parse(errorData);
-      } catch {
-        /* empty */
-      }
       logger.error('Error sending Discord notification', {
         label: 'Notifications',
         type: Notification[type],
         subject: payload.subject,
         errorMessage: e.message,
-        response: errorData,
+        response: e?.response?.data,
       });
 
       return false;

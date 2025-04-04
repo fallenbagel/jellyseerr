@@ -13,10 +13,10 @@ import { UserContext } from '@app/context/UserContext';
 import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
 import '@app/styles/globals.css';
-import '@app/utils/fetchOverride';
 import { polyfillIntl } from '@app/utils/polyfillIntl';
 import { MediaServerType } from '@server/constants/server';
 import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
+import axios from 'axios';
 import type { AppInitialProps, AppProps } from 'next/app';
 import App from 'next/app';
 import Head from 'next/head';
@@ -133,8 +133,8 @@ const CoreApp: Omit<NextAppComponentType, 'origGetInitialProps'> = ({
 
   useEffect(() => {
     const requestsCount = async () => {
-      const response = await fetch('/api/v1/request/count');
-      return await response.json();
+      const response = await axios.get('/api/v1/request/count');
+      return response.data;
     };
 
     // Cast navigator to a type that includes setAppBadge and clearAppBadge
@@ -171,11 +171,7 @@ const CoreApp: Omit<NextAppComponentType, 'origGetInitialProps'> = ({
   return (
     <SWRConfig
       value={{
-        fetcher: async (resource, init) => {
-          const res = await fetch(resource, init);
-          if (!res.ok) throw new Error();
-          return await res.json();
-        },
+        fetcher: (url) => axios.get(url).then((res) => res.data),
         fallback: {
           '/api/v1/auth/me': user,
         },
@@ -241,15 +237,15 @@ CoreApp.getInitialProps = async (initialProps) => {
 
   if (ctx.res) {
     // Check if app is initialized and redirect if necessary
-    const res = await fetch(
+    const response = await axios.get<PublicSettingsResponse>(
       `http://${process.env.HOST || 'localhost'}:${
         process.env.PORT || 5055
       }/api/v1/settings/public`
     );
-    if (!res.ok) throw new Error();
-    currentSettings = await res.json();
 
-    const initialized = currentSettings.initialized;
+    currentSettings = response.data;
+
+    const initialized = response.data.initialized;
 
     if (!initialized) {
       if (!router.pathname.match(/(setup|login\/plex)/)) {
@@ -261,7 +257,7 @@ CoreApp.getInitialProps = async (initialProps) => {
     } else {
       try {
         // Attempt to get the user by running a request to the local api
-        const res = await fetch(
+        const response = await axios.get<User>(
           `http://${process.env.HOST || 'localhost'}:${
             process.env.PORT || 5055
           }/api/v1/auth/me`,
@@ -272,8 +268,7 @@ CoreApp.getInitialProps = async (initialProps) => {
                 : undefined,
           }
         );
-        if (!res.ok) throw new Error();
-        user = await res.json();
+        user = response.data;
 
         if (router.pathname.match(/(setup|login)/)) {
           ctx.res.writeHead(307, {

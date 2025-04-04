@@ -5,6 +5,7 @@ import useSettings from '@app/hooks/useSettings';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -83,24 +84,17 @@ const NotificationsDiscord = () => {
       validationSchema={NotificationsDiscordSchema}
       onSubmit={async (values) => {
         try {
-          const res = await fetch('/api/v1/settings/notifications/discord', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+          await axios.post('/api/v1/settings/notifications/discord', {
+            enabled: values.enabled,
+            types: values.types,
+            options: {
+              botUsername: values.botUsername,
+              botAvatarUrl: values.botAvatarUrl,
+              webhookUrl: values.webhookUrl,
+              webhookRoleId: values.webhookRoleId,
+              enableMentions: values.enableMentions,
             },
-            body: JSON.stringify({
-              enabled: values.enabled,
-              types: values.types,
-              options: {
-                botUsername: values.botUsername,
-                botAvatarUrl: values.botAvatarUrl,
-                webhookUrl: values.webhookUrl,
-                webhookRoleId: values.webhookRoleId,
-                enableMentions: values.enableMentions,
-              },
-            }),
           });
-          if (!res.ok) throw new Error();
 
           addToast(intl.formatMessage(messages.discordsettingssaved), {
             appearance: 'success',
@@ -139,27 +133,17 @@ const NotificationsDiscord = () => {
                 toastId = id;
               }
             );
-            const res = await fetch(
-              '/api/v1/settings/notifications/discord/test',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  enabled: true,
-                  types: values.types,
-                  options: {
-                    botUsername: values.botUsername,
-                    botAvatarUrl: values.botAvatarUrl,
-                    webhookUrl: values.webhookUrl,
-                    webhookRoleId: values.webhookRoleId,
-                    enableMentions: values.enableMentions,
-                  },
-                }),
-              }
-            );
-            if (!res.ok) throw new Error();
+            await axios.post('/api/v1/settings/notifications/discord/test', {
+              enabled: true,
+              types: values.types,
+              options: {
+                botUsername: values.botUsername,
+                botAvatarUrl: values.botAvatarUrl,
+                webhookUrl: values.webhookUrl,
+                webhookRoleId: values.webhookRoleId,
+                enableMentions: values.enableMentions,
+              },
+            });
 
             if (toastId) {
               removeToast(toastId);

@@ -4,6 +4,7 @@ import NotificationTypeSelector from '@app/components/NotificationTypeSelector';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/solid';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -82,21 +83,14 @@ const NotificationsGotify = () => {
       validationSchema={NotificationsGotifySchema}
       onSubmit={async (values) => {
         try {
-          const res = await fetch('/api/v1/settings/notifications/gotify', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+          await axios.post('/api/v1/settings/notifications/gotify', {
+            enabled: values.enabled,
+            types: values.types,
+            options: {
+              url: values.url,
+              token: values.token,
             },
-            body: JSON.stringify({
-              enabled: values.enabled,
-              types: values.types,
-              options: {
-                url: values.url,
-                token: values.token,
-              },
-            }),
           });
-          if (!res.ok) throw new Error();
           addToast(intl.formatMessage(messages.gotifysettingssaved), {
             appearance: 'success',
             autoDismiss: true,
@@ -134,24 +128,14 @@ const NotificationsGotify = () => {
                 toastId = id;
               }
             );
-            const res = await fetch(
-              '/api/v1/settings/notifications/gotify/test',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  enabled: true,
-                  types: values.types,
-                  options: {
-                    url: values.url,
-                    token: values.token,
-                  },
-                }),
-              }
-            );
-            if (!res.ok) throw new Error();
+            await axios.post('/api/v1/settings/notifications/gotify/test', {
+              enabled: true,
+              types: values.types,
+              options: {
+                url: values.url,
+                token: values.token,
+              },
+            });
 
             if (toastId) {
               removeToast(toastId);

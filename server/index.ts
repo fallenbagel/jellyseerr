@@ -35,8 +35,6 @@ import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
 import session from 'express-session';
 import next from 'next';
-import dns from 'node:dns';
-import net from 'node:net';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
@@ -73,15 +71,6 @@ app
     // Load Settings
     const settings = await getSettings().load();
     restartFlag.initializeSettings(settings);
-
-    // Check if we force IPv4 first
-    if (
-      process.env.forceIpv4First === 'true' ||
-      settings.network.forceIpv4First
-    ) {
-      dns.setDefaultResultOrder('ipv4first');
-      net.setDefaultAutoSelectFamily(false);
-    }
 
     // Register HTTP proxy
     if (settings.network.proxy.enabled) {
