@@ -14,6 +14,7 @@ import * as Yup from 'yup';
 
 const messages = defineMessages('components.Settings.Notifications', {
   agentenabled: 'Enable Agent',
+  embedImage: 'Embed Image',
   botUsername: 'Bot Username',
   botUsernameTip:
     'Allow users to also start a chat with your bot and configure their own notifications',
@@ -88,6 +89,7 @@ const NotificationsTelegram = () => {
     <Formik
       initialValues={{
         enabled: data?.enabled,
+        embedImage: data?.embedImage,
         types: data?.types,
         botUsername: data?.options.botUsername,
         botAPI: data?.options.botAPI,
@@ -105,6 +107,7 @@ const NotificationsTelegram = () => {
             },
             body: JSON.stringify({
               enabled: values.enabled,
+              embedImage: values.embedImage,
               types: values.types,
               options: {
                 botAPI: values.botAPI,
@@ -163,6 +166,7 @@ const NotificationsTelegram = () => {
                 },
                 body: JSON.stringify({
                   enabled: true,
+                  embedImage: values.embedImage,
                   types: values.types,
                   options: {
                     botAPI: values.botAPI,
@@ -205,6 +209,14 @@ const NotificationsTelegram = () => {
               </label>
               <div className="form-input-area">
                 <Field type="checkbox" id="enabled" name="enabled" />
+              </div>
+            </div>
+            <div className="form-row">
+              <label htmlFor="embedImage" className="checkbox-label">
+                {intl.formatMessage(messages.embedImage)}
+              </label>
+              <div className="form-input-area">
+                <Field type="checkbox" id="embedImage" name="embedImage" />
               </div>
             </div>
             <div className="form-row">

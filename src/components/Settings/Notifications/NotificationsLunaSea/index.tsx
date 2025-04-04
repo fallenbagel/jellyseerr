@@ -15,6 +15,7 @@ const messages = defineMessages(
   'components.Settings.Notifications.NotificationsLunaSea',
   {
     agentenabled: 'Enable Agent',
+    embedImage: 'Embed Image',
     webhookUrl: 'Webhook URL',
     webhookUrlTip:
       'Your user- or device-based <LunaSeaLink>notification webhook URL</LunaSeaLink>',
@@ -61,6 +62,7 @@ const NotificationsLunaSea = () => {
     <Formik
       initialValues={{
         enabled: data.enabled,
+        embedImage: data.embedImage,
         types: data.types,
         webhookUrl: data.options.webhookUrl,
         profileName: data.options.profileName,
@@ -75,6 +77,7 @@ const NotificationsLunaSea = () => {
             },
             body: JSON.stringify({
               enabled: values.enabled,
+              embedImage: values.embedImage,
               types: values.types,
               options: {
                 webhookUrl: values.webhookUrl,
@@ -129,6 +132,7 @@ const NotificationsLunaSea = () => {
                 },
                 body: JSON.stringify({
                   enabled: true,
+                  embedImage: values.embedImage,
                   types: values.types,
                   options: {
                     webhookUrl: values.webhookUrl,
@@ -168,6 +172,14 @@ const NotificationsLunaSea = () => {
               </label>
               <div className="form-input-area">
                 <Field type="checkbox" id="enabled" name="enabled" />
+              </div>
+            </div>
+            <div className="form-row">
+              <label htmlFor="embedImage" className="checkbox-label">
+                {intl.formatMessage(messages.embedImage)}
+              </label>
+              <div className="form-input-area">
+                <Field type="checkbox" id="embedImage" name="embedImage" />
               </div>
             </div>
             <div className="form-row">
