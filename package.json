@@ -63,6 +63,7 @@
     "express-session": "1.17.3",
     "formik": "^2.4.6",
     "gravatar-url": "3.1.0",
+    "jwt-decode": "^4.0.0",
     "lodash": "4.17.21",
     "mime": "3",
     "next": "^14.2.25",

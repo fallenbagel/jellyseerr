@@ -225,6 +225,7 @@ CoreApp.getInitialProps = async (initialProps) => {
     series4kEnabled: false,
     localLogin: true,
     mediaServerLogin: true,
+    openIdProviders: [],
     discoverRegion: '',
     streamingRegion: '',
     originalLanguage: '',
@@ -275,7 +276,10 @@ CoreApp.getInitialProps = async (initialProps) => {
         if (!res.ok) throw new Error();
         user = await res.json();
 
-        if (router.pathname.match(/(setup|login)/)) {
+        if (
+          router.pathname.match(/(setup|login)/) &&
+          !router.pathname.includes('oidc')
+        ) {
           ctx.res.writeHead(307, {
             Location: '/',
           });
