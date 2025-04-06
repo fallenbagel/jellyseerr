@@ -3,7 +3,6 @@ import { Permission } from '@server/lib/permissions';
 import { runMigrations } from '@server/lib/settings/migrator';
 import { randomUUID } from 'crypto';
 import fs from 'fs/promises';
-import type { Address4, Address6 } from 'ip-address';
 import { merge } from 'lodash';
 import path from 'path';
 import webpush from 'web-push';
@@ -148,8 +147,8 @@ export interface NetworkSettings {
 }
 
 export interface TrustedProxies {
-  v4: Address4[];
-  v6: Address6[];
+  v4: string[];
+  v6: string[];
 }
 
 export interface ForwardAuthSettings {

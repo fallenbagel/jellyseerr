@@ -239,7 +239,6 @@ const SettingsNetwork = () => {
                           {intl.formatMessage(messages.trustedProxies)}
                         </span>
                         <SettingsBadge badgeType="advanced" className="mr-2" />
-                        <SettingsBadge badgeType="restartRequired" />
                       </label>
                       <div className="form-input-area">
                         <Field
@@ -296,10 +295,7 @@ const SettingsNetwork = () => {
                           >
                             {intl.formatMessage(messages.userHeaderName)}
                           </label>
-                          <SettingsBadge
-                            badgeType="advanced"
-                            className="mr-2"
-                          />
+                          <SettingsBadge badgeType="advanced" />
                           <div className="form-input-area">
                             <div className="form-input-field">
                               <Field
@@ -325,10 +321,7 @@ const SettingsNetwork = () => {
                           >
                             {intl.formatMessage(messages.emailHeaderName)}
                           </label>
-                          <SettingsBadge
-                            badgeType="advanced"
-                            className="mr-2"
-                          />
+                          <SettingsBadge badgeType="advanced" />
                           <div className="form-input-area">
                             <div className="form-input-field">
                               <Field

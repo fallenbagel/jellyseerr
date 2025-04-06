@@ -11,6 +11,14 @@ export const checkUser: Middleware = async (req, _res, next) => {
   let user: User | undefined | null;
 
   const userRepository = getRepository(User);
+  const clientIP = req.header('X-Forwarded-For');
+  let trustedProxy = false;
+
+  if (clientIP && clientIP.indexOf('.') != -1) {
+    trustedProxy = settings.network.trustedProxies.v4.includes(clientIP);
+  } else if (clientIP) {
+    trustedProxy = settings.network.trustedProxies.v6.includes(clientIP);
+  }
 
   if (req.header('X-API-Key') === settings.main.apiKey) {
     let userId = 1; // Work on original administrator account
@@ -21,16 +29,23 @@ export const checkUser: Middleware = async (req, _res, next) => {
     }
 
     user = await userRepository.findOne({ where: { id: userId } });
-  } else if (
-    settings.network.forwardAuth.enabled === true &&
-    req.header('Remote-Email') &&
-    req.header('Remote-User')
-  ) {
-    const userValue = req.header('Remote-User') ?? '';
-    const emailValue = req.header('Remote-Email') ?? '';
+  } else if (settings.network.forwardAuth.enabled && trustedProxy) {
+    const userValue = req.header(settings.network.forwardAuth.userHeader) ?? '';
+    const emailValue =
+      (settings.network.forwardAuth.emailHeader &&
+        settings.network.forwardAuth.emailHeader != '' &&
+        req.header(settings.network.forwardAuth.emailHeader)) ??
+      '';
 
-    user = await userRepository.findOne({
-      where: [
+    let query: object[] = [];
+
+    if (
+      settings.network.forwardAuth.emailHeader &&
+      settings.network.forwardAuth.emailHeader != '' &&
+      emailValue != ''
+    ) {
+      // email header was specified so we must verify it
+      query = [
         {
           jellyfinUsername: userValue,
           email: emailValue,
@@ -39,8 +54,24 @@ export const checkUser: Middleware = async (req, _res, next) => {
           plexUsername: userValue,
           email: emailValue,
         },
-      ],
-    });
+      ];
+    } else if (userValue != '') {
+      // email header not specified, just check the user header
+      query = [
+        {
+          jellyfinUsername: userValue,
+        },
+        {
+          plexUsername: userValue,
+        },
+      ];
+    }
+
+    if (query.length > 0) {
+      user = await userRepository.findOne({
+        where: query,
+      });
+    }
   } else if (req.session?.userId) {
     user = await userRepository.findOne({
       where: { id: req.session.userId },
