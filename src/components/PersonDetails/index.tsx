@@ -126,48 +126,40 @@ const PersonDetails = () => {
 
   const isLoading = !combinedCredits && !errorCombinedCredits;
 
+  const mediaTypePicker = (
+    <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0">
+      <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-gray-500 bg-gray-800 px-3 text-sm text-gray-100">
+        <CircleStackIcon className="h-6 w-6" />
+      </span>
+      <select
+        id="mediaType"
+        name="mediaType"
+        onChange={(e) => {
+          setCurrentMediaType(e.target.value as MediaType);
+          router.push({
+            pathname: router.pathname,
+            query: router.query.personId
+              ? { personId: router.query.personId }
+              : {},
+          });
+        }}
+        value={currentMediaType}
+        className="rounded-r-only"
+      >
+        <option value="all">{intl.formatMessage(globalMessages.all)}</option>
+        <option value="movie">
+          {intl.formatMessage(globalMessages.movies)}
+        </option>
+        <option value="tv">{intl.formatMessage(globalMessages.tvshows)}</option>
+      </select>
+    </div>
+  );
+
   const cast = (sortedCast ?? []).length > 0 && (
     <>
       <div className="slider-header">
-        <div className="mb-4 flex flex-grow flex-col justify-between lg:flex-row lg:items-end">
-          <div className="mt-8 md:flex md:items-center md:justify-between">
-            <div className="slider-title">
-              <span>{intl.formatMessage(messages.appearsin)}</span>
-            </div>
-          </div>
-          <div className="mt-2 flex flex-grow flex-col justify-end sm:flex-row lg:flex-grow-0">
-            <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0">
-              <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-gray-500 bg-gray-800 px-3 text-sm text-gray-100">
-                <CircleStackIcon className="h-6 w-6" />
-              </span>
-              <select
-                id="mediaType"
-                name="mediaType"
-                onChange={(e) => {
-                  setCurrentMediaType(e.target.value as MediaType);
-                  router.push({
-                    pathname: router.pathname,
-                    query: router.query.personId
-                      ? { personId: router.query.personId }
-                      : {},
-                  });
-                }}
-                value={currentMediaType}
-                className="rounded-r-only"
-              >
-                <option value="all">
-                  {intl.formatMessage(globalMessages.all)}
-                </option>
-                <option value="movie">
-                  {intl.formatMessage(globalMessages.movies)}
-                </option>
-                <option value="tv">
-                  {intl.formatMessage(globalMessages.tvshows)}
-                </option>
-              </select>
-              ;
-            </div>
-          </div>
+        <div className="slider-title">
+          <span>{intl.formatMessage(messages.appearsin)}</span>
         </div>
       </div>
 
@@ -278,7 +270,10 @@ const PersonDetails = () => {
           </div>
         )}
         <div className="text-center text-gray-300 lg:text-left">
-          <h1 className="text-3xl text-white lg:text-4xl">{data.name}</h1>
+          <div className="flex w-full items-center justify-between">
+            <h1 className="text-3xl text-white lg:text-4xl">{data.name}</h1>
+            <div className="flex-shrink-0">{mediaTypePicker}</div>
+          </div>
           <div className="mt-1 mb-2 space-y-1 text-xs text-white sm:text-sm lg:text-base">
             <div>{personAttributes.join(' | ')}</div>
             {(data.alsoKnownAs ?? []).length > 0 && (

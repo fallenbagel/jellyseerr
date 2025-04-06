@@ -33,6 +33,17 @@ personRoutes.get('/:id', async (req, res, next) => {
   }
 });
 
+function filterMediaByType(media: any[], mediaType: MediaType | 'all'): any[] {
+  switch (mediaType) {
+    case 'movie':
+      return media.filter((result) => result.media_type === 'movie');
+    case 'tv':
+      return media.filter((result) => result.media_type === 'tv');
+    default:
+      return media;
+  }
+}
+
 personRoutes.get('/:id/combined_credits', async (req, res, next) => {
   const tmdb = new TheMovieDb();
   const mediaType = (req.query.mediaType as MediaType | 'all') || 'all';
@@ -53,20 +64,8 @@ personRoutes.get('/:id/combined_credits', async (req, res, next) => {
       combinedCredits.crew.map((result) => result.id)
     );
 
-    switch (mediaType) {
-      case 'movie':
-        combinedCredits.cast = combinedCredits.cast.filter(
-          (result) => result.media_type === 'movie'
-        );
-        break;
-      case 'tv':
-        combinedCredits.cast = combinedCredits.cast.filter(
-          (result) => result.media_type === 'tv'
-        );
-        break;
-      default:
-        break;
-    }
+    combinedCredits.crew = filterMediaByType(combinedCredits.crew, mediaType);
+    combinedCredits.cast = filterMediaByType(combinedCredits.cast, mediaType);
 
     return res.status(200).json({
       cast: combinedCredits.cast
