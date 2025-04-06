@@ -416,6 +416,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
         tmdbId={request.media.tmdbId}
         type={request.type}
         is4k={request.is4k}
+        isAnime={request.isAnime}
         editRequest={request}
         onCancel={() => setShowEditModal(false)}
         onComplete={() => {

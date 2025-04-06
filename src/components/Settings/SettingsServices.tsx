@@ -31,7 +31,10 @@ const messages = defineMessages('components.Settings', {
   ssl: 'SSL',
   default: 'Default',
   default4k: 'Default 4K',
+  defaultAnime: 'Default Anime',
+  default4kAnime: 'Default 4K Anime',
   is4k: '4K',
+  isAnime: 'Anime',
   address: 'Address',
   activeProfile: 'Active Profile',
   addradarr: 'Add Radarr Server',
@@ -40,6 +43,8 @@ const messages = defineMessages('components.Settings', {
     'At least one {serverType} server must be marked as default in order for {mediaType} requests to be processed.',
   noDefaultNon4kServer:
     'If you only have a single {serverType} server for both non-4K and 4K content (or if you only download 4K content), your {serverType} server should <strong>NOT</strong> be designated as a 4K server.',
+  noDefaultNonAnimeServer:
+    'If you only have a single {serverType} server for both non-Anime and Anime content (or if you only download Anime content), your {serverType} server should <strong>NOT</strong> be designated as a Anime server.',
   noDefault4kServer:
     'A 4K {serverType} server must be marked as default in order to enable users to submit 4K {mediaType} requests.',
   mediaTypeMovie: 'movie',
@@ -55,6 +60,7 @@ interface ServerInstanceProps {
   name: string;
   isDefault?: boolean;
   is4k?: boolean;
+  isAnime?: boolean;
   hostname: string;
   port: number;
   isSSL?: boolean;
@@ -98,6 +104,7 @@ const ServerInstance = ({
   port,
   profileName,
   is4k = false,
+  isAnime = false,
   isDefault = false,
   isSSL = false,
   isSonarr = false,
@@ -126,15 +133,26 @@ const ServerInstance = ({
                 {name}
               </a>
             </h3>
-            {isDefault && !is4k && (
+            {isDefault && !is4k && !isAnime && (
               <Badge>{intl.formatMessage(messages.default)}</Badge>
             )}
-            {isDefault && is4k && (
+            {isDefault && is4k && isAnime && (
+              <Badge>{intl.formatMessage(messages.default4kAnime)}</Badge>
+            )}
+            {isDefault && is4k && !isAnime && (
               <Badge>{intl.formatMessage(messages.default4k)}</Badge>
+            )}
+            {isDefault && isAnime && (
+              <Badge>{intl.formatMessage(messages.defaultAnime)}</Badge>
             )}
             {!isDefault && is4k && (
               <Badge badgeType="warning">
                 {intl.formatMessage(messages.is4k)}
+              </Badge>
+            )}
+            {!isDefault && isAnime && (
+              <Badge badgeType="warning">
+                {intl.formatMessage(messages.isAnime)}
               </Badge>
             )}
             {isSSL && (
@@ -362,6 +380,19 @@ const SettingsServices = () => {
                     ),
                   })}
                 />
+              ) : !radarrData.some(
+                  (radarr) => radarr.isDefault && !radarr.isAnime
+                ) ? (
+                <Alert
+                  title={intl.formatMessage(messages.noDefaultNonAnimeServer, {
+                    serverType: 'Radarr',
+                    strong: (msg: React.ReactNode) => (
+                      <strong className="font-semibold text-white">
+                        {msg}
+                      </strong>
+                    ),
+                  })}
+                />
               ) : (
                 radarrData.some((radarr) => radarr.is4k) &&
                 !radarrData.some(
@@ -370,7 +401,7 @@ const SettingsServices = () => {
                   <Alert
                     title={intl.formatMessage(messages.noDefault4kServer, {
                       serverType: 'Radarr',
-                      mediaType: intl.formatMessage(messages.mediaTypeMovie),
+                      mediaType: intl.formatMessage(messages.mediaTypeSeries),
                     })}
                   />
                 )
@@ -386,6 +417,7 @@ const SettingsServices = () => {
                   isSSL={radarr.useSsl}
                   isDefault={radarr.isDefault}
                   is4k={radarr.is4k}
+                  isAnime={radarr.isAnime}
                   externalUrl={radarr.externalUrl}
                   onEdit={() => setEditRadarrModal({ open: true, radarr })}
                   onDelete={() =>
@@ -450,6 +482,19 @@ const SettingsServices = () => {
                     ),
                   })}
                 />
+              ) : !sonarrData.some(
+                  (sonarr) => sonarr.isDefault && !sonarr.isAnime
+                ) ? (
+                <Alert
+                  title={intl.formatMessage(messages.noDefaultNonAnimeServer, {
+                    serverType: 'Sonarr',
+                    strong: (msg: React.ReactNode) => (
+                      <strong className="font-semibold text-white">
+                        {msg}
+                      </strong>
+                    ),
+                  })}
+                />
               ) : (
                 sonarrData.some((sonarr) => sonarr.is4k) &&
                 !sonarrData.some(
@@ -475,6 +520,7 @@ const SettingsServices = () => {
                   isSonarr
                   isDefault={sonarr.isDefault}
                   is4k={sonarr.is4k}
+                  isAnime={sonarr.isAnime}
                   externalUrl={sonarr.externalUrl}
                   onEdit={() => setEditSonarrModal({ open: true, sonarr })}
                   onDelete={() =>
