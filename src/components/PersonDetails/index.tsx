@@ -7,6 +7,7 @@ import TitleCard from '@app/components/TitleCard';
 import globalMessages from '@app/i18n/globalMessages';
 import Error from '@app/pages/_error';
 import defineMessages from '@app/utils/defineMessages';
+import { CircleStackIcon } from '@heroicons/react/24/solid';
 import type { PersonCombinedCreditsResponse } from '@server/interfaces/api/personInterfaces';
 import type { PersonDetails as PersonDetailsType } from '@server/models/Person';
 import { groupBy } from 'lodash';
@@ -25,9 +26,12 @@ const messages = defineMessages('components.PersonDetails', {
   ascharacter: 'as {character}',
 });
 
+type MediaType = 'all' | 'movie' | 'tv';
+
 const PersonDetails = () => {
   const intl = useIntl();
   const router = useRouter();
+  const [currentMediaType, setCurrentMediaType] = useState<string>('all');
   const { data, error } = useSWR<PersonDetailsType>(
     `/api/v1/person/${router.query.personId}`
   );
@@ -35,7 +39,7 @@ const PersonDetails = () => {
 
   const { data: combinedCredits, error: errorCombinedCredits } =
     useSWR<PersonCombinedCreditsResponse>(
-      `/api/v1/person/${router.query.personId}/combined_credits`
+      `/api/v1/person/${router.query.personId}/combined_credits?mediaType=${currentMediaType}`
     );
 
   const sortedCast = useMemo(() => {
@@ -125,10 +129,48 @@ const PersonDetails = () => {
   const cast = (sortedCast ?? []).length > 0 && (
     <>
       <div className="slider-header">
-        <div className="slider-title">
-          <span>{intl.formatMessage(messages.appearsin)}</span>
+        <div className="mb-4 flex flex-grow flex-col justify-between lg:flex-row lg:items-end">
+          <div className="mt-8 md:flex md:items-center md:justify-between">
+            <div className="slider-title">
+              <span>{intl.formatMessage(messages.appearsin)}</span>
+            </div>
+          </div>
+          <div className="mt-2 flex flex-grow flex-col justify-end sm:flex-row lg:flex-grow-0">
+            <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0">
+              <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-gray-500 bg-gray-800 px-3 text-sm text-gray-100">
+                <CircleStackIcon className="h-6 w-6" />
+              </span>
+              <select
+                id="mediaType"
+                name="mediaType"
+                onChange={(e) => {
+                  setCurrentMediaType(e.target.value as MediaType);
+                  router.push({
+                    pathname: router.pathname,
+                    query: router.query.personId
+                      ? { personId: router.query.personId }
+                      : {},
+                  });
+                }}
+                value={currentMediaType}
+                className="rounded-r-only"
+              >
+                <option value="all">
+                  {intl.formatMessage(globalMessages.all)}
+                </option>
+                <option value="movie">
+                  {intl.formatMessage(globalMessages.movies)}
+                </option>
+                <option value="tv">
+                  {intl.formatMessage(globalMessages.tvshows)}
+                </option>
+              </select>
+              ;
+            </div>
+          </div>
         </div>
       </div>
+
       <ul className="cards-vertical">
         {sortedCast?.map((media, index) => {
           return (
@@ -251,6 +293,9 @@ const PersonDetails = () => {
                 })}
               </div>
             )}
+          </div>
+          <div className="mt-2 flex flex-grow flex-col sm:flex-row lg:flex-grow-0">
+            <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0"></div>
           </div>
           {data.biography && (
             <div className="relative text-left">

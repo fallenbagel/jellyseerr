@@ -1,4 +1,5 @@
 import TheMovieDb from '@server/api/themoviedb';
+import type { MediaType } from '@server/constants/media';
 import Media from '@server/entity/Media';
 import logger from '@server/logger';
 import {
@@ -34,6 +35,7 @@ personRoutes.get('/:id', async (req, res, next) => {
 
 personRoutes.get('/:id/combined_credits', async (req, res, next) => {
   const tmdb = new TheMovieDb();
+  const mediaType = (req.query.mediaType as MediaType | 'all') || 'all';
 
   try {
     const combinedCredits = await tmdb.getPersonCombinedCredits({
@@ -50,6 +52,21 @@ personRoutes.get('/:id/combined_credits', async (req, res, next) => {
       req.user,
       combinedCredits.crew.map((result) => result.id)
     );
+
+    switch (mediaType) {
+      case 'movie':
+        combinedCredits.cast = combinedCredits.cast.filter(
+          (result) => result.media_type === 'movie'
+        );
+        break;
+      case 'tv':
+        combinedCredits.cast = combinedCredits.cast.filter(
+          (result) => result.media_type === 'tv'
+        );
+        break;
+      default:
+        break;
+    }
 
     return res.status(200).json({
       cast: combinedCredits.cast
