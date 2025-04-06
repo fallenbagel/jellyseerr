@@ -196,9 +196,25 @@ components:
         trustProxy:
           type: boolean
           example: true
-        enableForwardAuth:
-          type: boolean
-          example: true
+        trustedProxies:
+          type: object
+          properties:
+            v4:
+              type: array
+            v6:
+              type: array
+        forwardAuth:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            userHeader:
+              type: string
+              example: 'Remote-User'
+            emailHeader:
+              type: string
+              example: 'Remote-Email'
+              nullable: true
     PlexLibrary:
       type: object
       properties:

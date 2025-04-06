@@ -115,6 +115,7 @@ const SettingsNetwork = () => {
 
   let trustedProxies = '';
   trustedProxies += data?.trustedProxies.v4.join(',') ?? '';
+  trustedProxies += ',';
   trustedProxies += data?.trustedProxies.v6.join(',') ?? '';
 
   return (
@@ -156,16 +157,16 @@ const SettingsNetwork = () => {
           validationSchema={NetworkSettingsSchema}
           onSubmit={async (values) => {
             try {
-              const trustedProxies: { v4: Address4[]; v6: Address6[] } = {
+              const trustedProxies: { v4: string[]; v6: string[] } = {
                 v4: [],
                 v6: [],
               };
-              for (let value in values.trustedProxies.split(',')) {
+              for (let value of values.trustedProxies.split(',')) {
                 value = value.trim();
                 if (value.indexOf('.') != -1) {
-                  trustedProxies.v4.push(new Address4(value));
-                } else {
-                  trustedProxies.v6.push(new Address6(value));
+                  trustedProxies.v4.push(value);
+                } else if (value.indexOf(':') != -1) {
+                  trustedProxies.v6.push(value);
                 }
               }
 
