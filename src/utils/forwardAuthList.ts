@@ -3,4 +3,6 @@ export const ForwardAuthAllowlist = [
   'Remote-Email',
   'Remote-Name',
   'Cf-Access-Authenticated-User-Email',
+  'X-authentik-username',
+  'X-authentik-email',
 ];
