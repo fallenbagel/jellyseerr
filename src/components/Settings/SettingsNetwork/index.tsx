@@ -330,6 +330,12 @@ const SettingsNetwork = () => {
                                 className="inline"
                                 id="forwardAuthUserHeader"
                                 name="forwardAuthUserHeader"
+                                onChange={(e) => {
+                                  setFieldValue(
+                                    'forwardAuthUserHeader',
+                                    e.target.value
+                                  );
+                                }}
                               >
                                 {ForwardAuthAllowlist.map((item) => (
                                   <option value={item} key={item}>
@@ -364,6 +370,12 @@ const SettingsNetwork = () => {
                                 className="inline"
                                 id="forwardAuthEmailHeader"
                                 name="forwardAuthEmailHeader"
+                                onChange={(e) => {
+                                  setFieldValue(
+                                    'forwardAuthEmailHeader',
+                                    e.target.value
+                                  );
+                                }}
                               >
                                 <option value="">--Do not use--</option>
                                 {ForwardAuthAllowlist.map((item) => (
