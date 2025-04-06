@@ -31,7 +31,7 @@ const messages = defineMessages('components.Settings.SettingsNetwork', {
   trustedProxies: 'Trusted Proxies',
   enableForwardAuth: 'Enable Proxy Forward Authentication',
   enableForwardAuthTip:
-    'Authenticate as the user specified by the X-Forwarded-User header. Only enable when secured behind a trusted proxy.',
+    'Authenticate as the user specified by the header. Only enable when secured behind a trusted proxy.',
   userHeaderName: 'User Header Name',
   emailHeaderName: 'Email Header Name',
   emailHeaderNameTip: 'Header with the Email. This value is optional',
