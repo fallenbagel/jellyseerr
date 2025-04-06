@@ -2,7 +2,8 @@
 
 You can use [forward-auth](https://doc.traefik.io/traefik/middlewares/http/forwardauth/) mechanism to log into Jellyseer.
 
-This works by passing the authenticated user e-mail in `Remote-User` header by the auth server, therefore enabling single-sign-on (SSO) login.
+This feature enables single sign-on(SSO) by passing the authenticated user(and optionally the authenticated user's email address for extra security) in the headers
+defined by `forwardAuth.userHeader` and `forwardAuth.emailHeader` in the configuration file or the settings in Settings->Network in Web UI.
 
 :::warning
 The user has to exist, it will not be created automatically.
@@ -15,6 +16,8 @@ If the user has no email set, the username will also work
 ## Example with Goauthentik and Traefik
 
 This example assumes that you have already configured an `application` and `provider` for Jellyseer in Authentik, and added the `provider` to the `outpost`.
+
+For our example, We'll assume `forwardAuth.userHeader` is set to `Remote-User`.
 
 We now have to create a scope mapping that will pass the `Remote-User` header containing user e-mail to Jellyseerr application.
 
@@ -31,7 +34,7 @@ return {
     "ak_proxy": {
         "user_attributes": {
             "additionalHeaders": {
-              "Remote-User": request.user.email
+              "Remote-User": request.user.username
             }
         }
     }
