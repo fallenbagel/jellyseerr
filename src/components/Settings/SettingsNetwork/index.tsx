@@ -299,7 +299,7 @@ const SettingsNetwork = () => {
                           onChange={() => {
                             setFieldValue(
                               'forwardAuthEnabled',
-                              !values.forwardAuthEnabled
+                              values.forwardAuthEnabled
                             );
                           }}
                         />

@@ -11,13 +11,29 @@ export const checkUser: Middleware = async (req, _res, next) => {
   let user: User | undefined | null;
 
   const userRepository = getRepository(User);
-  const clientIP = req.header('X-Forwarded-For');
   let trustedProxy = false;
+  // Client IP addresses are appended in this header.
+  // The first header should be the client IP and the last header
+  // should be the address of proxy just upstream of us. We use that
+  // address to figure out if it should be trusted
+  let proxyIP = null;
 
-  if (clientIP && clientIP.indexOf('.') != -1) {
-    trustedProxy = settings.network.trustedProxies.v4.includes(clientIP);
-  } else if (clientIP) {
-    trustedProxy = settings.network.trustedProxies.v6.includes(clientIP);
+  if (req.header('X-Forwarded-For')) {
+    const addresses = req
+      .header('X-Forwarded-For')!
+      .split(',')
+      .map((val) => val.trim())
+      .filter((val) => val.length > 0);
+
+    if (addresses.length > 0) {
+      proxyIP = addresses.pop();
+    }
+  }
+
+  if (proxyIP && proxyIP.indexOf('.') != -1) {
+    trustedProxy = settings.network.trustedProxies.v4.includes(proxyIP);
+  } else if (proxyIP) {
+    trustedProxy = settings.network.trustedProxies.v6.includes(proxyIP);
   }
 
   if (req.header('X-API-Key') === settings.main.apiKey) {
