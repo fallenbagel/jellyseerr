@@ -41,7 +41,11 @@ export const checkUser: Middleware = async (req, _res, next) => {
     }
 
     user = await userRepository.findOne({ where: { id: userId } });
-  } else if (settings.network.forwardAuth.enabled && trustedProxy) {
+  } else if (
+    settings.network.trustProxy &&
+    settings.network.forwardAuth.enabled &&
+    trustedProxy
+  ) {
     const userValue =
       (settings.network.forwardAuth.userHeader != '' &&
         req.header(settings.network.forwardAuth.userHeader)) ??

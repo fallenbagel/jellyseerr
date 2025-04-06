@@ -11,7 +11,6 @@ import type { NetworkSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { Address4, Address6 } from 'ip-address';
-import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR, { mutate } from 'swr';
@@ -36,8 +35,9 @@ const messages = defineMessages('components.Settings.SettingsNetwork', {
   forwardAuthEnabledTip:
     'Authenticate as the user specified by the header. Only enable when secured behind a trusted proxy.',
   userHeaderName: 'User Header Name',
+  userHeaderNameTip: 'Matched against Jellyfin or Plex Username',
   emailHeaderName: 'Email Header Name',
-  emailHeaderNameTip: 'Header with the Email. This value is optional',
+  emailHeaderNameTip: `Matched against email`,
   proxyEnabled: 'HTTP(S) Proxy',
   proxyHostname: 'Proxy Hostname',
   proxyPort: 'Proxy Port',
@@ -65,13 +65,6 @@ const SettingsNetwork = () => {
     error,
     mutate: revalidate,
   } = useSWR<NetworkSettings>('/api/v1/settings/network');
-
-  const [forwardAuthUserHeader, setForwardAuthUserHeader] = useState(
-    data?.forwardAuth.userHeader
-  );
-  const [forwardAuthEmailHeader, setForwardAuthEmailHeader] = useState(
-    data?.forwardAuth.emailHeader
-  );
 
   const NetworkSettingsSchema = Yup.object()
     .shape({
@@ -114,17 +107,30 @@ const SettingsNetwork = () => {
           }
           return true;
         }),
-      forwardAuthUserHeader: Yup.string().when('forwardAuthEnabled', {
-        is: (forwardAuthEnabled: boolean) => forwardAuthEnabled,
-        then: Yup.string().required(
-          intl.formatMessage(messages.validationForwardAuthUserHeader)
-        ),
-      }),
+      forwardAuthUserHeader: Yup.string(),
       forwardAuthEmailHeader: Yup.string(),
     })
-    .test('email-or-user', 'Either email OR user required', (values) => {
-      const { forwardAuthUserHeader, forwardAuthEmailHeader } = values;
-      return forwardAuthUserHeader != '' || forwardAuthEmailHeader != '';
+    .test('email-or-user', 'Either email OR user required', (values, ctx) => {
+      const {
+        trustProxy,
+        forwardAuthEnabled,
+        forwardAuthUserHeader,
+        forwardAuthEmailHeader,
+      } = values;
+
+      const userSet = forwardAuthUserHeader && forwardAuthUserHeader != '';
+      const emailSet = forwardAuthEmailHeader && forwardAuthEmailHeader != '';
+      const invalid =
+        trustProxy && forwardAuthEnabled && !(userSet || emailSet);
+
+      if (invalid) {
+        return ctx.createError({
+          path: 'forwardAuthHeaders',
+          message: 'Either user or email header must be set',
+        });
+      }
+
+      return true;
     });
 
   if (!data && !error) {
@@ -132,10 +138,10 @@ const SettingsNetwork = () => {
   }
 
   let trustedProxies = '';
-  const ipv4 = data?.trustedProxies.v4.join(',') ?? '';
-  const ipv6 = data?.trustedProxies.v6.join(',') ?? '';
+  const ipv4 = data?.trustedProxies.v4.join(', ') ?? '';
+  const ipv6 = data?.trustedProxies.v6.join(', ') ?? '';
   if (ipv4.length > 0 && ipv6.length > 0) {
-    trustedProxies = `${ipv4},${ipv6}`;
+    trustedProxies = `${ipv4}, ${ipv6}`;
   } else if (ipv4.length > 0) {
     trustedProxies = ipv4;
   } else if (ipv6.length > 0) {
@@ -161,6 +167,7 @@ const SettingsNetwork = () => {
       <div className="section">
         <Formik
           initialValues={{
+            forwardAuthHeaders: '',
             csrfProtection: data?.csrfProtection,
             forceIpv4First: data?.forceIpv4First,
             trustedProxies: trustedProxies,
@@ -214,8 +221,8 @@ const SettingsNetwork = () => {
                   trustedProxies: trustedProxies,
                   forwardAuth: {
                     enabled: values.forwardAuthEnabled,
-                    userHeader: forwardAuthUserHeader,
-                    emailHeader: forwardAuthEmailHeader,
+                    userHeader: values.forwardAuthUserHeader,
+                    emailHeader: values.forwardAuthEmailHeader,
                   },
                   proxy: {
                     enabled: values.proxyEnabled,
@@ -323,7 +330,7 @@ const SettingsNetwork = () => {
                           onChange={() => {
                             setFieldValue(
                               'forwardAuthEnabled',
-                              values.forwardAuthEnabled
+                              !values.forwardAuthEnabled
                             );
                           }}
                         />
@@ -340,6 +347,9 @@ const SettingsNetwork = () => {
                               {intl.formatMessage(messages.userHeaderName)}
                             </span>
                             <SettingsBadge badgeType="advanced" />
+                            <span className="label-tip">
+                              {intl.formatMessage(messages.userHeaderNameTip)}
+                            </span>
                           </label>
                           <div className="form-input-area">
                             <div className="form-input-field">
@@ -347,14 +357,27 @@ const SettingsNetwork = () => {
                                 className="inline"
                                 id="forwardAuthUserHeader"
                                 name="forwardAuthUserHeader"
-                                value={forwardAuthUserHeader}
                                 onChange={(e) => {
-                                  setForwardAuthUserHeader(e.target.value);
+                                  setFieldValue(
+                                    'forwardAuthUserHeader',
+                                    e.target.value
+                                  );
                                 }}
                               >
-                                <option value="">--Do not use--</option>
+                                <option
+                                  selected={values.forwardAuthUserHeader == ''}
+                                  value=""
+                                >
+                                  --Do not use--
+                                </option>
                                 {ForwardAuthAllowlist.map((item) => (
-                                  <option value={item} key={item}>
+                                  <option
+                                    value={item}
+                                    key={item}
+                                    selected={
+                                      values.forwardAuthUserHeader == item
+                                    }
+                                  >
                                     {item}
                                   </option>
                                 ))}
@@ -379,6 +402,9 @@ const SettingsNetwork = () => {
                               {intl.formatMessage(messages.emailHeaderName)}
                             </span>
                             <SettingsBadge badgeType="advanced" />
+                            <span className="label-tip">
+                              {intl.formatMessage(messages.emailHeaderNameTip)}
+                            </span>
                           </label>
                           <div className="form-input-area">
                             <div className="form-input-field">
@@ -386,14 +412,27 @@ const SettingsNetwork = () => {
                                 className="inline"
                                 id="forwardAuthEmailHeader"
                                 name="forwardAuthEmailHeader"
-                                value={forwardAuthEmailHeader}
                                 onChange={(e) => {
-                                  setForwardAuthEmailHeader(e.target.value);
+                                  setFieldValue(
+                                    'forwardAuthEmailHeader',
+                                    e.target.value
+                                  );
                                 }}
                               >
-                                <option value="">--Do not use--</option>
+                                <option
+                                  selected={values.forwardAuthEmailHeader == ''}
+                                  value=""
+                                >
+                                  --Do not use--
+                                </option>
                                 {ForwardAuthAllowlist.map((item) => (
-                                  <option value={item} key={item}>
+                                  <option
+                                    value={item}
+                                    key={item}
+                                    selected={
+                                      values.forwardAuthEmailHeader == item
+                                    }
+                                  >
                                     {item}
                                   </option>
                                 ))}
@@ -401,6 +440,12 @@ const SettingsNetwork = () => {
                             </div>
                           </div>
                         </div>
+                        {errors['forwardAuthHeaders'] &&
+                          typeof errors.forwardAuthHeaders === 'string' && (
+                            <div className="error">
+                              {errors.forwardAuthHeaders}
+                            </div>
+                          )}
                       </>
                     )}
                   </>
