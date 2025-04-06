@@ -71,12 +71,36 @@ const SettingsNetwork = () => {
         intl.formatMessage(messages.validationProxyPort)
       ),
     }),
-    trustedProxies: Yup.string().when('trustProxy', {
-      is: (trustProxy: boolean) => trustProxy,
-      then: Yup.string().required(
-        intl.formatMessage(messages.validationTrustedProxies)
-      ),
-    }),
+    trustedProxies: Yup.string()
+      .when('trustProxy', {
+        is: (trustProxy: boolean) => trustProxy,
+        then: Yup.string().required(
+          intl.formatMessage(messages.validationTrustedProxies)
+        ),
+      })
+      .test('validate-address', 'invalid address found', (value, ctx) => {
+        const addresses = value!.split(',').map((value) => value.trim());
+        for (const address of addresses) {
+          if (address.indexOf('.') != -1) {
+            if (!Address4.isValid(address)) {
+              return ctx.createError({
+                message: `Invalid IPv4 address: ${address}`,
+              });
+            }
+          } else if (address.indexOf(':') != -1) {
+            if (!Address6.isValid(address)) {
+              return ctx.createError({
+                message: `Invalid IPv6 address: ${address}`,
+              });
+            }
+          } else {
+            return ctx.createError({
+              message: `Invalid address: ${address}`,
+            });
+          }
+        }
+        return true;
+      }),
     forwardAuthUserHeader: Yup.string().when('forwardAuthEnabled', {
       is: (forwardAuthEnabled: boolean) => forwardAuthEnabled,
       then: Yup.string().required(
@@ -131,20 +155,20 @@ const SettingsNetwork = () => {
           enableReinitialize
           validationSchema={NetworkSettingsSchema}
           onSubmit={async (values) => {
-
-            const trustedProxies: { v4: Address4[]; v6: Address6[] } = {
-              v4: [],
-              v6: [],
-            };
-            for (const value in trustedProxies) {
-              if (value.indexOf('.') != -1) {
-                trustedProxies.v4.push(new Address4(value));
-              } else {
-                trustedProxies.v6.push(new Address6(value));
-              }
-            }
-
             try {
+              const trustedProxies: { v4: Address4[]; v6: Address6[] } = {
+                v4: [],
+                v6: [],
+              };
+              for (let value in values.trustedProxies.split(',')) {
+                value = value.trim();
+                if (value.indexOf('.') != -1) {
+                  trustedProxies.v4.push(new Address4(value));
+                } else {
+                  trustedProxies.v6.push(new Address6(value));
+                }
+              }
+
               await axios.post('/api/v1/settings/network', {
                 csrfProtection: values.csrfProtection,
                 trustProxy: values.trustProxy,
@@ -245,12 +269,6 @@ const SettingsNetwork = () => {
                           type="text"
                           id="trustedProxies"
                           name="trustedProxies"
-                          onChange={() => {
-                            setFieldValue(
-                              'trustedProxies',
-                              values.trustedProxies
-                            );
-                          }}
                         />
                       </div>
                       {errors.trustedProxies &&
