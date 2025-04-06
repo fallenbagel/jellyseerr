@@ -269,7 +269,7 @@ const PersonDetails = () => {
             />
           </div>
         )}
-        <div className="text-center text-gray-300 lg:text-left">
+        <div className="w-full text-center text-gray-300 lg:text-left">
           <div className="flex w-full items-center justify-between">
             <h1 className="text-3xl text-white lg:text-4xl">{data.name}</h1>
             <div className="flex-shrink-0">{mediaTypePicker}</div>
