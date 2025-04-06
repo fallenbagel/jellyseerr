@@ -39,7 +39,6 @@ const messages = defineMessages('components.Settings.SettingsNetwork', {
     "Use ',' as a separator, and '*.' as a wildcard for subdomains",
   proxyBypassLocalAddresses: 'Bypass Proxy for Local Addresses',
   validationProxyPort: 'You must provide a valid port',
-  advancedNetworkSettings: 'Advanced Network Settings',
   networkDisclaimer:
     'Network parameters from your container/system should be used instead of these settings. See the {docs} for more information.',
   docs: 'documentation',
@@ -370,23 +369,6 @@ const SettingsNetwork = () => {
                     </div>
                   </>
                 )}
-                <h3 className="heading mt-10">
-                  {intl.formatMessage(messages.advancedNetworkSettings)}
-                </h3>
-                <p className="description">
-                  {intl.formatMessage(messages.networkDisclaimer, {
-                    docs: (
-                      <a
-                        href="https://docs.jellyseerr.dev/troubleshooting"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-white"
-                      >
-                        {intl.formatMessage(messages.docs)}
-                      </a>
-                    ),
-                  })}
-                </p>
                 <div className="actions">
                   <div className="flex justify-end">
                     <span className="ml-3 inline-flex rounded-md shadow-sm">

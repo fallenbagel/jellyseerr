@@ -163,7 +163,7 @@ class JellyfinAPI extends ExternalAPI {
     } catch (e) {
       logger.debug('Failed to authenticate with headers', {
         label: 'Jellyfin API',
-        error: e.response?.status,
+        error: e.response?.statusText,
         ip: ClientIP,
       });
 

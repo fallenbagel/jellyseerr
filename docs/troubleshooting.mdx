@@ -97,37 +97,7 @@ You can try them all and see which one works for your network.
   </TabItem>
 </Tabs>
 
-### Option 2: Force IPV4 resolution first
-
-Sometimes there are configuration issues with IPV6 that prevent the hostname resolution from working correctly.
-
-You can try to force the resolution to use IPV4 first by going to `Settings > Networking > Advanced Networking` and enabling `Force IPv4 Resolution First` setting and restarting. You can also add the environment variable, `FORCE_IPV4_FIRST=true`:
-
-<Tabs groupId="methods" queryString>
-  <TabItem value="docker-cli" label="Docker CLI">
-
-Add the following to your `docker run` command:
-```bash
--e "FORCE_IPV4_FIRST=true"
-```
-
-  </TabItem>
-
-  <TabItem value="docker-compose" label="Docker Compose">
-
-Add the following to your `compose.yaml`:
-```yaml
----
-services:
-  jellyseerr:
-    environment:
-      - FORCE_IPV4_FIRST=true
-```
-
-  </TabItem>
-</Tabs>
-
-### Option 3: Use Jellyseerr through a proxy
+### Option 2: Use Jellyseerr through a proxy
 
 If you can't change your DNS servers or force IPV4 resolution, you can use Jellyseerr through a proxy.
 

@@ -21,7 +21,7 @@ const messages = defineMessages('components.TitleCard', {
   cleardata: 'Clear Data',
 });
 
-const Error = ({ id, tmdbId, tvdbId, type, canExpand }: ErrorCardProps) => {
+const ErrorCard = ({ id, tmdbId, tvdbId, type, canExpand }: ErrorCardProps) => {
   const intl = useIntl();
 
   const deleteMedia = async () => {
@@ -129,4 +129,4 @@ const Error = ({ id, tmdbId, tvdbId, type, canExpand }: ErrorCardProps) => {
     </div>
   );
 };
-export default Error;
+export default ErrorCard;

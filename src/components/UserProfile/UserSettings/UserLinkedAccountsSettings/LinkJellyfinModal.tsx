@@ -84,14 +84,8 @@ const LinkJellyfinModal: React.FC<LinkJellyfinModalProps> = ({
             await axios.post(
               `/api/v1/user/${user?.id}/settings/linked-accounts/jellyfin`,
               {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  username,
-                  password,
-                }),
+                username,
+                password,
               }
             );
             onSave();

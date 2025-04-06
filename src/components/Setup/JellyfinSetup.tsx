@@ -113,11 +113,6 @@ function JellyfinSetup({
       validationSchema={LoginSchema}
       onSubmit={async (values) => {
         try {
-          // Check if serverType is either 'Jellyfin' or 'Emby'
-          // if (serverType !== 'Jellyfin' && serverType !== 'Emby') {
-          //   throw new Error('Invalid serverType'); // You can customize the error message
-          // }
-
           await axios.post('/api/v1/auth/jellyfin', {
             username: values.username,
             password: values.password,

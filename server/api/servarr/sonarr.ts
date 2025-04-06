@@ -206,7 +206,7 @@ class SonarrAPI extends ServarrBase<{
           });
           logger.debug('Sonarr update details', {
             label: 'Sonarr',
-            movie: newSeriesResponse.data,
+            series: newSeriesResponse.data,
           });
 
           if (options.searchNow) {
@@ -254,7 +254,7 @@ class SonarrAPI extends ServarrBase<{
         logger.info('Sonarr accepted request', { label: 'Sonarr' });
         logger.debug('Sonarr add details', {
           label: 'Sonarr',
-          movie: createdSeriesResponse.data,
+          series: createdSeriesResponse.data,
         });
       } else {
         logger.error('Failed to add movie to Sonarr', {

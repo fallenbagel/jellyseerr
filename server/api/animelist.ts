@@ -164,9 +164,10 @@ class AnimeListMapping {
       const response = await axios.get(MAPPING_URL, {
         responseType: 'stream',
       });
-      await new Promise<void>((resolve) => {
+      await new Promise<void>((resolve, reject) => {
         const writer = fs.createWriteStream(LOCAL_PATH);
         writer.on('finish', resolve);
+        writer.on('error', reject);
         response.data.pipe(writer);
       });
     } catch (e) {

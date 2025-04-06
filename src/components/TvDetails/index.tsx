@@ -382,9 +382,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
     setIsUpdating(true);
 
     try {
-      await axios.delete('/api/v1/watchlist/' + tv?.id, {
-        method: 'DELETE',
-      });
+      await axios.delete('/api/v1/watchlist/' + tv?.id);
 
       addToast(
         <span>

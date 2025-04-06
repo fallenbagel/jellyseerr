@@ -141,8 +141,7 @@ const UserLinkedAccountsSettings = () => {
   const deleteRequest = async (account: string) => {
     try {
       await axios.delete(
-        `/api/v1/user/${user?.id}/settings/linked-accounts/${account}`,
-        { method: 'DELETE' }
+        `/api/v1/user/${user?.id}/settings/linked-accounts/${account}`
       );
     } catch {
       setError(intl.formatMessage(messages.deleteFailed));

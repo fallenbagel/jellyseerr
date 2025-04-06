@@ -180,6 +180,7 @@ class TelegramAgent
         await axios.post(endpoint, {
           ...notificationPayload,
           chat_id: settings.options.chatId,
+          message_thread_id: settings.options.messageThreadId,
           disable_notification: !!settings.options.sendSilently,
         } as TelegramMessagePayload | TelegramPhotoPayload);
       } catch (e) {
@@ -215,6 +216,8 @@ class TelegramAgent
           await axios.post(endpoint, {
             ...notificationPayload,
             chat_id: payload.notifyUser.settings.telegramChatId,
+            message_thread_id:
+              payload.notifyUser.settings.telegramMessageThreadId,
             disable_notification:
               !!payload.notifyUser.settings.telegramSendSilently,
           } as TelegramMessagePayload | TelegramPhotoPayload);
@@ -262,6 +265,7 @@ class TelegramAgent
                 await axios.post(endpoint, {
                   ...notificationPayload,
                   chat_id: user.settings.telegramChatId,
+                  message_thread_id: user.settings.telegramMessageThreadId,
                   disable_notification: !!user.settings?.telegramSendSilently,
                 } as TelegramMessagePayload | TelegramPhotoPayload);
               } catch (e) {
