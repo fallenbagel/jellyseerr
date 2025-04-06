@@ -114,9 +114,15 @@ const SettingsNetwork = () => {
   }
 
   let trustedProxies = '';
-  trustedProxies += data?.trustedProxies.v4.join(',') ?? '';
-  trustedProxies += ',';
-  trustedProxies += data?.trustedProxies.v6.join(',') ?? '';
+  const ipv4 = data?.trustedProxies.v4.join(',') ?? '';
+  const ipv6 = data?.trustedProxies.v6.join(',') ?? '';
+  if (ipv4.length > 0 && ipv6.length > 0) {
+    trustedProxies = `${ipv4},${ipv6}`;
+  } else if (ipv4.length > 0) {
+    trustedProxies = ipv4;
+  } else if (ipv6.length > 0) {
+    trustedProxies = ipv6;
+  }
 
   return (
     <>

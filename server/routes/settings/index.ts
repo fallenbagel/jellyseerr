@@ -87,6 +87,7 @@ settingsRoutes.get('/network', (req, res) => {
 settingsRoutes.post('/network', async (req, res) => {
   const settings = getSettings();
 
+  settings.network.trustedProxies = { v4: [], v6: [] };
   settings.network = merge(settings.network, req.body);
   await settings.save();
 

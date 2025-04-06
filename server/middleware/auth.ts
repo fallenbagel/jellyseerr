@@ -16,7 +16,8 @@ export const checkUser: Middleware = async (req, _res, next) => {
   // The first header should be the client IP and the last header
   // should be the address of proxy just upstream of us. We use that
   // address to figure out if it should be trusted
-  let proxyIP = null;
+  // Default to the remote address
+  let proxyIP = req.connection.remoteAddress;
 
   if (req.header('X-Forwarded-For')) {
     const addresses = req
