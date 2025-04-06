@@ -293,9 +293,11 @@ const SettingsNetwork = () => {
                             htmlFor="forwardAuthUserHeader"
                             className="text-label"
                           >
-                            {intl.formatMessage(messages.userHeaderName)}
+                            <span className="mr-2">
+                              {intl.formatMessage(messages.userHeaderName)}
+                            </span>
+                            <SettingsBadge badgeType="advanced" />
                           </label>
-                          <SettingsBadge badgeType="advanced" />
                           <div className="form-input-area">
                             <div className="form-input-field">
                               <Field
@@ -319,9 +321,11 @@ const SettingsNetwork = () => {
                             htmlFor="forwardAuthEmailHeader"
                             className="text-label"
                           >
-                            {intl.formatMessage(messages.emailHeaderName)}
+                            <span className="mr-2">
+                              {intl.formatMessage(messages.emailHeaderName)}
+                            </span>
+                            <SettingsBadge badgeType="advanced" />
                           </label>
-                          <SettingsBadge badgeType="advanced" />
                           <div className="form-input-area">
                             <div className="form-input-field">
                               <Field
