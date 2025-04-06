@@ -9,6 +9,7 @@ import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import type { NetworkSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
+import { Address4, Address6 } from 'ip-address';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR, { mutate } from 'swr';
@@ -29,8 +30,8 @@ const messages = defineMessages('components.Settings.SettingsNetwork', {
   trustProxyTip:
     'Allow Jellyseerr to correctly register client IP addresses behind a proxy',
   trustedProxies: 'Trusted Proxies',
-  enableForwardAuth: 'Enable Proxy Forward Authentication',
-  enableForwardAuthTip:
+  forwardAuthEnabled: 'Enable Proxy Forward Authentication',
+  forwardAuthEnabledTip:
     'Authenticate as the user specified by the header. Only enable when secured behind a trusted proxy.',
   userHeaderName: 'User Header Name',
   emailHeaderName: 'Email Header Name',
@@ -88,6 +89,10 @@ const SettingsNetwork = () => {
     return <LoadingSpinner />;
   }
 
+  let trustedProxies = '';
+  trustedProxies += data?.trustedProxies.v4.join(',') ?? '';
+  trustedProxies += data?.trustedProxies.v6.join(',') ?? '';
+
   return (
     <>
       <PageTitle
@@ -109,7 +114,7 @@ const SettingsNetwork = () => {
           initialValues={{
             csrfProtection: data?.csrfProtection,
             forceIpv4First: data?.forceIpv4First,
-            trustedProxies: data?.trustedProxies,
+            trustedProxies: trustedProxies,
             trustProxy: data?.trustProxy,
             forwardAuthEnabled: data?.forwardAuth.enabled,
             forwardAuthUserHeader: data?.forwardAuth.userHeader,
@@ -126,6 +131,19 @@ const SettingsNetwork = () => {
           enableReinitialize
           validationSchema={NetworkSettingsSchema}
           onSubmit={async (values) => {
+
+            const trustedProxies: { v4: Address4[]; v6: Address6[] } = {
+              v4: [],
+              v6: [],
+            };
+            for (const value in trustedProxies) {
+              if (value.indexOf('.') != -1) {
+                trustedProxies.v4.push(new Address4(value));
+              } else {
+                trustedProxies.v6.push(new Address6(value));
+              }
+            }
+
             try {
               await axios.post('/api/v1/settings/network', {
                 csrfProtection: values.csrfProtection,
@@ -144,7 +162,7 @@ const SettingsNetwork = () => {
                   csrfProtection: values.csrfProtection,
                   forceIpv4First: values.forceIpv4First,
                   trustProxy: values.trustProxy,
-                  trustedProxies: values.trustedProxies,
+                  trustedProxies: trustedProxies,
                   forwardAuth: {
                     enabled: values.forwardAuthEnabled,
                     userHeader: values.forwardAuthUserHeader,
@@ -244,25 +262,25 @@ const SettingsNetwork = () => {
                     </div>
                     <div className="form-row">
                       <label
-                        htmlFor="enableForwardAuth"
+                        htmlFor="forwardAuthEnabled"
                         className="checkbox-label"
                       >
                         <span className="mr-2">
-                          {intl.formatMessage(messages.enableForwardAuth)}
+                          {intl.formatMessage(messages.forwardAuthEnabled)}
                         </span>
                         <SettingsBadge badgeType="advanced" className="mr-2" />
                         <span className="label-tip">
-                          {intl.formatMessage(messages.enableForwardAuthTip)}
+                          {intl.formatMessage(messages.forwardAuthEnabledTip)}
                         </span>
                       </label>
                       <div className="form-input-area">
                         <Field
                           type="checkbox"
-                          id="enableForwardAuth"
-                          name="enableForwardAuth"
+                          id="forwardAuthEnabled"
+                          name="forwardAuthEnabled"
                           onChange={() => {
                             setFieldValue(
-                              'enableForwardAuth',
+                              'forwardAuthEnabled',
                               !values.forwardAuthEnabled
                             );
                           }}
@@ -293,7 +311,7 @@ const SettingsNetwork = () => {
                             {errors.forwardAuthUserHeader &&
                               touched.forwardAuthUserHeader &&
                               typeof errors.forwardAuthUserHeader ===
-                                'string' && (
+                              'string' && (
                                 <div className="error">
                                   {errors.forwardAuthUserHeader}
                                 </div>
