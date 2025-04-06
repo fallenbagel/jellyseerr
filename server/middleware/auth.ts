@@ -22,11 +22,24 @@ export const checkUser: Middleware = async (req, _res, next) => {
 
     user = await userRepository.findOne({ where: { id: userId } });
   } else if (
-    settings.network.enableForwardAuth === true &&
+    settings.network.forwardAuth.enabled === true &&
+    req.header('Remote-Email') &&
     req.header('Remote-User')
   ) {
+    const userValue = req.header('Remote-User') ?? '';
+    const emailValue = req.header('Remote-Email') ?? '';
+
     user = await userRepository.findOne({
-      where: { jellyfinUsername: req.header('Remote-User')! },
+      where: [
+        {
+          jellyfinUsername: userValue,
+          email: emailValue,
+        },
+        {
+          plexUsername: userValue,
+          email: emailValue,
+        },
+      ],
     });
   } else if (req.session?.userId) {
     user = await userRepository.findOne({

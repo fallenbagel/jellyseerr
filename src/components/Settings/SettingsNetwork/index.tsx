@@ -28,9 +28,13 @@ const messages = defineMessages('components.Settings.SettingsNetwork', {
   trustProxy: 'Enable Proxy Support',
   trustProxyTip:
     'Allow Jellyseerr to correctly register client IP addresses behind a proxy',
+  trustedProxies: 'Trusted Proxies',
   enableForwardAuth: 'Enable Proxy Forward Authentication',
   enableForwardAuthTip:
     'Authenticate as the user specified by the X-Forwarded-User header. Only enable when secured behind a trusted proxy.',
+  userHeaderName: 'User Header Name',
+  emailHeaderName: 'Email Header Name',
+  emailHeaderNameTip: 'Header with the Email. This value is optional',
   proxyEnabled: 'HTTP(S) Proxy',
   proxyHostname: 'Proxy Hostname',
   proxyPort: 'Proxy Port',
@@ -42,6 +46,9 @@ const messages = defineMessages('components.Settings.SettingsNetwork', {
     "Use ',' as a separator, and '*.' as a wildcard for subdomains",
   proxyBypassLocalAddresses: 'Bypass Proxy for Local Addresses',
   validationProxyPort: 'You must provide a valid port',
+  validationForwardAuthUserHeader: 'You must provide a user header name',
+  validationTrustedProxies: 'You must provide a list of trusted proxies',
+  advancedNetworkSettings: 'Advanced Network Settings',
   networkDisclaimer:
     'Network parameters from your container/system should be used instead of these settings. See the {docs} for more information.',
   docs: 'documentation',
@@ -61,6 +68,18 @@ const SettingsNetwork = () => {
       is: (proxyEnabled: boolean) => proxyEnabled,
       then: Yup.number().required(
         intl.formatMessage(messages.validationProxyPort)
+      ),
+    }),
+    trustedProxies: Yup.string().when('trustedProxies', {
+      is: (trustProxy: boolean) => trustProxy,
+      then: Yup.string().required(
+        intl.formatMessage(messages.validationTrustedProxies)
+      ),
+    }),
+    forwardAuthUserHeader: Yup.string().when('forwardAuthEnabled', {
+      is: (forwardAuthEnabled: boolean) => forwardAuthEnabled,
+      then: Yup.string().required(
+        intl.formatMessage(messages.validationForwardAuthUserHeader)
       ),
     }),
   });
@@ -90,9 +109,11 @@ const SettingsNetwork = () => {
           initialValues={{
             csrfProtection: data?.csrfProtection,
             forceIpv4First: data?.forceIpv4First,
-            enableForwardAuth: data?.enableForwardAuth,
-            dnsServers: data?.dnsServers,
+            trustedProxies: data?.trustedProxies,
             trustProxy: data?.trustProxy,
+            forwardAuthEnabled: data?.forwardAuth.enabled,
+            forwardAuthUserHeader: data?.forwardAuth.userHeader,
+            forwardAuthEmailHeader: data?.forwardAuth.emailHeader,
             proxyEnabled: data?.proxy?.enabled,
             proxyHostname: data?.proxy?.hostname,
             proxyPort: data?.proxy?.port,
@@ -123,7 +144,12 @@ const SettingsNetwork = () => {
                   csrfProtection: values.csrfProtection,
                   forceIpv4First: values.forceIpv4First,
                   trustProxy: values.trustProxy,
-                  enableForwardAuth: values.enableForwardAuth,
+                  trustedProxies: values.trustedProxies,
+                  forwardAuth: {
+                    enabled: values.forwardAuthEnabled,
+                    userHeader: values.forwardAuthUserHeader,
+                    emailHeader: values.forwardAuthEmailHeader,
+                  },
                   proxy: {
                     enabled: values.proxyEnabled,
                     hostname: values.proxyHostname,
@@ -185,6 +211,29 @@ const SettingsNetwork = () => {
                   </div>
                 </div>
                 <div className="form-row">
+                  <label htmlFor="trustedProxies" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.trustedProxies)}
+                    </span>
+                    <SettingsBadge badgeType="restartRequired" />
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      type="input"
+                      id="trustedProxies"
+                      name="trustedProxies"
+                      onChange={() => {
+                        setFieldValue('trustedProxies', values.trustedProxies);
+                      }}
+                    />
+                  </div>
+                  {errors.trustedProxies &&
+                    touched.trustedProxies &&
+                    typeof errors.trustedProxies === 'string' && (
+                      <div className="error">{errors.trustedProxies}</div>
+                    )}
+                </div>
+                <div className="form-row">
                   <label htmlFor="enableForwardAuth" className="checkbox-label">
                     <span className="mr-2">
                       {intl.formatMessage(messages.enableForwardAuth)}
@@ -202,10 +251,48 @@ const SettingsNetwork = () => {
                       onChange={() => {
                         setFieldValue(
                           'enableForwardAuth',
-                          !values.enableForwardAuth
+                          !values.forwardAuthEnabled
                         );
                       }}
                     />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="forwardAuthUserHeader" className="text-label">
+                    {intl.formatMessage(messages.userHeaderName)}
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field">
+                      <Field
+                        id="forwardAuthUserHeader"
+                        name="forwardAuthUserHeader"
+                        type="text"
+                      />
+                    </div>
+                    {errors.forwardAuthUserHeader &&
+                      touched.forwardAuthUserHeader &&
+                      typeof errors.forwardAuthUserHeader === 'string' && (
+                        <div className="error">
+                          {errors.forwardAuthUserHeader}
+                        </div>
+                      )}
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label
+                    htmlFor="forwardAuthEmailHeader"
+                    className="text-label"
+                  >
+                    {intl.formatMessage(messages.emailHeaderName)}
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field">
+                      <Field
+                        id="forwardAuthEmailHeader"
+                        name="forwardAuthEmailHeader"
+                        type="text"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="form-row">
