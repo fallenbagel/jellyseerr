@@ -89,7 +89,10 @@ const SettingsNetwork = () => {
           ),
         })
         .test('validate-address', 'invalid address found', (value, ctx) => {
-          const addresses = value!.split(',').map((value) => value.trim());
+          if (!value) {
+            return true;
+          }
+          const addresses = value.split(',').map((value) => value.trim());
           for (const address of addresses) {
             if (address.indexOf('.') != -1) {
               if (!Address4.isValid(address)) {
