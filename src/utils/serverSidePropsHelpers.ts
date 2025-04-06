@@ -1,31 +1,33 @@
-import { getSettings } from '@server/lib/settings';
 import type { NextPageContext } from 'next/dist/shared/lib/utils';
 import type { GetServerSidePropsContext, PreviewData } from 'next/types';
 import type { ParsedUrlQuery } from 'querystring';
+import { ForwardAuthAllowlist } from './forwardAuthList';
 
 export const getAuthHeaders = (
   ctx: NextPageContext | GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
 ) => {
-  const settings = getSettings();
-  const userHeader = settings.network.forwardAuth.userHeader;
-  const emailHeader = settings.network.forwardAuth.emailHeader ?? '';
+  if (!(ctx.req && ctx.req.headers)) {
+    return undefined;
+  }
 
-  return ctx.req && ctx.req.headers
-    ? {
-        ...(ctx.req.headers.cookie && {
-          cookie: ctx.req.headers.cookie,
-        }),
-        ...(ctx.req.headers[userHeader] && {
-          userHeader: ctx.req.headers[userHeader] as string,
-        }),
-        ...(emailHeader &&
-          emailHeader != '' &&
-          ctx.req.headers[emailHeader] && {
-            emailHeader: ctx.req.headers[emailHeader] as string,
-          }),
-        ...(ctx.req.headers['x-forwarded-for'] && {
-          'x-forwarded-for': ctx.req.headers['x-forwarded-for'] as string,
-        }),
-      }
-    : undefined;
+  const forwardAuthVars: {
+    [key: string]: string | string[] | undefined;
+  } = {};
+  for (const header of ForwardAuthAllowlist) {
+    if (ctx.req.headers[header.toLowerCase()]) {
+      forwardAuthVars[header.toLowerCase()] = ctx.req.headers[
+        header.toLowerCase()
+      ] as string;
+    }
+  }
+
+  return {
+    ...(ctx.req.headers.cookie && {
+      cookie: ctx.req.headers.cookie,
+    }),
+    ...(ctx.req.headers['x-forwarded-for'] && {
+      'x-forwarded-for': ctx.req.headers['x-forwarded-for'] as string,
+    }),
+    ...forwardAuthVars,
+  };
 };

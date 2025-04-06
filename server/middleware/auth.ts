@@ -49,18 +49,13 @@ export const checkUser: Middleware = async (req, _res, next) => {
   } else if (settings.network.forwardAuth.enabled && trustedProxy) {
     const userValue = req.header(settings.network.forwardAuth.userHeader) ?? '';
     const emailValue =
-      (settings.network.forwardAuth.emailHeader &&
-        settings.network.forwardAuth.emailHeader != '' &&
+      (settings.network.forwardAuth.emailHeader != '' &&
         req.header(settings.network.forwardAuth.emailHeader)) ??
       '';
 
     let query: object[] = [];
 
-    if (
-      settings.network.forwardAuth.emailHeader &&
-      settings.network.forwardAuth.emailHeader != '' &&
-      emailValue != ''
-    ) {
+    if (settings.network.forwardAuth.emailHeader != '' && emailValue != '') {
       // email header was specified so we must verify it
       query = [
         {

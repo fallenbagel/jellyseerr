@@ -5,6 +5,7 @@ import Tooltip from '@app/components/Common/Tooltip';
 import SettingsBadge from '@app/components/Settings/SettingsBadge';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
+import { ForwardAuthAllowlist } from '@app/utils/forwardAuthList';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import type { NetworkSettings } from '@server/lib/settings';
 import axios from 'axios';
@@ -325,11 +326,17 @@ const SettingsNetwork = () => {
                           </label>
                           <div className="form-input-area">
                             <div className="form-input-field">
-                              <Field
+                              <select
+                                className="inline"
                                 id="forwardAuthUserHeader"
                                 name="forwardAuthUserHeader"
-                                type="text"
-                              />
+                              >
+                                {ForwardAuthAllowlist.map((item) => (
+                                  <option value={item} key={item}>
+                                    {item}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                             {errors.forwardAuthUserHeader &&
                               touched.forwardAuthUserHeader &&
@@ -353,11 +360,18 @@ const SettingsNetwork = () => {
                           </label>
                           <div className="form-input-area">
                             <div className="form-input-field">
-                              <Field
+                              <select
+                                className="inline"
                                 id="forwardAuthEmailHeader"
                                 name="forwardAuthEmailHeader"
-                                type="text"
-                              />
+                              >
+                                <option value="">--Do not use--</option>
+                                {ForwardAuthAllowlist.map((item) => (
+                                  <option value={item} key={item}>
+                                    {item}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                           </div>
                         </div>
