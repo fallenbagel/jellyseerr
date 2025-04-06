@@ -73,50 +73,56 @@ const SettingsNetwork = () => {
     data?.forwardAuth.emailHeader
   );
 
-  const NetworkSettingsSchema = Yup.object().shape({
-    proxyPort: Yup.number().when('proxyEnabled', {
-      is: (proxyEnabled: boolean) => proxyEnabled,
-      then: Yup.number().required(
-        intl.formatMessage(messages.validationProxyPort)
-      ),
-    }),
-    trustedProxies: Yup.string()
-      .when('trustProxy', {
-        is: (trustProxy: boolean) => trustProxy,
-        then: Yup.string().required(
-          intl.formatMessage(messages.validationTrustedProxies)
+  const NetworkSettingsSchema = Yup.object()
+    .shape({
+      proxyPort: Yup.number().when('proxyEnabled', {
+        is: (proxyEnabled: boolean) => proxyEnabled,
+        then: Yup.number().required(
+          intl.formatMessage(messages.validationProxyPort)
         ),
-      })
-      .test('validate-address', 'invalid address found', (value, ctx) => {
-        const addresses = value!.split(',').map((value) => value.trim());
-        for (const address of addresses) {
-          if (address.indexOf('.') != -1) {
-            if (!Address4.isValid(address)) {
-              return ctx.createError({
-                message: `Invalid IPv4 address: ${address}`,
-              });
-            }
-          } else if (address.indexOf(':') != -1) {
-            if (!Address6.isValid(address)) {
-              return ctx.createError({
-                message: `Invalid IPv6 address: ${address}`,
-              });
-            }
-          } else {
-            return ctx.createError({
-              message: `Invalid address: ${address}`,
-            });
-          }
-        }
-        return true;
       }),
-    forwardAuthUserHeader: Yup.string().when('forwardAuthEnabled', {
-      is: (forwardAuthEnabled: boolean) => forwardAuthEnabled,
-      then: Yup.string().required(
-        intl.formatMessage(messages.validationForwardAuthUserHeader)
-      ),
-    }),
-  });
+      trustedProxies: Yup.string()
+        .when('trustProxy', {
+          is: (trustProxy: boolean) => trustProxy,
+          then: Yup.string().required(
+            intl.formatMessage(messages.validationTrustedProxies)
+          ),
+        })
+        .test('validate-address', 'invalid address found', (value, ctx) => {
+          const addresses = value!.split(',').map((value) => value.trim());
+          for (const address of addresses) {
+            if (address.indexOf('.') != -1) {
+              if (!Address4.isValid(address)) {
+                return ctx.createError({
+                  message: `Invalid IPv4 address: ${address}`,
+                });
+              }
+            } else if (address.indexOf(':') != -1) {
+              if (!Address6.isValid(address)) {
+                return ctx.createError({
+                  message: `Invalid IPv6 address: ${address}`,
+                });
+              }
+            } else {
+              return ctx.createError({
+                message: `Invalid address: ${address}`,
+              });
+            }
+          }
+          return true;
+        }),
+      forwardAuthUserHeader: Yup.string().when('forwardAuthEnabled', {
+        is: (forwardAuthEnabled: boolean) => forwardAuthEnabled,
+        then: Yup.string().required(
+          intl.formatMessage(messages.validationForwardAuthUserHeader)
+        ),
+      }),
+      forwardAuthEmailHeader: Yup.string(),
+    })
+    .test('email-or-user', 'Either email OR user required', (values) => {
+      const { forwardAuthUserHeader, forwardAuthEmailHeader } = values;
+      return forwardAuthUserHeader != '' || forwardAuthEmailHeader != '';
+    });
 
   if (!data && !error) {
     return <LoadingSpinner />;
@@ -205,8 +211,8 @@ const SettingsNetwork = () => {
                   trustedProxies: trustedProxies,
                   forwardAuth: {
                     enabled: values.forwardAuthEnabled,
-                    userHeader: values.forwardAuthUserHeader,
-                    emailHeader: values.forwardAuthEmailHeader,
+                    userHeader: forwardAuthUserHeader,
+                    emailHeader: forwardAuthEmailHeader,
                   },
                   proxy: {
                     enabled: values.proxyEnabled,
