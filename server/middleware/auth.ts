@@ -16,18 +16,13 @@ export const checkUser: Middleware = async (req, _res, next) => {
   // The first header should be the client IP and the last header
   // should be the address of proxy just upstream of us. We use that
   // address to figure out if it should be trusted
-  // Default to the remote address
-  let proxyIP = req.connection.remoteAddress;
+  let proxyIP = null;
 
-  if (req.header('X-Forwarded-For')) {
-    const addresses = req
-      .header('X-Forwarded-For')!
-      .split(',')
-      .map((val) => val.trim())
-      .filter((val) => val.length > 0);
-
-    if (addresses.length > 0) {
-      proxyIP = addresses.pop();
+  const ipHeader = req.header('X-Forwarded-For');
+  if (ipHeader) {
+    const lastComma = ipHeader.lastIndexOf(',');
+    if (lastComma != -1) {
+      proxyIP = ipHeader.slice(lastComma + 1).trim();
     }
   }
 
@@ -47,7 +42,10 @@ export const checkUser: Middleware = async (req, _res, next) => {
 
     user = await userRepository.findOne({ where: { id: userId } });
   } else if (settings.network.forwardAuth.enabled && trustedProxy) {
-    const userValue = req.header(settings.network.forwardAuth.userHeader) ?? '';
+    const userValue =
+      (settings.network.forwardAuth.userHeader != '' &&
+        req.header(settings.network.forwardAuth.userHeader)) ??
+      '';
     const emailValue =
       (settings.network.forwardAuth.emailHeader != '' &&
         req.header(settings.network.forwardAuth.emailHeader)) ??
@@ -55,8 +53,13 @@ export const checkUser: Middleware = async (req, _res, next) => {
 
     let query: object[] = [];
 
-    if (settings.network.forwardAuth.emailHeader != '' && emailValue != '') {
-      // email header was specified so we must verify it
+    if (
+      settings.network.forwardAuth.emailHeader != '' &&
+      settings.network.forwardAuth.userHeader != '' &&
+      emailValue != '' &&
+      userValue != ''
+    ) {
+      // email & user header was specified so we must verify both
       query = [
         {
           jellyfinUsername: userValue,
@@ -67,14 +70,25 @@ export const checkUser: Middleware = async (req, _res, next) => {
           email: emailValue,
         },
       ];
-    } else if (userValue != '') {
-      // email header not specified, just check the user header
+    } else if (
+      settings.network.forwardAuth.userHeader != '' &&
+      userValue != ''
+    ) {
       query = [
         {
           jellyfinUsername: userValue,
         },
         {
           plexUsername: userValue,
+        },
+      ];
+    } else if (
+      settings.network.forwardAuth.emailHeader != '' &&
+      emailValue != ''
+    ) {
+      query = [
+        {
+          email: emailValue,
         },
       ];
     }
