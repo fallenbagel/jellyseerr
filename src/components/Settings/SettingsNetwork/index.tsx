@@ -11,6 +11,7 @@ import type { NetworkSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { Address4, Address6 } from 'ip-address';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
 import useSWR, { mutate } from 'swr';
@@ -64,6 +65,13 @@ const SettingsNetwork = () => {
     error,
     mutate: revalidate,
   } = useSWR<NetworkSettings>('/api/v1/settings/network');
+
+  const [forwardAuthUserHeader, setForwardAuthUserHeader] = useState(
+    data?.forwardAuth.userHeader
+  );
+  const [forwardAuthEmailHeader, setForwardAuthEmailHeader] = useState(
+    data?.forwardAuth.emailHeader
+  );
 
   const NetworkSettingsSchema = Yup.object().shape({
     proxyPort: Yup.number().when('proxyEnabled', {
@@ -330,11 +338,9 @@ const SettingsNetwork = () => {
                                 className="inline"
                                 id="forwardAuthUserHeader"
                                 name="forwardAuthUserHeader"
+                                value={forwardAuthUserHeader}
                                 onChange={(e) => {
-                                  setFieldValue(
-                                    'forwardAuthUserHeader',
-                                    e.target.value
-                                  );
+                                  setForwardAuthUserHeader(e.target.value);
                                 }}
                               >
                                 <option value="">--Do not use--</option>
@@ -371,11 +377,9 @@ const SettingsNetwork = () => {
                                 className="inline"
                                 id="forwardAuthEmailHeader"
                                 name="forwardAuthEmailHeader"
+                                value={forwardAuthEmailHeader}
                                 onChange={(e) => {
-                                  setFieldValue(
-                                    'forwardAuthEmailHeader',
-                                    e.target.value
-                                  );
+                                  setForwardAuthEmailHeader(e.target.value);
                                 }}
                               >
                                 <option value="">--Do not use--</option>
