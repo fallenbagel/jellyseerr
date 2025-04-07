@@ -14,7 +14,7 @@ RUN \
   ;; \
   esac
 
-RUN npm install --global pnpm
+RUN npm install --global pnpm@9
 
 COPY package.json pnpm-lock.yaml postinstall-win.js ./
 RUN CYPRESS_INSTALL_BINARY=0 pnpm install --frozen-lockfile
@@ -54,7 +54,7 @@ WORKDIR /app
 
 RUN apk add --no-cache tzdata tini && rm -rf /tmp/*
 
-RUN npm install -g pnpm
+RUN npm install -g pnpm@9
 
 # copy from build image
 COPY --from=BUILD_IMAGE /app ./
