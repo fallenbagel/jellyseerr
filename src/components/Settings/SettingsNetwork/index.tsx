@@ -50,7 +50,6 @@ const messages = defineMessages('components.Settings.SettingsNetwork', {
   proxyBypassLocalAddresses: 'Bypass Proxy for Local Addresses',
   validationProxyPort: 'You must provide a valid port',
   validationForwardAuthUserHeader: 'You must provide a user header name',
-  validationTrustedProxies: 'You must provide a list of trusted proxies',
   advancedNetworkSettings: 'Advanced Network Settings',
   networkDisclaimer:
     'Network parameters from your container/system should be used instead of these settings. See the {docs} for more information.',
@@ -74,14 +73,10 @@ const SettingsNetwork = () => {
           intl.formatMessage(messages.validationProxyPort)
         ),
       }),
-      trustedProxies: Yup.string()
-        .when('trustProxy', {
-          is: (trustProxy: boolean) => trustProxy,
-          then: Yup.string().required(
-            intl.formatMessage(messages.validationTrustedProxies)
-          ),
-        })
-        .test('validate-address', 'invalid address found', (value, ctx) => {
+      trustedProxies: Yup.string().test(
+        'validate-address',
+        'invalid address found',
+        (value, ctx) => {
           if (!value) {
             return true;
           }
@@ -106,7 +101,8 @@ const SettingsNetwork = () => {
             }
           }
           return true;
-        }),
+        }
+      ),
       forwardAuthUserHeader: Yup.string(),
       forwardAuthEmailHeader: Yup.string(),
     })
@@ -284,38 +280,6 @@ const SettingsNetwork = () => {
                     />
                   </div>
                 </div>
-                {values.trustProxy && (
-                  <>
-                    <div className="mr-2 ml-4">
-                      <div className="form-row">
-                        <label
-                          htmlFor="trustedProxies"
-                          className="checkbox-label"
-                        >
-                          <span className="mr-2">
-                            {intl.formatMessage(messages.trustedProxies)}
-                          </span>
-                          <SettingsBadge
-                            badgeType="advanced"
-                            className="mr-2"
-                          />
-                        </label>
-                        <div className="form-input-area">
-                          <Field
-                            type="text"
-                            id="trustedProxies"
-                            name="trustedProxies"
-                          />
-                        </div>
-                        {errors.trustedProxies &&
-                          touched.trustedProxies &&
-                          typeof errors.trustedProxies === 'string' && (
-                            <div className="error">{errors.trustedProxies}</div>
-                          )}
-                      </div>
-                    </div>
-                  </>
-                )}
                 <div className="form-row">
                   <label htmlFor="csrfProtection" className="checkbox-label">
                     <span className="mr-2">
@@ -565,6 +529,34 @@ const SettingsNetwork = () => {
                 </div>
                 {values.trustProxy && (
                   <>
+                    <div className="mr-2 ml-4">
+                      <div className="form-row">
+                        <label
+                          htmlFor="trustedProxies"
+                          className="checkbox-label"
+                        >
+                          <span className="mr-2">
+                            {intl.formatMessage(messages.trustedProxies)}
+                          </span>
+                          <SettingsBadge
+                            badgeType="advanced"
+                            className="mr-2"
+                          />
+                        </label>
+                        <div className="form-input-area">
+                          <Field
+                            type="text"
+                            id="trustedProxies"
+                            name="trustedProxies"
+                          />
+                        </div>
+                        {errors.trustedProxies &&
+                          touched.trustedProxies &&
+                          typeof errors.trustedProxies === 'string' && (
+                            <div className="error">{errors.trustedProxies}</div>
+                          )}
+                      </div>
+                    </div>
                     <div className="form-row">
                       <label
                         htmlFor="forwardAuthEnabled"
