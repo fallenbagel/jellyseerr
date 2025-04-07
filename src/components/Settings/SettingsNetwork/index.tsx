@@ -286,168 +286,178 @@ const SettingsNetwork = () => {
                 </div>
                 {values.trustProxy && (
                   <>
-                    <div className="form-row">
-                      <label
-                        htmlFor="trustedProxies"
-                        className="checkbox-label"
-                      >
-                        <span className="mr-2">
-                          {intl.formatMessage(messages.trustedProxies)}
-                        </span>
-                        <SettingsBadge badgeType="advanced" className="mr-2" />
-                      </label>
-                      <div className="form-input-area">
-                        <Field
-                          type="text"
-                          id="trustedProxies"
-                          name="trustedProxies"
-                        />
+                    <div className="mr-2 ml-4">
+                      <div className="form-row">
+                        <label
+                          htmlFor="trustedProxies"
+                          className="checkbox-label"
+                        >
+                          <span className="mr-2">
+                            {intl.formatMessage(messages.trustedProxies)}
+                          </span>
+                          <SettingsBadge
+                            badgeType="advanced"
+                            className="mr-2"
+                          />
+                        </label>
+                        <div className="form-input-area">
+                          <Field
+                            type="text"
+                            id="trustedProxies"
+                            name="trustedProxies"
+                          />
+                        </div>
+                        {errors.trustedProxies &&
+                          touched.trustedProxies &&
+                          typeof errors.trustedProxies === 'string' && (
+                            <div className="error">{errors.trustedProxies}</div>
+                          )}
                       </div>
-                      {errors.trustedProxies &&
-                        touched.trustedProxies &&
-                        typeof errors.trustedProxies === 'string' && (
-                          <div className="error">{errors.trustedProxies}</div>
-                        )}
-                    </div>
-                    <div className="form-row">
-                      <label
-                        htmlFor="forwardAuthEnabled"
-                        className="checkbox-label"
-                      >
-                        <span className="mr-2">
-                          {intl.formatMessage(messages.forwardAuthEnabled)}
-                        </span>
-                        <SettingsBadge badgeType="advanced" className="mr-2" />
-                        <span className="label-tip">
-                          {intl.formatMessage(messages.forwardAuthEnabledTip)}
-                        </span>
-                      </label>
-                      <div className="form-input-area">
-                        <Field
-                          type="checkbox"
-                          id="forwardAuthEnabled"
-                          name="forwardAuthEnabled"
-                          onChange={() => {
-                            setFieldValue(
-                              'forwardAuthEnabled',
-                              !values.forwardAuthEnabled
-                            );
-                          }}
-                        />
+                      <div className="form-row">
+                        <label
+                          htmlFor="forwardAuthEnabled"
+                          className="checkbox-label"
+                        >
+                          <span className="mr-2">
+                            {intl.formatMessage(messages.forwardAuthEnabled)}
+                          </span>
+                          <SettingsBadge
+                            badgeType="advanced"
+                            className="mr-2"
+                          />
+                          <span className="label-tip">
+                            {intl.formatMessage(messages.forwardAuthEnabledTip)}
+                          </span>
+                        </label>
+                        <div className="form-input-area">
+                          <Field
+                            type="checkbox"
+                            id="forwardAuthEnabled"
+                            name="forwardAuthEnabled"
+                            onChange={() => {
+                              setFieldValue(
+                                'forwardAuthEnabled',
+                                !values.forwardAuthEnabled
+                              );
+                            }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    {values.forwardAuthEnabled && (
-                      <>
-                        <div className="form-row">
-                          <label
-                            htmlFor="forwardAuthUserHeader"
-                            className="text-label"
-                          >
-                            <span className="mr-2">
-                              {intl.formatMessage(messages.userHeaderName)}
-                            </span>
-                            <SettingsBadge badgeType="advanced" />
-                            <span className="label-tip">
-                              {intl.formatMessage(messages.userHeaderNameTip)}
-                            </span>
-                          </label>
-                          <div className="form-input-area">
-                            <div className="form-input-field">
-                              <select
-                                className="inline"
-                                id="forwardAuthUserHeader"
-                                name="forwardAuthUserHeader"
-                                onChange={(e) => {
-                                  setFieldValue(
-                                    'forwardAuthUserHeader',
-                                    e.target.value
-                                  );
-                                }}
+                      {values.forwardAuthEnabled && (
+                        <>
+                          <div className="mr-2 ml-4">
+                            <div className="form-row">
+                              <label
+                                htmlFor="forwardAuthUserHeader"
+                                className="text-label"
                               >
-                                <option
-                                  selected={values.forwardAuthUserHeader == ''}
-                                  value=""
-                                >
-                                  --Do not use--
-                                </option>
-                                {ForwardAuthAllowlist.map((item) => (
-                                  <option
-                                    value={item}
-                                    key={item}
-                                    selected={
-                                      values.forwardAuthUserHeader == item
-                                    }
+                                <span className="mr-2">
+                                  {intl.formatMessage(messages.userHeaderName)}
+                                </span>
+                                <SettingsBadge badgeType="advanced" />
+                                <span className="label-tip">
+                                  {intl.formatMessage(
+                                    messages.userHeaderNameTip
+                                  )}
+                                </span>
+                              </label>
+                              <div className="form-input-area">
+                                <div className="form-input-field">
+                                  <select
+                                    className="inline"
+                                    id="forwardAuthUserHeader"
+                                    name="forwardAuthUserHeader"
+                                    onChange={(e) => {
+                                      setFieldValue(
+                                        'forwardAuthUserHeader',
+                                        e.target.value
+                                      );
+                                    }}
                                   >
-                                    {item}
-                                  </option>
-                                ))}
-                              </select>
+                                    <option
+                                      selected={
+                                        values.forwardAuthUserHeader == ''
+                                      }
+                                      value=""
+                                    >
+                                      --Do not use--
+                                    </option>
+                                    {ForwardAuthAllowlist.map((item) => (
+                                      <option
+                                        value={item}
+                                        key={item}
+                                        selected={
+                                          values.forwardAuthUserHeader == item
+                                        }
+                                      >
+                                        {item}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                              </div>
                             </div>
-                            {errors.forwardAuthUserHeader &&
-                              touched.forwardAuthUserHeader &&
-                              typeof errors.forwardAuthUserHeader ===
-                              'string' && (
+                            <div className="form-row">
+                              <label
+                                htmlFor="forwardAuthEmailHeader"
+                                className="text-label"
+                              >
+                                <span className="mr-2">
+                                  {intl.formatMessage(messages.emailHeaderName)}
+                                </span>
+                                <SettingsBadge badgeType="advanced" />
+                                <span className="label-tip">
+                                  {intl.formatMessage(
+                                    messages.emailHeaderNameTip
+                                  )}
+                                </span>
+                              </label>
+                              <div className="form-input-area">
+                                <div className="form-input-field">
+                                  <select
+                                    className="inline"
+                                    id="forwardAuthEmailHeader"
+                                    name="forwardAuthEmailHeader"
+                                    onChange={(e) => {
+                                      setFieldValue(
+                                        'forwardAuthEmailHeader',
+                                        e.target.value
+                                      );
+                                    }}
+                                  >
+                                    <option
+                                      selected={
+                                        values.forwardAuthEmailHeader == ''
+                                      }
+                                      value=""
+                                    >
+                                      --Do not use--
+                                    </option>
+                                    {ForwardAuthAllowlist.map((item) => (
+                                      <option
+                                        value={item}
+                                        key={item}
+                                        selected={
+                                          values.forwardAuthEmailHeader == item
+                                        }
+                                      >
+                                        {item}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                            {errors['forwardAuthHeaders'] &&
+                              typeof errors.forwardAuthHeaders === 'string' && (
                                 <div className="error">
-                                  {errors.forwardAuthUserHeader}
+                                  {errors.forwardAuthHeaders}
                                 </div>
                               )}
                           </div>
-                        </div>
-                        <div className="form-row">
-                          <label
-                            htmlFor="forwardAuthEmailHeader"
-                            className="text-label"
-                          >
-                            <span className="mr-2">
-                              {intl.formatMessage(messages.emailHeaderName)}
-                            </span>
-                            <SettingsBadge badgeType="advanced" />
-                            <span className="label-tip">
-                              {intl.formatMessage(messages.emailHeaderNameTip)}
-                            </span>
-                          </label>
-                          <div className="form-input-area">
-                            <div className="form-input-field">
-                              <select
-                                className="inline"
-                                id="forwardAuthEmailHeader"
-                                name="forwardAuthEmailHeader"
-                                onChange={(e) => {
-                                  setFieldValue(
-                                    'forwardAuthEmailHeader',
-                                    e.target.value
-                                  );
-                                }}
-                              >
-                                <option
-                                  selected={values.forwardAuthEmailHeader == ''}
-                                  value=""
-                                >
-                                  --Do not use--
-                                </option>
-                                {ForwardAuthAllowlist.map((item) => (
-                                  <option
-                                    value={item}
-                                    key={item}
-                                    selected={
-                                      values.forwardAuthEmailHeader == item
-                                    }
-                                  >
-                                    {item}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                        {errors['forwardAuthHeaders'] &&
-                          typeof errors.forwardAuthHeaders === 'string' && (
-                            <div className="error">
-                              {errors.forwardAuthHeaders}
-                            </div>
-                          )}
-                      </>
-                    )}
+                        </>
+                      )}
+                    </div>
                   </>
                 )}
                 <div className="form-row">
