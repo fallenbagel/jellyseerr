@@ -14,10 +14,8 @@ export const getAuthHeaders = (
     [key: string]: string | string[] | undefined;
   } = {};
   for (const header of ForwardAuthAllowlist) {
-    if (ctx.req.headers[header.toLowerCase()]) {
-      forwardAuthVars[header.toLowerCase()] = ctx.req.headers[
-        header.toLowerCase()
-      ] as string;
+    if (ctx.req.headers[header]) {
+      forwardAuthVars[header] = ctx.req.headers[header] as string;
     }
   }
 
