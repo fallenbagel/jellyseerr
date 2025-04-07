@@ -529,33 +529,28 @@ const SettingsNetwork = () => {
                 </div>
                 {values.trustProxy && (
                   <>
-                    <div className="mr-2 ml-4">
-                      <div className="form-row">
-                        <label
-                          htmlFor="trustedProxies"
-                          className="checkbox-label"
-                        >
-                          <span className="mr-2">
-                            {intl.formatMessage(messages.trustedProxies)}
-                          </span>
-                          <SettingsBadge
-                            badgeType="advanced"
-                            className="mr-2"
-                          />
-                        </label>
-                        <div className="form-input-area">
-                          <Field
-                            type="text"
-                            id="trustedProxies"
-                            name="trustedProxies"
-                          />
-                        </div>
-                        {errors.trustedProxies &&
-                          touched.trustedProxies &&
-                          typeof errors.trustedProxies === 'string' && (
-                            <div className="error">{errors.trustedProxies}</div>
-                          )}
+                    <div className="form-row">
+                      <label
+                        htmlFor="trustedProxies"
+                        className="checkbox-label"
+                      >
+                        <span className="mr-2">
+                          {intl.formatMessage(messages.trustedProxies)}
+                        </span>
+                        <SettingsBadge badgeType="advanced" className="mr-2" />
+                      </label>
+                      <div className="form-input-area">
+                        <Field
+                          type="text"
+                          id="trustedProxies"
+                          name="trustedProxies"
+                        />
                       </div>
+                      {errors.trustedProxies &&
+                        touched.trustedProxies &&
+                        typeof errors.trustedProxies === 'string' && (
+                          <div className="error">{errors.trustedProxies}</div>
+                        )}
                     </div>
                     <div className="form-row">
                       <label
