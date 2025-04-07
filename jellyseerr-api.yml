@@ -1138,6 +1138,8 @@ components:
           type: number
         rootFolder:
           type: string
+        declineReason:
+          type: string
       required:
         - id
         - status
@@ -5863,6 +5865,9 @@ paths:
                 userId:
                   type: number
                   nullable: true
+                declineReason:
+                  type: string
+                  nullable: true
               required:
                 - mediaType
       responses:
@@ -5936,6 +5941,16 @@ paths:
           schema:
             type: string
             enum: [approve, decline]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                declineReason:
+                  type: string
+                  nullable: true
       responses:
         '200':
           description: Request status changed
