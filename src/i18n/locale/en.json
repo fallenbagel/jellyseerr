@@ -984,8 +984,6 @@
   "components.Settings.SettingsNetwork.docs": "documentation",
   "components.Settings.SettingsNetwork.emailHeaderName": "Email Header Name",
   "components.Settings.SettingsNetwork.emailHeaderNameTip": "Header with the Email. This value is optional",
-  "components.Settings.SettingsNetwork.forceIpv4First": "Force IPv4 Resolution First",
-  "components.Settings.SettingsNetwork.forceIpv4FirstTip": "Force Jellyseerr to resolve IPv4 addresses first instead of IPv6",
   "components.Settings.SettingsNetwork.forwardAuthEnabled": "Enable Proxy Forward Authentication",
   "components.Settings.SettingsNetwork.forwardAuthEnabledTip": "Authenticate as the user specified by the header. Only enable when secured behind a trusted proxy.",
   "components.Settings.SettingsNetwork.network": "Network",

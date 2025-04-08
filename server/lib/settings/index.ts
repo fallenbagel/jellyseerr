@@ -567,7 +567,6 @@ class Settings {
           userHeader: '',
           emailHeader: '',
         },
-        forceIpv4First: false,
         proxy: {
           enabled: false,
           hostname: '',

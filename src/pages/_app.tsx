@@ -13,7 +13,6 @@ import { UserContext } from '@app/context/UserContext';
 import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
 import '@app/styles/globals.css';
-import '@app/utils/fetchOverride';
 import { polyfillIntl } from '@app/utils/polyfillIntl';
 import { getAuthHeaders } from '@app/utils/serverSidePropsHelpers';
 import { MediaServerType } from '@server/constants/server';
@@ -256,7 +255,8 @@ CoreApp.getInitialProps = async (initialProps) => {
   if (ctx.res) {
     // Check if app is initialized and redirect if necessary
     const response = await axios.get<PublicSettingsResponse>(
-      `http://${process.env.HOST || 'localhost'}:${process.env.PORT || 5055
+      `http://${process.env.HOST || 'localhost'}:${
+        process.env.PORT || 5055
       }/api/v1/settings/public`
     );
 
@@ -275,7 +275,8 @@ CoreApp.getInitialProps = async (initialProps) => {
       try {
         // Attempt to get the user by running a request to the local api
         const response = await axios.get<User>(
-          `http://${process.env.HOST || 'localhost'}:${process.env.PORT || 5055
+          `http://${process.env.HOST || 'localhost'}:${
+            process.env.PORT || 5055
           }/api/v1/auth/me`,
           {
             headers: getAuthHeaders(ctx),

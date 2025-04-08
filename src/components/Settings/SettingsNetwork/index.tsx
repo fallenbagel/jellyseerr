@@ -165,7 +165,6 @@ const SettingsNetwork = () => {
           initialValues={{
             forwardAuthHeaders: '',
             csrfProtection: data?.csrfProtection,
-            forceIpv4First: data?.forceIpv4First,
             trustedProxies: trustedProxies,
             trustProxy: data?.trustProxy,
             forwardAuthEnabled: data?.forwardAuth.enabled,
@@ -212,7 +211,6 @@ const SettingsNetwork = () => {
                 },
                 body: JSON.stringify({
                   csrfProtection: values.csrfProtection,
-                  forceIpv4First: values.forceIpv4First,
                   trustProxy: values.trustProxy,
                   trustedProxies: trustedProxies,
                   forwardAuth: {
@@ -504,29 +502,6 @@ const SettingsNetwork = () => {
                     ),
                   })}
                 </p>
-                <div className="form-row">
-                  <label htmlFor="forceIpv4First" className="checkbox-label">
-                    <span className="mr-2">
-                      {intl.formatMessage(messages.forceIpv4First)}
-                    </span>
-                    <SettingsBadge badgeType="advanced" className="mr-2" />
-                    <SettingsBadge badgeType="restartRequired" />
-                    <SettingsBadge badgeType="experimental" />
-                    <span className="label-tip">
-                      {intl.formatMessage(messages.forceIpv4FirstTip)}
-                    </span>
-                  </label>
-                  <div className="form-input-area">
-                    <Field
-                      type="checkbox"
-                      id="forceIpv4First"
-                      name="forceIpv4First"
-                      onChange={() => {
-                        setFieldValue('forceIpv4First', !values.forceIpv4First);
-                      }}
-                    />
-                  </div>
-                </div>
                 {values.trustProxy && (
                   <>
                     <div className="form-row">
