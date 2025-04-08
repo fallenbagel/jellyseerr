@@ -199,6 +199,12 @@ const SettingsNetwork = () => {
               await axios.post('/api/v1/settings/network', {
                 csrfProtection: values.csrfProtection,
                 trustProxy: values.trustProxy,
+                forwardAuth: {
+                  enabled: values.forwardAuthEnabled,
+                  userHeader: values.forwardAuthUserHeader,
+                  emailHeader: values.forwardAuthEmailHeader,
+                },
+                trustedProxies: trustedProxies,
                 proxy: {
                   enabled: values.proxyEnabled,
                   hostname: values.proxyHostname,
@@ -209,26 +215,6 @@ const SettingsNetwork = () => {
                   bypassFilter: values.proxyBypassFilter,
                   bypassLocalAddresses: values.proxyBypassLocalAddresses,
                 },
-                body: JSON.stringify({
-                  csrfProtection: values.csrfProtection,
-                  trustProxy: values.trustProxy,
-                  trustedProxies: trustedProxies,
-                  forwardAuth: {
-                    enabled: values.forwardAuthEnabled,
-                    userHeader: values.forwardAuthUserHeader,
-                    emailHeader: values.forwardAuthEmailHeader,
-                  },
-                  proxy: {
-                    enabled: values.proxyEnabled,
-                    hostname: values.proxyHostname,
-                    port: values.proxyPort,
-                    useSsl: values.proxySsl,
-                    user: values.proxyUser,
-                    password: values.proxyPassword,
-                    bypassFilter: values.proxyBypassFilter,
-                    bypassLocalAddresses: values.proxyBypassLocalAddresses,
-                  },
-                }),
               });
               mutate('/api/v1/settings/public');
               mutate('/api/v1/status');
