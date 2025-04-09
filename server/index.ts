@@ -1,3 +1,4 @@
+import csurf from '@dr.pogodin/csurf';
 import PlexAPI from '@server/api/plexapi';
 import dataSource, { getRepository, isPgsql } from '@server/datasource';
 import DiscoverSlider from '@server/entity/DiscoverSlider';
@@ -28,15 +29,12 @@ import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
-import csurf from 'csurf';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
 import session from 'express-session';
 import next from 'next';
-import dns from 'node:dns';
-import net from 'node:net';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
@@ -73,21 +71,6 @@ app
     // Load Settings
     const settings = await getSettings().load();
     restartFlag.initializeSettings(settings);
-
-    // Check if we force IPv4 first
-    if (
-      process.env.forceIpv4First === 'true' ||
-      settings.network.forceIpv4First
-    ) {
-      dns.setDefaultResultOrder('ipv4first');
-      net.setDefaultAutoSelectFamily(false);
-    }
-
-    if (settings.network.dnsServers.trim() !== '') {
-      dns.setServers(
-        settings.network.dnsServers.split(',').map((server) => server.trim())
-      );
-    }
 
     // Register HTTP proxy
     if (settings.network.proxy.enabled) {

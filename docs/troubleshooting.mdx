@@ -24,6 +24,12 @@ or for Cloudflare's DNS:
 ```bash
 --dns=1.1.1.1
 ```
+or for Quad9 DNS:
+```bash
+--dns=9.9.9.9
+```
+
+You can try them all and see which one works for your network.
 
   </TabItem>
 
@@ -45,6 +51,16 @@ services:
     dns:
       - 1.1.1.1
 ```
+or for Quad9's DNS:
+```yaml
+---
+services:
+  jellyseerr:
+    dns:
+      - 9.9.9.9
+```
+
+You can try them all and see which one works for your network.
 
   </TabItem>
 
@@ -56,7 +72,7 @@ services:
 4. Click on Change adapter settings.
 5. Right-click the network interface connected to the internet and select Properties.
 6. Select Internet Protocol Version 4 (TCP/IPv4) and click Properties.
-7. Select Use the following DNS server addresses and enter `8.8.8.8` for Google's DNS or `1.1.1.1` for Cloudflare's DNS.
+7. Select Use the following DNS server addresses and enter `8.8.8.8` for Google's DNS or `1.1.1.1` for Cloudflare's DNS or `9.9.9.9` for Quad9's DNS.
 
   </TabItem>
 
@@ -73,41 +89,15 @@ services:
     ```bash
     nameserver 1.1.1.1
     ```
+    or for Quad9's DNS:
+    ```bash
+    nameserver 9.9.9.9
+    ```
 
   </TabItem>
 </Tabs>
 
-### Option 2: Force IPV4 resolution first
-
-Sometimes there are configuration issues with IPV6 that prevent the hostname resolution from working correctly.
-
-You can try to force the resolution to use IPV4 first by setting the `FORCE_IPV4_FIRST` environment variable to `true`:
-
-<Tabs groupId="methods" queryString>
-  <TabItem value="docker-cli" label="Docker CLI">
-
-Add the following to your `docker run` command:
-```bash
--e "FORCE_IPV4_FIRST=true"
-```
-
-  </TabItem>
-
-  <TabItem value="docker-compose" label="Docker Compose">
-
-Add the following to your `compose.yaml`:
-```yaml
----
-services:
-  jellyseerr:
-    environment:
-      - FORCE_IPV4_FIRST=true
-```
-
-  </TabItem>
-</Tabs>
-
-### Option 3: Use Jellyseerr through a proxy
+### Option 2: Use Jellyseerr through a proxy
 
 If you can't change your DNS servers or force IPV4 resolution, you can use Jellyseerr through a proxy.
 

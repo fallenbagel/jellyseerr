@@ -326,7 +326,7 @@
   "components.RequestModal.requestcancelled": "Forespørgslen for <strong>{title}</strong> er annulleret.",
   "components.RequestModal.requestedited": "Forespørgslen for <strong>{title}</strong> er redigeret!",
   "components.RequestModal.requesterror": "Noget gik galt under indsendelsen af forespørgslen.",
-  "components.RequestModal.requestfrom": "{username}s forespørgsel afventer godkendelse.",
+  "components.RequestModal.requestfrom": "{username}'s forespørgsel afventer godkendelse.",
   "components.RequestModal.requestseasons": "Forespørg om {seasonCount} {seasonCount, plural, one {Sæson} other {Sæsoner}}",
   "components.RequestModal.season": "Sæson",
   "components.ResetPassword.passwordreset": "Nulstil Kodeord",
@@ -1227,5 +1227,13 @@
   "components.Settings.Notifications.NotificationsPushover.deviceDefault": "Enhedsstandard",
   "components.Settings.Notifications.NotificationsPushover.sound": "Notifikationslyd",
   "components.UserProfile.UserSettings.UserNotificationSettings.deviceDefault": "Enhedsstandard",
-  "components.UserProfile.UserSettings.UserNotificationSettings.sound": "Notifikationslyd"
+  "components.UserProfile.UserSettings.UserNotificationSettings.sound": "Notifikationslyd",
+  "components.UserList.validationUsername": "Angiv et brugernavn",
+  "components.Login.signinwithjellyfin": "Brug din {mediaServerName} konto",
+  "components.Login.username": "Brugernavn",
+  "components.Login.validationEmailFormat": "Ugyldig e-mail",
+  "components.Login.validationEmailRequired": "Angiv en e-mail",
+  "components.Login.validationusernamerequired": "Brugernavn kræves",
+  "components.UserList.username": "Brugernavn",
+  "components.Login.credentialerror": "Brugernavnet eller kodeordet er forkert."
 }

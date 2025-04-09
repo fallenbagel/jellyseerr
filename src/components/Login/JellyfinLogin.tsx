@@ -5,6 +5,7 @@ import defineMessages from '@app/utils/defineMessages';
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 import { ApiErrorCode } from '@server/constants/error';
 import { MediaServerType, ServerType } from '@server/constants/server';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -71,28 +72,14 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
         validateOnBlur={false}
         onSubmit={async (values) => {
           try {
-            const res = await fetch('/api/v1/auth/jellyfin', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                username: values.username,
-                password: values.password,
-                email: values.username,
-              }),
+            await axios.post('/api/v1/auth/jellyfin', {
+              username: values.username,
+              password: values.password,
+              email: values.username,
             });
-            if (!res.ok) throw new Error(res.statusText, { cause: res });
           } catch (e) {
-            let errorData;
-            try {
-              errorData = await e.cause?.text();
-              errorData = JSON.parse(errorData);
-            } catch {
-              /* empty */
-            }
             let errorMessage = null;
-            switch (errorData?.message) {
+            switch (e?.response?.data?.message) {
               case ApiErrorCode.InvalidUrl:
                 errorMessage = messages.invalidurlerror;
                 break;
@@ -124,7 +111,7 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
         {({ errors, touched, isSubmitting, isValid }) => {
           return (
             <>
-              <Form>
+              <Form data-form-type="login">
                 <div>
                   <h2 className="mb-6 -mt-1 text-center text-lg font-bold text-neutral-200">
                     {intl.formatMessage(messages.loginwithapp, {
@@ -140,6 +127,7 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
                         type="text"
                         placeholder={intl.formatMessage(messages.username)}
                         className="!bg-gray-700/80 placeholder:text-gray-400"
+                        data-form-type="username"
                       />
                     </div>
                     {errors.username && touched.username && (
@@ -157,6 +145,9 @@ const JellyfinLogin: React.FC<JellyfinLoginProps> = ({
                         autoComplete="current-password"
                         placeholder={intl.formatMessage(messages.password)}
                         className="!bg-gray-700/80 placeholder:text-gray-400"
+                        data-form-type="password"
+                        data-1pignore="false"
+                        data-lpignore="false"
                       />
                     </div>
                     <div className="flex">

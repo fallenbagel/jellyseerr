@@ -23,8 +23,6 @@
     "mediaServerType": 1,
     "partialRequestsEnabled": true,
     "enableSpecialEpisodes": false,
-    "forceIpv4First": false,
-    "dnsServers": "",
     "locale": "en"
   },
   "plex": {
@@ -139,7 +137,8 @@
         "types": 0,
         "options": {
           "url": "",
-          "token": ""
+          "token": "",
+          "priority": 0
         }
       }
     }

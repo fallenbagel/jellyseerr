@@ -52,6 +52,7 @@ import { IssueStatus } from '@server/constants/issue';
 import { MediaStatus, MediaType } from '@server/constants/media';
 import { MediaServerType } from '@server/constants/server';
 import type { MovieDetails as MovieDetailsType } from '@server/models/Movie';
+import axios from 'axios';
 import { countries } from 'country-flag-icons';
 import 'country-flag-icons/3x2/flags.css';
 import { uniqBy } from 'lodash';
@@ -319,41 +320,29 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const onClickWatchlistBtn = async (): Promise<void> => {
     setIsUpdating(true);
 
-    const res = await fetch('/api/v1/watchlist', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    try {
+      const response = await axios.post('/api/v1/watchlist', {
         tmdbId: movie?.id,
         mediaType: MediaType.MOVIE,
         title: movie?.title,
-      }),
-    });
+      });
 
-    if (!res.ok) {
+      if (response.data) {
+        addToast(
+          <span>
+            {intl.formatMessage(messages.watchlistSuccess, {
+              title: movie?.title,
+              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+            })}
+          </span>,
+          { appearance: 'success', autoDismiss: true }
+        );
+      }
+    } catch (e) {
       addToast(intl.formatMessage(messages.watchlistError), {
         appearance: 'error',
         autoDismiss: true,
       });
-
-      setIsUpdating(false);
-      return;
-    }
-
-    const data = await res.json();
-
-    if (data) {
-      addToast(
-        <span>
-          {intl.formatMessage(messages.watchlistSuccess, {
-            title: movie?.title,
-            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-          })}
-        </span>,
-        { appearance: 'success', autoDismiss: true }
-      );
     }
 
     setIsUpdating(false);
@@ -363,22 +352,17 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const onClickDeleteWatchlistBtn = async (): Promise<void> => {
     setIsUpdating(true);
     try {
-      const res = await fetch(`/api/v1/watchlist/${movie?.id}`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) throw new Error();
+      await axios.delete(`/api/v1/watchlist/${movie?.id}`);
 
-      if (res.status === 204) {
-        addToast(
-          <span>
-            {intl.formatMessage(messages.watchlistDeleted, {
-              title: movie?.title,
-              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-            })}
-          </span>,
-          { appearance: 'info', autoDismiss: true }
-        );
-      }
+      addToast(
+        <span>
+          {intl.formatMessage(messages.watchlistDeleted, {
+            title: movie?.title,
+            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+          })}
+        </span>,
+        { appearance: 'info', autoDismiss: true }
+      );
     } catch (e) {
       addToast(intl.formatMessage(messages.watchlistError), {
         appearance: 'error',
@@ -393,21 +377,14 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const onClickHideItemBtn = async (): Promise<void> => {
     setIsBlacklistUpdating(true);
 
-    const res = await fetch('/api/v1/blacklist', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    try {
+      await axios.post('/api/v1/blacklist', {
         tmdbId: movie?.id,
         mediaType: 'movie',
         title: movie?.title,
         user: user?.id,
-      }),
-    });
+      });
 
-    if (res.status === 201) {
       addToast(
         <span>
           {intl.formatMessage(globalMessages.blacklistSuccess, {
@@ -419,21 +396,23 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
       );
 
       revalidate();
-    } else if (res.status === 412) {
-      addToast(
-        <span>
-          {intl.formatMessage(globalMessages.blacklistDuplicateError, {
-            title: movie?.title,
-            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-          })}
-        </span>,
-        { appearance: 'info', autoDismiss: true }
-      );
-    } else {
-      addToast(intl.formatMessage(globalMessages.blacklistError), {
-        appearance: 'error',
-        autoDismiss: true,
-      });
+    } catch (e) {
+      if (e?.response?.status === 412) {
+        addToast(
+          <span>
+            {intl.formatMessage(globalMessages.blacklistDuplicateError, {
+              title: movie?.title,
+              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+            })}
+          </span>,
+          { appearance: 'info', autoDismiss: true }
+        );
+      } else {
+        addToast(intl.formatMessage(globalMessages.blacklistError), {
+          appearance: 'error',
+          autoDismiss: true,
+        });
+      }
     }
 
     setIsBlacklistUpdating(false);
@@ -590,7 +569,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                   buttonSize={'md'}
                   onClick={() => setShowBlacklistModal(true)}
                 >
-                  <EyeSlashIcon className={'h-3'} />
+                  <EyeSlashIcon />
                 </Button>
               </Tooltip>
             )}
@@ -608,9 +587,9 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                       onClick={onClickWatchlistBtn}
                     >
                       {isUpdating ? (
-                        <Spinner className="h-3" />
+                        <Spinner />
                       ) : (
-                        <StarIcon className={'h-3 text-amber-300'} />
+                        <StarIcon className={'text-amber-300'} />
                       )}
                     </Button>
                   </Tooltip>
@@ -623,17 +602,15 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                       buttonSize={'md'}
                       onClick={onClickDeleteWatchlistBtn}
                     >
-                      {isUpdating ? (
-                        <Spinner className="h-3" />
-                      ) : (
-                        <MinusCircleIcon className={'h-3'} />
-                      )}
+                      {isUpdating ? <Spinner /> : <MinusCircleIcon />}
                     </Button>
                   </Tooltip>
                 )}
               </>
             )}
-          <PlayButton links={mediaLinks} />
+          <div className="z-20">
+            <PlayButton links={mediaLinks} />
+          </div>
           <RequestButton
             mediaType="movie"
             media={data.mediaInfo}

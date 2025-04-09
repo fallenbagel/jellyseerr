@@ -32,7 +32,14 @@ const router = Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    const pageSize = req.query.take ? Number(req.query.take) : 10;
+    const includeIds = [
+      ...new Set(
+        req.query.includeIds ? req.query.includeIds.toString().split(',') : []
+      ),
+    ];
+    const pageSize = req.query.take
+      ? Number(req.query.take)
+      : Math.max(10, includeIds.length);
     const skip = req.query.skip ? Number(req.query.skip) : 0;
     const q = req.query.q ? req.query.q.toString().toLowerCase() : '';
     let query = getRepository(User).createQueryBuilder('user');
@@ -44,27 +51,33 @@ router.get('/', async (req, res, next) => {
       );
     }
 
+    if (includeIds.length > 0) {
+      query.andWhereInIds(includeIds);
+    }
+
     switch (req.query.sort) {
       case 'updated':
         query = query.orderBy('user.updatedAt', 'DESC');
         break;
       case 'displayname':
-        query = query.orderBy(
-          `CASE WHEN (user.username IS NULL OR user.username = '') THEN (
-             CASE WHEN (user.plexUsername IS NULL OR user.plexUsername = '') THEN (
-               CASE WHEN (user.jellyfinUsername IS NULL OR user.jellyfinUsername = '') THEN
-                 "user"."email"
-               ELSE
-                 LOWER(user.jellyfinUsername)
-               END)
-             ELSE
-               LOWER(user.jellyfinUsername)
-             END)
-           ELSE
-             LOWER(user.username)
-           END`,
-          'ASC'
-        );
+        query = query
+          .addSelect(
+            `CASE WHEN (user.username IS NULL OR user.username = '') THEN (
+              CASE WHEN (user.plexUsername IS NULL OR user.plexUsername = '') THEN (
+                CASE WHEN (user.jellyfinUsername IS NULL OR user.jellyfinUsername = '') THEN
+                  "user"."email"
+                ELSE
+                  LOWER(user.jellyfinUsername)
+                END)
+              ELSE
+                LOWER(user.jellyfinUsername)
+              END)
+            ELSE
+              LOWER(user.username)
+            END`,
+            'displayname_sort_key'
+          )
+          .orderBy('displayname_sort_key', 'ASC');
         break;
       case 'requests':
         query = query
@@ -84,6 +97,7 @@ router.get('/', async (req, res, next) => {
     const [users, userCount] = await query
       .take(pageSize)
       .skip(skip)
+      .distinct(true)
       .getManyAndCount();
 
     return res.status(200).json({
@@ -170,13 +184,15 @@ router.post<
     endpoint: string;
     p256dh: string;
     auth: string;
+    userAgent: string;
   }
 >('/registerPushSubscription', async (req, res, next) => {
   try {
     const userPushSubRepository = getRepository(UserPushSubscription);
 
     const existingSubs = await userPushSubRepository.find({
-      where: { auth: req.body.auth },
+      relations: { user: true },
+      where: { auth: req.body.auth, user: { id: req.user?.id } },
     });
 
     if (existingSubs.length > 0) {
@@ -191,6 +207,7 @@ router.post<
       auth: req.body.auth,
       endpoint: req.body.endpoint,
       p256dh: req.body.p256dh,
+      userAgent: req.body.userAgent,
       user: req.user,
     });
 
@@ -204,6 +221,79 @@ router.post<
     next({ status: 500, message: 'Failed to register subscription.' });
   }
 });
+
+router.get<{ userId: number }>(
+  '/:userId/pushSubscriptions',
+  async (req, res, next) => {
+    try {
+      const userPushSubRepository = getRepository(UserPushSubscription);
+
+      const userPushSubs = await userPushSubRepository.find({
+        relations: { user: true },
+        where: { user: { id: req.params.userId } },
+      });
+
+      return res.status(200).json(userPushSubs);
+    } catch (e) {
+      next({ status: 404, message: 'User subscriptions not found.' });
+    }
+  }
+);
+
+router.get<{ userId: number; key: string }>(
+  '/:userId/pushSubscription/:key',
+  async (req, res, next) => {
+    try {
+      const userPushSubRepository = getRepository(UserPushSubscription);
+
+      const userPushSub = await userPushSubRepository.findOneOrFail({
+        relations: {
+          user: true,
+        },
+        where: {
+          user: { id: req.params.userId },
+          p256dh: req.params.key,
+        },
+      });
+
+      return res.status(200).json(userPushSub);
+    } catch (e) {
+      next({ status: 404, message: 'User subscription not found.' });
+    }
+  }
+);
+
+router.delete<{ userId: number; key: string }>(
+  '/:userId/pushSubscription/:key',
+  async (req, res, next) => {
+    try {
+      const userPushSubRepository = getRepository(UserPushSubscription);
+
+      const userPushSub = await userPushSubRepository.findOneOrFail({
+        relations: {
+          user: true,
+        },
+        where: {
+          user: { id: req.params.userId },
+          p256dh: req.params.key,
+        },
+      });
+
+      await userPushSubRepository.remove(userPushSub);
+      return res.status(204).send();
+    } catch (e) {
+      logger.error('Something went wrong deleting the user push subcription', {
+        label: 'API',
+        key: req.params.key,
+        errorMessage: e.message,
+      });
+      return next({
+        status: 500,
+        message: 'User push subcription not found',
+      });
+    }
+  }
+);
 
 router.get<{ id: string }>('/:id', async (req, res, next) => {
   try {

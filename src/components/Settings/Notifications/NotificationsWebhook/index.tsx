@@ -8,6 +8,7 @@ import {
   ArrowPathIcon,
   QuestionMarkCircleIcon,
 } from '@heroicons/react/24/solid';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -149,22 +150,15 @@ const NotificationsWebhook = () => {
       validationSchema={NotificationsWebhookSchema}
       onSubmit={async (values) => {
         try {
-          const res = await fetch('/api/v1/settings/notifications/webhook', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+          await axios.post('/api/v1/settings/notifications/webhook', {
+            enabled: values.enabled,
+            types: values.types,
+            options: {
+              webhookUrl: values.webhookUrl,
+              jsonPayload: JSON.stringify(values.jsonPayload),
+              authHeader: values.authHeader,
             },
-            body: JSON.stringify({
-              enabled: values.enabled,
-              types: values.types,
-              options: {
-                webhookUrl: values.webhookUrl,
-                jsonPayload: JSON.stringify(values.jsonPayload),
-                authHeader: values.authHeader,
-              },
-            }),
           });
-          if (!res.ok) throw new Error();
           addToast(intl.formatMessage(messages.webhooksettingssaved), {
             appearance: 'success',
             autoDismiss: true,
@@ -213,25 +207,16 @@ const NotificationsWebhook = () => {
                 toastId = id;
               }
             );
-            const res = await fetch(
-              '/api/v1/settings/notifications/webhook/test',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  enabled: true,
-                  types: values.types,
-                  options: {
-                    webhookUrl: values.webhookUrl,
-                    jsonPayload: JSON.stringify(values.jsonPayload),
-                    authHeader: values.authHeader,
-                  },
-                }),
-              }
-            );
-            if (!res.ok) throw new Error();
+            await axios.post('/api/v1/settings/notifications/webhook/test', {
+              enabled: true,
+              types: values.types,
+              options: {
+                webhookUrl: values.webhookUrl,
+                jsonPayload: JSON.stringify(values.jsonPayload),
+                authHeader: values.authHeader,
+              },
+            });
+
             if (toastId) {
               removeToast(toastId);
             }

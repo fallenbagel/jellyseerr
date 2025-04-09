@@ -4,6 +4,7 @@ import defineMessages from '@app/utils/defineMessages';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
 import { ApiErrorCode } from '@server/constants/error';
 import { MediaServerType, ServerType } from '@server/constants/server';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -112,38 +113,19 @@ function JellyfinSetup({
       validationSchema={LoginSchema}
       onSubmit={async (values) => {
         try {
-          // Check if serverType is either 'Jellyfin' or 'Emby'
-          // if (serverType !== 'Jellyfin' && serverType !== 'Emby') {
-          //   throw new Error('Invalid serverType'); // You can customize the error message
-          // }
-
-          const res = await fetch('/api/v1/auth/jellyfin', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              username: values.username,
-              password: values.password,
-              hostname: values.hostname,
-              port: values.port,
-              useSsl: values.useSsl,
-              urlBase: values.urlBase,
-              email: values.email,
-              serverType: serverType,
-            }),
+          await axios.post('/api/v1/auth/jellyfin', {
+            username: values.username,
+            password: values.password,
+            hostname: values.hostname,
+            port: values.port,
+            useSsl: values.useSsl,
+            urlBase: values.urlBase,
+            email: values.email,
+            serverType: serverType,
           });
-          if (!res.ok) throw new Error(res.statusText, { cause: res });
         } catch (e) {
-          let errorData;
-          try {
-            errorData = await e.cause?.text();
-            errorData = JSON.parse(errorData);
-          } catch {
-            /* empty */
-          }
           let errorMessage = null;
-          switch (errorData?.message) {
+          switch (e?.response?.data?.message) {
             case ApiErrorCode.InvalidUrl:
               errorMessage = messages.invalidurlerror;
               break;
@@ -198,6 +180,11 @@ function JellyfinSetup({
                         messages.hostname,
                         mediaServerFormatValues
                       )}
+                      autoComplete="off"
+                      data-form-type="other"
+                      data-1pignore="true"
+                      data-lpignore="true"
+                      data-bwignore="true"
                     />
                   </div>
                   {errors.hostname && touched.hostname && (
@@ -282,6 +269,11 @@ function JellyfinSetup({
                   name="email"
                   type="text"
                   placeholder={intl.formatMessage(messages.email)}
+                  autoComplete="off"
+                  data-form-type="other"
+                  data-1pignore="true"
+                  data-lpignore="true"
+                  data-bwignore="true"
                 />
               </div>
               {errors.email && touched.email && (
@@ -298,6 +290,11 @@ function JellyfinSetup({
                   name="username"
                   type="text"
                   placeholder={intl.formatMessage(messages.username)}
+                  autoComplete="off"
+                  data-form-type="other"
+                  data-1pignore="true"
+                  data-lpignore="true"
+                  data-bwignore="true"
                 />
               </div>
               {errors.username && touched.username && (
@@ -314,6 +311,11 @@ function JellyfinSetup({
                   name="password"
                   type="password"
                   placeholder={intl.formatMessage(messages.password)}
+                  autoComplete="off"
+                  data-form-type="other"
+                  data-1pignore="true"
+                  data-lpignore="true"
+                  data-bwignore="true"
                 />
               </div>
               {errors.password && touched.password && (
