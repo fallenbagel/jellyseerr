@@ -1,6 +1,6 @@
 # jellyseerr-chart
 
-![Version: 2.3.4](https://img.shields.io/badge/Version-2.3.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.5.2](https://img.shields.io/badge/AppVersion-2.5.2-informational?style=flat-square)
+![Version: 2.4.0](https://img.shields.io/badge/Version-2.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.5.2](https://img.shields.io/badge/AppVersion-2.5.2-informational?style=flat-square)
 
 Jellyseerr helm chart for Kubernetes
 
@@ -52,8 +52,8 @@ Kubernetes: `>=1.23.0-0`
 | podAnnotations | object | `{}` |  |
 | podLabels | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |
-| probes.livenessProbe | object | `{"httpGet":{"path":"/","port":"http"},"initialDelaySeconds":60}` | Configure liveness probe (set to null to disable) |
-| probes.readinessProbe | object | `{"enabled":true,"httpGet":{"path":"/","port":"http"}}` | Configure readiness probe (set to null to disable) |
+| probes.livenessProbe | object | `{"httpGet":{"path":"/","port":"http"}}` | Configure liveness probe (set to null to disable) |
+| probes.readinessProbe | object | `{"httpGet":{"path":"/","port":"http"}}` | Configure readiness probe (set to null to disable) |
 | probes.startupProbe | string | `nil` | Configure startup probe |
 | replicaCount | int | `1` |  |
 | resources | object | `{}` |  |
