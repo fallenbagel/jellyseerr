@@ -44,14 +44,18 @@ spec:
             - name: http
               containerPort: 5055
               protocol: TCP
+          {{- if .Values.probes.livenessProbe }}
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
+            {{- toYaml .Values.probes.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.probes.readinessProbe }}
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
+            {{- toYaml .Values.probes.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.probes.startupProbe }}
+          startupProbe:
+            {{- toYaml .Values.probes.startupProbe | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.extraEnv }}
