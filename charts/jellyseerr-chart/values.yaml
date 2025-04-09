@@ -18,16 +18,20 @@ strategy:
 
 # Liveness / Readiness / Startup Probes
 probes:
-  # -- Configure liveness probe (set to null to disable)
-  livenessProbe:
-    httpGet:
-      path: /
-      port: http
-  # -- Configure readiness probe (set to null to disable)
-  readinessProbe:
-    httpGet:
-      path: /
-      port: http
+  # -- Configure liveness probe
+  livenessProbe: {}
+  # initialDelaySeconds: 60
+  # periodSeconds: 30
+  # timeoutSeconds: 5
+  # successThreshold: 1
+  # failureThreshold: 5
+  # -- Configure readiness probe
+  readinessProbe: {}
+  # initialDelaySeconds: 60
+  # periodSeconds: 30
+  # timeoutSeconds: 5
+  # successThreshold: 1
+  # failureThreshold: 5
   # -- Configure startup probe
   startupProbe: null
   #  tcpSocket:
