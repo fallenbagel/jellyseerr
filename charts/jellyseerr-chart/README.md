@@ -52,8 +52,8 @@ Kubernetes: `>=1.23.0-0`
 | podAnnotations | object | `{}` |  |
 | podLabels | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |
-| probes.livenessProbe | object | `{"httpGet":{"path":"/","port":"http"}}` | Configure liveness probe (set to null to disable) |
-| probes.readinessProbe | object | `{"httpGet":{"path":"/","port":"http"}}` | Configure readiness probe (set to null to disable) |
+| probes.livenessProbe | object | `{}` | Configure liveness probe |
+| probes.readinessProbe | object | `{}` | Configure readiness probe |
 | probes.startupProbe | string | `nil` | Configure startup probe |
 | replicaCount | int | `1` |  |
 | resources | object | `{}` |  |
