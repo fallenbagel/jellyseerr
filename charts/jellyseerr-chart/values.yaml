@@ -23,10 +23,8 @@ probes:
     httpGet:
       path: /
       port: http
-    initialDelaySeconds: 60
   # -- Configure readiness probe (set to null to disable)
   readinessProbe:
-    enabled: true
     httpGet:
       path: /
       port: http
