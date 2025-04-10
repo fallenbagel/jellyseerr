@@ -607,7 +607,7 @@
   "components.RequestModal.QuotaDisplay.movielimit": "{limit, plural, one {film} other {filmer}}",
   "components.RequestModal.QuotaDisplay.movie": "film",
   "components.RequestModal.QuotaDisplay.allowedRequestsUser": "Denna användare kan skicka <strong>{limit}</strong> {type}-förfrågningar varje <strong>{days}</strong> dagar.",
-  "components.RequestModal.QuotaDisplay.allowedRequests": "Du har tillåtelse att skicka <strong>{limit}</strong> {type}-förfrågningar varje <strong>{days}</strong> dagar.",
+  "components.RequestModal.QuotaDisplay.allowedRequests": "Du är tillåten att förfråga <strong>{limit}</strong> {type} varje <strong>{days}</strong> dagar.",
   "components.QuotaSelector.unlimited": "Obegränsat",
   "i18n.view": "Visa",
   "i18n.tvshow": "Serier",
