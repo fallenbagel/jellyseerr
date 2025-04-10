@@ -940,7 +940,7 @@
   "components.RequestModal.selectmovies": "Välj Film(er)",
   "components.IssueDetails.commentplaceholder": "Lägg till en kommentar…",
   "components.RequestModal.approve": "Godkänn förfrågan",
-  "components.RequestModal.requestApproved": "förfrågan av <strong>{title}</strong> godkänd!",
+  "components.RequestModal.requestApproved": "Förfrågan av <strong>{title}</strong> godkänd!",
   "components.RequestModal.requestmovies": "Förfråga {count} {count, plural, one {film} other {filmer}}",
   "components.RequestModal.requestmovies4k": "Förfråga {count} {count, plural, one {film} other {filmer}} i 4K",
   "components.RequestModal.requestseasons4k": "Förfråga {seasonCount} {seasonCount, plural, one {säsong} other {säsonger}} i 4K",
