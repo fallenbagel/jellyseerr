@@ -1269,7 +1269,7 @@
   "components.Layout.UserWarnings.emailRequired": "En e-postadress krävs.",
   "components.Login.emailtooltip": "Adressen behöver inte vara kopplad till din {mediaServerName}-instans.",
   "components.Login.validationEmailRequired": "Du måste ange en e-postadress",
-  "components.Settings.jellyfinlibrariesDescription": "Biblioteket {mediaServerName} scannas efter tittlar. Klicka på knappen nedan om inga bibliotek visas.",
+  "components.Settings.jellyfinlibrariesDescription": "Biblioteket {mediaServerName} skannas efter tittlar. Klicka på knappen nedan om inga bibliotek visas.",
   "components.Settings.Notifications.NotificationsPushover.deviceDefault": "Enhetsstandard",
   "components.Settings.SonarrModal.seriesType": "Serietyp",
   "components.Setup.signinWithJellyfin": "Ange dina Jellyfin-uppgifter",
