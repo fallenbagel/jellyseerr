@@ -521,7 +521,7 @@
   "components.Settings.Notifications.NotificationsPushbullet.accessToken": "Åtkomsttoken",
   "components.RequestModal.AdvancedRequester.languageprofile": "Språkprofil",
   "components.RequestList.RequestItem.requested": "Förfrågad",
-  "components.RequestList.RequestItem.modifieduserdate": "{date} av{user}",
+  "components.RequestList.RequestItem.modifieduserdate": "{date} av {user}",
   "components.RequestList.RequestItem.modified": "Ändrad",
   "components.RequestBlock.requestoverrides": "Överskrivning av förfrågningar",
   "components.RegionSelector.regionServerDefault": "Standard ({region})",
