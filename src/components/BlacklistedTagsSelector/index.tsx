@@ -7,6 +7,7 @@ import { Transition } from '@headlessui/react';
 import { ArrowDownIcon } from '@heroicons/react/24/solid';
 import type { TmdbKeywordSearchResponse } from '@server/api/themoviedb/interfaces';
 import type { Keyword } from '@server/models/common';
+import axios from 'axios';
 import { useFormikContext } from 'formik';
 import {
   forwardRef,
@@ -123,13 +124,12 @@ const ControlledKeywordSelector = ({
 
       const keywords = await Promise.all(
         defaultValue.split(',').map(async (keywordId) => {
-          const res = await fetch(`/api/v1/keyword/${keywordId}`);
-          if (!res.ok) {
-            throw new Error('Network response was not ok');
+          try {
+            const { data } = await axios.get(`/api/v1/keyword/${keywordId}`);
+            return data;
+          } catch (err) {
+            throw new Error('Network repsonse was not ok');
           }
-          const keyword: Keyword = await res.json();
-
-          return keyword;
         })
       );
 
@@ -145,18 +145,18 @@ const ControlledKeywordSelector = ({
   }, [defaultValue, onChange]);
 
   const loadKeywordOptions = async (inputValue: string) => {
-    const res = await fetch(
-      `/api/v1/search/keyword?query=${encodeURIExtraParams(inputValue)}`
-    );
-    if (!res.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const results: TmdbKeywordSearchResponse = await res.json();
+    try {
+      const { data }: { data: TmdbKeywordSearchResponse } = await axios.get(
+        `/api/v1/search/keyword?query=${encodeURIExtraParams(inputValue)}`
+      );
 
-    return results.results.map((result) => ({
-      label: result.name,
-      value: result.id,
-    }));
+      return data.results.map((result) => ({
+        label: result.name,
+        value: result.id,
+      }));
+    } catch (err) {
+      throw new Error('Network repsonse was not ok');
+    }
   };
 
   return (
@@ -267,16 +267,17 @@ const BlacklistedTagImportForm = forwardRef<
 
     const keywords = await Promise.allSettled(
       formValue.split(',').map(async (keywordId) => {
-        const res = await fetch(`/api/v1/keyword/${keywordId}`);
-        if (!res.ok) {
+        try {
+          const { data }: { data: Keyword } = await axios.get(
+            `/api/v1/keyword/${keywordId}`
+          );
+          return {
+            label: data.name,
+            value: data.id,
+          };
+        } catch (err) {
           throw intl.formatMessage(messages.invalidKeyword, { keywordId });
         }
-
-        const keyword: Keyword = await res.json();
-        return {
-          label: keyword.name,
-          value: keyword.id,
-        };
       })
     );
 

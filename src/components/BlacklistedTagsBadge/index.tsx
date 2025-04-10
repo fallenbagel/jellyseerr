@@ -4,6 +4,7 @@ import defineMessages from '@app/utils/defineMessages';
 import { TagIcon } from '@heroicons/react/20/solid';
 import type { BlacklistItem } from '@server/interfaces/api/blacklistInterfaces';
 import type { Keyword } from '@server/models/common';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -28,13 +29,14 @@ const BlacklistedTagsBadge = ({ data }: BlacklistedTagsBadgeProps) => {
     const keywordIds = data.blacklistedTags.slice(1, -1).split(',');
     Promise.all(
       keywordIds.map(async (keywordId) => {
-        const res = await fetch(`/api/v1/keyword/${keywordId}`);
-        if (!res.ok) {
+        try {
+          const { data }: { data: Keyword } = await axios.get(
+            `/api/v1/keyword/${keywordId}`
+          );
+          return data.name;
+        } catch (err) {
           return '';
         }
-        const keyword: Keyword = await res.json();
-
-        return keyword.name;
       })
     ).then((keywords) => {
       setTagNamesBlacklistedFor(keywords.join(', '));
