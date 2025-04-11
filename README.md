@@ -11,7 +11,7 @@
 <a href="http://translate.jellyseerr.dev/engage/jellyseerr/"><img src="http://translate.jellyseerr.dev/widget/jellyseerr/jellyseerr-frontend/svg-badge.svg" alt="Translation status" /></a>
 <a href="https://github.com/fallenbagel/jellyseerr/blob/develop/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/fallenbagel/jellyseerr"></a>
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-91-orange.svg"/></a>
+<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-92-orange.svg"/></a>
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Jellyseerr** is a free and open source software application for managing requests for your media library. It integrates with the media server of your choice: [Jellyfin](https://jellyfin.org), [Plex](https://plex.tv), and [Emby](https://emby.media/). In addition, it integrates with your existing services, such as **[Sonarr](https://sonarr.tv/)**, **[Radarr](https://radarr.video/)**.
@@ -201,6 +201,9 @@ Thanks goes to these wonderful people from Overseerr ([emoji key](https://allcon
       <td align="center" valign="top" width="14.28%"><a href="http://www.linkedin.com/in/jessielwilson"><img src="https://avatars.githubusercontent.com/u/48299282?v=4?s=100" width="100px;" alt="Jessie Wilson"/><br /><sub><b>Jessie Wilson</b></sub></a><br /><a href="https://github.com/fallenbagel/jellyseerr/commits?author=jessielw" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/brotaxt"><img src="https://avatars.githubusercontent.com/u/25477935?v=4?s=100" width="100px;" alt="DominicKo"/><br /><sub><b>DominicKo</b></sub></a><br /><a href="https://github.com/fallenbagel/jellyseerr/commits?author=brotaxt" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://doctolib.com"><img src="https://avatars.githubusercontent.com/u/30508927?v=4?s=100" width="100px;" alt="Corentin Normand"/><br /><sub><b>Corentin Normand</b></sub></a><br /><a href="https://github.com/fallenbagel/jellyseerr/commits?author=corentinnormand" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/benbeauchamp7"><img src="https://avatars.githubusercontent.com/u/43358492?v=4?s=100" width="100px;" alt="Ben Beauchamp"/><br /><sub><b>Ben Beauchamp</b></sub></a><br /><a href="https://github.com/fallenbagel/jellyseerr/commits?author=benbeauchamp7" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
