@@ -30,7 +30,7 @@ const BlacklistedTagsBadge = ({ data }: BlacklistedTagsBadgeProps) => {
     Promise.all(
       keywordIds.map(async (keywordId) => {
         try {
-          const { data }: { data: Keyword } = await axios.get(
+          const { data } = await axios.get<Keyword>(
             `/api/v1/keyword/${keywordId}`
           );
           return data.name;

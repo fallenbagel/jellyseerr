@@ -124,12 +124,10 @@ const ControlledKeywordSelector = ({
 
       const keywords = await Promise.all(
         defaultValue.split(',').map(async (keywordId) => {
-          try {
-            const { data } = await axios.get(`/api/v1/keyword/${keywordId}`);
-            return data;
-          } catch (err) {
-            throw new Error('Network repsonse was not ok');
-          }
+          const { data } = await axios.get<Keyword>(
+            `/api/v1/keyword/${keywordId}`
+          );
+          return data;
         })
       );
 
@@ -145,18 +143,14 @@ const ControlledKeywordSelector = ({
   }, [defaultValue, onChange]);
 
   const loadKeywordOptions = async (inputValue: string) => {
-    try {
-      const { data }: { data: TmdbKeywordSearchResponse } = await axios.get(
-        `/api/v1/search/keyword?query=${encodeURIExtraParams(inputValue)}`
-      );
+    const { data } = await axios.get<TmdbKeywordSearchResponse>(
+      `/api/v1/search/keyword?query=${encodeURIExtraParams(inputValue)}`
+    );
 
-      return data.results.map((result) => ({
-        label: result.name,
-        value: result.id,
-      }));
-    } catch (err) {
-      throw new Error('Network repsonse was not ok');
-    }
+    return data.results.map((result) => ({
+      label: result.name,
+      value: result.id,
+    }));
   };
 
   return (
@@ -268,7 +262,7 @@ const BlacklistedTagImportForm = forwardRef<
     const keywords = await Promise.allSettled(
       formValue.split(',').map(async (keywordId) => {
         try {
-          const { data }: { data: Keyword } = await axios.get(
+          const { data } = await axios.get<Keyword>(
             `/api/v1/keyword/${keywordId}`
           );
           return {
