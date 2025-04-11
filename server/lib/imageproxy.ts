@@ -3,6 +3,7 @@ import axios from 'axios';
 import rateLimit, { type rateLimitOptions } from 'axios-rate-limit';
 import { createHash } from 'crypto';
 import { promises } from 'fs';
+import mime from 'mime/lite';
 import path, { join } from 'path';
 
 type ImageResponse = {
@@ -269,7 +270,10 @@ class ImageProxy {
       });
 
       const buffer = Buffer.from(response.data, 'binary');
-      const extension = path.split('.').pop() ?? '';
+
+      const contentType = response.headers['content-type'] || '';
+      const extension = mime.getExtension(contentType) || '';
+
       let maxAge = Number(
         (response.headers['cache-control'] ?? '0').split('=')[1]
       );
