@@ -8,7 +8,7 @@ module.exports = {
   images: {
     remotePatterns: [
       { hostname: 'gravatar.com' },
-      { hostname: 'image.tmdb.org' },
+      { protocol: 'https', hostname: 'image.tmdb.org', pathname: '**' },
       { hostname: 'artworks.thetvdb.com' },
       { hostname: 'plex.tv' },
     ],
