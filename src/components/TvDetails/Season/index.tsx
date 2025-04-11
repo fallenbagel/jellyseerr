@@ -29,7 +29,6 @@ const Season = ({ seasonNumber, tvId }: SeasonProps) => {
   if (!data) {
     return <div>{intl.formatMessage(messages.somethingwentwrong)}</div>;
   }
-  console.log(data.episodes.map((e) => e.stillPath));
 
   return (
     <div className="flex flex-col justify-center divide-y divide-gray-700">
