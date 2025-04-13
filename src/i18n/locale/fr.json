@@ -307,7 +307,7 @@
   "components.TvDetails.anime": "Animé",
   "components.Settings.SonarrModal.animerootfolder": "Dossier racine pour anime",
   "components.Settings.SonarrModal.animequalityprofile": "Profil qualité pour anime",
-  "components.MovieDetails.studio": "{studioCount, plusieurs, un {Studio} les autres {Studios}}",
+  "components.MovieDetails.studio": "{studioCount, plural, one {Studio} other {Studios}}",
   "components.Settings.SettingsAbout.supportoverseerr": "Soutenez Overseerr",
   "i18n.close": "Fermer",
   "components.Settings.SettingsAbout.timezone": "Fuseau horaire",
