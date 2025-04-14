@@ -98,6 +98,9 @@ class TelegramAgent
         case Notification.MEDIA_AVAILABLE:
           status = 'Available';
           break;
+        case Notification.EPISODE_AVAILABLE:
+          status = 'New Episode Available';
+          break;
         case Notification.MEDIA_DECLINED:
           status = 'Declined';
           break;
