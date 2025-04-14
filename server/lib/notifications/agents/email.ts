@@ -102,6 +102,11 @@ class EmailAgent
             is4k ? 'in 4K ' : ''
           }is now available:`;
           break;
+        case Notification.EPISODE_AVAILABLE:
+          body = `A new episode of the following ${mediaType} ${
+            is4k ? 'in 4K ' : ''
+          }is now available:`;
+          break;
         case Notification.MEDIA_DECLINED:
           body = `Your request for the following ${mediaType} ${
             is4k ? 'in 4K ' : ''

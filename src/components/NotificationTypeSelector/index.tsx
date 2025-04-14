@@ -29,6 +29,11 @@ const messages = defineMessages('components.NotificationTypeSelector', {
     'Send notifications when media requests become available.',
   usermediaavailableDescription:
     'Get notified when your media requests become available.',
+  episodeavailable: 'New Episode in Partially Available Season',
+  episodeavailableDescription:
+    'Send notifications when new episodes of partially available seasons of requested shows become available.',
+  userepisodeavailableDescription:
+    'Get notified when new episodes for partially available seasons of your requested shows become available.',
   mediafailed: 'Request Processing Failed',
   mediafailedDescription:
     'Send notifications when media requests fail to be added to Radarr or Sonarr.',
@@ -106,6 +111,7 @@ export enum Notification {
   ISSUE_RESOLVED = 1024,
   ISSUE_REOPENED = 2048,
   MEDIA_AUTO_REQUESTED = 4096,
+  EPISODE_AVAILABLE = 8192,
 }
 
 export const ALL_NOTIFICATIONS = Object.values(Notification)
@@ -272,6 +278,17 @@ const NotificationTypeSelector = ({
             : messages.mediaavailableDescription
         ),
         value: Notification.MEDIA_AVAILABLE,
+        hasNotifyUser: true,
+      },
+      {
+        id: 'episode-available',
+        name: intl.formatMessage(messages.episodeavailable),
+        description: intl.formatMessage(
+          user
+            ? messages.userepisodeavailableDescription
+            : messages.episodeavailableDescription
+        ),
+        value: Notification.EPISODE_AVAILABLE,
         hasNotifyUser: true,
       },
       {

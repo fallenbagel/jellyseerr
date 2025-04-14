@@ -40,6 +40,7 @@ class JellyfinScanner {
   private enable4kMovie = false;
   private enable4kShow = false;
   private asyncLock = new AsyncLock();
+  private processedEpisodeIds = new Set<string>();
 
   constructor({ isRecentOnly }: { isRecentOnly?: boolean } = {}) {
     this.tmdb = new TheMovieDb();
@@ -533,9 +534,179 @@ class JellyfinScanner {
           await this.processMovie(item);
         } else if (item.Type === 'Series') {
           await this.processShow(item);
+        } else if (item.Type === 'Episode' && this.isRecentOnly) {
+          // Process individual episodes when using the recently added scan
+          await this.processEpisode(item);
         }
       })
     );
+  }
+
+  /**
+   * Process an individual episode from Jellyfin's recently added endpoint.
+   * This is more efficient for detecting new episodes compared to scanning entire shows.
+   */
+  private async processEpisode(jellyfinEpisode: JellyfinLibraryItem) {
+    if (!jellyfinEpisode.SeriesId) {
+      this.log('Episode missing SeriesId, skipping', 'warn', {
+        episodeId: jellyfinEpisode.Id,
+        name: jellyfinEpisode.Name,
+      });
+      return;
+    }
+
+    const seasonNumber = jellyfinEpisode.ParentIndexNumber ?? 0;
+    const episodeNumber = jellyfinEpisode.IndexNumber ?? 0;
+
+    // Generate a unique identifier for this episode based on series ID and episode info
+    const episodeIdentifier = `${jellyfinEpisode.SeriesId}_S${seasonNumber}E${episodeNumber}`;
+
+    // Skip if we've already processed this episode in this scan session
+    if (this.processedEpisodeIds.has(episodeIdentifier)) {
+      this.log(
+        `Episode ${episodeIdentifier} already processed this session, skipping`,
+        'debug'
+      );
+      return;
+    }
+
+    try {
+      // Get series metadata
+      const seriesMetadata = await this.jfClient.getItemData(
+        jellyfinEpisode.SeriesId
+      );
+
+      if (!seriesMetadata?.ProviderIds?.Tmdb) {
+        this.log('Series missing TMDB ID, skipping episode', 'debug', {
+          seriesId: jellyfinEpisode.SeriesId,
+          episodeId: jellyfinEpisode.Id,
+          seriesName: jellyfinEpisode.SeriesName,
+        });
+        return;
+      }
+
+      const tmdbId = Number(seriesMetadata.ProviderIds.Tmdb);
+
+      // Get the media entity
+      const mediaRepository = getRepository(Media);
+      const media = await mediaRepository.findOne({
+        where: { tmdbId, mediaType: MediaType.TV },
+      });
+
+      if (!media) {
+        this.log(
+          'Media not found in database, skipping episode notification',
+          'debug',
+          {
+            tmdbId,
+            seriesName: jellyfinEpisode.SeriesName,
+          }
+        );
+        return;
+      }
+
+      // Check if we've recently sent a notification for this show
+      // (within the last 12 hours)
+      if (media.lastSeasonChange) {
+        const notificationThreshold = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+        const timeSinceLastNotification =
+          Date.now() - media.lastSeasonChange.getTime();
+
+        if (timeSinceLastNotification < notificationThreshold) {
+          this.log(
+            `Skipping notification - show ${
+              jellyfinEpisode.SeriesName
+            } was recently notified (${Math.round(
+              timeSinceLastNotification / (60 * 60 * 1000)
+            )} hours ago)`,
+            'debug'
+          );
+          this.processedEpisodeIds.add(episodeIdentifier);
+          return;
+        }
+      }
+
+      // Get episode details
+      const episodeData = await this.jfClient.getItemData(jellyfinEpisode.Id);
+
+      if (!episodeData) {
+        this.log('Failed to get episode data', 'error', {
+          episodeId: jellyfinEpisode.Id,
+        });
+        return;
+      }
+
+      // Check episode creation date to avoid notifying about older episodes
+      const episodeDate = new Date(
+        episodeData.DateCreated ?? new Date().toISOString()
+      );
+      const now = new Date();
+      const episodeAge = now.getTime() - episodeDate.getTime();
+      const recentThreshold = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+      if (episodeAge > recentThreshold) {
+        this.log(
+          `Skipping older episode ${
+            jellyfinEpisode.SeriesName
+          } S${seasonNumber}E${episodeNumber} (created ${Math.round(
+            episodeAge / (24 * 60 * 60 * 1000)
+          )} days ago)`,
+          'debug'
+        );
+        this.processedEpisodeIds.add(episodeIdentifier);
+        return;
+      }
+
+      // Check if this is a 4K episode
+      const is4k =
+        episodeData.MediaSources?.some((source) =>
+          source.MediaStreams.some(
+            (stream) => stream.Type === 'Video' && (stream.Width ?? 0) >= 2000
+          )
+        ) ?? false;
+
+      // Get the corresponding season from the media entity
+      const season = media.seasons.find((s) => s.seasonNumber === seasonNumber);
+
+      if (!season) {
+        this.log('Season not found in media seasons', 'debug', {
+          tmdbId,
+          seasonNumber,
+          mediaId: media.id,
+        });
+        return;
+      }
+
+      // Check if the season is partially available - this is where we'd expect new episodes
+      const isPartiallyAvailable =
+        is4k && this.enable4kShow
+          ? season.status4k === MediaStatus.PARTIALLY_AVAILABLE
+          : season.status === MediaStatus.PARTIALLY_AVAILABLE;
+
+      // Only proceed with notification if the season is partially available
+      if (isPartiallyAvailable) {
+        // Log the detection
+        this.log(
+          `New ${is4k ? '4K' : 'standard'} episode detected for ${
+            jellyfinEpisode.SeriesName
+          } S${seasonNumber}E${episodeNumber}`,
+          'info'
+        );
+
+        // Mark this episode as processed
+        this.processedEpisodeIds.add(episodeIdentifier);
+
+        // Update lastSeasonChange, which updates the entity and triggers the notification
+        media.lastSeasonChange = new Date();
+        await mediaRepository.save(media);
+      }
+    } catch (e) {
+      this.log('Failed to process episode', 'error', {
+        errorMessage: e.message,
+        episodeId: jellyfinEpisode.Id,
+        name: jellyfinEpisode.Name,
+      });
+    }
   }
 
   private async loop({
@@ -595,6 +766,10 @@ class JellyfinScanner {
 
     const sessionId = uuid();
     this.sessionId = sessionId;
+
+    // Reset processed episode IDs for new scan
+    this.processedEpisodeIds.clear();
+
     logger.info('Jellyfin Sync Starting', {
       sessionId,
       label: 'Jellyfin Sync',
