@@ -115,8 +115,7 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
 
   async login(): Promise<TvdbLoginResponse> {
     let body: { apiKey: string; pin?: string } = {
-      apiKey:
-        process.env.TVDB_API_KEY || 'e4428e99-1c35-4500-9534-e13c1193b428',
+      apiKey: process.env.TVDB_API_KEY || '',
     };
 
     if (this.pin) {
