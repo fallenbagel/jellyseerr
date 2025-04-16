@@ -1,5 +1,5 @@
 import ExternalAPI from '@server/api/externalapi';
-import type { TvShowIndexer } from '@server/api/indexer';
+import type { TvShowProvider } from '@server/api/provider';
 import cacheManager from '@server/lib/cache';
 import { getSettings } from '@server/lib/settings';
 import { sortBy } from 'lodash';
@@ -121,7 +121,7 @@ interface DiscoverTvOptions {
   certificationCountry?: string;
 }
 
-class TheMovieDb extends ExternalAPI implements TvShowIndexer {
+class TheMovieDb extends ExternalAPI implements TvShowProvider {
   private locale: string;
   private discoverRegion?: string;
   private originalLanguage?: string;
