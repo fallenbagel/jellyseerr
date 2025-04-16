@@ -1,5 +1,5 @@
 import ExternalAPI from '@server/api/externalapi';
-import type { TvShowIndexer } from '@server/api/indexer';
+import type { TvShowProvider } from '@server/api/provider';
 import TheMovieDb from '@server/api/themoviedb';
 import type {
   TmdbSeasonWithEpisodes,
@@ -38,7 +38,7 @@ const enum TvdbIdStatus {
 type TvdbId = number;
 type ValidTvdbId = Exclude<TvdbId, TvdbIdStatus.INVALID>;
 
-class Tvdb extends ExternalAPI implements TvShowIndexer {
+class Tvdb extends ExternalAPI implements TvShowProvider {
   static instance: Tvdb;
   private readonly tmdb: TheMovieDb;
   private static readonly DEFAULT_CACHE_TTL = 43200;
