@@ -1,4 +1,4 @@
-import type { TvShowIndexer } from '@server/api/indexer';
+import type { TvShowProvider } from '@server/api/provider';
 import TheMovieDb from '@server/api/themoviedb';
 import Tvdb from '@server/api/tvdb';
 import { getSettings, IndexerType } from '@server/lib/settings';
@@ -6,7 +6,7 @@ import logger from '@server/logger';
 
 export const getMetadataProvider = async (
   mediaType: 'movie' | 'tv' | 'anime'
-): Promise<TvShowIndexer> => {
+): Promise<TvShowProvider> => {
   try {
     const settings = await getSettings();
 

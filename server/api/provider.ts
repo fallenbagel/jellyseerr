@@ -3,7 +3,7 @@ import type {
   TmdbTvDetails,
 } from '@server/api/themoviedb/interfaces';
 
-export interface TvShowIndexer {
+export interface TvShowProvider {
   getTvShow({
     tvId,
     language,
