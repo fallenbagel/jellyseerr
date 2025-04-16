@@ -19,10 +19,8 @@ const metadataRoutes = Router();
 metadataRoutes.get('/', (_req, res) => {
   const settings = getSettings();
   res.status(200).json({
-    metadata: {
-      tv: settings.metadataSettings.tv,
-      anime: settings.metadataSettings.anime,
-    },
+    tv: settings.metadataSettings.tv,
+    anime: settings.metadataSettings.anime,
   });
 });
 
@@ -61,10 +59,14 @@ metadataRoutes.put('/', async (req, res) => {
     });
   }
 
+  // Si un test a échoué, renvoyez les résultats des tests
   if (tvdbTest === 0 || tmdbTest === 0) {
     return res.status(500).json({
-      tvdb: tvdbTest === 1 ? 'ok' : 'failed',
-      tmdb: tmdbTest === 1 ? 'ok' : 'failed',
+      success: false,
+      tests: {
+        tvdb: getTestResultString(tvdbTest),
+        tmdb: getTestResultString(tmdbTest),
+      },
     });
   }
 
@@ -75,8 +77,13 @@ metadataRoutes.put('/', async (req, res) => {
   await settings.save();
 
   res.status(200).json({
-    tv: settings.metadataSettings.tv === IndexerType.TMDB,
-    anime: settings.metadataSettings.anime === IndexerType.TMDB,
+    success: true,
+    tv: body.tv,
+    anime: body.anime,
+    tests: {
+      tvdb: getTestResultString(tvdbTest),
+      tmdb: getTestResultString(tmdbTest),
+    },
   });
 });
 
@@ -115,24 +122,25 @@ metadataRoutes.post('/test', async (req, res) => {
       });
     }
 
-    const response = {
-      tmdb: getTestResultString(tmdbTest),
-      tvdb: getTestResultString(tvdbTest),
-    };
+    const success = !(tvdbTest === 0 || tmdbTest === 0);
+    const statusCode = success ? 200 : 500;
 
-    return res.status(200).json(response);
-  } catch (e) {
-    logger.error('Failed to test indexers', {
-      label: 'Metadata',
-      message: e.message,
+    return res.status(statusCode).json({
+      success: success,
+      tests: {
+        tmdb: getTestResultString(tmdbTest),
+        tvdb: getTestResultString(tvdbTest),
+      },
     });
-
-    const response = {
-      tmdb: getTestResultString(tmdbTest),
-      tvdb: getTestResultString(tvdbTest),
-    };
-
-    return res.status(500).json(response);
+  } catch (e) {
+    return res.status(500).json({
+      success: false,
+      tests: {
+        tmdb: getTestResultString(tmdbTest),
+        tvdb: getTestResultString(tvdbTest),
+      },
+      error: e.message,
+    });
   }
 });
 
