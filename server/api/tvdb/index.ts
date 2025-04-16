@@ -20,12 +20,14 @@ import logger from '@server/logger';
 interface TvdbConfig {
   baseUrl: string;
   maxRequestsPerSecond: number;
+  maxRequests: number;
   cachePrefix: AvailableCacheIds;
 }
 
 const DEFAULT_CONFIG: TvdbConfig = {
   baseUrl: 'https://api4.thetvdb.com/v4',
   maxRequestsPerSecond: 50,
+  maxRequests: 20,
   cachePrefix: 'tvdb' as const,
 };
 
@@ -52,8 +54,8 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
       {
         nodeCache: cacheManager.getCache(finalConfig.cachePrefix).data,
         rateLimit: {
+          maxRequests: finalConfig.maxRequests,
           maxRPS: finalConfig.maxRequestsPerSecond,
-          id: finalConfig.cachePrefix,
         },
       }
     );
@@ -112,14 +114,25 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
   }
 
   async login(): Promise<TvdbLoginResponse> {
+    let body: { apiKey: string; pin?: string } = {
+      apiKey:
+        process.env.TVDB_API_KEY || 'e4428e99-1c35-4500-9534-e13c1193b428',
+    };
+
+    if (this.pin) {
+      body = {
+        ...body,
+        pin: this.pin,
+      };
+    }
+
     const response = await this.post<TvdbBaseResponse<TvdbLoginResponse>>(
       '/login',
       {
-        apiKey: process.env.TVDB_API_KEY,
+        ...body,
       }
     );
 
-    this.defaultHeaders.Authorization = `Bearer ${response.data.token}`;
     this.token = response.data.token;
 
     return response.data;
@@ -250,9 +263,11 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
 
   private async fetchTvdbShowData(tvdbId: number): Promise<TvdbTvDetails> {
     const resp = await this.get<TvdbBaseResponse<TvdbTvDetails>>(
-      `/series/${tvdbId}/extended?meta=episodes`,
+      `/series/${tvdbId}/extended?meta=episodes&short=true`,
       {
-        short: 'true',
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
       },
       Tvdb.DEFAULT_CACHE_TTL
     );
@@ -265,12 +280,15 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
       return [];
     }
 
-    return tvdbData.seasons
+    const seasons = tvdbData.seasons
       .filter(
         (season) =>
           season.number > 0 && season.type && season.type.type === 'official'
       )
+      .sort((a, b) => a.number - b.number)
       .map((season) => this.createSeasonData(season, tvdbData));
+
+    return seasons;
   }
 
   private createSeasonData(
@@ -307,18 +325,38 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
   private async getTvdbSeasonData(
     tvdbId: number,
     seasonNumber: number,
-    tvId: number,
-    language: string = Tvdb.DEFAULT_LANGUAGE
+    tvId: number
+    //language: string = Tvdb.DEFAULT_LANGUAGE
   ): Promise<TmdbSeasonWithEpisodes> {
     const tvdbData = await this.fetchTvdbShowData(tvdbId);
 
     if (!tvdbData) {
+      logger.error(`Failed to fetch TVDB data for ID: ${tvdbId}`);
+      return this.createEmptySeasonResponse(tvId);
+    }
+
+    // get season id
+    const season = tvdbData.seasons.find(
+      (season) =>
+        season.number === seasonNumber &&
+        season.type.type &&
+        season.type.type === 'official'
+    );
+
+    if (!season) {
+      logger.error(
+        `Failed to find season ${seasonNumber} for TVDB ID: ${tvdbId}`
+      );
       return this.createEmptySeasonResponse(tvId);
     }
 
     const resp = await this.get<TvdbBaseResponse<TvdbSeasonDetails>>(
-      `/series/${tvdbId}/episodes/official/${language}`,
-      {}
+      `/seasons/${season.id}/extended`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      }
     );
 
     const seasons = resp.data;
@@ -342,6 +380,7 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     tvId: number
   ): TmdbTvEpisodeResult[] {
     if (!tvdbSeason || !tvdbSeason.episodes) {
+      logger.error('No episodes found in TVDB season data');
       return [];
     }
 
@@ -355,6 +394,10 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     index: number,
     tvId: number
   ): TmdbTvEpisodeResult {
+    logger.info(
+      `Creating episode data for episode: ${episode.name} with index: ${index}`
+    );
+
     return {
       id: episode.id,
       air_date: episode.aired,
@@ -364,9 +407,7 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
       season_number: episode.seasonNumber,
       production_code: '',
       show_id: tvId,
-      still_path: episode.image
-        ? 'https://artworks.thetvdb.com' + episode.image
-        : '',
+      still_path: episode.image ? episode.image : '',
       vote_average: 1,
       vote_count: 1,
     };
