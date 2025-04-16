@@ -128,7 +128,7 @@ class TheMovieDb extends ExternalAPI implements TvShowIndexer {
   constructor({
     discoverRegion,
     originalLanguage,
-  }: { discoverRegion?: string; originalLanguage?: string } = {})  {
+  }: { discoverRegion?: string; originalLanguage?: string } = {}) {
     super(
       'https://api.themoviedb.org/3',
       {
