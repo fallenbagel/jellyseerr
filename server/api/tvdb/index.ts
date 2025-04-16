@@ -393,10 +393,6 @@ class Tvdb extends ExternalAPI implements TvShowIndexer {
     index: number,
     tvId: number
   ): TmdbTvEpisodeResult {
-    logger.info(
-      `Creating episode data for episode: ${episode.name} with index: ${index}`
-    );
-
     return {
       id: episode.id,
       air_date: episode.aired,
