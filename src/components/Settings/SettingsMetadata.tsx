@@ -197,16 +197,22 @@ const SettingsMetadata = () => {
         </h4>
         <div className="flex flex-col space-y-3">
           <div className="flex items-center">
-            <span className="mr-2 w-12">TheMovieDB:</span>
-            <span className={`text-sm ${getStatusClass(providerStatus.tmdb)}`}>
+            <span className="mr-2 w-24">TheMovieDB:</span>
+            <span
+              className={`text-sm ${getStatusClass(providerStatus.tmdb)}`}
+              data-testid="tmdb-status-container"
+            >
               <Badge badgeType={getBadgeType(providerStatus.tmdb)}>
                 {getStatusMessage(providerStatus.tmdb)}
               </Badge>
             </span>
           </div>
           <div className="flex items-center">
-            <span className="mr-2 w-12">TheTVDB:</span>
-            <span className={`text-sm ${getStatusClass(providerStatus.tvdb)}`}>
+            <span className="mr-2 w-24">TheTVDB:</span>
+            <span
+              className={`text-sm ${getStatusClass(providerStatus.tvdb)}`}
+              data-testid="tvdb-status"
+            >
               <Badge badgeType={getBadgeType(providerStatus.tvdb)}>
                 {getStatusMessage(providerStatus.tvdb)}
               </Badge>
@@ -254,6 +260,7 @@ const SettingsMetadata = () => {
                   </label>
                   <div className="form-input-area">
                     <MetadataSelector
+                      testId="tv-indexer-selector"
                       value={values.metadata.tv}
                       onChange={(value) => setFieldValue('metadata.tv', value)}
                       isDisabled={isSubmitting}
@@ -269,6 +276,7 @@ const SettingsMetadata = () => {
                   </label>
                   <div className="form-input-area">
                     <MetadataSelector
+                      testId="anime-indexer-selector"
                       value={values.metadata.anime}
                       onChange={(value) =>
                         setFieldValue('metadata.anime', value)
