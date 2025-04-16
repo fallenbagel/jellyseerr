@@ -141,7 +141,7 @@
   "components.ManageSlideOver.manageModalAdvanced": "Erweitert",
   "components.ManageSlideOver.manageModalClearMedia": "Daten löschen",
   "components.ManageSlideOver.manageModalClearMediaWarning": "* Dadurch werden alle Daten für diesen {mediaType} unwiderruflich entfernt, einschließlich aller Anfragen. Wenn dieses Element in deiner {mediaServerName}-Bibliothek existiert, werden die Medieninformationen beim nächsten Scan neu erstellt.",
-  "components.ManageSlideOver.manageModalIssues": "Problem eröffnen",
+  "components.ManageSlideOver.manageModalIssues": "Offene Probleme",
   "components.ManageSlideOver.manageModalMedia": "Medien",
   "components.ManageSlideOver.manageModalMedia4k": "4K Medien",
   "components.ManageSlideOver.manageModalNoRequests": "Keine Anfragen.",
