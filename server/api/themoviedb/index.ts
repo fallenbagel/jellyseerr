@@ -110,7 +110,7 @@ class TheMovieDb extends ExternalAPI implements TvShowIndexer {
   constructor({
     discoverRegion,
     originalLanguage,
-  }: { discoverRegion?: string; originalLanguage?: string } = {})  {
+  }: { discoverRegion?: string; originalLanguage?: string } = {}) {
     super(
       'https://api.themoviedb.org/3',
       {
@@ -497,42 +497,42 @@ class TheMovieDb extends ExternalAPI implements TvShowIndexer {
         .toISOString()
         .split('T')[0];
 
-        const data = await this.get<TmdbSearchMovieResponse>('/discover/movie', {
-          params: {
-            sort_by: sortBy,
-            page,
-            include_adult: includeAdult,
-            language,
-            region: this.discoverRegion || '',
-            with_original_language:
-              originalLanguage && originalLanguage !== 'all'
-                ? originalLanguage
-                : originalLanguage === 'all'
-                ? undefined
-                : this.originalLanguage,
-            // Set our release date values, but check if one is set and not the other,
-            // so we can force a past date or a future date. TMDB Requires both values if one is set!
-            'primary_release_date.gte':
-              !primaryReleaseDateGte && primaryReleaseDateLte
-                ? defaultPastDate
-                : primaryReleaseDateGte,
-            'primary_release_date.lte':
-              !primaryReleaseDateLte && primaryReleaseDateGte
-                ? defaultFutureDate
-                : primaryReleaseDateLte,
-            with_genres: genre,
-            with_companies: studio,
-            with_keywords: keywords,
-            'with_runtime.gte': withRuntimeGte,
-            'with_runtime.lte': withRuntimeLte,
-            'vote_average.gte': voteAverageGte,
-            'vote_average.lte': voteAverageLte,
-            'vote_count.gte': voteCountGte,
-            'vote_count.lte': voteCountLte,
-            watch_region: watchRegion,
-            with_watch_providers: watchProviders,
-          },
-        });
+      const data = await this.get<TmdbSearchMovieResponse>('/discover/movie', {
+        params: {
+          sort_by: sortBy,
+          page,
+          include_adult: includeAdult,
+          language,
+          region: this.discoverRegion || '',
+          with_original_language:
+            originalLanguage && originalLanguage !== 'all'
+              ? originalLanguage
+              : originalLanguage === 'all'
+              ? undefined
+              : this.originalLanguage,
+          // Set our release date values, but check if one is set and not the other,
+          // so we can force a past date or a future date. TMDB Requires both values if one is set!
+          'primary_release_date.gte':
+            !primaryReleaseDateGte && primaryReleaseDateLte
+              ? defaultPastDate
+              : primaryReleaseDateGte,
+          'primary_release_date.lte':
+            !primaryReleaseDateLte && primaryReleaseDateGte
+              ? defaultFutureDate
+              : primaryReleaseDateLte,
+          with_genres: genre,
+          with_companies: studio,
+          with_keywords: keywords,
+          'with_runtime.gte': withRuntimeGte,
+          'with_runtime.lte': withRuntimeLte,
+          'vote_average.gte': voteAverageGte,
+          'vote_average.lte': voteAverageLte,
+          'vote_count.gte': voteCountGte,
+          'vote_count.lte': voteCountLte,
+          watch_region: watchRegion,
+          with_watch_providers: watchProviders,
+        },
+      });
 
       return data;
     } catch (e) {
