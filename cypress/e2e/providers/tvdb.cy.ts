@@ -84,7 +84,7 @@ describe('TVDB Integration', () => {
       tv: 'tvdb',
     }).then(({ response }) => {
       expect(response.statusCode).to.equal(200);
-      expect(response.body.tv).to.equal(false);
+      expect(response.body.tv).to.equal('tvdb');
     });
   });
 
