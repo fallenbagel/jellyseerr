@@ -8,6 +8,7 @@ import MetadataSelector, {
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
+import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -63,7 +64,20 @@ const SettingsMetadata = () => {
     useState<ProviderResponse>(defaultStatus);
 
   const { data, error } = useSWR<MetadataSettings>(
-    '/api/v1/settings/metadatas'
+    '/api/v1/settings/metadatas',
+    async (url: string) => {
+      const response = await axios.get<{
+        tv: IndexerType;
+        anime: IndexerType;
+      }>(url);
+
+      return {
+        metadata: {
+          tv: response.data.tv,
+          anime: response.data.anime,
+        },
+      };
+    }
   );
 
   const testConnection = async (
@@ -79,48 +93,110 @@ const SettingsMetadata = () => {
       tvdb: useTvdb,
     };
 
-    const response = await fetch('/api/v1/settings/metadatas/test', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(testData),
-    });
+    try {
+      const response = await axios.post<{
+        success: boolean;
+        tests: ProviderResponse;
+      }>('/api/v1/settings/metadatas/test', testData);
 
-    if (!response.ok) {
+      const newStatus: ProviderResponse = {
+        tmdb: useTmdb ? response.data.tests.tmdb : 'not tested',
+        tvdb: useTvdb ? response.data.tests.tvdb : 'not tested',
+      };
+
+      setProviderStatus(newStatus);
+      return newStatus;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        // Si nous recevons une réponse d'erreur avec un format valide
+        const errorData = error.response.data as {
+          success: boolean;
+          tests: ProviderResponse;
+        };
+
+        if (errorData.tests) {
+          const newStatus: ProviderResponse = {
+            tmdb: useTmdb ? errorData.tests.tmdb : 'not tested',
+            tvdb: useTvdb ? errorData.tests.tvdb : 'not tested',
+          };
+
+          setProviderStatus(newStatus);
+          return newStatus;
+        }
+      }
+
+      // En cas d'erreur sans données utilisables
       throw new Error('Failed to test connection');
     }
-
-    const body = (await response.json()) as ProviderResponse;
-
-    const newStatus: ProviderResponse = {
-      tmdb: useTmdb ? body.tmdb : 'not tested',
-      tvdb: useTvdb ? body.tvdb : 'not tested',
-    };
-
-    setProviderStatus(newStatus);
-    return newStatus;
   };
 
   const saveSettings = async (
     values: MetadataValues
   ): Promise<MetadataSettings> => {
-    const response = await fetch('/api/v1/settings/metadatas', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        anime: values.anime,
+    try {
+      const response = await axios.put<{
+        success: boolean;
+        tv: IndexerType;
+        anime: IndexerType;
+        tests?: {
+          tvdb: ProviderStatus;
+          tmdb: ProviderStatus;
+        };
+      }>('/api/v1/settings/metadatas', {
         tv: values.tv,
-      }),
-    });
+        anime: values.anime,
+      });
 
-    if (!response.ok) {
+      // Mettre à jour le statut des providers si disponible
+      if (response.data.tests) {
+        const mapStatusValue = (status: string): ProviderStatus => {
+          if (status === 'ok') return 'ok';
+          if (status === 'failed') return 'failed';
+          return 'not tested';
+        };
+
+        setProviderStatus({
+          tmdb: mapStatusValue(response.data.tests.tmdb),
+          tvdb: mapStatusValue(response.data.tests.tvdb),
+        });
+      }
+
+      // Adapter la réponse au format attendu par le composant
+      return {
+        metadata: {
+          tv: response.data.tv,
+          anime: response.data.anime,
+        },
+      };
+    } catch (error) {
+      // Récupérer les données de test en cas d'erreur
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorData = error.response.data as {
+          success: boolean;
+          tests?: {
+            tvdb: string;
+            tmdb: string;
+          };
+        };
+
+        // Si des données de test sont disponibles dans la réponse d'erreur
+        if (errorData.tests) {
+          const mapStatusValue = (status: string): ProviderStatus => {
+            if (status === 'ok') return 'ok';
+            if (status === 'failed') return 'failed';
+            return 'not tested';
+          };
+
+          // Mettre à jour le statut des providers avec les données d'erreur
+          setProviderStatus({
+            tmdb: mapStatusValue(errorData.tests.tmdb),
+            tvdb: mapStatusValue(errorData.tests.tvdb),
+          });
+        }
+      }
+
       throw new Error('Failed to save Metadata settings');
     }
-
-    return (await response.json()) as MetadataSettings;
   };
 
   const getStatusClass = (status: ProviderStatus): string => {
@@ -226,10 +302,10 @@ const SettingsMetadata = () => {
           initialValues={{ metadata: initialValues }}
           onSubmit={async (values) => {
             try {
-              await saveSettings(values.metadata);
+              const result = await saveSettings(values.metadata);
 
               if (data) {
-                data.metadata = values.metadata;
+                data.metadata = result.metadata;
               }
 
               addToast('Metadata settings saved', { appearance: 'success' });
