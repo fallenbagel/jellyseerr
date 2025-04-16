@@ -271,7 +271,41 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
         ))
     );
   }
-  
+
+  const getAllRequestedSeasons = (is4k: boolean): number[] => {
+    const requestedSeasons = (data?.mediaInfo?.requests ?? [])
+      .filter(
+        (request) =>
+          request.is4k === is4k &&
+          request.status !== MediaRequestStatus.DECLINED
+      )
+      .reduce((requestedSeasons, request) => {
+        return [
+          ...requestedSeasons,
+          ...request.seasons.map((sr) => sr.seasonNumber),
+        ];
+      }, [] as number[]);
+
+    const availableSeasons = (data?.mediaInfo?.seasons ?? [])
+      .filter(
+        (season) =>
+          (season[is4k ? 'status4k' : 'status'] === MediaStatus.AVAILABLE ||
+            season[is4k ? 'status4k' : 'status'] ===
+              MediaStatus.PARTIALLY_AVAILABLE ||
+            season[is4k ? 'status4k' : 'status'] === MediaStatus.PROCESSING) &&
+          !requestedSeasons.includes(season.seasonNumber)
+      )
+      .map((season) => season.seasonNumber);
+
+    return [...requestedSeasons, ...availableSeasons];
+  };
+
+  const showHasSpecials = data.seasons.some(
+    (season) =>
+      season.seasonNumber === 0 &&
+      settings.currentSettings.enableSpecialEpisodes
+  );
+
   const streamingRegion = user?.settings?.streamingRegion
     ? user.settings.streamingRegion
     : settings.currentSettings.streamingRegion
