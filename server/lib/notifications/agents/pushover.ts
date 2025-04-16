@@ -68,7 +68,7 @@ class PushoverAgent
       logger.error('Error getting image payload', {
         label: 'Notifications',
         errorMessage: e.message,
-        response: e?.response?.data,
+        response: e.response?.data,
       });
       return {};
     }

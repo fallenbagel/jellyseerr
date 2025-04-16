@@ -467,7 +467,9 @@ const TitleCard = ({
                   <div
                     className={`px-2 text-white ${
                       !showRequestButton ||
-                      (currentStatus && currentStatus !== MediaStatus.UNKNOWN)
+                      (currentStatus &&
+                        currentStatus !== MediaStatus.UNKNOWN &&
+                        currentStatus !== MediaStatus.DELETED)
                         ? 'pb-2'
                         : 'pb-11'
                     }`}
@@ -493,7 +495,8 @@ const TitleCard = ({
                         WebkitLineClamp:
                           !showRequestButton ||
                           (currentStatus &&
-                            currentStatus !== MediaStatus.UNKNOWN)
+                            currentStatus !== MediaStatus.UNKNOWN &&
+                            currentStatus !== MediaStatus.DELETED)
                             ? 5
                             : 3,
                         display: '-webkit-box',
@@ -510,7 +513,9 @@ const TitleCard = ({
 
               <div className="absolute bottom-0 left-0 right-0 flex justify-between px-2 py-2">
                 {showRequestButton &&
-                  (!currentStatus || currentStatus === MediaStatus.UNKNOWN) && (
+                  (!currentStatus ||
+                    currentStatus === MediaStatus.UNKNOWN ||
+                    currentStatus === MediaStatus.DELETED) && (
                     <Button
                       buttonType="primary"
                       buttonSize="sm"

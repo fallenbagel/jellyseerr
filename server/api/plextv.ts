@@ -367,12 +367,12 @@ class PlexTvAPI extends ExternalAPI {
 
   public async pingToken() {
     try {
-      const data: { pong: unknown } = await this.get('/api/v2/ping', {
+      const response = await this.axios.get('/api/v2/ping', {
         headers: {
           'X-Plex-Client-Identifier': randomUUID(),
         },
       });
-      if (!data?.pong) {
+      if (!response?.data?.pong) {
         throw new Error('No pong response');
       }
     } catch (e) {

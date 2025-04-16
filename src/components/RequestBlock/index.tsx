@@ -206,6 +206,11 @@ const RequestBlock = ({ request, onUpdate }: RequestBlockProps) => {
                   {intl.formatMessage(globalMessages.failed)}
                 </Badge>
               )}
+              {request.status === MediaRequestStatus.COMPLETED && (
+                <Badge badgeType="success">
+                  {intl.formatMessage(globalMessages.completed)}
+                </Badge>
+              )}
             </div>
           </div>
           <div className="mt-2 flex items-center text-sm leading-5 sm:mt-0">

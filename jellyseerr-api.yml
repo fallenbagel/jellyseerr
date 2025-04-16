@@ -1157,7 +1157,7 @@ components:
         status:
           type: number
           example: 0
-          description: Availability of the media. 1 = `UNKNOWN`, 2 = `PENDING`, 3 = `PROCESSING`, 4 = `PARTIALLY_AVAILABLE`, 5 = `AVAILABLE`
+          description: Availability of the media. 1 = `UNKNOWN`, 2 = `PENDING`, 3 = `PROCESSING`, 4 = `PARTIALLY_AVAILABLE`, 5 = `AVAILABLE`, 6 = `DELETED`
         requests:
           type: array
           readOnly: true
@@ -5676,6 +5676,8 @@ paths:
                 processing,
                 unavailable,
                 failed,
+                deleted,
+                completed,
               ]
         - in: query
           name: sort
@@ -6422,7 +6424,16 @@ paths:
           schema:
             type: string
             nullable: true
-            enum: [all, available, partial, allavailable, processing, pending]
+            enum:
+              [
+                all,
+                available,
+                partial,
+                allavailable,
+                processing,
+                pending,
+                deleted,
+              ]
         - in: query
           name: sort
           schema:
@@ -6498,7 +6509,7 @@ paths:
           example: available
           schema:
             type: string
-            enum: [available, partial, processing, pending, unknown]
+            enum: [available, partial, processing, pending, unknown, deleted]
       requestBody:
         content:
           application/json:

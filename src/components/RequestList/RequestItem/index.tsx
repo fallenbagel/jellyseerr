@@ -17,7 +17,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid';
-import { MediaRequestStatus } from '@server/constants/media';
+import { MediaRequestStatus, MediaStatus } from '@server/constants/media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
 import type { NonFunctionProperties } from '@server/interfaces/api/common';
 import type { RequestResultsResponse } from '@server/interfaces/api/requestInterfaces';
@@ -508,6 +508,15 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
                   href={`/${requestData.type}/${requestData.media.tmdbId}?manage=1`}
                 >
                   {intl.formatMessage(globalMessages.failed)}
+                </Badge>
+              ) : requestData.status === MediaRequestStatus.PENDING &&
+                requestData.media[requestData.is4k ? 'status4k' : 'status'] ===
+                  MediaStatus.DELETED ? (
+                <Badge
+                  badgeType="warning"
+                  href={`/${requestData.type}/${requestData.media.tmdbId}?manage=1`}
+                >
+                  {intl.formatMessage(globalMessages.pending)}
                 </Badge>
               ) : (
                 <StatusBadge
