@@ -358,6 +358,7 @@ Thanks goes to these wonderful people from Overseerr ([emoji key](https://allcon
       <td align="center" valign="top" width="14.28%"><a href="http://indicus.ro"><img src="https://avatars.githubusercontent.com/u/1199404?v=4?s=100" width="100px;" alt="Stancu Florin"/><br /><sub><b>Stancu Florin</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=StancuFlorin" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/lmiklosko"><img src="https://avatars.githubusercontent.com/u/44380311?v=4?s=100" width="100px;" alt="Lukas Miklosko"/><br /><sub><b>Lukas Miklosko</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=lmiklosko" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://gauthierth.fr/"><img src="https://avatars.githubusercontent.com/u/37781713?v=4?s=100" width="100px;" alt="Gauthier"/><br /><sub><b>Gauthier</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=gauthier-th" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/vfaergestad"><img src="https://avatars.githubusercontent.com/u/49147564?v=4?s=100" width="100px;" alt="vfaergestad"/><br /><sub><b>vfaergestad</b></sub></a><br /><a href="https://github.com/sct/overseerr/commits?author=vfaergestad" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
