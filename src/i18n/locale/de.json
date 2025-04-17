@@ -246,7 +246,7 @@
   "components.PermissionEdit.autorequestDescription": "Autorisierung zur automatischen Anfrage von Nicht-4K-Medien über die Plex Merkliste.",
   "components.PermissionEdit.autorequestMovies": "Filme automatisch anfragen",
   "components.PermissionEdit.autorequestMoviesDescription": "Autorisierung zur automatischen Anfrage von Nicht-4K-Medien über die Plex Merkliste.",
-  "components.PermissionEdit.autorequestSeries": "Auto-Anfrage-Serien",
+  "components.PermissionEdit.autorequestSeries": "Serien automatisch anfragen",
   "components.PermissionEdit.autorequestSeriesDescription": "Autorisierung der automatischen Anfrage von Nicht-4K-Serien über die Plex Merkliste.",
   "components.PermissionEdit.createissues": "Probleme melden",
   "components.PermissionEdit.createissuesDescription": "Autorisierung zur Meldung von Medienproblemen.",
