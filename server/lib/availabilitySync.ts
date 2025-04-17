@@ -747,7 +747,11 @@ class AvailabilitySync {
         }
 
         if (radarr && radarr.hasFile) {
-          existsInRadarr = true;
+          const resolution =
+            radarr?.movieFile?.mediaInfo?.resolution?.split('x');
+          const is4kMovie =
+            resolution?.length === 2 && Number(resolution[0]) >= 2000;
+          existsInRadarr = is4k ? is4kMovie : !is4kMovie;
         }
       } catch (ex) {
         if (!ex.message.includes('404')) {

@@ -4,6 +4,7 @@ import NotificationTypeSelector from '@app/components/NotificationTypeSelector';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/solid';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -17,9 +18,11 @@ const messages = defineMessages(
     agentenabled: 'Enable Agent',
     url: 'Server URL',
     token: 'Application Token',
+    priority: 'Priority',
     validationUrlRequired: 'You must provide a valid URL',
     validationUrlTrailingSlash: 'URL must not end in a trailing slash',
     validationTokenRequired: 'You must provide an application token',
+    validationPriorityRequired: 'You must set a priority number',
     gotifysettingssaved: 'Gotify notification settings saved successfully!',
     gotifysettingsfailed: 'Gotify notification settings failed to save.',
     toastGotifyTestSending: 'Sending Gotify test notification…',
@@ -65,6 +68,15 @@ const NotificationsGotify = () => {
         .required(intl.formatMessage(messages.validationTokenRequired)),
       otherwise: Yup.string().nullable(),
     }),
+    priority: Yup.string().when('enabled', {
+      is: true,
+      then: Yup.string()
+        .nullable()
+        .min(0)
+        .max(9)
+        .required(intl.formatMessage(messages.validationPriorityRequired)),
+      otherwise: Yup.string().nullable(),
+    }),
   });
 
   if (!data && !error) {
@@ -78,25 +90,20 @@ const NotificationsGotify = () => {
         types: data?.types,
         url: data?.options.url,
         token: data?.options.token,
+        priority: data?.options.priority,
       }}
       validationSchema={NotificationsGotifySchema}
       onSubmit={async (values) => {
         try {
-          const res = await fetch('/api/v1/settings/notifications/gotify', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+          await axios.post('/api/v1/settings/notifications/gotify', {
+            enabled: values.enabled,
+            types: values.types,
+            options: {
+              url: values.url,
+              token: values.token,
+              priority: Number(values.priority),
             },
-            body: JSON.stringify({
-              enabled: values.enabled,
-              types: values.types,
-              options: {
-                url: values.url,
-                token: values.token,
-              },
-            }),
           });
-          if (!res.ok) throw new Error();
           addToast(intl.formatMessage(messages.gotifysettingssaved), {
             appearance: 'success',
             autoDismiss: true,
@@ -134,24 +141,15 @@ const NotificationsGotify = () => {
                 toastId = id;
               }
             );
-            const res = await fetch(
-              '/api/v1/settings/notifications/gotify/test',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  enabled: true,
-                  types: values.types,
-                  options: {
-                    url: values.url,
-                    token: values.token,
-                  },
-                }),
-              }
-            );
-            if (!res.ok) throw new Error();
+            await axios.post('/api/v1/settings/notifications/gotify/test', {
+              enabled: true,
+              types: values.types,
+              options: {
+                url: values.url,
+                token: values.token,
+                priority: Number(values.priority),
+              },
+            });
 
             if (toastId) {
               removeToast(toastId);
@@ -213,6 +211,30 @@ const NotificationsGotify = () => {
                   touched.token &&
                   typeof errors.token === 'string' && (
                     <div className="error">{errors.token}</div>
+                  )}
+              </div>
+            </div>
+            <div className="form-row">
+              <label htmlFor="priority" className="text-label">
+                {intl.formatMessage(messages.priority)}
+                <span className="label-required">*</span>
+              </label>
+              <div className="form-input-area">
+                <Field
+                  id="priority"
+                  name="priority"
+                  type="text"
+                  inputMode="numeric"
+                  className="short"
+                  autoComplete="off"
+                  data-1pignore="true"
+                  data-lpignore="true"
+                  data-bwignore="true"
+                />
+                {errors.priority &&
+                  touched.priority &&
+                  typeof errors.priority === 'string' && (
+                    <div className="error">{errors.priority}</div>
                   )}
               </div>
             </div>

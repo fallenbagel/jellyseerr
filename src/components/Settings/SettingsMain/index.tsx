@@ -1,3 +1,4 @@
+import BlacklistedTagsSelector from '@app/components/BlacklistedTagsSelector';
 import Button from '@app/components/Common/Button';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
@@ -16,6 +17,7 @@ import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import type { MainSettings } from '@server/lib/settings';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -28,12 +30,19 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   generalsettingsDescription:
     'Configure global and default settings for Jellyseerr.',
   apikey: 'API Key',
+  apikeyCopied: 'Copied API key to clipboard.',
   applicationTitle: 'Application Title',
   applicationurl: 'Application URL',
   discoverRegion: 'Discover Region',
   discoverRegionTip: 'Filter content by regional availability',
   originallanguage: 'Discover Language',
   originallanguageTip: 'Filter content by original language',
+  blacklistedTags: 'Blacklist Content with Tags',
+  blacklistedTagsTip:
+    'Automatically add content with tags to the blacklist using the "Process Blacklisted Tags" job',
+  blacklistedTagsLimit: 'Limit Content Blacklisted per Tag',
+  blacklistedTagsLimitTip:
+    'The "Process Blacklisted Tags" job will blacklist this many pages into each sort. Larger numbers will create a more accurate blacklist, but use more space.',
   streamingRegion: 'Streaming Region',
   streamingRegionTip: 'Show streaming sites by regional availability',
   toastApiKeySuccess: 'New API key generated successfully!',
@@ -80,14 +89,22 @@ const SettingsMain = () => {
         intl.formatMessage(messages.validationApplicationUrlTrailingSlash),
         (value) => !value || !value.endsWith('/')
       ),
+    blacklistedTagsLimit: Yup.number()
+      .test(
+        'positive',
+        'Number must be greater than 0.',
+        (value) => (value ?? 0) >= 0
+      )
+      .test(
+        'lte-250',
+        'Number must be less than or equal to 250.',
+        (value) => (value ?? 0) <= 250
+      ),
   });
 
   const regenerate = async () => {
     try {
-      const res = await fetch('/api/v1/settings/main/regenerate', {
-        method: 'POST',
-      });
-      if (!res.ok) throw new Error();
+      await axios.post('/api/v1/settings/main/regenerate');
 
       revalidate();
       addToast(intl.formatMessage(messages.toastApiKeySuccess), {
@@ -132,6 +149,8 @@ const SettingsMain = () => {
             discoverRegion: data?.discoverRegion,
             originalLanguage: data?.originalLanguage,
             streamingRegion: data?.streamingRegion || 'US',
+            blacklistedTags: data?.blacklistedTags,
+            blacklistedTagsLimit: data?.blacklistedTagsLimit || 50,
             partialRequestsEnabled: data?.partialRequestsEnabled,
             enableSpecialEpisodes: data?.enableSpecialEpisodes,
             cacheImages: data?.cacheImages,
@@ -140,25 +159,20 @@ const SettingsMain = () => {
           validationSchema={MainSettingsSchema}
           onSubmit={async (values) => {
             try {
-              const res = await fetch('/api/v1/settings/main', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  applicationTitle: values.applicationTitle,
-                  applicationUrl: values.applicationUrl,
-                  hideAvailable: values.hideAvailable,
-                  locale: values.locale,
-                  discoverRegion: values.discoverRegion,
-                  streamingRegion: values.streamingRegion,
-                  originalLanguage: values.originalLanguage,
-                  partialRequestsEnabled: values.partialRequestsEnabled,
-                  enableSpecialEpisodes: values.enableSpecialEpisodes,
-                  cacheImages: values.cacheImages,
-                }),
+              await axios.post('/api/v1/settings/main', {
+                applicationTitle: values.applicationTitle,
+                applicationUrl: values.applicationUrl,
+                hideAvailable: values.hideAvailable,
+                locale: values.locale,
+                discoverRegion: values.discoverRegion,
+                streamingRegion: values.streamingRegion,
+                originalLanguage: values.originalLanguage,
+                blacklistedTags: values.blacklistedTags,
+                blacklistedTagsLimit: values.blacklistedTagsLimit,
+                partialRequestsEnabled: values.partialRequestsEnabled,
+                enableSpecialEpisodes: values.enableSpecialEpisodes,
+                cacheImages: values.cacheImages,
               });
-              if (!res.ok) throw new Error();
               mutate('/api/v1/settings/public');
               mutate('/api/v1/status');
 
@@ -210,6 +224,9 @@ const SettingsMain = () => {
                         />
                         <CopyButton
                           textToCopy={data?.apiKey ?? ''}
+                          toastMessage={intl.formatMessage(
+                            messages.apikeyCopied
+                          )}
                           key={data?.apiKey}
                         />
                         <button
@@ -218,6 +235,7 @@ const SettingsMain = () => {
                             regenerate();
                           }}
                           className="input-action"
+                          type="button"
                         >
                           <ArrowPathIcon />
                         </button>
@@ -359,6 +377,49 @@ const SettingsMain = () => {
                         disableAll
                       />
                     </div>
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="blacklistedTags" className="text-label">
+                    <span>{intl.formatMessage(messages.blacklistedTags)}</span>
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.blacklistedTagsTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field relative z-10">
+                      <BlacklistedTagsSelector
+                        defaultValue={values.blacklistedTags}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="blacklistedTagsLimit" className="text-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.blacklistedTagsLimit)}
+                    </span>
+                    <SettingsBadge badgeType="advanced" />
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.blacklistedTagsLimitTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      id="blacklistedTagsLimit"
+                      name="blacklistedTagsLimit"
+                      type="text"
+                      inputMode="numeric"
+                      className="short"
+                      placeholder={50}
+                    />
+                    {errors.blacklistedTagsLimit &&
+                      touched.blacklistedTagsLimit &&
+                      typeof errors.blacklistedTagsLimit === 'string' && (
+                        <div className="error">
+                          {errors.blacklistedTagsLimit}
+                        </div>
+                      )}
                   </div>
                 </div>
                 <div className="form-row">

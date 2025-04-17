@@ -191,9 +191,6 @@ components:
         csrfProtection:
           type: boolean
           example: false
-        forceIpv4First:
-          type: boolean
-          example: false
         trustProxy:
           type: boolean
           example: true
@@ -3965,6 +3962,8 @@ paths:
                   type: string
                 p256dh:
                   type: string
+                userAgent:
+                  type: string
               required:
                 - endpoint
                 - auth
@@ -3972,6 +3971,88 @@ paths:
       responses:
         '204':
           description: Successfully registered push subscription
+  /user/{userId}/pushSubscriptions:
+    get:
+      summary: Get all web push notification settings for a user
+      description: |
+        Returns all web push notification settings for a user in a JSON object.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: User web push notification settings in JSON
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  endpoint:
+                    type: string
+                  p256dh:
+                    type: string
+                  auth:
+                    type: string
+                  userAgent:
+                    type: string
+  /user/{userId}/pushSubscription/{key}:
+    get:
+      summary: Get web push notification settings for a user
+      description: |
+        Returns web push notification settings for a user in a JSON object.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User web push notification settings in JSON
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  endpoint:
+                    type: string
+                  p256dh:
+                    type: string
+                  auth:
+                    type: string
+                  userAgent:
+                    type: string
+    delete:
+      summary: Delete user push subscription by key
+      description: Deletes the user push subscription with the provided key.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Successfully removed user push subscription
   /user/{userId}:
     get:
       summary: Get user by ID
@@ -4158,6 +4239,12 @@ paths:
             type: string
             nullable: true
             example: dune
+        - in: query
+          name: filter
+          schema:
+            type: string
+            enum: [all, manual, blacklistedTags]
+            default: manual
       responses:
         '200':
           description: Blacklisted items returned

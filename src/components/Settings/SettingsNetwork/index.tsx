@@ -7,6 +7,7 @@ import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import type { NetworkSettings } from '@server/lib/settings';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -38,13 +39,9 @@ const messages = defineMessages('components.Settings.SettingsNetwork', {
     "Use ',' as a separator, and '*.' as a wildcard for subdomains",
   proxyBypassLocalAddresses: 'Bypass Proxy for Local Addresses',
   validationProxyPort: 'You must provide a valid port',
-  advancedNetworkSettings: 'Advanced Network Settings',
   networkDisclaimer:
     'Network parameters from your container/system should be used instead of these settings. See the {docs} for more information.',
   docs: 'documentation',
-  forceIpv4First: 'Force IPv4 Resolution First',
-  forceIpv4FirstTip:
-    'Force Jellyseerr to resolve IPv4 addresses first instead of IPv6',
 });
 
 const SettingsNetwork = () => {
@@ -89,7 +86,6 @@ const SettingsNetwork = () => {
         <Formik
           initialValues={{
             csrfProtection: data?.csrfProtection,
-            forceIpv4First: data?.forceIpv4First,
             trustProxy: data?.trustProxy,
             proxyEnabled: data?.proxy?.enabled,
             proxyHostname: data?.proxy?.hostname,
@@ -104,28 +100,20 @@ const SettingsNetwork = () => {
           validationSchema={NetworkSettingsSchema}
           onSubmit={async (values) => {
             try {
-              const res = await fetch('/api/v1/settings/network', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
+              await axios.post('/api/v1/settings/network', {
+                csrfProtection: values.csrfProtection,
+                trustProxy: values.trustProxy,
+                proxy: {
+                  enabled: values.proxyEnabled,
+                  hostname: values.proxyHostname,
+                  port: values.proxyPort,
+                  useSsl: values.proxySsl,
+                  user: values.proxyUser,
+                  password: values.proxyPassword,
+                  bypassFilter: values.proxyBypassFilter,
+                  bypassLocalAddresses: values.proxyBypassLocalAddresses,
                 },
-                body: JSON.stringify({
-                  csrfProtection: values.csrfProtection,
-                  forceIpv4First: values.forceIpv4First,
-                  trustProxy: values.trustProxy,
-                  proxy: {
-                    enabled: values.proxyEnabled,
-                    hostname: values.proxyHostname,
-                    port: values.proxyPort,
-                    useSsl: values.proxySsl,
-                    user: values.proxyUser,
-                    password: values.proxyPassword,
-                    bypassFilter: values.proxyBypassFilter,
-                    bypassLocalAddresses: values.proxyBypassLocalAddresses,
-                  },
-                }),
               });
-              if (!res.ok) throw new Error();
               mutate('/api/v1/settings/public');
               mutate('/api/v1/status');
 
@@ -381,46 +369,6 @@ const SettingsNetwork = () => {
                     </div>
                   </>
                 )}
-                <h3 className="heading mt-10">
-                  {intl.formatMessage(messages.advancedNetworkSettings)}
-                </h3>
-                <p className="description">
-                  {intl.formatMessage(messages.networkDisclaimer, {
-                    docs: (
-                      <a
-                        href="https://docs.jellyseerr.dev/troubleshooting"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-white"
-                      >
-                        {intl.formatMessage(messages.docs)}
-                      </a>
-                    ),
-                  })}
-                </p>
-                <div className="form-row">
-                  <label htmlFor="forceIpv4First" className="checkbox-label">
-                    <span className="mr-2">
-                      {intl.formatMessage(messages.forceIpv4First)}
-                    </span>
-                    <SettingsBadge badgeType="advanced" className="mr-2" />
-                    <SettingsBadge badgeType="restartRequired" />
-                    <SettingsBadge badgeType="experimental" />
-                    <span className="label-tip">
-                      {intl.formatMessage(messages.forceIpv4FirstTip)}
-                    </span>
-                  </label>
-                  <div className="form-input-area">
-                    <Field
-                      type="checkbox"
-                      id="forceIpv4First"
-                      name="forceIpv4First"
-                      onChange={() => {
-                        setFieldValue('forceIpv4First', !values.forceIpv4First);
-                      }}
-                    />
-                  </div>
-                </div>
                 <div className="actions">
                   <div className="flex justify-end">
                     <span className="ml-3 inline-flex rounded-md shadow-sm">
