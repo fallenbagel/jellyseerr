@@ -242,7 +242,7 @@
   "components.PermissionEdit.autoapproveMoviesDescription": "Autorisierung der automatischen Freigabe von Anfragen für nicht-4K-Filme.",
   "components.PermissionEdit.autoapproveSeries": "Automatische Genehmigung von Serien",
   "components.PermissionEdit.autoapproveSeriesDescription": "Autorisierung der automatischen Freigabe von Anfragen für nicht-4K-Serien.",
-  "components.PermissionEdit.autorequest": "Automatische Anfrage",
+  "components.PermissionEdit.autorequest": "Automatische Anfrage Plex Merkliste",
   "components.PermissionEdit.autorequestDescription": "Autorisierung zur automatischen Anfrage von Nicht-4K-Medien über die Plex Merkliste.",
   "components.PermissionEdit.autorequestMovies": "Filme automatisch anfragen",
   "components.PermissionEdit.autorequestMoviesDescription": "Autorisierung zur automatischen Anfrage von Nicht-4K-Medien über die Plex Merkliste.",
