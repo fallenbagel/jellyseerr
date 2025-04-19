@@ -259,10 +259,23 @@ export interface NotificationAgentGotify extends NotificationAgentConfig {
   };
 }
 
+export interface NotificationAgentNtfy extends NotificationAgentConfig {
+  options: {
+    url: string;
+    topic: string;
+    authMethodUsernamePassword?: boolean;
+    username?: string;
+    password?: string;
+    authMethodToken?: boolean;
+    token?: string;
+  };
+}
+
 export enum NotificationAgentKey {
   DISCORD = 'discord',
   EMAIL = 'email',
   GOTIFY = 'gotify',
+  NTFY = 'ntfy',
   PUSHBULLET = 'pushbullet',
   PUSHOVER = 'pushover',
   SLACK = 'slack',
@@ -275,6 +288,7 @@ interface NotificationAgents {
   discord: NotificationAgentDiscord;
   email: NotificationAgentEmail;
   gotify: NotificationAgentGotify;
+  ntfy: NotificationAgentNtfy;
   lunasea: NotificationAgentLunaSea;
   pushbullet: NotificationAgentPushbullet;
   pushover: NotificationAgentPushover;
@@ -469,6 +483,14 @@ class Settings {
               url: '',
               token: '',
               priority: 0,
+            },
+          },
+          ntfy: {
+            enabled: false,
+            types: 0,
+            options: {
+              url: '',
+              topic: '',
             },
           },
         },

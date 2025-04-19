@@ -5,6 +5,7 @@ import DiscordAgent from '@server/lib/notifications/agents/discord';
 import EmailAgent from '@server/lib/notifications/agents/email';
 import GotifyAgent from '@server/lib/notifications/agents/gotify';
 import LunaSeaAgent from '@server/lib/notifications/agents/lunasea';
+import NtfyAgent from '@server/lib/notifications/agents/ntfy';
 import PushbulletAgent from '@server/lib/notifications/agents/pushbullet';
 import PushoverAgent from '@server/lib/notifications/agents/pushover';
 import SlackAgent from '@server/lib/notifications/agents/slack';
@@ -410,6 +411,73 @@ notificationRoutes.post('/gotify/test', async (req, res, next) => {
       status: 500,
       message: 'Failed to send Gotify notification.',
     });
+  }
+});
+
+notificationRoutes.get('/ntfy', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.notifications.agents.ntfy);
+});
+
+notificationRoutes.post('/ntfy', async (req, res, next) => {
+  const settings = getSettings();
+  try {
+    settings.notifications.agents.ntfy = {
+      enabled: req.body.enabled,
+      types: req.body.types,
+      options: {
+        url: req.body.options.url,
+        topic: req.body.options.topic,
+        authMethodUsernamePassword: req.body.options.authMethodUsernamePassword,
+        username: req.body.options.username,
+        password: req.body.options.password,
+        authMethodToken: req.body.options.authMethodToken,
+        token: req.body.options.token,
+      },
+    };
+    await settings.save();
+
+    res.status(200).json(settings.notifications.agents.ntfy);
+  } catch (e) {
+    next({ status: 500, message: e.message });
+  }
+});
+
+notificationRoutes.post('/ntfy/test', async (req, res, next) => {
+  if (!req.user) {
+    return next({
+      status: 500,
+      message: 'User information is missing from the request.',
+    });
+  }
+
+  try {
+    const testBody = {
+      enabled: req.body.enabled,
+      types: req.body.types,
+      options: {
+        url: req.body.options.url,
+        topic: req.body.options.topic,
+        authMethodUsernamePassword: req.body.options.authMethodUsernamePassword,
+        username: req.body.options.username,
+        password: req.body.options.password,
+        authMethodToken: req.body.options.authMethodToken,
+        token: req.body.options.token,
+      },
+    };
+
+    const ntfyAgent = new NtfyAgent(testBody);
+    if (await sendTestNotification(ntfyAgent, req.user)) {
+      return res.status(204).send();
+    } else {
+      return next({
+        status: 500,
+        message: 'Failed to send ntfy notification.',
+      });
+    }
+  } catch (e) {
+    next({ status: 500, message: e.message });
   }
 });
 

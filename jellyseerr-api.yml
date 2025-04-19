@@ -1399,6 +1399,32 @@ components:
               type: string
             token:
               type: string
+    NtfySettings:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          example: false
+        types:
+          type: number
+          example: 2
+        options:
+          type: object
+          properties:
+            url:
+              type: string
+            topic:
+              type: string
+            authMethodUsernamePassword:
+              type: boolean
+            username:
+              type: string
+            password:
+              type: string
+            authMethodToken:
+              type: boolean
+            token:
+              type: string
     LunaSeaSettings:
       type: object
       properties:
@@ -3246,6 +3272,52 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/GotifySettings'
+      responses:
+        '204':
+          description: Test notification attempted
+  /settings/notifications/ntfy:
+    get:
+      summary: Get ntfy.sh notification settings
+      description: Returns current ntfy.sh notification settings in a JSON object.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Returned ntfy.sh settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NtfySettings'
+    post:
+      summary: Update ntfy.sh notification settings
+      description: Update ntfy.sh notification settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NtfySettings'
+      responses:
+        '200':
+          description: 'Values were sucessfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NtfySettings'
+  /settings/notifications/ntfy/test:
+    post:
+      summary: Test ntfy.sh settings
+      description: Sends a test notification to the ntfy.sh agent.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NtfySettings'
       responses:
         '204':
           description: Test notification attempted
