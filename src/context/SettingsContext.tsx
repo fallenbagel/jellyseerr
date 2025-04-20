@@ -13,6 +13,7 @@ const defaultSettings = {
   applicationTitle: 'Jellyseerr',
   applicationUrl: '',
   hideAvailable: false,
+  hideBlacklisted: false,
   localLogin: true,
   mediaServerLogin: true,
   movie4kEnabled: false,

@@ -122,6 +122,7 @@ export interface MainSettings {
     tv: Quota;
   };
   hideAvailable: boolean;
+  hideBlacklisted: boolean;
   localLogin: boolean;
   mediaServerLogin: boolean;
   newPlexLogin: boolean;
@@ -150,6 +151,7 @@ interface FullPublicSettings extends PublicSettings {
   applicationTitle: string;
   applicationUrl: string;
   hideAvailable: boolean;
+  hideBlacklisted: boolean;
   localLogin: boolean;
   mediaServerLogin: boolean;
   movie4kEnabled: boolean;
@@ -346,6 +348,7 @@ class Settings {
           tv: {},
         },
         hideAvailable: false,
+        hideBlacklisted: false,
         localLogin: true,
         mediaServerLogin: true,
         newPlexLogin: true,
@@ -596,6 +599,7 @@ class Settings {
       applicationTitle: this.data.main.applicationTitle,
       applicationUrl: this.data.main.applicationUrl,
       hideAvailable: this.data.main.hideAvailable,
+      hideBlacklisted: this.data.main.hideBlacklisted,
       localLogin: this.data.main.localLogin,
       mediaServerLogin: this.data.main.mediaServerLogin,
       jellyfinExternalHost: this.data.jellyfin.externalHostname,
