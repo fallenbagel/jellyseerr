@@ -142,6 +142,14 @@
           "token": "",
           "priority": 0
         }
+      },
+      "ntfy": {
+        "enabled": false,
+        "types": 0,
+        "options": {
+          "url": "",
+          "topic": ""
+        }
       }
     }
   },
