@@ -420,28 +420,13 @@ notificationRoutes.get('/ntfy', (_req, res) => {
   res.status(200).json(settings.notifications.agents.ntfy);
 });
 
-notificationRoutes.post('/ntfy', async (req, res, next) => {
+notificationRoutes.post('/ntfy', async (req, res) => {
   const settings = getSettings();
-  try {
-    settings.notifications.agents.ntfy = {
-      enabled: req.body.enabled,
-      types: req.body.types,
-      options: {
-        url: req.body.options.url,
-        topic: req.body.options.topic,
-        authMethodUsernamePassword: req.body.options.authMethodUsernamePassword,
-        username: req.body.options.username,
-        password: req.body.options.password,
-        authMethodToken: req.body.options.authMethodToken,
-        token: req.body.options.token,
-      },
-    };
-    await settings.save();
 
-    res.status(200).json(settings.notifications.agents.ntfy);
-  } catch (e) {
-    next({ status: 500, message: e.message });
-  }
+  settings.notifications.agents.ntfy = req.body;
+  await settings.save();
+
+  res.status(200).json(settings.notifications.agents.ntfy);
 });
 
 notificationRoutes.post('/ntfy/test', async (req, res, next) => {
@@ -452,32 +437,14 @@ notificationRoutes.post('/ntfy/test', async (req, res, next) => {
     });
   }
 
-  try {
-    const testBody = {
-      enabled: req.body.enabled,
-      types: req.body.types,
-      options: {
-        url: req.body.options.url,
-        topic: req.body.options.topic,
-        authMethodUsernamePassword: req.body.options.authMethodUsernamePassword,
-        username: req.body.options.username,
-        password: req.body.options.password,
-        authMethodToken: req.body.options.authMethodToken,
-        token: req.body.options.token,
-      },
-    };
-
-    const ntfyAgent = new NtfyAgent(testBody);
-    if (await sendTestNotification(ntfyAgent, req.user)) {
-      return res.status(204).send();
-    } else {
-      return next({
-        status: 500,
-        message: 'Failed to send ntfy notification.',
-      });
-    }
-  } catch (e) {
-    next({ status: 500, message: e.message });
+  const ntfyAgent = new NtfyAgent(req.body);
+  if (await sendTestNotification(ntfyAgent, req.user)) {
+    return res.status(204).send();
+  } else {
+    return next({
+      status: 500,
+      message: 'Failed to send ntfy notification.',
+    });
   }
 });
 
