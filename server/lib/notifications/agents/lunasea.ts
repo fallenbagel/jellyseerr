@@ -1,7 +1,6 @@
 import { IssueStatus, IssueType } from '@server/constants/issue';
 import { MediaStatus } from '@server/constants/media';
 import type { NotificationAgentLunaSea } from '@server/lib/settings';
-import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import axios from 'axios';
 import { hasNotificationType, Notification } from '..';
@@ -12,16 +11,6 @@ class LunaSeaAgent
   extends BaseAgent<NotificationAgentLunaSea>
   implements NotificationAgent
 {
-  protected getSettings(): NotificationAgentLunaSea {
-    if (this.settings) {
-      return this.settings;
-    }
-
-    const settings = getSettings();
-
-    return settings.notifications.agents.lunasea;
-  }
-
   private buildPayload(type: Notification, payload: NotificationPayload) {
     return {
       notification_type: Notification[type],
@@ -85,7 +74,7 @@ class LunaSeaAgent
     type: Notification,
     payload: NotificationPayload
   ): Promise<boolean> {
-    const settings = this.getSettings();
+    const settings = this.getSettings() as NotificationAgentLunaSea;
 
     if (
       !payload.notifySystem ||
