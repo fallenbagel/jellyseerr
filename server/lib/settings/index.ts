@@ -180,8 +180,12 @@ interface FullPublicSettings extends PublicSettings {
 export interface NotificationAgentConfig {
   enabled: boolean;
   types?: number;
+  name: string;
+  id?: number;
+  type: NotificationAgentKey;
   options: Record<string, unknown>;
 }
+
 export interface NotificationAgentDiscord extends NotificationAgentConfig {
   options: {
     botUsername?: string;
@@ -274,6 +278,7 @@ export enum NotificationAgentKey {
   EMAIL = 'email',
   GOTIFY = 'gotify',
   NTFY = 'ntfy',
+  LUNASEA = 'lunasea',
   PUSHBULLET = 'pushbullet',
   PUSHOVER = 'pushover',
   SLACK = 'slack',
@@ -282,7 +287,7 @@ export enum NotificationAgentKey {
   WEBPUSH = 'webpush',
 }
 
-interface NotificationAgents {
+interface NotificationAgentTemplates {
   discord: NotificationAgentDiscord;
   email: NotificationAgentEmail;
   gotify: NotificationAgentGotify;
@@ -296,7 +301,8 @@ interface NotificationAgents {
 }
 
 interface NotificationSettings {
-  agents: NotificationAgents;
+  instances: NotificationAgentConfig[];
+  agentTemplates: NotificationAgentTemplates;
 }
 
 interface JobSettings {
@@ -398,9 +404,12 @@ class Settings {
         initialized: false,
       },
       notifications: {
-        agents: {
+        instances: [],
+        agentTemplates: {
           email: {
             enabled: false,
+            name: '',
+            type: NotificationAgentKey.EMAIL,
             options: {
               userEmailRequired: false,
               emailFrom: '',
@@ -416,6 +425,8 @@ class Settings {
           discord: {
             enabled: false,
             types: 0,
+            name: '',
+            type: NotificationAgentKey.DISCORD,
             options: {
               webhookUrl: '',
               webhookRoleId: '',
@@ -425,6 +436,8 @@ class Settings {
           slack: {
             enabled: false,
             types: 0,
+            name: '',
+            type: NotificationAgentKey.SLACK,
             options: {
               webhookUrl: '',
             },
@@ -432,6 +445,8 @@ class Settings {
           telegram: {
             enabled: false,
             types: 0,
+            name: '',
+            type: NotificationAgentKey.TELEGRAM,
             options: {
               botAPI: '',
               chatId: '',
@@ -442,6 +457,8 @@ class Settings {
           pushbullet: {
             enabled: false,
             types: 0,
+            name: '',
+            type: NotificationAgentKey.PUSHBULLET,
             options: {
               accessToken: '',
             },
@@ -449,6 +466,8 @@ class Settings {
           pushover: {
             enabled: false,
             types: 0,
+            name: '',
+            type: NotificationAgentKey.PUSHOVER,
             options: {
               accessToken: '',
               userToken: '',
@@ -458,6 +477,8 @@ class Settings {
           webhook: {
             enabled: false,
             types: 0,
+            name: '',
+            type: NotificationAgentKey.WEBHOOK,
             options: {
               webhookUrl: '',
               jsonPayload: '',
@@ -465,11 +486,15 @@ class Settings {
           },
           webpush: {
             enabled: false,
+            name: '',
+            type: NotificationAgentKey.WEBPUSH,
             options: {},
           },
           gotify: {
             enabled: false,
             types: 0,
+            name: '',
+            type: NotificationAgentKey.GOTIFY,
             options: {
               url: '',
               token: '',
@@ -629,11 +654,11 @@ class Settings {
       enableSpecialEpisodes: this.data.main.enableSpecialEpisodes,
       cacheImages: this.data.main.cacheImages,
       vapidPublic: this.vapidPublic,
-      enablePushRegistration: this.data.notifications.agents.webpush.enabled,
+      // TODO no static values here
+      enablePushRegistration: false,
       locale: this.data.main.locale,
-      emailEnabled: this.data.notifications.agents.email.enabled,
-      userEmailRequired:
-        this.data.notifications.agents.email.options.userEmailRequired,
+      emailEnabled: false,
+      userEmailRequired: false,
       newPlexLogin: this.data.main.newPlexLogin,
       youtubeUrl: this.data.main.youtubeUrl,
     };
