@@ -5,21 +5,7 @@ import DiscoverSlider from '@server/entity/DiscoverSlider';
 import { Session } from '@server/entity/Session';
 import { User } from '@server/entity/User';
 import { startJobs } from '@server/job/schedule';
-<<<<<<< HEAD
 import notificationManager from '@server/lib/notifications';
-import DiscordAgent from '@server/lib/notifications/agents/discord';
-import EmailAgent from '@server/lib/notifications/agents/email';
-import GotifyAgent from '@server/lib/notifications/agents/gotify';
-import LunaSeaAgent from '@server/lib/notifications/agents/lunasea';
-import NtfyAgent from '@server/lib/notifications/agents/ntfy';
-import PushbulletAgent from '@server/lib/notifications/agents/pushbullet';
-import PushoverAgent from '@server/lib/notifications/agents/pushover';
-import SlackAgent from '@server/lib/notifications/agents/slack';
-import TelegramAgent from '@server/lib/notifications/agents/telegram';
-import WebhookAgent from '@server/lib/notifications/agents/webhook';
-import WebPushAgent from '@server/lib/notifications/agents/webpush';
-=======
->>>>>>> 87c8421d (feat(notifications): implement notification agent registration and unregistration at endpoints)
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import clearCookies from '@server/middleware/clearcookies';
@@ -101,6 +87,9 @@ app
         await plexapi.syncLibraries();
       }
     }
+
+    // Register Notification Agents
+    notificationManager.registerAllAgents();
 
     const userRepository = getRepository(User);
     const totalUsers = await userRepository.count();
