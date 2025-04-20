@@ -91,7 +91,7 @@ class NtfyAgent
   public shouldSend(): boolean {
     const settings = this.getSettings();
 
-    if (settings.enabled && settings.options.url) {
+    if (settings.enabled && settings.options.url && settings.options.topic) {
       return true;
     }
 
