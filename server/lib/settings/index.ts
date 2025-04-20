@@ -182,7 +182,7 @@ export interface NotificationAgentConfig {
   types?: number;
   name: string;
   id?: number;
-  type: NotificationAgentKey;
+  agent: NotificationAgentKey;
   options: Record<string, unknown>;
 }
 
@@ -409,7 +409,7 @@ class Settings {
           email: {
             enabled: false,
             name: '',
-            type: NotificationAgentKey.EMAIL,
+            agent: NotificationAgentKey.EMAIL,
             options: {
               userEmailRequired: false,
               emailFrom: '',
@@ -426,7 +426,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
-            type: NotificationAgentKey.DISCORD,
+            agent: NotificationAgentKey.DISCORD,
             options: {
               webhookUrl: '',
               webhookRoleId: '',
@@ -437,7 +437,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
-            type: NotificationAgentKey.SLACK,
+            agent: NotificationAgentKey.SLACK,
             options: {
               webhookUrl: '',
             },
@@ -446,7 +446,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
-            type: NotificationAgentKey.TELEGRAM,
+            agent: NotificationAgentKey.TELEGRAM,
             options: {
               botAPI: '',
               chatId: '',
@@ -458,7 +458,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
-            type: NotificationAgentKey.PUSHBULLET,
+            agent: NotificationAgentKey.PUSHBULLET,
             options: {
               accessToken: '',
             },
@@ -467,7 +467,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
-            type: NotificationAgentKey.PUSHOVER,
+            agent: NotificationAgentKey.PUSHOVER,
             options: {
               accessToken: '',
               userToken: '',
@@ -478,7 +478,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
-            type: NotificationAgentKey.WEBHOOK,
+            agent: NotificationAgentKey.WEBHOOK,
             options: {
               webhookUrl: '',
               jsonPayload: '',
@@ -487,14 +487,14 @@ class Settings {
           webpush: {
             enabled: false,
             name: '',
-            type: NotificationAgentKey.WEBPUSH,
+            agent: NotificationAgentKey.WEBPUSH,
             options: {},
           },
           gotify: {
             enabled: false,
             types: 0,
             name: '',
-            type: NotificationAgentKey.GOTIFY,
+            agent: NotificationAgentKey.GOTIFY,
             options: {
               url: '',
               token: '',
