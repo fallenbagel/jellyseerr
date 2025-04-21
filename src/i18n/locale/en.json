@@ -937,7 +937,7 @@
   "components.Settings.SettingsMain.hideAvailable": "Hide Available Media",
   "components.Settings.SettingsMain.hideAvailableTip": "Hide available media from the discover pages but not search results",
   "components.Settings.SettingsMain.hideBlacklisted": "Hide Blacklisted Items",
-  "components.Settings.SettingsMain.hideBlacklistedTip": "Hide blacklisted items from the discover pages but not search results",
+  "components.Settings.SettingsMain.hideBlacklistedTip": "Hide blacklisted items from the discover pages but not search results for all users including administrators",
   "components.Settings.SettingsMain.locale": "Display Language",
   "components.Settings.SettingsMain.originallanguage": "Discover Language",
   "components.Settings.SettingsMain.originallanguageTip": "Filter content by original language",
