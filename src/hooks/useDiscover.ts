@@ -123,7 +123,7 @@ const useDiscover = <
     );
   }
 
-  if (settings.currentSettings.hideBlacklisted && hideBlacklisted && hasPermission(Permission.ADMIN)) {
+  if (settings.currentSettings.hideBlacklisted && hideBlacklisted && (hasPermission(Permission.ADMIN) || hasPermission(Permission.MANAGE_BLACKLIST))) {
     titles = titles.filter(
       (i) =>
         (i.mediaType === 'movie' || i.mediaType === 'tv') &&
