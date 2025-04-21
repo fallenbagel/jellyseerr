@@ -1,8 +1,7 @@
 import { MediaStatus } from '@server/constants/media';
 import useSWRInfinite from 'swr/infinite';
 import useSettings from './useSettings';
-import { useUser } from './useUser';
-import { Permission } from './useUser';
+import { Permission, useUser } from './useUser';
 
 export interface BaseSearchResult<T> {
   page: number;
@@ -123,7 +122,11 @@ const useDiscover = <
     );
   }
 
-  if (settings.currentSettings.hideBlacklisted && hideBlacklisted && (hasPermission(Permission.ADMIN) || hasPermission(Permission.MANAGE_BLACKLIST))) {
+  if (
+    settings.currentSettings.hideBlacklisted &&
+    hideBlacklisted &&
+    hasPermission(Permission.MANAGE_BLACKLIST)
+  ) {
     titles = titles.filter(
       (i) =>
         (i.mediaType === 'movie' || i.mediaType === 'tv') &&

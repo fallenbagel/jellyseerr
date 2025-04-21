@@ -47,7 +47,7 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   streamingRegionTip: 'Show streaming sites by regional availability',
   hideBlacklisted: 'Hide Blacklisted Items',
   hideBlacklistedTip:
-    'Hide blacklisted items for all administrators as the "Manage Blacklist" permission forces them to be visible',
+    'Hide blacklisted items from discover pages for all users with the "Manage Blacklist" permission',
   toastApiKeySuccess: 'New API key generated successfully!',
   toastApiKeyFailure: 'Something went wrong while generating a new API key.',
   toastSettingsSuccess: 'Settings saved successfully!',
