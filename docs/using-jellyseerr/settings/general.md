@@ -80,7 +80,7 @@ This setting is **disabled** by default.
 
 ## Hide Blacklisted Items
 
-When enabled, media that has been blacklisted will not appear on the "Discover" home page, or in search results. This can be useful to hide content that you don't want to see, such as content with specific tags or content that has been manually blacklisted.
+When enabled, media that has been blacklisted will not appear on the "Discover" home page, for all users. This can be useful to hide content that you don't want to see, such as content with specific tags or content that has been manually blacklisted.
 
 This setting is **disabled** by default.
 
