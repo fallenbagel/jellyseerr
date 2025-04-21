@@ -776,7 +776,10 @@ export class MediaRequest {
 
   @AfterRemove()
   public async handleRemoveParentUpdate(): Promise<void> {
+    if (this.media === null) return;
+
     const mediaRepository = getRepository(Media);
+
     const fullMedia = await mediaRepository.findOneOrFail({
       where: { id: this.media.id },
       relations: { requests: true },
