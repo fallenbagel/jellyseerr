@@ -2,6 +2,7 @@ import { IssueStatus, IssueTypeName } from '@server/constants/issue';
 import type { NotificationAgentNtfy } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import axios from 'axios';
 import { hasNotificationType, Notification } from '..';
 import type { NotificationAgent, NotificationPayload } from './agent';
 import { BaseAgent } from './agent';
@@ -118,7 +119,7 @@ class NtfyAgent
     });
 
     try {
-      let authHeader = '';
+      let authHeader;
       if (
         settings.options.authMethodUsernamePassword &&
         settings.options.username &&
@@ -133,33 +134,26 @@ class NtfyAgent
         authHeader = `Bearer ${settings.options.token}`;
       }
 
-      const response = await fetch(settings.options.url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: authHeader,
-        },
-        body: JSON.stringify(this.buildPayload(type, payload)),
-      });
-      if (!response.ok) {
-        throw new Error(response.statusText, { cause: response });
-      }
+      await axios.post(
+        settings.options.url,
+        this.buildPayload(type, payload),
+        authHeader
+          ? {
+              headers: {
+                Authorization: authHeader,
+              },
+            }
+          : undefined
+      );
 
       return true;
     } catch (e) {
-      let errorData;
-      try {
-        errorData = await e.cause?.text();
-        errorData = JSON.parse(errorData);
-      } catch {
-        /* empty */
-      }
       logger.error('Error sending ntfy notification', {
         label: 'Notifications',
         type: Notification[type],
         subject: payload.subject,
         errorMessage: e.message,
-        response: errorData,
+        response: e?.response?.data,
       });
 
       return false;
