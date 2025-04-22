@@ -434,6 +434,7 @@ const SettingsMain = () => {
                     <span className="mr-2">
                       {intl.formatMessage(messages.hideAvailable)}
                     </span>
+                    <SettingsBadge badgeType="experimental" />
                     <span className="label-tip">
                       {intl.formatMessage(messages.hideAvailableTip)}
                     </span>
