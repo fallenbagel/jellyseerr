@@ -152,7 +152,9 @@ const ManageSlideOver = ({
     if (data.mediaInfo) {
       await axios.post(`/api/v1/media/${data.mediaInfo?.id}/available`, {
         is4k,
-        ...(mediaType === 'tv' && { seasons: data.seasons }),
+        ...(mediaType === 'tv' && {
+          seasons: data.seasons.filter((season) => season.seasonNumber !== 0),
+        }),
       });
       revalidate();
     }
