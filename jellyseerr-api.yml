@@ -1388,6 +1388,9 @@ components:
         agent:
           type: string
           example: 'email'
+        default:
+          type: boolean
+          example: false
         options:
           type: object
     Job:
