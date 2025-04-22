@@ -569,6 +569,31 @@ requestRoutes.delete('/:requestId', async (req, res, next) => {
 
     await requestRepository.remove(request);
 
+    const mediaRepository = getRepository(Media);
+
+    const media = await mediaRepository.findOne({
+      where: { id: request.media.id },
+      relations: { requests: true },
+    });
+
+    if (media) {
+      if (
+        !media.requests.some((r) => !r.is4k) &&
+        media.status !== MediaStatus.AVAILABLE
+      ) {
+        media.status = MediaStatus.UNKNOWN;
+      }
+
+      if (
+        !media.requests.some((r) => r.is4k) &&
+        media.status4k !== MediaStatus.AVAILABLE
+      ) {
+        media.status4k = MediaStatus.UNKNOWN;
+      }
+
+      await mediaRepository.save(media);
+    }
+
     return res.status(204).send();
   } catch (e) {
     logger.error('Something went wrong deleting a request.', {
