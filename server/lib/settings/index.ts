@@ -336,7 +336,7 @@ export interface AllSettings {
   radarr: RadarrSettings[];
   sonarr: SonarrSettings[];
   public: PublicSettings;
-  notifications: NotificationSettings;
+  notification: NotificationSettings;
   jobs: Record<JobId, JobSettings>;
   network: NetworkSettings;
 }
@@ -404,7 +404,7 @@ class Settings {
       public: {
         initialized: false,
       },
-      notifications: {
+      notification: {
         instances: [],
         agentTemplates: {
           email: {
@@ -664,20 +664,20 @@ class Settings {
       enableSpecialEpisodes: this.data.main.enableSpecialEpisodes,
       cacheImages: this.data.main.cacheImages,
       vapidPublic: this.vapidPublic,
-      enablePushRegistration: this.notifications.instances.some(
+      enablePushRegistration: this.notification.instances.some(
         (instance) =>
           instance.default &&
           instance.agent === NotificationAgentKey.WEBPUSH &&
           instance.enabled
       ),
       locale: this.data.main.locale,
-      emailEnabled: this.notifications.instances.some(
+      emailEnabled: this.notification.instances.some(
         (instance) =>
           instance.default &&
           instance.agent === NotificationAgentKey.EMAIL &&
           instance.enabled
       ),
-      userEmailRequired: this.notifications.instances.some(
+      userEmailRequired: this.notification.instances.some(
         (instance) =>
           instance.default &&
           instance.agent === NotificationAgentKey.EMAIL &&
@@ -688,12 +688,12 @@ class Settings {
     };
   }
 
-  get notifications(): NotificationSettings {
-    return this.data.notifications;
+  get notification(): NotificationSettings {
+    return this.data.notification;
   }
 
-  set notifications(data: NotificationSettings) {
-    this.data.notifications = data;
+  set notification(data: NotificationSettings) {
+    this.data.notification = data;
   }
 
   get jobs(): Record<JobId, JobSettings> {
