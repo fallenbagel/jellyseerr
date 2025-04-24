@@ -111,6 +111,7 @@
     "zod": "3.24.2"
   },
   "devDependencies": {
+    "@codedependant/semantic-release-docker": "^5.1.0",
     "@commitlint/cli": "17.4.4",
     "@commitlint/config-conventional": "17.4.4",
     "@semantic-release/changelog": "6.0.2",
@@ -167,7 +168,6 @@
     "prettier-plugin-organize-imports": "3.2.2",
     "prettier-plugin-tailwindcss": "0.2.3",
     "semantic-release": "19.0.5",
-    "semantic-release-docker-buildx": "1.0.1",
     "tailwindcss": "3.2.7",
     "ts-node": "10.9.1",
     "tsc-alias": "1.8.2",
@@ -222,7 +222,49 @@
           "message": "chore(release): ${nextRelease.version}"
         }
       ],
-      "semantic-release-docker-buildx",
+      [
+        "@codedependant/semantic-release-docker",
+        {
+          "dockerArgs": {
+            "COMMIT_TAG": "$GIT_SHA"
+          },
+          "dockerLogin": false,
+          "dockerProject": "fallenbagel",
+          "dockerImage": "jellyseerr",
+          "dockerTags": [
+            "latest",
+            "{{major}}",
+            "{{major}}.{{minor}}",
+            "{{major}}.{{minor}}.{{patch}}"
+          ],
+          "dockerPlatform": [
+            "linux/amd64",
+            "linux/arm64"
+          ]
+        }
+      ],
+      [
+        "@codedependant/semantic-release-docker",
+        {
+          "dockerArgs": {
+            "COMMIT_TAG": "$GIT_SHA"
+          },
+          "dockerLogin": false,
+          "dockerRegistry": "ghcr.io",
+          "dockerProject": "fallenbagel",
+          "dockerImage": "jellyseerr",
+          "dockerTags": [
+            "latest",
+            "{{major}}",
+            "{{major}}.{{minor}}",
+            "{{major}}.{{minor}}.{{patch}}"
+          ],
+          "dockerPlatform": [
+            "linux/amd64",
+            "linux/arm64"
+          ]
+        }
+      ],
       [
         "@semantic-release/github",
         {
@@ -235,20 +277,7 @@
     ],
     "npmPublish": false,
     "publish": [
-      {
-        "path": "semantic-release-docker-buildx",
-        "buildArgs": {
-          "COMMIT_TAG": "$GIT_SHA"
-        },
-        "imageNames": [
-          "fallenbagel/jellyseerr",
-          "ghcr.io/fallenbagel/jellyseerr"
-        ],
-        "platforms": [
-          "linux/amd64",
-          "linux/arm64"
-        ]
-      },
+      "@codedependant/semantic-release-docker",
       "@semantic-release/github"
     ]
   }
