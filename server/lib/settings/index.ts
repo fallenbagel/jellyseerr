@@ -188,7 +188,7 @@ export interface NotificationAgentConfig {
   enabled: boolean;
   types?: number;
   name: string;
-  id?: number;
+  id: number;
   agent: NotificationAgentKey;
   default?: boolean;
   options: Record<string, unknown>;
@@ -417,6 +417,7 @@ class Settings {
           email: {
             enabled: false,
             name: '',
+            id: 0,
             agent: NotificationAgentKey.EMAIL,
             options: {
               userEmailRequired: false,
@@ -434,6 +435,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
+            id: 0,
             agent: NotificationAgentKey.DISCORD,
             options: {
               webhookUrl: '',
@@ -445,6 +447,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
+            id: 0,
             agent: NotificationAgentKey.SLACK,
             options: {
               webhookUrl: '',
@@ -454,6 +457,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
+            id: 0,
             agent: NotificationAgentKey.TELEGRAM,
             options: {
               botAPI: '',
@@ -466,6 +470,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
+            id: 0,
             agent: NotificationAgentKey.PUSHBULLET,
             options: {
               accessToken: '',
@@ -475,6 +480,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
+            id: 0,
             agent: NotificationAgentKey.PUSHOVER,
             options: {
               accessToken: '',
@@ -486,6 +492,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
+            id: 0,
             agent: NotificationAgentKey.WEBHOOK,
             options: {
               webhookUrl: '',
@@ -495,6 +502,7 @@ class Settings {
           webpush: {
             enabled: false,
             name: '',
+            id: 0,
             agent: NotificationAgentKey.WEBPUSH,
             options: {},
           },
@@ -502,6 +510,7 @@ class Settings {
             enabled: false,
             types: 0,
             name: '',
+            id: 0,
             agent: NotificationAgentKey.GOTIFY,
             options: {
               url: '',
