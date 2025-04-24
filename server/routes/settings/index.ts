@@ -39,7 +39,7 @@ import { rescheduleJob } from 'node-schedule';
 import path from 'path';
 import semver from 'semver';
 import { URL } from 'url';
-import notificationRoutes from './notifications';
+import notificationRoutes from './notification';
 import radarrRoutes from './radarr';
 import sonarrRoutes from './sonarr';
 
