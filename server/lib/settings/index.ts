@@ -295,7 +295,7 @@ export enum NotificationAgentKey {
   WEBPUSH = 'webpush',
 }
 
-interface NotificationAgentTemplates {
+export interface NotificationAgentTemplates {
   discord: NotificationAgentDiscord;
   email: NotificationAgentEmail;
   gotify: NotificationAgentGotify;
