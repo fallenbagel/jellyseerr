@@ -39,11 +39,15 @@ const PersonDetails = () => {
 
   const { data: combinedCredits, error: errorCombinedCredits } =
     useSWR<PersonCombinedCreditsResponse>(
-      `/api/v1/person/${router.query.personId}/combined_credits?mediaType=${currentMediaType}`
+      `/api/v1/person/${router.query.personId}/combined_credits`
     );
 
   const sortedCast = useMemo(() => {
-    const grouped = groupBy(combinedCredits?.cast ?? [], 'id');
+    const filtered = (combinedCredits?.cast ?? []).filter(
+      (media) =>
+        currentMediaType === 'all' || media.mediaType === currentMediaType
+    );
+    const grouped = groupBy(filtered, 'id');
 
     const reduced = Object.values(grouped).map((objs) => ({
       ...objs[0],
@@ -58,10 +62,14 @@ const PersonDetails = () => {
       }
       return 1;
     });
-  }, [combinedCredits]);
+  }, [combinedCredits, currentMediaType]);
 
   const sortedCrew = useMemo(() => {
-    const grouped = groupBy(combinedCredits?.crew ?? [], 'id');
+    const filtered = (combinedCredits?.crew ?? []).filter(
+      (media) =>
+        currentMediaType === 'all' || media.mediaType === currentMediaType
+    );
+    const grouped = groupBy(filtered, 'id');
 
     const reduced = Object.values(grouped).map((objs) => ({
       ...objs[0],
@@ -76,7 +84,7 @@ const PersonDetails = () => {
       }
       return 1;
     });
-  }, [combinedCredits]);
+  }, [combinedCredits, currentMediaType]);
 
   if (!data && !error) {
     return <LoadingSpinner />;
@@ -136,12 +144,6 @@ const PersonDetails = () => {
         name="mediaType"
         onChange={(e) => {
           setCurrentMediaType(e.target.value as MediaType);
-          router.push({
-            pathname: router.pathname,
-            query: router.query.personId
-              ? { personId: router.query.personId }
-              : {},
-          });
         }}
         value={currentMediaType}
         className="rounded-r-only"
@@ -162,7 +164,6 @@ const PersonDetails = () => {
           <span>{intl.formatMessage(messages.appearsin)}</span>
         </div>
       </div>
-
       <ul className="cards-vertical">
         {sortedCast?.map((media, index) => {
           return (
@@ -288,9 +289,6 @@ const PersonDetails = () => {
                 })}
               </div>
             )}
-          </div>
-          <div className="mt-2 flex flex-grow flex-col sm:flex-row lg:flex-grow-0">
-            <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0"></div>
           </div>
           {data.biography && (
             <div className="relative text-left">
