@@ -142,9 +142,8 @@ class BlacklistedTagProcessor implements RunnableScanner<StatusBase> {
           blacklistEntry.blacklistedTags &&
           !blacklistEntry.blacklistedTags.includes(`,${keywordId},`)
         ) {
-          await blacklistRepository.update(blacklistEntry.id, {
-            blacklistedTags: `${blacklistEntry.blacklistedTags}${keywordId},`,
-          });
+          blacklistEntry.blacklistedTags = `${blacklistEntry.blacklistedTags}${keywordId},`;
+          await blacklistRepository.save(blacklistEntry);
         }
       } else {
         // Media wasn't previously blacklisted, add it to the blacklist

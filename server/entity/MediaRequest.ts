@@ -728,12 +728,8 @@ export class MediaRequest {
         MediaStatus.PARTIALLY_AVAILABLE &&
       media[this.is4k ? 'status4k' : 'status'] !== MediaStatus.PROCESSING
     ) {
-      const statusField = this.is4k ? 'status4k' : 'status';
-
-      await mediaRepository.update(
-        { id: this.media.id },
-        { [statusField]: MediaStatus.PROCESSING }
-      );
+      media[this.is4k ? 'status4k' : 'status'] = MediaStatus.PROCESSING;
+      mediaRepository.save(media);
     }
 
     if (
@@ -741,11 +737,8 @@ export class MediaRequest {
       this.status === MediaRequestStatus.DECLINED &&
       media[this.is4k ? 'status4k' : 'status'] !== MediaStatus.DELETED
     ) {
-      const statusField = this.is4k ? 'status4k' : 'status';
-      await mediaRepository.update(
-        { id: this.media.id },
-        { [statusField]: MediaStatus.UNKNOWN }
-      );
+      media[this.is4k ? 'status4k' : 'status'] = MediaStatus.UNKNOWN;
+      mediaRepository.save(media);
     }
 
     /**
@@ -763,11 +756,8 @@ export class MediaRequest {
       media[this.is4k ? 'status4k' : 'status'] === MediaStatus.PENDING &&
       media[this.is4k ? 'status4k' : 'status'] !== MediaStatus.DELETED
     ) {
-      const statusField = this.is4k ? 'status4k' : 'status';
-      mediaRepository.update(
-        { id: this.media.id },
-        { [statusField]: MediaStatus.UNKNOWN }
-      );
+      media[this.is4k ? 'status4k' : 'status'] = MediaStatus.UNKNOWN;
+      mediaRepository.save(media);
     }
 
     // Approve child seasons if parent is approved
@@ -969,10 +959,8 @@ export class MediaRequest {
           });
 
           const requestRepository = getRepository(MediaRequest);
-
-          await requestRepository.update(this.id, {
-            status: MediaRequestStatus.APPROVED,
-          });
+          this.status = MediaRequestStatus.APPROVED;
+          await requestRepository.save(this);
           return;
         }
 
@@ -1002,22 +990,18 @@ export class MediaRequest {
               throw new Error('Media data not found');
             }
 
-            const updateFields = {
-              [this.is4k ? 'externalServiceId4k' : 'externalServiceId']:
-                radarrMovie.id,
-              [this.is4k ? 'externalServiceSlug4k' : 'externalServiceSlug']:
-                radarrMovie.titleSlug,
-              [this.is4k ? 'serviceId4k' : 'serviceId']: radarrSettings?.id,
-            };
-
-            await mediaRepository.update({ id: this.media.id }, updateFields);
+            media[this.is4k ? 'externalServiceId4k' : 'externalServiceId'] =
+              radarrMovie.id;
+            media[this.is4k ? 'externalServiceSlug4k' : 'externalServiceSlug'] =
+              radarrMovie.titleSlug;
+            media[this.is4k ? 'serviceId4k' : 'serviceId'] = radarrSettings?.id;
+            await mediaRepository.save(media);
           })
           .catch(async () => {
             const requestRepository = getRepository(MediaRequest);
 
-            await requestRepository.update(this.id, {
-              status: MediaRequestStatus.FAILED,
-            });
+            this.status = MediaRequestStatus.FAILED;
+            requestRepository.save(this);
 
             logger.warn(
               'Something went wrong sending movie request to Radarr, marking status as FAILED',
@@ -1133,9 +1117,8 @@ export class MediaRequest {
           });
 
           const requestRepository = getRepository(MediaRequest);
-          await requestRepository.update(this.id, {
-            status: MediaRequestStatus.APPROVED,
-          });
+          this.status = MediaRequestStatus.APPROVED;
+          await requestRepository.save(this);
           return;
         }
 
@@ -1296,23 +1279,18 @@ export class MediaRequest {
               throw new Error('Media data not found');
             }
 
-            const updateFields = {
-              [this.is4k ? 'externalServiceId4k' : 'externalServiceId']:
-                sonarrSeries.id,
-              [this.is4k ? 'externalServiceSlug4k' : 'externalServiceSlug']:
-                sonarrSeries.titleSlug,
-              [this.is4k ? 'serviceId4k' : 'serviceId']: sonarrSettings?.id,
-            };
-
-            await mediaRepository.update({ id: this.media.id }, updateFields);
+            media[this.is4k ? 'externalServiceId4k' : 'externalServiceId'] =
+              sonarrSeries.id;
+            media[this.is4k ? 'externalServiceSlug4k' : 'externalServiceSlug'] =
+              sonarrSeries.titleSlug;
+            media[this.is4k ? 'serviceId4k' : 'serviceId'] = sonarrSettings?.id;
+            await mediaRepository.save(media);
           })
           .catch(async () => {
             const requestRepository = getRepository(MediaRequest);
 
-            await requestRepository.update(
-              { id: this.id },
-              { status: MediaRequestStatus.FAILED }
-            );
+            this.status = MediaRequestStatus.FAILED;
+            requestRepository.save(this);
 
             logger.warn(
               'Something went wrong sending series request to Sonarr, marking status as FAILED',
