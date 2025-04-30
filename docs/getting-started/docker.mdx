@@ -7,6 +7,8 @@ sidebar_position: 1
 :::info
 This is the recommended method for most users.
 Details on how to install Docker can be found on the [official Docker website](https://docs.docker.com/get-docker/).
+
+Refer to [Configuring Databases](/extending-jellyseerr/database-config#postgresql-options) for details on how to configure your database.
 :::
 
 ## Unix (Linux, macOS)
@@ -35,7 +37,7 @@ docker run -d \
   -p 5055:5055 \
   -v /path/to/appdata/config:/app/config \
   --restart unless-stopped \
-  fallenbagel/jellyseerr
+  ghcr.io/fallenbagel/jellyseerr
 ```
 :::tip
 If you are using emby, make sure to set the `JELLYFIN_TYPE` environment variable to `emby`.
@@ -53,7 +55,7 @@ docker stop jellyseerr && docker rm Jellyseerr
 ```
 Pull the latest image:
 ```bash
-docker pull fallenbagel/jellyseerr
+docker pull ghcr.io/fallenbagel/jellyseerr
 ```
 Finally, run the container with the same parameters originally used to create the container:
 ```bash
@@ -76,7 +78,7 @@ Define the `jellyseerr` service in your `compose.yaml` as follows:
 ---
 services:
   jellyseerr:
-    image: fallenbagel/jellyseerr:latest
+    image: ghcr.io/fallenbagel/jellyseerr:latest
     container_name: jellyseerr
     environment:
       - LOG_LEVEL=debug
@@ -144,7 +146,17 @@ Then, create and start the Jellyseerr container:
 <Tabs groupId="docker-methods" queryString>
   <TabItem value="docker-cli" label="Docker CLI">
 ```bash
-docker run -d --name jellyseerr -e LOG_LEVEL=debug -e TZ=Asia/Tashkent -p 5055:5055 -v "jellyseerr-data:/app/config" --restart unless-stopped fallenbagel/jellyseerr:latest
+docker run -d --name jellyseerr -e LOG_LEVEL=debug -e TZ=Asia/Tashkent -p 5055:5055 -v "jellyseerr-data:/app/config" --restart unless-stopped ghcr.io/fallenbagel/jellyseerr:latest
+```
+
+#### Updating:
+Pull the latest image:
+```bash
+docker compose pull jellyseerr
+```
+Then, restart all services defined in the Compose file:
+```bash
+docker compose up -d
 ```
   </TabItem>
 
@@ -168,6 +180,16 @@ volumes:
   jellyseerr-data:
     external: true
 ```
+
+#### Updating:
+Pull the latest image:
+```bash
+docker compose pull jellyseerr
+```
+Then, restart all services defined in the Compose file:
+```bash
+docker compose up -d
+```
   </TabItem>
 </Tabs>
 
@@ -185,3 +207,6 @@ Docker on Windows works differently than it does on Linux; it runs Docker inside
 **If you must run Docker on Windows, you should put the `/app/config` directory mount inside the VM and not on the Windows host.** (This also applies to other containers with SQLite databases.)
 
 Named volumes, like in the example commands above, are automatically mounted inside the VM. Therefore the warning on the setup about the `/app/config` folder being incorrectly mounted page should be ignored.
+:::
+
+

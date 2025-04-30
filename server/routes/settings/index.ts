@@ -78,6 +78,21 @@ settingsRoutes.post('/main', async (req, res) => {
   return res.status(200).json(settings.main);
 });
 
+settingsRoutes.get('/network', (req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.network);
+});
+
+settingsRoutes.post('/network', async (req, res) => {
+  const settings = getSettings();
+
+  settings.network = merge(settings.network, req.body);
+  await settings.save();
+
+  return res.status(200).json(settings.network);
+});
+
 settingsRoutes.post('/main/regenerate', async (req, res, next) => {
   const settings = getSettings();
 
@@ -337,7 +352,7 @@ settingsRoutes.get('/jellyfin/library', async (req, res, next) => {
       const account = await jellyfinClient.getUser();
 
       // Automatic Library grouping is not supported when user views are used to get library
-      if (account.Configuration.GroupedFolders.length > 0) {
+      if (account.Configuration.GroupedFolders?.length > 0) {
         return next({
           status: 501,
           message: ApiErrorCode.SyncErrorGroupedFolders,

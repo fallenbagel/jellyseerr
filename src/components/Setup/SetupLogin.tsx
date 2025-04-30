@@ -1,9 +1,10 @@
 import Button from '@app/components/Common/Button';
-import JellyfinLogin from '@app/components/Login/JellyfinLogin';
-import PlexLoginButton from '@app/components/PlexLoginButton';
+import PlexLoginButton from '@app/components/Login/PlexLoginButton';
+import JellyfinSetup from '@app/components/Setup/JellyfinSetup';
 import { useUser } from '@app/hooks/useUser';
 import defineMessages from '@app/utils/defineMessages';
 import { MediaServerType } from '@server/constants/server';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -40,19 +41,11 @@ const SetupLogin: React.FC<LoginWithMediaServerProps> = ({
 
   useEffect(() => {
     const login = async () => {
-      const res = await fetch('/api/v1/auth/plex', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          authToken: authToken,
-        }),
+      const response = await axios.post('/api/v1/auth/plex', {
+        authToken: authToken,
       });
-      if (!res.ok) throw new Error();
-      const data = await res.json();
 
-      if (data?.email) {
+      if (response.data?.email) {
         revalidate();
       }
     };
@@ -83,11 +76,9 @@ const SetupLogin: React.FC<LoginWithMediaServerProps> = ({
       </div>
       {serverType === MediaServerType.PLEX && (
         <>
-          <div
-            className="px-10 py-8"
-            style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}
-          >
+          <div className="flex justify-center bg-black/30 px-10 py-8">
             <PlexLoginButton
+              large
               onAuthToken={(authToken) => {
                 setMediaServerType(MediaServerType.PLEX);
                 setAuthToken(authToken);
@@ -102,16 +93,14 @@ const SetupLogin: React.FC<LoginWithMediaServerProps> = ({
         </>
       )}
       {serverType === MediaServerType.JELLYFIN && (
-        <JellyfinLogin
-          initial={true}
+        <JellyfinSetup
           revalidate={revalidate}
           serverType={serverType}
           onCancel={onCancel}
         />
       )}
       {serverType === MediaServerType.EMBY && (
-        <JellyfinLogin
-          initial={true}
+        <JellyfinSetup
           revalidate={revalidate}
           serverType={serverType}
           onCancel={onCancel}

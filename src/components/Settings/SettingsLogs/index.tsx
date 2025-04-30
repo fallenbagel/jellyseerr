@@ -35,7 +35,7 @@ import useSWR from 'swr';
 const messages = defineMessages('components.Settings.SettingsLogs', {
   logs: 'Logs',
   logsDescription:
-    'You can also view these logs directly via <code>stdout</code>, or in <code>{appDataPath}/logs/overseerr.log</code>.',
+    'You can also view these logs directly via <code>stdout</code>, or in <code>{appDataPath}/logs/jellyseerr.log</code>.',
   time: 'Timestamp',
   level: 'Severity',
   label: 'Label',
@@ -245,7 +245,9 @@ const SettingsLogs = () => {
         <p className="description">
           {intl.formatMessage(messages.logsDescription, {
             code: (msg: React.ReactNode) => (
-              <code className="bg-opacity-50">{msg}</code>
+              <code className="whitespace-normal break-words bg-opacity-50">
+                {msg}
+              </code>
             ),
             appDataPath: appData ? appData.appDataPath : '/app/config',
           })}

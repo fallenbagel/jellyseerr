@@ -43,14 +43,14 @@ const logger = winston.createLogger({
     }),
     new winston.transports.DailyRotateFile({
       filename: process.env.CONFIG_DIRECTORY
-        ? `${process.env.CONFIG_DIRECTORY}/logs/overseerr-%DATE%.log`
-        : path.join(__dirname, '../config/logs/overseerr-%DATE%.log'),
+        ? `${process.env.CONFIG_DIRECTORY}/logs/jellyseerr-%DATE%.log`
+        : path.join(__dirname, '../config/logs/jellyseerr-%DATE%.log'),
       datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
       maxSize: '20m',
       maxFiles: '7d',
       createSymlink: true,
-      symlinkName: 'overseerr.log',
+      symlinkName: 'jellyseerr.log',
     }),
     new winston.transports.DailyRotateFile({
       filename: process.env.CONFIG_DIRECTORY

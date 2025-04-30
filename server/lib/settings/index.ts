@@ -115,7 +115,6 @@ export interface MainSettings {
   apiKey: string;
   applicationTitle: string;
   applicationUrl: string;
-  csrfProtection: boolean;
   cacheImages: boolean;
   defaultPermissions: number;
   defaultQuotas: {
@@ -124,15 +123,22 @@ export interface MainSettings {
   };
   hideAvailable: boolean;
   localLogin: boolean;
+  mediaServerLogin: boolean;
   newPlexLogin: boolean;
   discoverRegion: string;
   streamingRegion: string;
   originalLanguage: string;
-  trustProxy: boolean;
+  blacklistedTags: string;
+  blacklistedTagsLimit: number;
   mediaServerType: number;
   partialRequestsEnabled: boolean;
   enableSpecialEpisodes: boolean;
   locale: string;
+}
+
+export interface NetworkSettings {
+  csrfProtection: boolean;
+  trustProxy: boolean;
   proxy: ProxySettings;
 }
 
@@ -145,6 +151,7 @@ interface FullPublicSettings extends PublicSettings {
   applicationUrl: string;
   hideAvailable: boolean;
   localLogin: boolean;
+  mediaServerLogin: boolean;
   movie4kEnabled: boolean;
   series4kEnabled: boolean;
   discoverRegion: string;
@@ -248,6 +255,7 @@ export interface NotificationAgentGotify extends NotificationAgentConfig {
   options: {
     url: string;
     token: string;
+    priority: number;
   };
 }
 
@@ -296,7 +304,8 @@ export type JobId =
   | 'jellyfin-recently-added-scan'
   | 'jellyfin-full-scan'
   | 'image-cache-cleanup'
-  | 'availability-sync';
+  | 'availability-sync'
+  | 'process-blacklisted-tags';
 
 export interface AllSettings {
   clientId: string;
@@ -311,6 +320,7 @@ export interface AllSettings {
   public: PublicSettings;
   notifications: NotificationSettings;
   jobs: Record<JobId, JobSettings>;
+  network: NetworkSettings;
 }
 
 const SETTINGS_PATH = process.env.CONFIG_DIRECTORY
@@ -329,7 +339,6 @@ class Settings {
         apiKey: '',
         applicationTitle: 'Jellyseerr',
         applicationUrl: '',
-        csrfProtection: false,
         cacheImages: false,
         defaultPermissions: Permission.REQUEST,
         defaultQuotas: {
@@ -338,25 +347,17 @@ class Settings {
         },
         hideAvailable: false,
         localLogin: true,
+        mediaServerLogin: true,
         newPlexLogin: true,
         discoverRegion: '',
         streamingRegion: '',
         originalLanguage: '',
-        trustProxy: false,
+        blacklistedTags: '',
+        blacklistedTagsLimit: 50,
         mediaServerType: MediaServerType.NOT_CONFIGURED,
         partialRequestsEnabled: true,
         enableSpecialEpisodes: false,
         locale: 'en',
-        proxy: {
-          enabled: false,
-          hostname: '',
-          port: 8080,
-          useSsl: false,
-          user: '',
-          password: '',
-          bypassFilter: '',
-          bypassLocalAddresses: true,
-        },
       },
       plex: {
         name: '',
@@ -467,6 +468,7 @@ class Settings {
             options: {
               url: '',
               token: '',
+              priority: 0,
             },
           },
         },
@@ -507,6 +509,23 @@ class Settings {
         },
         'image-cache-cleanup': {
           schedule: '0 0 5 * * *',
+        },
+        'process-blacklisted-tags': {
+          schedule: '0 30 1 */7 * *',
+        },
+      },
+      network: {
+        csrfProtection: false,
+        trustProxy: false,
+        proxy: {
+          enabled: false,
+          hostname: '',
+          port: 8080,
+          useSsl: false,
+          user: '',
+          password: '',
+          bypassFilter: '',
+          bypassLocalAddresses: true,
         },
       },
     };
@@ -578,6 +597,8 @@ class Settings {
       applicationUrl: this.data.main.applicationUrl,
       hideAvailable: this.data.main.hideAvailable,
       localLogin: this.data.main.localLogin,
+      mediaServerLogin: this.data.main.mediaServerLogin,
+      jellyfinExternalHost: this.data.jellyfin.externalHostname,
       jellyfinForgotPasswordUrl: this.data.jellyfin.jellyfinForgotPasswordUrl,
       movie4kEnabled: this.data.radarr.some(
         (radarr) => radarr.is4k && radarr.isDefault
@@ -616,6 +637,14 @@ class Settings {
 
   set jobs(data: Record<JobId, JobSettings>) {
     this.data.jobs = data;
+  }
+
+  get network(): NetworkSettings {
+    return this.data.network;
+  }
+
+  set network(data: NetworkSettings) {
+    this.data.network = data;
   }
 
   get clientId(): string {

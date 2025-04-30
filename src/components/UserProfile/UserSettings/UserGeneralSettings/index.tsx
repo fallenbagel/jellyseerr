@@ -16,6 +16,7 @@ import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import { ApiErrorCode } from '@server/constants/error';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -100,7 +101,9 @@ const UserGeneralSettings = () => {
 
   const UserGeneralSettingsSchema = Yup.object().shape({
     email:
-      user?.id === 1
+      // email is required for everybody except non-admin jellyfin users
+      user?.id === 1 ||
+      (user?.userType !== UserType.JELLYFIN && user?.userType !== UserType.EMBY)
         ? Yup.string()
             .email(intl.formatMessage(messages.validationemailformat))
             .required(intl.formatMessage(messages.validationemailrequired))
@@ -162,33 +165,24 @@ const UserGeneralSettings = () => {
         enableReinitialize
         onSubmit={async (values) => {
           try {
-            const res = await fetch(`/api/v1/user/${user?.id}/settings/main`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                username: values.displayName,
-                email:
-                  values.email || user?.jellyfinUsername || user?.plexUsername,
-                discordId: values.discordId,
-                locale: values.locale,
-                discoverRegion: values.discoverRegion,
-                streamingRegion: values.streamingRegion,
-                originalLanguage: values.originalLanguage,
-                movieQuotaLimit: movieQuotaEnabled
-                  ? values.movieQuotaLimit
-                  : null,
-                movieQuotaDays: movieQuotaEnabled
-                  ? values.movieQuotaDays
-                  : null,
-                tvQuotaLimit: tvQuotaEnabled ? values.tvQuotaLimit : null,
-                tvQuotaDays: tvQuotaEnabled ? values.tvQuotaDays : null,
-                watchlistSyncMovies: values.watchlistSyncMovies,
-                watchlistSyncTv: values.watchlistSyncTv,
-              }),
+            await axios.post(`/api/v1/user/${user?.id}/settings/main`, {
+              username: values.displayName,
+              email:
+                values.email || user?.jellyfinUsername || user?.plexUsername,
+              discordId: values.discordId,
+              locale: values.locale,
+              discoverRegion: values.discoverRegion,
+              streamingRegion: values.streamingRegion,
+              originalLanguage: values.originalLanguage,
+              movieQuotaLimit: movieQuotaEnabled
+                ? values.movieQuotaLimit
+                : null,
+              movieQuotaDays: movieQuotaEnabled ? values.movieQuotaDays : null,
+              tvQuotaLimit: tvQuotaEnabled ? values.tvQuotaLimit : null,
+              tvQuotaDays: tvQuotaEnabled ? values.tvQuotaDays : null,
+              watchlistSyncMovies: values.watchlistSyncMovies,
+              watchlistSyncTv: values.watchlistSyncTv,
             });
-            if (!res.ok) throw new Error(res.statusText, { cause: res });
 
             if (currentUser?.id === user?.id && setLocale) {
               setLocale(
@@ -203,14 +197,7 @@ const UserGeneralSettings = () => {
               appearance: 'success',
             });
           } catch (e) {
-            let errorData;
-            try {
-              errorData = await e.cause?.text();
-              errorData = JSON.parse(errorData);
-            } catch {
-              /* empty */
-            }
-            if (errorData?.message === ApiErrorCode.InvalidEmail) {
+            if (e?.response?.data?.message === ApiErrorCode.InvalidEmail) {
               if (values.email) {
                 addToast(
                   intl.formatMessage(messages.toastSettingsFailureEmail),
@@ -413,7 +400,7 @@ const UserGeneralSettings = () => {
                   </span>
                 </label>
                 <div className="form-input-area">
-                  <div className="form-input-field">
+                  <div className="form-input-field relative z-[22]">
                     <RegionSelector
                       name="discoverRegion"
                       value={values.discoverRegion ?? ''}
@@ -431,7 +418,7 @@ const UserGeneralSettings = () => {
                   </span>
                 </label>
                 <div className="form-input-area">
-                  <div className="form-input-field">
+                  <div className="form-input-field relative z-[21]">
                     <LanguageSelector
                       setFieldValue={setFieldValue}
                       serverValue={currentSettings.originalLanguage}
@@ -449,7 +436,7 @@ const UserGeneralSettings = () => {
                   </span>
                 </label>
                 <div className="form-input-area">
-                  <div className="form-input-field">
+                  <div className="form-input-field relative z-20">
                     <RegionSelector
                       name="streamingRegion"
                       value={values.streamingRegion || ''}

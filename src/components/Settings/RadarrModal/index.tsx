@@ -1,24 +1,16 @@
-import Button from '@app/components/Common/Button';
 import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
-import OverrideRuleTile from '@app/components/Settings/OverrideRule/OverrideRuleTile';
-import type {
-  DVRTestResponse,
-  RadarrTestResponse,
-} from '@app/components/Settings/SettingsServices';
+import type { RadarrTestResponse } from '@app/components/Settings/SettingsServices';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
-import { PlusIcon } from '@heroicons/react/24/solid';
-import type OverrideRule from '@server/entity/OverrideRule';
-import type { OverrideRuleResultsResponse } from '@server/interfaces/api/overrideRuleInterfaces';
 import type { RadarrSettings } from '@server/lib/settings';
+import axios from 'axios';
 import { Field, Formik } from 'formik';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import Select from 'react-select';
 import { useToasts } from 'react-toast-notifications';
-import useSWR from 'swr';
 import * as Yup from 'yup';
 
 type OptionType = {
@@ -79,36 +71,16 @@ const messages = defineMessages('components.Settings.RadarrModal', {
   announced: 'Announced',
   inCinemas: 'In Cinemas',
   released: 'Released',
-  overrideRules: 'Override Rules',
-  addrule: 'New Override Rule',
 });
 
 interface RadarrModalProps {
   radarr: RadarrSettings | null;
   onClose: () => void;
   onSave: () => void;
-  overrideRuleModal: { open: boolean; rule: OverrideRule | null };
-  setOverrideRuleModal: ({
-    open,
-    rule,
-    testResponse,
-  }: {
-    open: boolean;
-    rule: OverrideRule | null;
-    testResponse: DVRTestResponse;
-  }) => void;
 }
 
-const RadarrModal = ({
-  onClose,
-  radarr,
-  onSave,
-  overrideRuleModal,
-  setOverrideRuleModal,
-}: RadarrModalProps) => {
+const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
   const intl = useIntl();
-  const { data: rules, mutate: revalidate } =
-    useSWR<OverrideRuleResultsResponse>('/api/v1/overrideRule');
   const initialLoad = useRef(false);
   const { addToast } = useToasts();
   const [isValidated, setIsValidated] = useState(radarr ? true : false);
@@ -183,24 +155,19 @@ const RadarrModal = ({
     }) => {
       setIsTesting(true);
       try {
-        const res = await fetch('/api/v1/settings/radarr/test', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+        const response = await axios.post<RadarrTestResponse>(
+          '/api/v1/settings/radarr/test',
+          {
             hostname,
             apiKey,
             port: Number(port),
             baseUrl,
             useSsl,
-          }),
-        });
-        if (!res.ok) throw new Error();
-        const data = await res.json();
+          }
+        );
 
         setIsValidated(true);
-        setTestResponse(data);
+        setTestResponse(response.data);
         if (initialLoad.current) {
           addToast(intl.formatMessage(messages.toastRadarrTestSuccess), {
             appearance: 'success',
@@ -234,10 +201,6 @@ const RadarrModal = ({
       });
     }
   }, [radarr, testConnection]);
-
-  useEffect(() => {
-    revalidate();
-  }, [overrideRuleModal, revalidate]);
 
   return (
     <Transition
@@ -297,23 +260,12 @@ const RadarrModal = ({
               tagRequests: values.tagRequests,
             };
             if (!radarr) {
-              const res = await fetch('/api/v1/settings/radarr', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(submission),
-              });
-              if (!res.ok) throw new Error();
+              await axios.post('/api/v1/settings/radarr', submission);
             } else {
-              const res = await fetch(`/api/v1/settings/radarr/${radarr.id}`, {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(submission),
-              });
-              if (!res.ok) throw new Error();
+              await axios.put(
+                `/api/v1/settings/radarr/${radarr.id}`,
+                submission
+              );
             }
 
             onSave();
@@ -382,7 +334,6 @@ const RadarrModal = ({
                       values.is4k ? messages.edit4kradarr : messages.editradarr
                     )
               }
-              backgroundClickable={!overrideRuleModal.open}
             >
               <div className="mb-6">
                 <div className="form-row">
@@ -416,6 +367,11 @@ const RadarrModal = ({
                         id="name"
                         name="name"
                         type="text"
+                        autoComplete="off"
+                        data-form-type="other"
+                        data-1pignore="true"
+                        data-lpignore="true"
+                        data-bwignore="true"
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setIsValidated(false);
                           setFieldValue('name', e.target.value);
@@ -509,7 +465,6 @@ const RadarrModal = ({
                         as="field"
                         id="apiKey"
                         name="apiKey"
-                        autoComplete="one-time-code"
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setIsValidated(false);
                           setFieldValue('apiKey', e.target.value);
@@ -773,38 +728,6 @@ const RadarrModal = ({
                   </div>
                 </div>
               </div>
-              <h3 className="mb-4 text-xl font-bold leading-8 text-gray-100">
-                {intl.formatMessage(messages.overrideRules)}
-              </h3>
-              <ul className="grid grid-cols-2 gap-6">
-                {rules && (
-                  <OverrideRuleTile
-                    rules={rules}
-                    setOverrideRuleModal={setOverrideRuleModal}
-                    testResponse={testResponse}
-                    radarr={radarr}
-                    revalidate={revalidate}
-                  />
-                )}
-                <li className="min-h-[8rem] rounded-lg border-2 border-dashed border-gray-400 shadow sm:min-h-[11rem]">
-                  <div className="flex h-full w-full items-center justify-center">
-                    <Button
-                      buttonType="ghost"
-                      onClick={() =>
-                        setOverrideRuleModal({
-                          open: true,
-                          rule: null,
-                          testResponse,
-                        })
-                      }
-                      disabled={!isValidated}
-                    >
-                      <PlusIcon />
-                      <span>{intl.formatMessage(messages.addrule)}</span>
-                    </Button>
-                  </div>
-                </li>
-              </ul>
             </Modal>
           );
         }}

@@ -13,10 +13,10 @@ describe('General Settings', () => {
   });
 
   it('modifies setting that requires restart', () => {
-    cy.visit('/settings');
+    cy.visit('/settings/network');
 
     cy.get('#trustProxy').click();
-    cy.get('[data-testid=settings-main-form]').submit();
+    cy.get('[data-testid=settings-network-form]').submit();
     cy.get('[data-testid=modal-title]').should(
       'contain',
       'Server Restart Required'
@@ -26,7 +26,7 @@ describe('General Settings', () => {
     cy.get('[data-testid=modal-title]').should('not.exist');
 
     cy.get('[type=checkbox]#trustProxy').click();
-    cy.get('[data-testid=settings-main-form]').submit();
+    cy.get('[data-testid=settings-network-form]').submit();
     cy.get('[data-testid=modal-title]').should('not.exist');
   });
 });

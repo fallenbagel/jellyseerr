@@ -6,13 +6,15 @@ sidebar_position: 2
 # Build from Source (Advanced)
 :::warning
 This method is not recommended for most users. It is intended for advanced users who are familiar with managing their own server infrastructure.
+
+Refer to [Configuring Databases](/extending-jellyseerr/database-config#postgresql-options) for details on how to configure your database.
 :::
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 ### Prerequisites
-    - [Node.js 20.x](https://nodejs.org/en/download/)
+    - [Node.js 22.x](https://nodejs.org/en/download/)
     - [Pnpm 9.x](https://pnpm.io/installation)
     - [Git](https://git-scm.com/downloads)
 
@@ -253,7 +255,8 @@ To run jellyseerr as a service:
 1. Download the [Non-Sucking Service Manager](https://nssm.cc/download)
 2. Install NSSM:
 ```powershell
-nssm install Jellyseerr "C:\Program Files\nodejs\node.exe" ["C:\jellyseerr\dist\index.js"]
+nssm install Jellyseerr "C:\Program Files\nodejs\node.exe" "C:\jellyseerr\dist\index.js"
+nssm set Jellyseerr AppDirectory "C:\jellyseerr"
 nssm set Jellyseerr AppEnvironmentExtra NODE_ENV=production
 ```
 3. Start the service:

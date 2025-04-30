@@ -1,85 +1,43 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Generator: Adobe Illustrator 26.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 361 157">
+  <defs>
+    <style>
+      .cls-1 {
+      fill: #fff;
+      }
 
-<svg
-  xmlns:dc="http://purl.org/dc/elements/1.1/"
-  xmlns:cc="http://creativecommons.org/ns#"
-  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  xmlns:svg="http://www.w3.org/2000/svg"
-  xmlns="http://www.w3.org/2000/svg"
-  xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-  xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-  version="1.1"
-  id="plex-logo"
-  x="0px"
-  y="0px"
-  viewBox="0 0 1000 460.89727"
-  xml:space="preserve"
-  sodipodi:docname="plex-logo.svg"
-  inkscape:version="0.92.4 (5da689c313, 2019-01-14)"><metadata
-   id="metadata25"><rdf:RDF><cc:Work
-       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
-   id="defs23">
-	</defs><sodipodi:namedview
-   pagecolor="#ffffff"
-   bordercolor="#111111"
-   borderopacity="1"
-   objecttolerance="10"
-   gridtolerance="10"
-   guidetolerance="10"
-   inkscape:pageopacity="0"
-   inkscape:pageshadow="2"
-   inkscape:window-width="1920"
-   inkscape:window-height="1017"
-   id="namedview21"
-   showgrid="false"
-   fit-margin-top="0"
-   fit-margin-left="0"
-   fit-margin-right="0"
-   fit-margin-bottom="0"
-   inkscape:zoom="0.27956081"
-   inkscape:cx="783.06912"
-   inkscape:cy="-132.85701"
-   inkscape:window-x="1912"
-   inkscape:window-y="-8"
-   inkscape:window-maximized="1"
-   inkscape:current-layer="plex-logo" />
-<style
-   type="text/css"
-   id="style2">
-	.st0{fill:#FFFFFF;}
-	.st1{fill:#EBAF00;}
-</style>
-<path
-   class="st0"
-   d="m 164.18919,82.43243 c -39.86487,0 -65.540543,11.48648 -87.162163,38.51351 V 91.21621 H 0 v 366.21621 c 0,0 1.3513514,0.67567 5.4054053,1.35135 5.4054057,1.35135 33.7837827,7.43243 54.7297287,-10.13514 18.243244,-15.54054 22.297295,-33.78378 22.297295,-54.05405 v -52.7027 c 22.297301,23.64864 47.297301,33.78378 82.432431,33.78378 75.67567,0 133.78378,-61.48648 133.78378,-143.24323 0,-88.51352 -56.08108,-150 -134.45945,-150 z m -14.86487,223.64864 c -42.56756,0 -76.351351,-35.13513 -76.351351,-77.7027 0,-41.89189 39.864871,-75.67567 76.351351,-75.67567 43.24324,0 76.35135,33.1081 76.35135,76.35135 0,43.24324 -33.78378,77.02702 -76.35135,77.02702 z"
-   id="path4"
-   inkscape:connector-curvature="0"
-   style="fill:#ffffff;stroke-width:6.75675678" /><path
-   class="st0"
-   d="m 408.1081,223.64864 c 0,31.75676 3.37838,70.27027 34.45946,112.16216 0.67567,0.67567 2.02702,2.7027 2.02702,2.7027 -12.83783,21.62162 -28.37837,36.48648 -49.32432,36.48648 -16.21622,0 -32.43243,-8.78378 -45.94595,-23.64864 -14.18918,-16.21622 -20.94594,-37.16216 -20.94594,-59.45946 V 0 h 79.05405 z"
-   id="path6"
-   inkscape:connector-curvature="0"
-   style="fill:#ffffff;stroke-width:6.75675678" /><polygon
-   class="st1"
-   points="117.9,33.9 104.1,13.5 118.3,13.5 132,33.9 118.3,54.2 104.1,54.2 "
-   id="polygon8"
-   style="fill:#ebaf00"
-   transform="scale(6.7567568)" /><polygon
-   class="st0"
-   points="135.7,31.6 148,13.5 133.8,13.5 128.7,21 "
-   id="polygon10"
-   style="fill:#ffffff"
-   transform="scale(6.7567568)" /><path
-   class="st0"
-   d="m 869.59458,316.2162 c 0,0 16.2162,22.2973 16.2162,22.2973 15.54058,24.32432 35.8108,36.48648 59.45949,36.48648 25,-0.67567 42.56752,-22.29729 49.3243,-30.4054 0,0 -12.16218,-10.81081 -27.7027,-29.05405 -20.94598,-24.32432 -48.64868,-68.91892 -49.3243,-70.94594 z"
-   id="path12"
-   inkscape:connector-curvature="0"
-   style="fill:#ffffff;stroke-width:6.75675678" /><path
-   style="fill:#ffffff;stroke-width:6.75675678"
-   inkscape:connector-curvature="0"
-   id="path16"
-   d="m 632.43242,287.16215 c -16.21622,14.86486 -27.02703,22.97297 -49.32432,22.97297 -39.86487,0 -62.83784,-28.37837 -66.21622,-59.45945 h 211.4865 c 1.35131,-4.05406 2.027,-9.45946 2.027,-18.24324 0,-85.81082 -62.83783,-150 -145.27026,-150 -78.37837,0 -142.56756,65.54054 -142.56756,147.29729 0,81.08108 64.18919,145.27026 144.59459,145.27026 56.08108,0 104.72973,-31.75675 131.08105,-87.83783 z M 585.8108,147.29729 c 35.13513,0 61.48648,22.97297 67.56756,53.37838 H 519.59458 c 6.75676,-31.75676 31.75676,-53.37838 66.21622,-53.37838 z"
-   class="st0" />
+      .cls-2 {
+      fill: #eaaf20;
+      }
+    </style>
+  </defs>
+  <!-- Generator: Adobe Illustrator 28.7.1, SVG Export Plug-In . SVG Version: 1.2.0 Build 142)  -->
+  <g>
+    <g id="Layer_1">
+      <path id="path4" class="cls-1"
+        d="M60.6,28.8c-14.3,0-23.5,3.9-31.3,13v-10H1.6v123.7s.5.2,1.9.5c1.9.5,12.1,2.5,19.6-3.4,6.5-5.3,8-11.4,8-18.3v-17.8c8,8,17,11.4,29.6,11.4,27.2,0,48-20.8,48-48.4s-20.1-50.7-48.3-50.7h0ZM55.2,104.3c-15.3,0-27.4-11.9-27.4-26.3s14.3-25.6,27.4-25.6,27.4,11.2,27.4,25.8-12.1,26-27.4,26Z" />
+      <path id="path6" class="cls-1"
+        d="M148.1,76.5c0,10.7,1.2,23.7,12.4,37.9.2.2.7.9.7.9-4.6,7.3-10.2,12.3-17.7,12.3s-11.6-3-16.5-8c-5.1-5.5-7.5-12.6-7.5-20.1V.9h28.4l.2,75.6Z" />
+      <polygon id="polygon8" class="cls-2"
+        points="287.6 78.3 254.1 31.7 288.6 31.7 321.8 78.3 288.6 124.6 254.1 124.6 287.6 78.3" />
+      <polygon id="polygon10" class="cls-1"
+        points="330.8 73 360.6 31.7 326.2 31.7 313.8 48.9 330.8 73" />
+      <path id="path12" class="cls-1"
+        d="M313.8,107.7l5.8,7.5c5.6,8.2,12.9,12.3,21.3,12.3,9-.2,15.3-7.5,17.7-10.3,0,0-4.4-3.7-9.9-9.8-7.5-8.2-17.5-23.3-17.7-24l-17.2,24.2Z" />
+      <path id="path16" class="cls-1"
+        d="M228.7,97.9c-5.8,5-9.7,7.8-17.7,7.8-14.3,0-22.6-9.6-23.8-20.1h75.9c.5-1.4.7-3.2.7-6.2,0-29-22.6-50.7-52.2-50.7s-51.2,22.1-51.2,49.8,23,49.1,51.9,49.1,37.6-10.7,47.1-29.7h-30.8ZM211.9,50.7c12.6,0,22.1,7.8,24.3,18h-48c2.4-10.7,11.4-18,23.8-18h0Z" />
+      <path id="path4-2" data-name="path4" class="cls-1"
+        d="M59.3,28.2c-14.3,0-23.5,3.9-31.3,13v-10H.4v123.7s.5.2,1.9.5c1.9.5,12.1,2.5,19.6-3.4,6.5-5.3,8-11.4,8-18.3v-17.8c8,8,17,11.4,29.6,11.4,27.2,0,48-20.8,48-48.4s-20.1-50.7-48.3-50.7h0ZM54,103.8c-15.3,0-27.4-11.9-27.4-26.3s14.3-25.6,27.4-25.6,27.4,11.2,27.4,25.8-12.1,26-27.4,26Z" />
+      <path id="path6-2" data-name="path6" class="cls-1"
+        d="M146.9,75.9c0,10.7,1.2,23.7,12.4,37.9.2.2.7.9.7.9-4.6,7.3-10.2,12.3-17.7,12.3s-11.6-3-16.5-8c-5.1-5.5-7.5-12.6-7.5-20.1V.4h28.4l.2,75.6Z" />
+      <polygon id="polygon8-2" data-name="polygon8" class="cls-2"
+        points="286.4 77.8 252.9 31.2 287.3 31.2 320.6 77.8 287.3 124.1 252.9 124.1 286.4 77.8" />
+      <polygon id="polygon10-2" data-name="polygon10" class="cls-1"
+        points="329.5 72.5 359.4 31.2 324.9 31.2 312.6 48.3 329.5 72.5" />
+      <path id="path12-2" data-name="path12" class="cls-1"
+        d="M312.6,107.2l5.8,7.5c5.6,8.2,12.9,12.3,21.3,12.3,9-.2,15.3-7.5,17.7-10.3,0,0-4.4-3.7-9.9-9.8-7.5-8.2-17.5-23.3-17.7-24l-17.2,24.2Z" />
+      <path id="path16-2" data-name="path16" class="cls-1"
+        d="M227.4,97.4c-5.8,5-9.7,7.8-17.7,7.8-14.3,0-22.6-9.6-23.8-20.1h75.9c.5-1.4.7-3.2.7-6.2,0-29-22.6-50.7-52.2-50.7s-51.2,22.1-51.2,49.8,23,49.1,51.9,49.1,37.6-10.7,47.1-29.7h-30.8ZM210.7,50.1c12.6,0,22.1,7.8,24.3,18h-48c2.4-10.7,11.4-18,23.8-18h0Z" />
+    </g>
+  </g>
 </svg>

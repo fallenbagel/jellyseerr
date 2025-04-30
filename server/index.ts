@@ -1,3 +1,4 @@
+import csurf from '@dr.pogodin/csurf';
 import PlexAPI from '@server/api/plexapi';
 import dataSource, { getRepository, isPgsql } from '@server/datasource';
 import DiscoverSlider from '@server/entity/DiscoverSlider';
@@ -28,27 +29,19 @@ import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
-import csurf from 'csurf';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
 import session from 'express-session';
 import next from 'next';
-import dns from 'node:dns';
-import net from 'node:net';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 
-if (process.env.forceIpv4First === 'true') {
-  dns.setDefaultResultOrder('ipv4first');
-  net.setDefaultAutoSelectFamily(false);
-}
+const API_SPEC_PATH = path.join(__dirname, '../jellyseerr-api.yml');
 
-const API_SPEC_PATH = path.join(__dirname, '../overseerr-api.yml');
-
-logger.info(`Starting Overseerr version ${getAppVersion()}`);
+logger.info(`Starting Jellyseerr version ${getAppVersion()}`);
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -77,11 +70,11 @@ app
 
     // Load Settings
     const settings = await getSettings().load();
-    restartFlag.initializeSettings(settings.main);
+    restartFlag.initializeSettings(settings);
 
     // Register HTTP proxy
-    if (settings.main.proxy.enabled) {
-      await createCustomProxyAgent(settings.main.proxy);
+    if (settings.network.proxy.enabled) {
+      await createCustomProxyAgent(settings.network.proxy);
     }
 
     // Migrate library types
@@ -136,7 +129,7 @@ app
     await DiscoverSlider.bootstrapSliders();
 
     const server = express();
-    if (settings.main.trustProxy) {
+    if (settings.network.trustProxy) {
       server.enable('trust proxy');
     }
     server.use(cookieParser());
@@ -157,7 +150,7 @@ app
         next();
       }
     });
-    if (settings.main.csrfProtection) {
+    if (settings.network.csrfProtection) {
       server.use(
         csurf({
           cookie: {
@@ -187,7 +180,7 @@ app
         cookie: {
           maxAge: 1000 * 60 * 60 * 24 * 30,
           httpOnly: true,
-          sameSite: settings.main.csrfProtection ? 'strict' : 'lax',
+          sameSite: settings.network.csrfProtection ? 'strict' : 'lax',
           secure: 'auto',
         },
         store: new TypeormStore({

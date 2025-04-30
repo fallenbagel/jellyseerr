@@ -28,6 +28,7 @@ import type { MediaWatchDataResponse } from '@server/interfaces/api/mediaInterfa
 import type { RadarrSettings, SonarrSettings } from '@server/lib/settings';
 import type { MovieDetails } from '@server/models/Movie';
 import type { TvDetails } from '@server/models/Tv';
+import axios from 'axios';
 import Link from 'next/link';
 import { useIntl } from 'react-intl';
 import useSWR from 'swr';
@@ -111,10 +112,7 @@ const ManageSlideOver = ({
 
   const deleteMedia = async () => {
     if (data.mediaInfo) {
-      const res = await fetch(`/api/v1/media/${data.mediaInfo.id}`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) throw new Error();
+      await axios.delete(`/api/v1/media/${data.mediaInfo.id}`);
       revalidate();
       onClose();
     }
@@ -122,16 +120,8 @@ const ManageSlideOver = ({
 
   const deleteMediaFile = async () => {
     if (data.mediaInfo) {
-      const res1 = await fetch(`/api/v1/media/${data.mediaInfo.id}/file`, {
-        method: 'DELETE',
-      });
-      if (!res1.ok) throw new Error();
-
-      const res2 = await fetch(`/api/v1/media/${data.mediaInfo.id}`, {
-        method: 'DELETE',
-      });
-      if (!res2.ok) throw new Error();
-
+      await axios.delete(`/api/v1/media/${data.mediaInfo.id}/file`);
+      await axios.delete(`/api/v1/media/${data.mediaInfo.id}`);
       revalidate();
       onClose();
     }
@@ -160,16 +150,12 @@ const ManageSlideOver = ({
 
   const markAvailable = async (is4k = false) => {
     if (data.mediaInfo) {
-      const res = await fetch(`/api/v1/media/${data.mediaInfo?.id}/available`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          is4k,
+      await axios.post(`/api/v1/media/${data.mediaInfo?.id}/available`, {
+        is4k,
+        ...(mediaType === 'tv' && {
+          seasons: data.seasons.filter((season) => season.seasonNumber !== 0),
         }),
       });
-      if (!res.ok) throw new Error();
       revalidate();
     }
   };

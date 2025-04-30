@@ -12,8 +12,8 @@ jobs:
   test:
     name: Lint & Test Build
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-22.04
-    container: node:20-alpine
+    runs-on: ubuntu-24.04
+    container: node:22-alpine
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -43,15 +43,23 @@ jobs:
       - name: Build
         run: pnpm build
 
-  build_and_push:
+  build:
     name: Build & Publish Docker Images
     if: github.ref == 'refs/heads/develop' && !contains(github.event.head_commit.message, '[skip ci]')
-    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            platform: linux/amd64
+          - runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    runs-on: ${{ matrix.runner }}
+    outputs:
+      digest-amd64: ${{ steps.set_outputs.outputs.digest-amd64 }}
+      digest-arm64: ${{ steps.set_outputs.outputs.digest-arm64 }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Log in to Docker Hub
@@ -70,24 +78,79 @@ jobs:
           echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
         env:
           OWNER: ${{ github.repository_owner }}
-      - name: Build and push
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            fallenbagel/jellyseerr
+            ghcr.io/${{ env.OWNER_LC }}/jellyseerr
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix=,suffix=,format=short
+      - name: Build and push by digest
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.platform }}
           push: true
           build-args: |
             COMMIT_TAG=${{ github.sha }}
-          tags: |
-            fallenbagel/jellyseerr:develop
-            ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop
+            BUILD_VERSION=develop
+            BUILD_DATE=${{ github.event.repository.updated_at }}
+          outputs: |
+            type=image,push-by-digest=true,name=fallenbagel/jellyseerr,push=true
+            type=image,push-by-digest=true,name=ghcr.io/${{ env.OWNER_LC }}/jellyseerr,push=true
+          cache-from: type=gha,scope=${{ matrix.platform }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
+          provenance: false
+      - name: Set outputs
+        id: set_outputs
+        run: |
+          platform="${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}"
+          echo "digest-${platform}=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
+
+  merge_and_push:
+    name: Create and Push Multi-arch Manifest
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set lower case owner name
+        run: |
+          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+        env:
+          OWNER: ${{ github.repository_owner }}
+      - name: Create and push manifest
+        run: |
+          docker manifest create fallenbagel/jellyseerr:develop \
+            --amend fallenbagel/jellyseerr@${{ needs.build.outputs.digest-amd64 }} \
+            --amend fallenbagel/jellyseerr@${{ needs.build.outputs.digest-arm64 }}
+          docker manifest push fallenbagel/jellyseerr:develop
+
+          # GHCR manifest
+          docker manifest create ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop \
+            --amend ghcr.io/${{ env.OWNER_LC }}/jellyseerr@${{ needs.build.outputs.digest-amd64 }} \
+            --amend ghcr.io/${{ env.OWNER_LC }}/jellyseerr@${{ needs.build.outputs.digest-arm64 }}
+          docker manifest push ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop
 
   discord:
     name: Send Discord Notification
-    needs: build_and_push
+    needs: merge_and_push
     if: always() && github.event_name != 'pull_request' && !contains(github.event.head_commit.message, '[skip ci]')
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Get Build Job Status
         uses: technote-space/workflow-conclusion-action@v3

@@ -1,6 +1,6 @@
-# Jellyseerr
+# jellyseerr-chart
 
-![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.1.0](https://img.shields.io/badge/AppVersion-2.1.0-informational?style=flat-square)
+![Version: 2.4.0](https://img.shields.io/badge/Version-2.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.5.2](https://img.shields.io/badge/AppVersion-2.5.2-informational?style=flat-square)
 
 Jellyseerr helm chart for Kubernetes
 
@@ -25,10 +25,6 @@ Kubernetes: `>=1.23.0-0`
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
-| autoscaling.enabled | bool | `false` |  |
-| autoscaling.maxReplicas | int | `100` |  |
-| autoscaling.minReplicas | int | `1` |  |
-| autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
 | config | object | `{"persistence":{"accessModes":["ReadWriteOnce"],"annotations":{},"name":"","size":"5Gi","volumeName":""}}` | Creating PVC to store configuration |
 | config.persistence.accessModes | list | `["ReadWriteOnce"]` | Access modes of persistent disk |
 | config.persistence.annotations | object | `{}` | Annotations for PVCs |
@@ -39,7 +35,7 @@ Kubernetes: `>=1.23.0-0`
 | extraEnvFrom | list | `[]` | Environment variables from secrets or configmaps to add to the jellyseerr pods |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.registry | string | `"docker.io"` |  |
+| image.registry | string | `"ghcr.io"` |  |
 | image.repository | string | `"fallenbagel/jellyseerr"` |  |
 | image.sha | string | `""` |  |
 | image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion. |
@@ -56,6 +52,9 @@ Kubernetes: `>=1.23.0-0`
 | podAnnotations | object | `{}` |  |
 | podLabels | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |
+| probes.livenessProbe | object | `{}` | Configure liveness probe |
+| probes.readinessProbe | object | `{}` | Configure readiness probe |
+| probes.startupProbe | string | `nil` | Configure startup probe |
 | replicaCount | int | `1` |  |
 | resources | object | `{}` |  |
 | securityContext | object | `{}` |  |
@@ -67,3 +66,5 @@ Kubernetes: `>=1.23.0-0`
 | serviceAccount.name | string | `""` | If not set and create is true, a name is generated using the fullname template |
 | strategy | object | `{"type":"Recreate"}` | Deployment strategy |
 | tolerations | list | `[]` |  |
+| volumeMounts | list | `[]` | Additional volumeMounts on the output Deployment definition. |
+| volumes | list | `[]` | Additional volumes on the output Deployment definition. |

@@ -1,4 +1,5 @@
 import { MediaServerType } from '@server/constants/server';
+import blacklistedTagsProcessor from '@server/job/blacklistedTagsProcessor';
 import availabilitySync from '@server/lib/availabilitySync';
 import downloadTracker from '@server/lib/downloadtracker';
 import ImageProxy from '@server/lib/imageproxy';
@@ -21,7 +22,7 @@ interface ScheduledJob {
   job: schedule.Job;
   name: string;
   type: 'process' | 'command';
-  interval: 'seconds' | 'minutes' | 'hours' | 'fixed';
+  interval: 'seconds' | 'minutes' | 'hours' | 'days' | 'fixed';
   cronSchedule: string;
   running?: () => boolean;
   cancelFn?: () => void;
@@ -70,6 +71,35 @@ export const startJobs = (): void => {
       running: () => plexFullScanner.status().running,
       cancelFn: () => plexFullScanner.cancel(),
     });
+
+    scheduledJobs.push({
+      id: 'plex-refresh-token',
+      name: 'Plex Refresh Token',
+      type: 'process',
+      interval: 'fixed',
+      cronSchedule: jobs['plex-refresh-token'].schedule,
+      job: schedule.scheduleJob(jobs['plex-refresh-token'].schedule, () => {
+        logger.info('Starting scheduled job: Plex Refresh Token', {
+          label: 'Jobs',
+        });
+        refreshToken.run();
+      }),
+    });
+
+    // Watchlist Sync
+    scheduledJobs.push({
+      id: 'plex-watchlist-sync',
+      name: 'Plex Watchlist Sync',
+      type: 'process',
+      interval: 'seconds',
+      cronSchedule: jobs['plex-watchlist-sync'].schedule,
+      job: schedule.scheduleJob(jobs['plex-watchlist-sync'].schedule, () => {
+        logger.info('Starting scheduled job: Plex Watchlist Sync', {
+          label: 'Jobs',
+        });
+        watchlistSync.syncWatchlist();
+      }),
+    });
   } else if (
     mediaServerType === MediaServerType.JELLYFIN ||
     mediaServerType === MediaServerType.EMBY
@@ -111,21 +141,6 @@ export const startJobs = (): void => {
       cancelFn: () => jellyfinFullScanner.cancel(),
     });
   }
-
-  // Watchlist Sync
-  scheduledJobs.push({
-    id: 'plex-watchlist-sync',
-    name: 'Plex Watchlist Sync',
-    type: 'process',
-    interval: 'seconds',
-    cronSchedule: jobs['plex-watchlist-sync'].schedule,
-    job: schedule.scheduleJob(jobs['plex-watchlist-sync'].schedule, () => {
-      logger.info('Starting scheduled job: Plex Watchlist Sync', {
-        label: 'Jobs',
-      });
-      watchlistSync.syncWatchlist();
-    }),
-  });
 
   // Run full radarr scan every 24 hours
   scheduledJobs.push({
@@ -224,17 +239,19 @@ export const startJobs = (): void => {
   });
 
   scheduledJobs.push({
-    id: 'plex-refresh-token',
-    name: 'Plex Refresh Token',
+    id: 'process-blacklisted-tags',
+    name: 'Process Blacklisted Tags',
     type: 'process',
-    interval: 'fixed',
-    cronSchedule: jobs['plex-refresh-token'].schedule,
-    job: schedule.scheduleJob(jobs['plex-refresh-token'].schedule, () => {
-      logger.info('Starting scheduled job: Plex Refresh Token', {
+    interval: 'days',
+    cronSchedule: jobs['process-blacklisted-tags'].schedule,
+    job: schedule.scheduleJob(jobs['process-blacklisted-tags'].schedule, () => {
+      logger.info('Starting scheduled job: Process Blacklisted Tags', {
         label: 'Jobs',
       });
-      refreshToken.run();
+      blacklistedTagsProcessor.run();
     }),
+    running: () => blacklistedTagsProcessor.status().running,
+    cancelFn: () => blacklistedTagsProcessor.cancel(),
   });
 
   logger.info('Scheduled jobs loaded', { label: 'Jobs' });

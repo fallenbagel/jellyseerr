@@ -3,7 +3,7 @@
 // previously cached resources to be updated from the network.
 // This variable is intentionally declared and unused.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const OFFLINE_VERSION = 3;
+const OFFLINE_VERSION = 4;
 const CACHE_NAME = 'offline';
 // Customize this with a different URL if needed.
 const OFFLINE_URL = '/offline.html';
@@ -105,6 +105,25 @@ self.addEventListener('push', (event) => {
         title: 'Decline',
       }
     );
+  }
+
+  // Set the badge with the amount of pending requests
+  // Only update the badge if the payload confirms they are the admin
+  if (
+    (payload.notificationType === 'MEDIA_APPROVED' ||
+      payload.notificationType === 'MEDIA_DECLINED') &&
+    payload.isAdmin
+  ) {
+    if ('setAppBadge' in navigator) {
+      navigator.setAppBadge(payload.pendingRequestsCount);
+    }
+    return;
+  }
+
+  if (payload.notificationType === 'MEDIA_PENDING') {
+    if ('setAppBadge' in navigator) {
+      navigator.setAppBadge(payload.pendingRequestsCount);
+    }
   }
 
   event.waitUntil(self.registration.showNotification(payload.subject, options));

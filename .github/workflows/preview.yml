@@ -33,5 +33,7 @@ jobs:
           push: true
           build-args: |
             COMMIT_TAG=${{ github.sha }}
+            BUILD_VERSION=${{ steps.get_version.outputs.VERSION }}
+            BUILD_DATE=${{ github.event.repository.updated_at }}
           tags: |
             fallenbagel/jellyseerr:${{ steps.get_version.outputs.VERSION }}

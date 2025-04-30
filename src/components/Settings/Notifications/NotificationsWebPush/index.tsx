@@ -4,6 +4,7 @@ import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -57,17 +58,10 @@ const NotificationsWebPush = () => {
         }}
         onSubmit={async (values) => {
           try {
-            const res = await fetch('/api/v1/settings/notifications/webpush', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                enabled: values.enabled,
-                options: {},
-              }),
+            await axios.post('/api/v1/settings/notifications/webpush', {
+              enabled: values.enabled,
+              options: {},
             });
-            if (!res.ok) throw new Error();
             mutate('/api/v1/settings/public');
             addToast(intl.formatMessage(messages.webpushsettingssaved), {
               appearance: 'success',
@@ -98,20 +92,10 @@ const NotificationsWebPush = () => {
                   toastId = id;
                 }
               );
-              const res = await fetch(
-                '/api/v1/settings/notifications/webpush/test',
-                {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    enabled: true,
-                    options: {},
-                  }),
-                }
-              );
-              if (!res.ok) throw new Error();
+              await axios.post('/api/v1/settings/notifications/webpush/test', {
+                enabled: true,
+                options: {},
+              });
 
               if (toastId) {
                 removeToast(toastId);

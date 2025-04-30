@@ -29,11 +29,16 @@ interface ModalProps {
   secondaryDisabled?: boolean;
   tertiaryDisabled?: boolean;
   tertiaryButtonType?: ButtonType;
+  okButtonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
+  cancelButtonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
+  secondaryButtonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
+  tertiaryButtonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
   disableScrollLock?: boolean;
   backgroundClickable?: boolean;
   loading?: boolean;
   backdrop?: string;
   children?: React.ReactNode;
+  dialogClass?: string;
 }
 
 const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
@@ -61,6 +66,11 @@ const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
       loading = false,
       onTertiary,
       backdrop,
+      dialogClass,
+      okButtonProps,
+      cancelButtonProps,
+      secondaryButtonProps,
+      tertiaryButtonProps,
     },
     parentRef
   ) => {
@@ -106,7 +116,7 @@ const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
           </div>
         </Transition>
         <Transition
-          className="hide-scrollbar relative inline-block w-full overflow-auto bg-gray-800 px-4 pt-4 pb-4 text-left align-bottom shadow-xl ring-1 ring-gray-700 transition-all sm:my-8 sm:max-w-3xl sm:rounded-lg sm:align-middle"
+          className={`hide-scrollbar relative inline-block w-full overflow-auto bg-gray-800 px-4 pt-4 pb-4 text-left align-bottom shadow-xl ring-1 ring-gray-700 transition-all sm:my-8 sm:max-w-3xl sm:rounded-lg sm:align-middle ${dialogClass}`}
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-headline"
@@ -189,6 +199,7 @@ const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
                   className="ml-3"
                   disabled={okDisabled}
                   data-testid="modal-ok-button"
+                  {...okButtonProps}
                 >
                   {okText ? okText : 'Ok'}
                 </Button>
@@ -200,6 +211,7 @@ const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
                   className="ml-3"
                   disabled={secondaryDisabled}
                   data-testid="modal-secondary-button"
+                  {...secondaryButtonProps}
                 >
                   {secondaryText}
                 </Button>
@@ -210,6 +222,7 @@ const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
                   onClick={onTertiary}
                   className="ml-3"
                   disabled={tertiaryDisabled}
+                  {...tertiaryButtonProps}
                 >
                   {tertiaryText}
                 </Button>
@@ -220,6 +233,7 @@ const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
                   onClick={onCancel}
                   className="ml-3 sm:ml-0"
                   data-testid="modal-cancel-button"
+                  {...cancelButtonProps}
                 >
                   {cancelText
                     ? cancelText

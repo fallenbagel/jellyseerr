@@ -26,25 +26,37 @@ export const JellyseerrVersion = () => {
 };
 
 export const NixpkgVersion = () => {
-  const [version, setVersion] = useState(null);
+  const [versions, setVersions] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchVersion = async () => {
       try {
-        const url =
-          'https://raw.githubusercontent.com/NixOS/nixpkgs/nixos-unstable/pkgs/servers/jellyseerr/default.nix';
-        const response = await fetch(url);
-        const data = await response.text();
+        const unstableUrl =
+          'https://raw.githubusercontent.com/NixOS/nixpkgs/refs/heads/nixos-unstable/pkgs/by-name/je/jellyseerr/package.nix';
+        const stableUrl =
+          'https://raw.githubusercontent.com/NixOS/nixpkgs/refs/heads/nixos-24.11/pkgs/servers/jellyseerr/default.nix';
+
+        const [unstableResponse, stableResponse] = await Promise.all([
+          fetch(unstableUrl),
+          fetch(stableUrl),
+        ]);
+
+        const unstableData = await unstableResponse.text();
+        const stableData = await stableResponse.text();
 
         const versionRegex = /version\s*=\s*"([^"]+)"/;
-        const match = data.match(versionRegex);
-        if (match && match[1]) {
-          setVersion(match[1]);
-        } else {
-          setError('0.0.0');
-        }
+
+        const unstableMatch = unstableData.match(versionRegex);
+        const stableMatch = stableData.match(versionRegex);
+
+        const unstableVersion =
+          unstableMatch && unstableMatch[1] ? unstableMatch[1] : '0.0.0';
+        const stableVersion =
+          stableMatch && stableMatch[1] ? stableMatch[1] : '0.0.0';
+
+        setVersions({ unstable: unstableVersion, stable: stableVersion });
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -63,5 +75,5 @@ export const NixpkgVersion = () => {
     return { error };
   }
 
-  return version;
+  return versions;
 };

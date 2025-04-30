@@ -5,6 +5,7 @@ import NotificationTypeSelector from '@app/components/NotificationTypeSelector';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -98,24 +99,17 @@ const NotificationsTelegram = () => {
       validationSchema={NotificationsTelegramSchema}
       onSubmit={async (values) => {
         try {
-          const res = await fetch('/api/v1/settings/notifications/telegram', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+          await axios.post('/api/v1/settings/notifications/telegram', {
+            enabled: values.enabled,
+            types: values.types,
+            options: {
+              botAPI: values.botAPI,
+              chatId: values.chatId,
+              messageThreadId: values.messageThreadId,
+              sendSilently: values.sendSilently,
+              botUsername: values.botUsername,
             },
-            body: JSON.stringify({
-              enabled: values.enabled,
-              types: values.types,
-              options: {
-                botAPI: values.botAPI,
-                chatId: values.chatId,
-                messageThreadId: values.messageThreadId,
-                sendSilently: values.sendSilently,
-                botUsername: values.botUsername,
-              },
-            }),
           });
-          if (!res.ok) throw new Error();
 
           addToast(intl.formatMessage(messages.telegramsettingssaved), {
             appearance: 'success',
@@ -154,27 +148,17 @@ const NotificationsTelegram = () => {
                 toastId = id;
               }
             );
-            const res = await fetch(
-              '/api/v1/settings/notifications/telegram/test',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  enabled: true,
-                  types: values.types,
-                  options: {
-                    botAPI: values.botAPI,
-                    chatId: values.chatId,
-                    messageThreadId: values.messageThreadId,
-                    sendSilently: values.sendSilently,
-                    botUsername: values.botUsername,
-                  },
-                }),
-              }
-            );
-            if (!res.ok) throw new Error();
+            await axios.post('/api/v1/settings/notifications/telegram/test', {
+              enabled: true,
+              types: values.types,
+              options: {
+                botAPI: values.botAPI,
+                chatId: values.chatId,
+                messageThreadId: values.messageThreadId,
+                sendSilently: values.sendSilently,
+                botUsername: values.botUsername,
+              },
+            });
 
             if (toastId) {
               removeToast(toastId);
@@ -245,7 +229,7 @@ const NotificationsTelegram = () => {
                     as="field"
                     id="botAPI"
                     name="botAPI"
-                    autoComplete="one-time-code"
+                    type="text"
                   />
                 </div>
                 {errors.botAPI &&
@@ -264,7 +248,16 @@ const NotificationsTelegram = () => {
               </label>
               <div className="form-input-area">
                 <div className="form-input-field">
-                  <Field id="botUsername" name="botUsername" type="text" />
+                  <Field
+                    id="botUsername"
+                    name="botUsername"
+                    type="text"
+                    autoComplete="off"
+                    data-form-type="other"
+                    data-1pignore="true"
+                    data-lpignore="true"
+                    data-bwignore="true"
+                  />
                 </div>
                 {errors.botUsername &&
                   touched.botUsername &&
@@ -294,7 +287,16 @@ const NotificationsTelegram = () => {
               </label>
               <div className="form-input-area">
                 <div className="form-input-field">
-                  <Field id="chatId" name="chatId" type="text" />
+                  <Field
+                    id="chatId"
+                    name="chatId"
+                    type="text"
+                    autoComplete="off"
+                    data-form-type="other"
+                    data-1pignore="true"
+                    data-lpignore="true"
+                    data-bwignore="true"
+                  />
                 </div>
                 {errors.chatId &&
                   touched.chatId &&

@@ -1,6 +1,13 @@
 import type { AllSettings } from '@server/lib/settings';
 
 const migrateRegionSetting = (settings: any): AllSettings => {
+  if (
+    settings.main.discoverRegion !== undefined &&
+    settings.main.streamingRegion !== undefined
+  ) {
+    return settings;
+  }
+
   const oldRegion = settings.main.region;
   if (oldRegion) {
     settings.main.discoverRegion = oldRegion;

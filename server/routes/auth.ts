@@ -10,6 +10,7 @@ import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
+import { checkAvatarChanged } from '@server/routes/avatarproxy';
 import { ApiError } from '@server/types/error';
 import { getHostname } from '@server/utils/getHostname';
 import * as EmailValidator from 'email-validator';
@@ -56,8 +57,9 @@ authRoutes.post('/plex', async (req, res, next) => {
   }
 
   if (
-    settings.main.mediaServerType != MediaServerType.PLEX &&
-    settings.main.mediaServerType != MediaServerType.NOT_CONFIGURED
+    settings.main.mediaServerType != MediaServerType.NOT_CONFIGURED &&
+    (settings.main.mediaServerLogin === false ||
+      settings.main.mediaServerType != MediaServerType.PLEX)
   ) {
     return res.status(500).json({ error: 'Plex login is disabled' });
   }
@@ -157,7 +159,7 @@ authRoutes.post('/plex', async (req, res, next) => {
           });
         } else {
           logger.info(
-            'Sign-in attempt from Plex user with access to the media server; creating new Overseerr user',
+            'Sign-in attempt from Plex user with access to the media server; creating new Jellyseerr user',
             {
               label: 'API',
               ip: req.ip,
@@ -215,6 +217,10 @@ authRoutes.post('/plex', async (req, res, next) => {
   }
 });
 
+function getUserAvatarUrl(user: User): string {
+  return `/avatarproxy/${user.jellyfinUserId}?v=${user.avatarVersion}`;
+}
+
 authRoutes.post('/jellyfin', async (req, res, next) => {
   const settings = getSettings();
   const userRepository = getRepository(User);
@@ -231,10 +237,13 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
 
   //Make sure jellyfin login is enabled, but only if jellyfin && Emby is not already configured
   if (
-    settings.main.mediaServerType !== MediaServerType.JELLYFIN &&
-    settings.main.mediaServerType !== MediaServerType.EMBY &&
+    // media server not configured, allow login for setup
     settings.main.mediaServerType != MediaServerType.NOT_CONFIGURED &&
-    settings.jellyfin.ip !== ''
+    (settings.main.mediaServerLogin === false ||
+      // media server is neither jellyfin or emby
+      (settings.main.mediaServerType !== MediaServerType.JELLYFIN &&
+        settings.main.mediaServerType !== MediaServerType.EMBY &&
+        settings.jellyfin.ip !== ''))
   ) {
     return res.status(500).json({ error: 'Jellyfin login is disabled' });
   }
@@ -263,13 +272,14 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
     // Try to find deviceId that corresponds to jellyfin user, else generate a new one
     let user = await userRepository.findOne({
       where: { jellyfinUsername: body.username },
+      select: { id: true, jellyfinDeviceId: true },
     });
 
     let deviceId = '';
     if (user) {
       deviceId = user.jellyfinDeviceId ?? '';
     } else {
-      deviceId = Buffer.from(`BOT_overseerr_${body.username ?? ''}`).toString(
+      deviceId = Buffer.from(`BOT_jellyseerr_${body.username ?? ''}`).toString(
         'base64'
       );
     }
@@ -313,7 +323,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
         body.serverType !== MediaServerType.JELLYFIN &&
         body.serverType !== MediaServerType.EMBY
       ) {
-        throw new Error('select_server_type');
+        throw new ApiError(500, ApiErrorCode.NoAdminUser);
       }
       settings.main.mediaServerType = body.serverType;
 
@@ -338,12 +348,12 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
           jellyfinDeviceId: deviceId,
           jellyfinAuthToken: account.AccessToken,
           permissions: Permission.ADMIN,
-          avatar: `/avatarproxy/${account.User.Id}`,
           userType:
             body.serverType === MediaServerType.JELLYFIN
               ? UserType.JELLYFIN
               : UserType.EMBY,
         });
+        user.avatar = getUserAvatarUrl(user);
 
         await userRepository.save(user);
       } else {
@@ -370,7 +380,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
         user.jellyfinDeviceId = deviceId;
         user.jellyfinAuthToken = account.AccessToken;
         user.permissions = Permission.ADMIN;
-        user.avatar = `/avatarproxy/${account.User.Id}`;
+        user.avatar = getUserAvatarUrl(user);
         user.userType =
           body.serverType === MediaServerType.JELLYFIN
             ? UserType.JELLYFIN
@@ -417,7 +427,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
           jellyfinUsername: account.User.Name,
         }
       );
-      user.avatar = `/avatarproxy/${account.User.Id}`;
+      user.avatar = getUserAvatarUrl(user);
       user.jellyfinUsername = account.User.Name;
 
       if (user.username === account.User.Name) {
@@ -441,7 +451,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       });
     } else if (!user) {
       logger.info(
-        'Sign-in attempt from Jellyfin user with access to the media server; creating new Overseerr user',
+        'Sign-in attempt from Jellyfin user with access to the media server; creating new Jellyseerr user',
         {
           label: 'API',
           ip: req.ip,
@@ -455,12 +465,12 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
         jellyfinUserId: account.User.Id,
         jellyfinDeviceId: deviceId,
         permissions: settings.main.defaultPermissions,
-        avatar: `/avatarproxy/${account.User.Id}`,
         userType:
           settings.main.mediaServerType === MediaServerType.JELLYFIN
             ? UserType.JELLYFIN
             : UserType.EMBY,
       });
+      user.avatar = getUserAvatarUrl(user);
 
       //initialize Jellyfin/Emby users with local login
       const passedExplicitPassword = body.password && body.password.length > 0;
@@ -468,6 +478,26 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
         await user.setPassword(body.password ?? '');
       }
       await userRepository.save(user);
+    }
+
+    if (user && user.jellyfinUserId) {
+      try {
+        const { changed } = await checkAvatarChanged(user);
+
+        if (changed) {
+          user.avatar = getUserAvatarUrl(user);
+          await userRepository.save(user);
+          logger.debug('Avatar updated during login', {
+            userId: user.id,
+            jellyfinUserId: user.jellyfinUserId,
+          });
+        }
+      } catch (error) {
+        logger.error('Error handling avatar during login', {
+          label: 'Auth',
+          errorMessage: error.message,
+        });
+      }
     }
 
     // Set logged in session
@@ -533,6 +563,22 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
           message: e.errorCode,
         });
 
+      case ApiErrorCode.NoAdminUser:
+        logger.warn(
+          'Failed login attempt from user without admin permissions and no admin user exists',
+          {
+            label: 'Auth',
+            account: {
+              ip: req.ip,
+              email: body.username,
+            },
+          }
+        );
+        return next({
+          status: e.statusCode,
+          message: e.errorCode,
+        });
+
       default:
         logger.error(e.message, { label: 'Auth' });
         return next({
@@ -563,7 +609,7 @@ authRoutes.post('/local', async (req, res, next) => {
       .getOne();
 
     if (!user || !(await user.passwordMatch(body.password))) {
-      logger.warn('Failed sign-in attempt using invalid Overseerr password', {
+      logger.warn('Failed sign-in attempt using invalid Jellyseerr password', {
         label: 'API',
         ip: req.ip,
         email: body.email,
@@ -653,7 +699,7 @@ authRoutes.post('/local', async (req, res, next) => {
     return res.status(200).json(user?.filter() ?? {});
   } catch (e) {
     logger.error(
-      'Something went wrong authenticating with Overseerr password',
+      'Something went wrong authenticating with Jellyseerr password',
       {
         label: 'API',
         errorMessage: e.message,

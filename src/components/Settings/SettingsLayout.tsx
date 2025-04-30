@@ -13,6 +13,7 @@ const messages = defineMessages('components.Settings', {
   menuPlexSettings: 'Plex',
   menuJellyfinSettings: '{mediaServerName}',
   menuServices: 'Services',
+  menuNetwork: 'Network',
   menuNotifications: 'Notifications',
   menuLogs: 'Logs',
   menuJobs: 'Jobs & Cache',
@@ -52,6 +53,11 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       text: intl.formatMessage(messages.menuServices),
       route: '/settings/services',
       regex: /^\/settings\/services/,
+    },
+    {
+      text: intl.formatMessage(messages.menuNetwork),
+      route: '/settings/network',
+      regex: /^\/settings\/network/,
     },
     {
       text: intl.formatMessage(messages.menuNotifications),

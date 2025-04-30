@@ -17,9 +17,11 @@ import {
 } from '@heroicons/react/24/solid';
 import { MediaRequestStatus } from '@server/constants/media';
 import type { MediaRequest } from '@server/entity/MediaRequest';
+import axios from 'axios';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
+import { mutate } from 'swr';
 
 const messages = defineMessages('components.RequestBlock', {
   seasons: '{seasonCount, plural, one {Season} other {Seasons}}',
@@ -52,26 +54,22 @@ const RequestBlock = ({ request, onUpdate }: RequestBlockProps) => {
 
   const updateRequest = async (type: 'approve' | 'decline'): Promise<void> => {
     setIsUpdating(true);
-    const res = await fetch(`/api/v1/request/${request.id}/${type}`, {
-      method: 'POST',
-    });
-    if (!res.ok) throw new Error();
+    await axios.post(`/api/v1/request/${request.id}/${type}`);
 
     if (onUpdate) {
       onUpdate();
+      mutate('/api/v1/request/count');
     }
     setIsUpdating(false);
   };
 
   const deleteRequest = async () => {
     setIsUpdating(true);
-    const res = await fetch(`/api/v1/request/${request.id}`, {
-      method: 'DELETE',
-    });
-    if (!res.ok) throw new Error();
+    await axios.delete(`/api/v1/request/${request.id}`);
 
     if (onUpdate) {
       onUpdate();
+      mutate('/api/v1/request/count');
     }
 
     setIsUpdating(false);
@@ -206,6 +204,11 @@ const RequestBlock = ({ request, onUpdate }: RequestBlockProps) => {
               {request.status === MediaRequestStatus.FAILED && (
                 <Badge badgeType="danger">
                   {intl.formatMessage(globalMessages.failed)}
+                </Badge>
+              )}
+              {request.status === MediaRequestStatus.COMPLETED && (
+                <Badge badgeType="success">
+                  {intl.formatMessage(globalMessages.completed)}
                 </Badge>
               )}
             </div>

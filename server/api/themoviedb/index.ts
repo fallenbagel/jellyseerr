@@ -1,5 +1,6 @@
 import ExternalAPI from '@server/api/externalapi';
 import cacheManager from '@server/lib/cache';
+import { getSettings } from '@server/lib/settings';
 import { sortBy } from 'lodash';
 import type {
   TmdbCollection,
@@ -37,23 +38,26 @@ interface SingleSearchOptions extends SearchOptions {
   year?: number;
 }
 
-export type SortOptions =
-  | 'popularity.asc'
-  | 'popularity.desc'
-  | 'release_date.asc'
-  | 'release_date.desc'
-  | 'revenue.asc'
-  | 'revenue.desc'
-  | 'primary_release_date.asc'
-  | 'primary_release_date.desc'
-  | 'original_title.asc'
-  | 'original_title.desc'
-  | 'vote_average.asc'
-  | 'vote_average.desc'
-  | 'vote_count.asc'
-  | 'vote_count.desc'
-  | 'first_air_date.asc'
-  | 'first_air_date.desc';
+export const SortOptionsIterable = [
+  'popularity.desc',
+  'popularity.asc',
+  'release_date.desc',
+  'release_date.asc',
+  'revenue.desc',
+  'revenue.asc',
+  'primary_release_date.desc',
+  'primary_release_date.asc',
+  'original_title.asc',
+  'original_title.desc',
+  'vote_average.desc',
+  'vote_average.asc',
+  'vote_count.desc',
+  'vote_count.asc',
+  'first_air_date.desc',
+  'first_air_date.asc',
+] as const;
+
+export type SortOptions = (typeof SortOptionsIterable)[number];
 
 interface DiscoverMovieOptions {
   page?: number;
@@ -99,6 +103,7 @@ interface DiscoverTvOptions {
 }
 
 class TheMovieDb extends ExternalAPI {
+  private locale: string;
   private discoverRegion?: string;
   private originalLanguage?: string;
   constructor({
@@ -108,16 +113,17 @@ class TheMovieDb extends ExternalAPI {
     super(
       'https://api.themoviedb.org/3',
       {
-        api_key: 'db55323b8d3e4154498498a75642b381',
+        api_key: '431a8708161bcd1f1fbe7536137e61ed',
       },
       {
         nodeCache: cacheManager.getCache('tmdb').data,
         rateLimit: {
+          maxRequests: 20,
           maxRPS: 50,
-          id: 'tmdb',
         },
       }
     );
+    this.locale = getSettings().main?.locale || 'en';
     this.discoverRegion = discoverRegion;
     this.originalLanguage = originalLanguage;
   }
@@ -126,14 +132,11 @@ class TheMovieDb extends ExternalAPI {
     query,
     page = 1,
     includeAdult = false,
-    language = 'en',
+    language = this.locale,
   }: SearchOptions): Promise<TmdbSearchMultiResponse> => {
     try {
       const data = await this.get<TmdbSearchMultiResponse>('/search/multi', {
-        query,
-        page: page.toString(),
-        include_adult: includeAdult ? 'true' : 'false',
-        language,
+        params: { query, page, include_adult: includeAdult, language },
       });
 
       return data;
@@ -151,16 +154,18 @@ class TheMovieDb extends ExternalAPI {
     query,
     page = 1,
     includeAdult = false,
-    language = 'en',
+    language = this.locale,
     year,
   }: SingleSearchOptions): Promise<TmdbSearchMovieResponse> => {
     try {
       const data = await this.get<TmdbSearchMovieResponse>('/search/movie', {
-        query,
-        page: page.toString(),
-        include_adult: includeAdult ? 'true' : 'false',
-        language,
-        primary_release_year: year?.toString() || '',
+        params: {
+          query,
+          page,
+          include_adult: includeAdult,
+          language,
+          primary_release_year: year,
+        },
       });
 
       return data;
@@ -178,16 +183,18 @@ class TheMovieDb extends ExternalAPI {
     query,
     page = 1,
     includeAdult = false,
-    language = 'en',
+    language = this.locale,
     year,
   }: SingleSearchOptions): Promise<TmdbSearchTvResponse> => {
     try {
       const data = await this.get<TmdbSearchTvResponse>('/search/tv', {
-        query,
-        page: page.toString(),
-        include_adult: includeAdult ? 'true' : 'false',
-        language,
-        first_air_date_year: year?.toString() || '',
+        params: {
+          query,
+          page,
+          include_adult: includeAdult,
+          language,
+          first_air_date_year: year,
+        },
       });
 
       return data;
@@ -203,14 +210,14 @@ class TheMovieDb extends ExternalAPI {
 
   public getPerson = async ({
     personId,
-    language = 'en',
+    language = this.locale,
   }: {
     personId: number;
     language?: string;
   }): Promise<TmdbPersonDetails> => {
     try {
       const data = await this.get<TmdbPersonDetails>(`/person/${personId}`, {
-        language,
+        params: { language },
       });
 
       return data;
@@ -221,7 +228,7 @@ class TheMovieDb extends ExternalAPI {
 
   public getPersonCombinedCredits = async ({
     personId,
-    language = 'en',
+    language = this.locale,
   }: {
     personId: number;
     language?: string;
@@ -230,7 +237,7 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbPersonCombinedCredits>(
         `/person/${personId}/combined_credits`,
         {
-          language,
+          params: { language },
         }
       );
 
@@ -244,7 +251,7 @@ class TheMovieDb extends ExternalAPI {
 
   public getMovie = async ({
     movieId,
-    language = 'en',
+    language = this.locale,
   }: {
     movieId: number;
     language?: string;
@@ -253,9 +260,12 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbMovieDetails>(
         `/movie/${movieId}`,
         {
-          language,
-          append_to_response:
-            'credits,external_ids,videos,keywords,release_dates,watch/providers',
+          params: {
+            language,
+            append_to_response:
+              'credits,external_ids,videos,keywords,release_dates,watch/providers',
+            include_video_language: language + ', en',
+          },
         },
         43200
       );
@@ -268,7 +278,7 @@ class TheMovieDb extends ExternalAPI {
 
   public getTvShow = async ({
     tvId,
-    language = 'en',
+    language = this.locale,
   }: {
     tvId: number;
     language?: string;
@@ -277,9 +287,12 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbTvDetails>(
         `/tv/${tvId}`,
         {
-          language,
-          append_to_response:
-            'aggregate_credits,credits,external_ids,keywords,videos,content_ratings,watch/providers',
+          params: {
+            language,
+            append_to_response:
+              'aggregate_credits,credits,external_ids,keywords,videos,content_ratings,watch/providers',
+            include_video_language: language + ', en',
+          },
         },
         43200
       );
@@ -303,8 +316,10 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbSeasonWithEpisodes>(
         `/tv/${tvId}/season/${seasonNumber}`,
         {
-          language: language || '',
-          append_to_response: 'external_ids',
+          params: {
+            language,
+            append_to_response: 'external_ids',
+          },
         }
       );
 
@@ -317,7 +332,7 @@ class TheMovieDb extends ExternalAPI {
   public async getMovieRecommendations({
     movieId,
     page = 1,
-    language = 'en',
+    language = this.locale,
   }: {
     movieId: number;
     page?: number;
@@ -327,8 +342,10 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbSearchMovieResponse>(
         `/movie/${movieId}/recommendations`,
         {
-          page: page.toString(),
-          language,
+          params: {
+            page,
+            language,
+          },
         }
       );
 
@@ -341,7 +358,7 @@ class TheMovieDb extends ExternalAPI {
   public async getMovieSimilar({
     movieId,
     page = 1,
-    language = 'en',
+    language = this.locale,
   }: {
     movieId: number;
     page?: number;
@@ -351,8 +368,10 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbSearchMovieResponse>(
         `/movie/${movieId}/similar`,
         {
-          page: page.toString(),
-          language,
+          params: {
+            page,
+            language,
+          },
         }
       );
 
@@ -365,7 +384,7 @@ class TheMovieDb extends ExternalAPI {
   public async getMoviesByKeyword({
     keywordId,
     page = 1,
-    language = 'en',
+    language = this.locale,
   }: {
     keywordId: number;
     page?: number;
@@ -375,8 +394,10 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbSearchMovieResponse>(
         `/keyword/${keywordId}/movies`,
         {
-          page: page.toString(),
-          language,
+          params: {
+            page,
+            language,
+          },
         }
       );
 
@@ -389,7 +410,7 @@ class TheMovieDb extends ExternalAPI {
   public async getTvRecommendations({
     tvId,
     page = 1,
-    language = 'en',
+    language = this.locale,
   }: {
     tvId: number;
     page?: number;
@@ -399,8 +420,10 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbSearchTvResponse>(
         `/tv/${tvId}/recommendations`,
         {
-          page: page.toString(),
-          language,
+          params: {
+            page,
+            language,
+          },
         }
       );
 
@@ -415,7 +438,7 @@ class TheMovieDb extends ExternalAPI {
   public async getTvSimilar({
     tvId,
     page = 1,
-    language = 'en',
+    language = this.locale,
   }: {
     tvId: number;
     page?: number;
@@ -423,8 +446,10 @@ class TheMovieDb extends ExternalAPI {
   }): Promise<TmdbSearchTvResponse> {
     try {
       const data = await this.get<TmdbSearchTvResponse>(`/tv/${tvId}/similar`, {
-        page: page.toString(),
-        language,
+        params: {
+          page,
+          language,
+        },
       });
 
       return data;
@@ -437,7 +462,7 @@ class TheMovieDb extends ExternalAPI {
     sortBy = 'popularity.desc',
     page = 1,
     includeAdult = false,
-    language = 'en',
+    language = this.locale,
     primaryReleaseDateGte,
     primaryReleaseDateLte,
     originalLanguage,
@@ -465,38 +490,40 @@ class TheMovieDb extends ExternalAPI {
         .split('T')[0];
 
       const data = await this.get<TmdbSearchMovieResponse>('/discover/movie', {
-        sort_by: sortBy,
-        page: page.toString(),
-        include_adult: includeAdult ? 'true' : 'false',
-        language,
-        region: this.discoverRegion || '',
-        with_original_language:
-          originalLanguage && originalLanguage !== 'all'
-            ? originalLanguage
-            : originalLanguage === 'all'
-            ? ''
-            : this.originalLanguage || '',
-        // Set our release date values, but check if one is set and not the other,
-        // so we can force a past date or a future date. TMDB Requires both values if one is set!
-        'primary_release_date.gte':
-          !primaryReleaseDateGte && primaryReleaseDateLte
-            ? defaultPastDate
-            : primaryReleaseDateGte || '',
-        'primary_release_date.lte':
-          !primaryReleaseDateLte && primaryReleaseDateGte
-            ? defaultFutureDate
-            : primaryReleaseDateLte || '',
-        with_genres: genre || '',
-        with_companies: studio || '',
-        with_keywords: keywords || '',
-        'with_runtime.gte': withRuntimeGte || '',
-        'with_runtime.lte': withRuntimeLte || '',
-        'vote_average.gte': voteAverageGte || '',
-        'vote_average.lte': voteAverageLte || '',
-        'vote_count.gte': voteCountGte || '',
-        'vote_count.lte': voteCountLte || '',
-        watch_region: watchRegion || '',
-        with_watch_providers: watchProviders || '',
+        params: {
+          sort_by: sortBy,
+          page,
+          include_adult: includeAdult,
+          language,
+          region: this.discoverRegion || '',
+          with_original_language:
+            originalLanguage && originalLanguage !== 'all'
+              ? originalLanguage
+              : originalLanguage === 'all'
+              ? undefined
+              : this.originalLanguage,
+          // Set our release date values, but check if one is set and not the other,
+          // so we can force a past date or a future date. TMDB Requires both values if one is set!
+          'primary_release_date.gte':
+            !primaryReleaseDateGte && primaryReleaseDateLte
+              ? defaultPastDate
+              : primaryReleaseDateGte,
+          'primary_release_date.lte':
+            !primaryReleaseDateLte && primaryReleaseDateGte
+              ? defaultFutureDate
+              : primaryReleaseDateLte,
+          with_genres: genre,
+          with_companies: studio,
+          with_keywords: keywords,
+          'with_runtime.gte': withRuntimeGte,
+          'with_runtime.lte': withRuntimeLte,
+          'vote_average.gte': voteAverageGte,
+          'vote_average.lte': voteAverageLte,
+          'vote_count.gte': voteCountGte,
+          'vote_count.lte': voteCountLte,
+          watch_region: watchRegion,
+          with_watch_providers: watchProviders,
+        },
       });
 
       return data;
@@ -508,7 +535,7 @@ class TheMovieDb extends ExternalAPI {
   public getDiscoverTv = async ({
     sortBy = 'popularity.desc',
     page = 1,
-    language = 'en',
+    language = this.locale,
     firstAirDateGte,
     firstAirDateLte,
     includeEmptyReleaseDate = false,
@@ -538,41 +565,41 @@ class TheMovieDb extends ExternalAPI {
         .split('T')[0];
 
       const data = await this.get<TmdbSearchTvResponse>('/discover/tv', {
-        sort_by: sortBy,
-        page: page.toString(),
-        language,
-        region: this.discoverRegion || '',
-        // Set our release date values, but check if one is set and not the other,
-        // so we can force a past date or a future date. TMDB Requires both values if one is set!
-        'first_air_date.gte':
-          !firstAirDateGte && firstAirDateLte
-            ? defaultPastDate
-            : firstAirDateGte || '',
-        'first_air_date.lte':
-          !firstAirDateLte && firstAirDateGte
-            ? defaultFutureDate
-            : firstAirDateLte || '',
-        with_original_language:
-          originalLanguage && originalLanguage !== 'all'
-            ? originalLanguage
-            : originalLanguage === 'all'
-            ? ''
-            : this.originalLanguage || '',
-        include_null_first_air_dates: includeEmptyReleaseDate
-          ? 'true'
-          : 'false',
-        with_genres: genre || '',
-        with_networks: network?.toString() || '',
-        with_keywords: keywords || '',
-        'with_runtime.gte': withRuntimeGte || '',
-        'with_runtime.lte': withRuntimeLte || '',
-        'vote_average.gte': voteAverageGte || '',
-        'vote_average.lte': voteAverageLte || '',
-        'vote_count.gte': voteCountGte || '',
-        'vote_count.lte': voteCountLte || '',
-        with_watch_providers: watchProviders || '',
-        watch_region: watchRegion || '',
-        with_status: withStatus || '',
+        params: {
+          sort_by: sortBy,
+          page,
+          language,
+          region: this.discoverRegion || '',
+          // Set our release date values, but check if one is set and not the other,
+          // so we can force a past date or a future date. TMDB Requires both values if one is set!
+          'first_air_date.gte':
+            !firstAirDateGte && firstAirDateLte
+              ? defaultPastDate
+              : firstAirDateGte,
+          'first_air_date.lte':
+            !firstAirDateLte && firstAirDateGte
+              ? defaultFutureDate
+              : firstAirDateLte,
+          with_original_language:
+            originalLanguage && originalLanguage !== 'all'
+              ? originalLanguage
+              : originalLanguage === 'all'
+              ? undefined
+              : this.originalLanguage,
+          include_null_first_air_dates: includeEmptyReleaseDate,
+          with_genres: genre,
+          with_networks: network,
+          with_keywords: keywords,
+          'with_runtime.gte': withRuntimeGte,
+          'with_runtime.lte': withRuntimeLte,
+          'vote_average.gte': voteAverageGte,
+          'vote_average.lte': voteAverageLte,
+          'vote_count.gte': voteCountGte,
+          'vote_count.lte': voteCountLte,
+          with_watch_providers: watchProviders,
+          watch_region: watchRegion,
+          with_status: withStatus,
+        },
       });
 
       return data;
@@ -583,7 +610,7 @@ class TheMovieDb extends ExternalAPI {
 
   public getUpcomingMovies = async ({
     page = 1,
-    language = 'en',
+    language = this.locale,
   }: {
     page: number;
     language: string;
@@ -592,10 +619,12 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbUpcomingMoviesResponse>(
         '/movie/upcoming',
         {
-          page: page.toString(),
-          language,
-          region: this.discoverRegion || '',
-          originalLanguage: this.originalLanguage || '',
+          params: {
+            page,
+            language,
+            region: this.discoverRegion,
+            originalLanguage: this.originalLanguage,
+          },
         }
       );
 
@@ -608,7 +637,7 @@ class TheMovieDb extends ExternalAPI {
   public getAllTrending = async ({
     page = 1,
     timeWindow = 'day',
-    language = 'en',
+    language = this.locale,
   }: {
     page?: number;
     timeWindow?: 'day' | 'week';
@@ -618,9 +647,11 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbSearchMultiResponse>(
         `/trending/all/${timeWindow}`,
         {
-          page: page.toString(),
-          language,
-          region: this.discoverRegion || '',
+          params: {
+            page,
+            language,
+            region: this.discoverRegion,
+          },
         }
       );
 
@@ -641,7 +672,9 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbSearchMovieResponse>(
         `/trending/movie/${timeWindow}`,
         {
-          page: page.toString(),
+          params: {
+            page,
+          },
         }
       );
 
@@ -662,7 +695,9 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbSearchTvResponse>(
         `/trending/tv/${timeWindow}`,
         {
-          page: page.toString(),
+          params: {
+            page,
+          },
         }
       );
 
@@ -675,7 +710,7 @@ class TheMovieDb extends ExternalAPI {
   public async getByExternalId({
     externalId,
     type,
-    language = 'en',
+    language = this.locale,
   }:
     | {
         externalId: string;
@@ -691,8 +726,10 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbExternalIdResponse>(
         `/find/${externalId}`,
         {
-          external_source: type === 'imdb' ? 'imdb_id' : 'tvdb_id',
-          language,
+          params: {
+            external_source: type === 'imdb' ? 'imdb_id' : 'tvdb_id',
+            language,
+          },
         }
       );
 
@@ -704,7 +741,7 @@ class TheMovieDb extends ExternalAPI {
 
   public async getMediaByImdbId({
     imdbId,
-    language = 'en',
+    language = this.locale,
   }: {
     imdbId: string;
     language?: string;
@@ -743,7 +780,7 @@ class TheMovieDb extends ExternalAPI {
 
   public async getShowByTvdbId({
     tvdbId,
-    language = 'en',
+    language = this.locale,
   }: {
     tvdbId: number;
     language?: string;
@@ -773,7 +810,7 @@ class TheMovieDb extends ExternalAPI {
 
   public async getCollection({
     collectionId,
-    language = 'en',
+    language = this.locale,
   }: {
     collectionId: number;
     language?: string;
@@ -782,7 +819,9 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbCollection>(
         `/collection/${collectionId}`,
         {
-          language,
+          params: {
+            language,
+          },
         }
       );
 
@@ -847,7 +886,7 @@ class TheMovieDb extends ExternalAPI {
   }
 
   public async getMovieGenres({
-    language = 'en',
+    language = this.locale,
   }: {
     language?: string;
   } = {}): Promise<TmdbGenre[]> {
@@ -855,7 +894,9 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbGenresResult>(
         '/genre/movie/list',
         {
-          language,
+          params: {
+            language,
+          },
         },
         86400 // 24 hours
       );
@@ -867,7 +908,9 @@ class TheMovieDb extends ExternalAPI {
         const englishData = await this.get<TmdbGenresResult>(
           '/genre/movie/list',
           {
-            language: 'en',
+            params: {
+              language: 'en',
+            },
           },
           86400 // 24 hours
         );
@@ -894,7 +937,7 @@ class TheMovieDb extends ExternalAPI {
   }
 
   public async getTvGenres({
-    language = 'en',
+    language = this.locale,
   }: {
     language?: string;
   } = {}): Promise<TmdbGenre[]> {
@@ -902,7 +945,9 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbGenresResult>(
         '/genre/tv/list',
         {
-          language,
+          params: {
+            language,
+          },
         },
         86400 // 24 hours
       );
@@ -914,7 +959,9 @@ class TheMovieDb extends ExternalAPI {
         const englishData = await this.get<TmdbGenresResult>(
           '/genre/tv/list',
           {
-            language: 'en',
+            params: {
+              language: 'en',
+            },
           },
           86400 // 24 hours
         );
@@ -969,8 +1016,10 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbKeywordSearchResponse>(
         '/search/keyword',
         {
-          query,
-          page: page.toString(),
+          params: {
+            query,
+            page,
+          },
         },
         86400 // 24 hours
       );
@@ -992,8 +1041,10 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<TmdbCompanySearchResponse>(
         '/search/company',
         {
-          query,
-          page: page.toString(),
+          params: {
+            query,
+            page,
+          },
         },
         86400 // 24 hours
       );
@@ -1013,7 +1064,9 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<{ results: TmdbWatchProviderRegion[] }>(
         '/watch/providers/regions',
         {
-          language: language ? this.originalLanguage || '' : '',
+          params: {
+            language: language ?? this.originalLanguage,
+          },
         },
         86400 // 24 hours
       );
@@ -1037,8 +1090,10 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<{ results: TmdbWatchProviderDetails[] }>(
         '/watch/providers/movie',
         {
-          language: language ? this.originalLanguage || '' : '',
-          watch_region: watchRegion,
+          params: {
+            language: language ?? this.originalLanguage,
+            watch_region: watchRegion,
+          },
         },
         86400 // 24 hours
       );
@@ -1062,8 +1117,10 @@ class TheMovieDb extends ExternalAPI {
       const data = await this.get<{ results: TmdbWatchProviderDetails[] }>(
         '/watch/providers/tv',
         {
-          language: language ? this.originalLanguage || '' : '',
-          watch_region: watchRegion,
+          params: {
+            language: language ?? this.originalLanguage,
+            watch_region: watchRegion,
+          },
         },
         86400 // 24 hours
       );

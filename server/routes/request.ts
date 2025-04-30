@@ -44,7 +44,6 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
       switch (req.query.filter) {
         case 'approved':
         case 'processing':
-        case 'available':
           statusFilter = [MediaRequestStatus.APPROVED];
           break;
         case 'pending':
@@ -59,12 +58,18 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
         case 'failed':
           statusFilter = [MediaRequestStatus.FAILED];
           break;
+        case 'completed':
+        case 'available':
+        case 'deleted':
+          statusFilter = [MediaRequestStatus.COMPLETED];
+          break;
         default:
           statusFilter = [
             MediaRequestStatus.PENDING,
             MediaRequestStatus.APPROVED,
             MediaRequestStatus.DECLINED,
             MediaRequestStatus.FAILED,
+            MediaRequestStatus.COMPLETED,
           ];
       }
 
@@ -83,6 +88,9 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
             MediaStatus.PARTIALLY_AVAILABLE,
           ];
           break;
+        case 'deleted':
+          mediaStatusFilter = [MediaStatus.DELETED];
+          break;
         default:
           mediaStatusFilter = [
             MediaStatus.UNKNOWN,
@@ -90,6 +98,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
             MediaStatus.PROCESSING,
             MediaStatus.PARTIALLY_AVAILABLE,
             MediaStatus.AVAILABLE,
+            MediaStatus.DELETED,
           ];
       }
 
@@ -189,7 +198,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
       );
 
       // add profile names to the media requests, with undefined if not found
-      const requestsWithProfileNames = requests.map((r) => {
+      let mappedRequests = requests.map((r) => {
         switch (r.type) {
           case MediaType.MOVIE: {
             const profileName = radarrServers
@@ -212,6 +221,36 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
         }
       });
 
+      // add canRemove prop if user has permission
+      if (req.user?.hasPermission(Permission.MANAGE_REQUESTS)) {
+        mappedRequests = mappedRequests.map((r) => {
+          switch (r.type) {
+            case MediaType.MOVIE: {
+              return {
+                ...r,
+                // check if the radarr server for this request is configured
+                canRemove: radarrServers.some(
+                  (server) =>
+                    server.id ===
+                    (r.is4k ? r.media.serviceId4k : r.media.serviceId)
+                ),
+              };
+            }
+            case MediaType.TV: {
+              return {
+                ...r,
+                // check if the sonarr server for this request is configured
+                canRemove: sonarrServers.some(
+                  (server) =>
+                    server.id ===
+                    (r.is4k ? r.media.serviceId4k : r.media.serviceId)
+                ),
+              };
+            }
+          }
+        });
+      }
+
       return res.status(200).json({
         pageInfo: {
           pages: Math.ceil(requestCount / pageSize),
@@ -219,7 +258,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
           results: requestCount,
           page: Math.ceil(skip / pageSize) + 1,
         },
-        results: requestsWithProfileNames,
+        results: mappedRequests,
       });
     } catch (e) {
       next({ status: 500, message: e.message });
@@ -268,7 +307,7 @@ requestRoutes.get('/count', async (_req, res, next) => {
   try {
     const query = requestRepository
       .createQueryBuilder('request')
-      .leftJoinAndSelect('request.media', 'media');
+      .innerJoinAndSelect('request.media', 'media');
 
     const totalCount = await query.getCount();
 
@@ -462,7 +501,8 @@ requestRoutes.put<{ requestId: string }>(
             (r) =>
               r.is4k === request.is4k &&
               r.id !== request.id &&
-              r.status !== MediaRequestStatus.DECLINED
+              r.status !== MediaRequestStatus.DECLINED &&
+              r.status !== MediaRequestStatus.COMPLETED
           )
           .reduce((seasons, r) => {
             const combinedSeasons = r.seasons.map(

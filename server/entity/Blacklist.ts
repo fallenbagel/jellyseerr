@@ -1,8 +1,9 @@
 import { MediaStatus, type MediaType } from '@server/constants/media';
-import { getRepository } from '@server/datasource';
+import dataSource from '@server/datasource';
 import Media from '@server/entity/Media';
 import { User } from '@server/entity/User';
 import type { BlacklistItem } from '@server/interfaces/api/blacklistInterfaces';
+import type { EntityManager } from 'typeorm';
 import {
   Column,
   CreateDateColumn,
@@ -35,13 +36,16 @@ export class Blacklist implements BlacklistItem {
   @ManyToOne(() => User, (user) => user.id, {
     eager: true,
   })
-  user: User;
+  user?: User;
 
   @OneToOne(() => Media, (media) => media.blacklist, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
   public media: Media;
+
+  @Column({ nullable: true, type: 'varchar' })
+  public blacklistedTags?: string;
 
   @CreateDateColumn()
   public createdAt: Date;
@@ -50,27 +54,32 @@ export class Blacklist implements BlacklistItem {
     Object.assign(this, init);
   }
 
-  public static async addToBlacklist({
-    blacklistRequest,
-  }: {
-    blacklistRequest: {
-      mediaType: MediaType;
-      title?: ZodOptional<ZodString>['_output'];
-      tmdbId: ZodNumber['_output'];
-    };
-  }): Promise<void> {
+  public static async addToBlacklist(
+    {
+      blacklistRequest,
+    }: {
+      blacklistRequest: {
+        mediaType: MediaType;
+        title?: ZodOptional<ZodString>['_output'];
+        tmdbId: ZodNumber['_output'];
+        blacklistedTags?: string;
+      };
+    },
+    entityManager?: EntityManager
+  ): Promise<void> {
+    const em = entityManager ?? dataSource;
     const blacklist = new this({
       ...blacklistRequest,
     });
 
-    const mediaRepository = getRepository(Media);
+    const mediaRepository = em.getRepository(Media);
     let media = await mediaRepository.findOne({
       where: {
         tmdbId: blacklistRequest.tmdbId,
       },
     });
 
-    const blacklistRepository = getRepository(this);
+    const blacklistRepository = em.getRepository(this);
 
     await blacklistRepository.save(blacklist);
 

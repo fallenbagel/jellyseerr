@@ -1,9 +1,11 @@
 import Modal from '@app/components/Common/Modal';
 import PermissionEdit from '@app/components/PermissionEdit';
 import type { User } from '@app/hooks/useUser';
-import { useUser } from '@app/hooks/useUser';
+import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
+import { hasPermission } from '@server/lib/permissions';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -44,18 +46,10 @@ const BulkEditModal = ({
   const updateUsers = async () => {
     try {
       setIsSaving(true);
-      const res = await fetch('/api/v1/user', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ids: selectedUserIds,
-          permissions: currentPermission,
-        }),
+      const { data: updated } = await axios.put<User[]>(`/api/v1/user`, {
+        ids: selectedUserIds,
+        permissions: currentPermission,
       });
-      if (!res.ok) throw new Error();
-      const updated: User[] = await res.json();
       if (onComplete) {
         onComplete(updated);
       }
@@ -79,7 +73,10 @@ const BulkEditModal = ({
       const { permissions: allPermissionsEqual } = selectedUsers.reduce(
         ({ permissions: aPerms }, { permissions: bPerms }) => {
           return {
-            permissions: aPerms === bPerms ? aPerms : NaN,
+            permissions:
+              aPerms === bPerms || hasPermission(Permission.ADMIN, aPerms)
+                ? aPerms
+                : NaN,
           };
         },
         { permissions: selectedUsers[0].permissions }

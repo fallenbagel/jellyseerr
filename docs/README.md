@@ -7,31 +7,34 @@ sidebar_position: 1
 
 Welcome to the Jellyseerr Documentation.
 
+**Jellyseerr** is a free and open source software application for managing requests for your media library. It integrates with the media server of your choice: [Jellyfin](https://jellyfin.org), [Plex](https://plex.tv), and [Emby](https://emby.media/). In addition, it integrates with your existing services, such as **[Sonarr](https://sonarr.tv/)**, **[Radarr](https://radarr.video/)**.
+
 ## Features
 
 - **Full Jellyfin/Emby/Plex integration**. Login and manage user access with Jellyfin/Emby/Plex.
 - **Syncs to your Jellyfin/Emby/Plex library** to show what titles you already have.
+- Supports Movies, Shows and Mixed Libraries.
 - **Integrates with Sonarr and Radarr**. With more services to come in the future.
+- Optionally set **Override rules** for requests to match with your defined conditions.
 - **Easy to use request system** allowing users to request individual seasons or movies in a friendly, clean UI.
 - **Simple request management UI**. Don't dig through the app to approve recent requests.
 - **Mobile-friendly design**, for when you need to approve requests on the go.
 - Granular permission system.
 - Localization into other languages.
-- Support for PostgreSQL and SQLite databases.
+- Support for **PostgreSQL** and **SQLite** databases.
+- Support for various notification agents.
+- Easily **Watchlist** or **Blacklist** media.
 - More features to come!
 
 ## Motivation
 
-The primary motivation for starting this project was to add support for Jellyfin and Emby to Overseerr. As Overseerr is an incredibly performant and easy-to-use application, we wanted to bring that same experience to Jellyfin and Emby users. Thus, **Jellyseerr** was born.
-
-This application is designed to be a **one-stop-shop** for all your media requests. It is designed to be a **simple, easy-to-use** application that allows users to request media to be added to your Jellyfin/Emby/Plex server.
+The primary motivation for starting Jellyseerr was to bring Jellyfin and Emby support to Overseerr. However, over time, **Jellyseerr** has evolved into its own distinct application with unique features. Designed as a one-stop shop for media requests, it offers a simple, easy-to-use experience for managing requests on Jellyfin, Emby, and Plex servers.
 
 ## We need your help!
 
-[Jellyseerr](https://github.com/Fallenbagel/jellyseerr) is a fork of Overseerr, with a heavy focus on Jellyfin and Emby integration.
-[Overseerr](https://github.com/sct/overseerr) is an ambitious project where the original developers/contributors have already poured a lot of work into, and we wanted to build on top of that.
+[Jellyseerr](https://github.com/Fallenbagel/jellyseerr) is an ambitious project where developers/contributors poured a lot of work into, and that builds on top of [Overseerr](https://github.com/sct/overseerr). And we have a lot more to do as well.
 
-We also have poured a lot of work into this project, and we have a lot more to do as well. We need your valuable feedback and help to find and fix bugs. Also, with Jellyseerr being an open-source project, anyone is welcome to contribute. We also encourage you to contribute to Overseerr as well.
+We value your feedback and support in identifying and fixing bugs to make Jellyseerr even better. As an open-source project, we welcome contributions from everyone. While Jellyseerr has diverged from Overseerr and evolved into its own unique application, we still encourage contributions to Overseerr, as it played a crucial role in inspiring what Jellyseerr has become today.
 
 Contribution includes building new features, patching bugs, translating the application, or even just writing documentation.
 

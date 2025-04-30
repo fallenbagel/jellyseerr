@@ -65,8 +65,8 @@ class JellyfinScanner {
 
       if (!metadata?.Id) {
         logger.debug('No Id metadata for this title. Skipping', {
-          label: 'Plex Sync',
-          ratingKey: jellyfinitem.Id,
+          label: 'Jellyfin Sync',
+          jellyfinItemId: jellyfinitem.Id,
         });
         return;
       }
@@ -204,8 +204,8 @@ class JellyfinScanner {
 
       if (!metadata?.Id) {
         logger.debug('No Id metadata for this title. Skipping', {
-          label: 'Plex Sync',
-          ratingKey: jellyfinitem.Id,
+          label: 'Jellyfin Sync',
+          jellyfinItemId: jellyfinitem.Id,
         });
         return;
       }

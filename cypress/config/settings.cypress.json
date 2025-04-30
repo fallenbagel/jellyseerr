@@ -4,7 +4,7 @@
   "vapidPublic": "BK_EpP8NDm9waor2zn6_S28o3ZYv4kCkJOfYpO3pt3W6jnPmxrgTLANUBNbbyaNatPnSQ12De9CeqSYQrqWzHTs",
   "main": {
     "apiKey": "testkey",
-    "applicationTitle": "Overseerr",
+    "applicationTitle": "Jellyseerr",
     "applicationUrl": "",
     "csrfProtection": false,
     "cacheImages": false,
@@ -19,6 +19,8 @@
     "discoverRegion": "",
     "streamingRegion": "",
     "originalLanguage": "",
+    "blacklistedTags": "",
+    "blacklistedTagsLimit": 50,
     "trustProxy": false,
     "mediaServerType": 1,
     "partialRequestsEnabled": true,
@@ -69,7 +71,7 @@
           "ignoreTls": false,
           "requireTls": false,
           "allowSelfSigned": false,
-          "senderName": "Overseerr"
+          "senderName": "Jellyseerr"
         }
       },
       "discord": {
@@ -137,7 +139,8 @@
         "types": 0,
         "options": {
           "url": "",
-          "token": ""
+          "token": "",
+          "priority": 0
         }
       }
     }

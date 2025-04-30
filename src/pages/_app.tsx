@@ -11,11 +11,12 @@ import { LanguageContext } from '@app/context/LanguageContext';
 import { SettingsProvider } from '@app/context/SettingsContext';
 import { UserContext } from '@app/context/UserContext';
 import type { User } from '@app/hooks/useUser';
+import { Permission, useUser } from '@app/hooks/useUser';
 import '@app/styles/globals.css';
-import '@app/utils/fetchOverride';
 import { polyfillIntl } from '@app/utils/polyfillIntl';
 import { MediaServerType } from '@server/constants/server';
 import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
+import axios from 'axios';
 import type { AppInitialProps, AppProps } from 'next/app';
 import App from 'next/app';
 import Head from 'next/head';
@@ -128,6 +129,49 @@ const CoreApp: Omit<NextAppComponentType, 'origGetInitialProps'> = ({
     loadLocaleData(currentLocale).then(setMessages);
   }, [currentLocale]);
 
+  const { hasPermission } = useUser();
+
+  useEffect(() => {
+    const requestsCount = async () => {
+      const response = await axios.get('/api/v1/request/count');
+      return response.data;
+    };
+
+    // Cast navigator to a type that includes setAppBadge and clearAppBadge
+    // to avoid TypeScript errors while ensuring these methods exist before calling them.
+    const newNavigator = navigator as unknown as {
+      setAppBadge?: (count: number) => Promise<void>;
+      clearAppBadge?: () => Promise<void>;
+    };
+
+    const handleBadgeUpdate = () => {
+      if ('setAppBadge' in newNavigator) {
+        if (
+          !router.pathname.match(/(login|setup|resetpassword)/) &&
+          hasPermission(Permission.ADMIN)
+        ) {
+          requestsCount().then((data) => {
+            if (data.pending > 0) {
+              newNavigator.setAppBadge?.(data.pending);
+            } else {
+              newNavigator.clearAppBadge?.();
+            }
+          });
+        } else {
+          newNavigator.clearAppBadge?.();
+        }
+      }
+    };
+
+    handleBadgeUpdate();
+
+    window.addEventListener('focus', handleBadgeUpdate);
+
+    return () => {
+      window.removeEventListener('focus', handleBadgeUpdate);
+    };
+  }, [hasPermission, router.pathname]);
+
   if (router.pathname.match(/(login|setup|resetpassword)/)) {
     component = <Component {...pageProps} />;
   } else {
@@ -141,11 +185,7 @@ const CoreApp: Omit<NextAppComponentType, 'origGetInitialProps'> = ({
   return (
     <SWRConfig
       value={{
-        fetcher: async (resource, init) => {
-          const res = await fetch(resource, init);
-          if (!res.ok) throw new Error();
-          return await res.json();
-        },
+        fetcher: (url) => axios.get(url).then((res) => res.data),
         fallback: {
           '/api/v1/auth/me': user,
         },
@@ -194,6 +234,7 @@ CoreApp.getInitialProps = async (initialProps) => {
     movie4kEnabled: false,
     series4kEnabled: false,
     localLogin: true,
+    mediaServerLogin: true,
     discoverRegion: '',
     streamingRegion: '',
     originalLanguage: '',
@@ -210,13 +251,15 @@ CoreApp.getInitialProps = async (initialProps) => {
 
   if (ctx.res) {
     // Check if app is initialized and redirect if necessary
-    const res = await fetch(
-      `http://localhost:${process.env.PORT || 5055}/api/v1/settings/public`
+    const response = await axios.get<PublicSettingsResponse>(
+      `http://${process.env.HOST || 'localhost'}:${
+        process.env.PORT || 5055
+      }/api/v1/settings/public`
     );
-    if (!res.ok) throw new Error();
-    currentSettings = await res.json();
 
-    const initialized = currentSettings.initialized;
+    currentSettings = response.data;
+
+    const initialized = response.data.initialized;
 
     if (!initialized) {
       if (!router.pathname.match(/(setup|login\/plex)/)) {
@@ -228,8 +271,10 @@ CoreApp.getInitialProps = async (initialProps) => {
     } else {
       try {
         // Attempt to get the user by running a request to the local api
-        const res = await fetch(
-          `http://localhost:${process.env.PORT || 5055}/api/v1/auth/me`,
+        const response = await axios.get<User>(
+          `http://${process.env.HOST || 'localhost'}:${
+            process.env.PORT || 5055
+          }/api/v1/auth/me`,
           {
             headers:
               ctx.req && ctx.req.headers.cookie
@@ -237,8 +282,7 @@ CoreApp.getInitialProps = async (initialProps) => {
                 : undefined,
           }
         );
-        if (!res.ok) throw new Error();
-        user = await res.json();
+        user = response.data;
 
         if (router.pathname.match(/(setup|login)/)) {
           ctx.res.writeHead(307, {

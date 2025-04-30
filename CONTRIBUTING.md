@@ -8,7 +8,7 @@ All help is welcome and greatly appreciated! If you would like to contribute to 
 
 - HTML/Typescript/Javascript editor
 - [VSCode](https://code.visualstudio.com/) is recommended. Upon opening the project, a few extensions will be automatically recommended for install.
-- [NodeJS](https://nodejs.org/en/download/) (Node 20.x)
+- [NodeJS](https://nodejs.org/en/download/) (Node 22.x)
 - [Pnpm](https://pnpm.io/cli/install)
 - [Git](https://git-scm.com/downloads)
 
@@ -58,11 +58,26 @@ All help is welcome and greatly appreciated! If you would like to contribute to 
 
    - Be sure to follow both the [code](#contributing-code) and [UI text](#ui-text-style) guidelines.
    - Should you need to update your fork, you can do so by rebasing from `upstream`:
+
      ```bash
      git fetch upstream
      git rebase upstream/develop
      git push origin BRANCH_NAME -f
      ```
+
+### Helm Chart
+
+Tools Required:
+
+- [Helm](https://helm.sh/docs/intro/install/)
+- [helm-docs](https://github.com/norwoodj/helm-docs)
+
+Steps:
+
+1. Make the necessary changes.
+2. Test your changes.
+3. Update the `version` in `charts/jellyseerr-chart/Chart.yaml` following [Semantic Versioning (SemVer)](https://semver.org/).
+4. Run the `helm-docs` command to regenerate the chart's README.
 
 ### Contributing Code
 
@@ -97,7 +112,7 @@ When adding new UI text, please try to adhere to the following guidelines:
 
 ## Translation
 
-We use [Weblate](https://jellyseerr.borgcube.de/projects/jellyseerr/jellyseerr-frontend/) for our translations, and your help with localizing Overseerr would be greatly appreciated! If your language is not listed below, please [open a feature request](https://github.com/fallenbagel/jellyseerr/issues/new/choose).
+We use [Weblate](https://jellyseerr.borgcube.de/projects/jellyseerr/jellyseerr-frontend/) for our translations, and your help with localizing Jellyseerr would be greatly appreciated! If your language is not listed below, please [open a feature request](https://github.com/fallenbagel/jellyseerr/issues/new/choose).
 
 <a href="https://jellyseerr.borgcube.de/engage/jellysseerr/"><img src="https://jellyseerr.borgcube.de/widget/jellyseerr/multi-auto.svg" alt="Translation status" /></a>
 

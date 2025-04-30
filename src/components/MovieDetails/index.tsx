@@ -25,7 +25,7 @@ import StatusBadge from '@app/components/StatusBadge';
 import useDeepLinks from '@app/hooks/useDeepLinks';
 import useLocale from '@app/hooks/useLocale';
 import useSettings from '@app/hooks/useSettings';
-import { Permission, useUser } from '@app/hooks/useUser';
+import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import ErrorPage from '@app/pages/_error';
 import { sortCrewPriority } from '@app/utils/creditHelpers';
@@ -38,20 +38,21 @@ import {
   ExclamationTriangleIcon,
   EyeSlashIcon,
   FilmIcon,
+  MinusCircleIcon,
   PlayIcon,
+  StarIcon,
   TicketIcon,
 } from '@heroicons/react/24/outline';
 import {
   ChevronDoubleDownIcon,
   ChevronDoubleUpIcon,
-  MinusCircleIcon,
-  StarIcon,
 } from '@heroicons/react/24/solid';
 import { type RatingResponse } from '@server/api/ratings';
 import { IssueStatus } from '@server/constants/issue';
 import { MediaStatus, MediaType } from '@server/constants/media';
 import { MediaServerType } from '@server/constants/server';
 import type { MovieDetails as MovieDetailsType } from '@server/models/Movie';
+import axios from 'axios';
 import { countries } from 'country-flag-icons';
 import 'country-flag-icons/3x2/flags.css';
 import { uniqBy } from 'lodash';
@@ -102,7 +103,7 @@ const messages = defineMessages('components.MovieDetails', {
   watchlistSuccess: '<strong>{title}</strong> added to watchlist successfully!',
   watchlistDeleted:
     '<strong>{title}</strong> Removed from watchlist successfully!',
-  watchlistError: 'Something went wrong try again.',
+  watchlistError: 'Something went wrong. Please try again.',
   removefromwatchlist: 'Remove From Watchlist',
   addtowatchlist: 'Add To Watchlist',
 });
@@ -190,7 +191,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
     })
   ) {
     mediaLinks.push({
-      text: getAvalaibleMediaServerName(),
+      text: getAvailableMediaServerName(),
       url: plexUrl,
       svg: <PlayIcon />,
     });
@@ -204,7 +205,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
     })
   ) {
     mediaLinks.push({
-      text: getAvalaible4kMediaServerName(),
+      text: getAvailable4kMediaServerName(),
       url: plexUrl4k,
       svg: <PlayIcon />,
     });
@@ -292,7 +293,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
       (provider) => provider.iso_3166_1 === streamingRegion
     )?.flatrate ?? [];
 
-  function getAvalaibleMediaServerName() {
+  function getAvailableMediaServerName() {
     if (settings.currentSettings.mediaServerType === MediaServerType.EMBY) {
       return intl.formatMessage(messages.play, { mediaServerName: 'Emby' });
     }
@@ -304,7 +305,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
     return intl.formatMessage(messages.play, { mediaServerName: 'Jellyfin' });
   }
 
-  function getAvalaible4kMediaServerName() {
+  function getAvailable4kMediaServerName() {
     if (settings.currentSettings.mediaServerType === MediaServerType.EMBY) {
       return intl.formatMessage(messages.play, { mediaServerName: 'Emby' });
     }
@@ -319,41 +320,29 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const onClickWatchlistBtn = async (): Promise<void> => {
     setIsUpdating(true);
 
-    const res = await fetch('/api/v1/watchlist', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    try {
+      const response = await axios.post('/api/v1/watchlist', {
         tmdbId: movie?.id,
         mediaType: MediaType.MOVIE,
         title: movie?.title,
-      }),
-    });
+      });
 
-    if (!res.ok) {
+      if (response.data) {
+        addToast(
+          <span>
+            {intl.formatMessage(messages.watchlistSuccess, {
+              title: movie?.title,
+              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+            })}
+          </span>,
+          { appearance: 'success', autoDismiss: true }
+        );
+      }
+    } catch (e) {
       addToast(intl.formatMessage(messages.watchlistError), {
         appearance: 'error',
         autoDismiss: true,
       });
-
-      setIsUpdating(false);
-      return;
-    }
-
-    const data = await res.json();
-
-    if (data) {
-      addToast(
-        <span>
-          {intl.formatMessage(messages.watchlistSuccess, {
-            title: movie?.title,
-            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-          })}
-        </span>,
-        { appearance: 'success', autoDismiss: true }
-      );
     }
 
     setIsUpdating(false);
@@ -363,22 +352,17 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const onClickDeleteWatchlistBtn = async (): Promise<void> => {
     setIsUpdating(true);
     try {
-      const res = await fetch(`/api/v1/watchlist/${movie?.id}`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) throw new Error();
+      await axios.delete(`/api/v1/watchlist/${movie?.id}`);
 
-      if (res.status === 204) {
-        addToast(
-          <span>
-            {intl.formatMessage(messages.watchlistDeleted, {
-              title: movie?.title,
-              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-            })}
-          </span>,
-          { appearance: 'info', autoDismiss: true }
-        );
-      }
+      addToast(
+        <span>
+          {intl.formatMessage(messages.watchlistDeleted, {
+            title: movie?.title,
+            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+          })}
+        </span>,
+        { appearance: 'info', autoDismiss: true }
+      );
     } catch (e) {
       addToast(intl.formatMessage(messages.watchlistError), {
         appearance: 'error',
@@ -393,21 +377,14 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const onClickHideItemBtn = async (): Promise<void> => {
     setIsBlacklistUpdating(true);
 
-    const res = await fetch('/api/v1/blacklist', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    try {
+      await axios.post('/api/v1/blacklist', {
         tmdbId: movie?.id,
         mediaType: 'movie',
         title: movie?.title,
         user: user?.id,
-      }),
-    });
+      });
 
-    if (res.status === 201) {
       addToast(
         <span>
           {intl.formatMessage(globalMessages.blacklistSuccess, {
@@ -419,21 +396,23 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
       );
 
       revalidate();
-    } else if (res.status === 412) {
-      addToast(
-        <span>
-          {intl.formatMessage(globalMessages.blacklistDuplicateError, {
-            title: movie?.title,
-            strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-          })}
-        </span>,
-        { appearance: 'info', autoDismiss: true }
-      );
-    } else {
-      addToast(intl.formatMessage(globalMessages.blacklistError), {
-        appearance: 'error',
-        autoDismiss: true,
-      });
+    } catch (e) {
+      if (e?.response?.status === 412) {
+        addToast(
+          <span>
+            {intl.formatMessage(globalMessages.blacklistDuplicateError, {
+              title: movie?.title,
+              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+            })}
+          </span>,
+          { appearance: 'info', autoDismiss: true }
+        );
+      } else {
+        addToast(intl.formatMessage(globalMessages.blacklistError), {
+          appearance: 'error',
+          autoDismiss: true,
+        });
+      }
     }
 
     setIsBlacklistUpdating(false);
@@ -505,7 +484,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
             src={
               data.posterPath
                 ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${data.posterPath}`
-                : '/images/overseerr_poster_not_found.png'
+                : '/images/jellyseerr_poster_not_found.png'
             }
             alt=""
             sizes="100vw"
@@ -590,47 +569,48 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                   buttonSize={'md'}
                   onClick={() => setShowBlacklistModal(true)}
                 >
-                  <EyeSlashIcon className={'h-3'} />
+                  <EyeSlashIcon />
                 </Button>
               </Tooltip>
             )}
-          {data?.mediaInfo?.status !== MediaStatus.BLACKLISTED && (
-            <>
-              {toggleWatchlist ? (
-                <Tooltip content={intl.formatMessage(messages.addtowatchlist)}>
-                  <Button
-                    buttonType={'ghost'}
-                    className="z-40 mr-2"
-                    buttonSize={'md'}
-                    onClick={onClickWatchlistBtn}
+          {data?.mediaInfo?.status !== MediaStatus.BLACKLISTED &&
+            user?.userType !== UserType.PLEX && (
+              <>
+                {toggleWatchlist ? (
+                  <Tooltip
+                    content={intl.formatMessage(messages.addtowatchlist)}
                   >
-                    {isUpdating ? (
-                      <Spinner className="h-3" />
-                    ) : (
-                      <StarIcon className={'h-3 text-amber-300'} />
-                    )}
-                  </Button>
-                </Tooltip>
-              ) : (
-                <Tooltip
-                  content={intl.formatMessage(messages.removefromwatchlist)}
-                >
-                  <Button
-                    className="z-40 mr-2"
-                    buttonSize={'md'}
-                    onClick={onClickDeleteWatchlistBtn}
+                    <Button
+                      buttonType={'ghost'}
+                      className="z-40 mr-2"
+                      buttonSize={'md'}
+                      onClick={onClickWatchlistBtn}
+                    >
+                      {isUpdating ? (
+                        <Spinner />
+                      ) : (
+                        <StarIcon className={'text-amber-300'} />
+                      )}
+                    </Button>
+                  </Tooltip>
+                ) : (
+                  <Tooltip
+                    content={intl.formatMessage(messages.removefromwatchlist)}
                   >
-                    {isUpdating ? (
-                      <Spinner className="h-3" />
-                    ) : (
-                      <MinusCircleIcon className={'h-3'} />
-                    )}
-                  </Button>
-                </Tooltip>
-              )}
-            </>
-          )}
-          <PlayButton links={mediaLinks} />
+                    <Button
+                      className="z-40 mr-2"
+                      buttonSize={'md'}
+                      onClick={onClickDeleteWatchlistBtn}
+                    >
+                      {isUpdating ? <Spinner /> : <MinusCircleIcon />}
+                    </Button>
+                  </Tooltip>
+                )}
+              </>
+            )}
+          <div className="z-20">
+            <PlayButton links={mediaLinks} />
+          </div>
           <RequestButton
             mediaType="movie"
             media={data.mediaInfo}
@@ -1063,14 +1043,26 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               </div>
             )}
             {!!streamingProviders.length && (
-              <div className="media-fact">
+              <div className="media-fact flex-col gap-1">
                 <span>{intl.formatMessage(messages.streamingproviders)}</span>
-                <span className="media-fact-value">
+                <span className="media-fact-value flex flex-row flex-wrap gap-5">
                   {streamingProviders.map((p) => {
                     return (
-                      <span className="block" key={`provider-${p.id}`}>
-                        {p.name}
-                      </span>
+                      <Tooltip content={p.name}>
+                        <span
+                          className="opacity-50 transition duration-300 hover:opacity-100"
+                          key={`provider-${p.id}`}
+                        >
+                          <CachedImage
+                            type="tmdb"
+                            src={'https://image.tmdb.org/t/p/w45/' + p.logoPath}
+                            alt={p.name}
+                            width={32}
+                            height={32}
+                            className="rounded-md"
+                          />
+                        </span>
+                      </Tooltip>
                     );
                   })}
                 </span>
