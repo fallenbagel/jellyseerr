@@ -21,6 +21,7 @@ import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isEqual, truncate } from 'lodash';
 import type {
+  EntityManager,
   EntitySubscriberInterface,
   InsertEvent,
   RemoveEvent,
@@ -741,12 +742,16 @@ export class MediaRequestSubscriber
     }
   }
 
-  public async handleRemoveParentUpdate(entity: MediaRequest): Promise<void> {
-    const mediaRepository = getRepository(Media);
-    const fullMedia = await mediaRepository.findOneOrFail({
+  public async handleRemoveParentUpdate(
+    manager: EntityManager,
+    entity: MediaRequest
+  ): Promise<void> {
+    const fullMedia = await manager.findOneOrFail(Media, {
       where: { id: entity.media.id },
       relations: { requests: true },
     });
+
+    if (!fullMedia) return;
 
     if (
       !fullMedia.requests.some((request) => !request.is4k) &&
@@ -762,7 +767,7 @@ export class MediaRequestSubscriber
       fullMedia.status4k = MediaStatus.UNKNOWN;
     }
 
-    mediaRepository.save(fullMedia);
+    await manager.save(fullMedia);
   }
 
   public afterUpdate(event: UpdateEvent<MediaRequest>): void {
@@ -796,12 +801,15 @@ export class MediaRequestSubscriber
     this.updateParentStatus(event.entity as MediaRequest);
   }
 
-  public afterRemove(event: RemoveEvent<MediaRequest>): void {
+  public async afterRemove(event: RemoveEvent<MediaRequest>): Promise<void> {
     if (!event.entity) {
       return;
     }
 
-    this.handleRemoveParentUpdate(event.entity as MediaRequest);
+    await this.handleRemoveParentUpdate(
+      event.manager as EntityManager,
+      event.entity as MediaRequest
+    );
   }
 
   public listenTo(): typeof MediaRequest {
