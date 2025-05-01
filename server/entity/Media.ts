@@ -108,7 +108,9 @@ class Media {
   @Column({ type: 'int', default: MediaStatus.UNKNOWN })
   public status4k: MediaStatus;
 
-  @OneToMany(() => MediaRequest, (request) => request.media, { cascade: true })
+  @OneToMany(() => MediaRequest, (request) => request.media, {
+    cascade: ['insert', 'remove'],
+  })
   public requests: MediaRequest[];
 
   @OneToMany(() => Watchlist, (watchlist) => watchlist.media)
