@@ -5,6 +5,7 @@ import NotificationTypeSelector from '@app/components/NotificationTypeSelector';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -89,26 +90,20 @@ const NotificationsNtfy = () => {
       validationSchema={NotificationsNtfySchema}
       onSubmit={async (values) => {
         try {
-          const res = await fetch('/api/v1/settings/notifications/ntfy', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+          await axios.post('/api/v1/settings/notifications/ntfy', {
+            enabled: values.enabled,
+            types: values.types,
+            options: {
+              url: values.url,
+              topic: values.topic,
+              authMethodUsernamePassword: values.authMethodUsernamePassword,
+              username: values.username,
+              password: values.password,
+              authMethodToken: values.authMethodToken,
+              token: values.token,
             },
-            body: JSON.stringify({
-              enabled: values.enabled,
-              types: values.types,
-              options: {
-                url: values.url,
-                topic: values.topic,
-                authMethodUsernamePassword: values.authMethodUsernamePassword,
-                username: values.username,
-                password: values.password,
-                authMethodToken: values.authMethodToken,
-                token: values.token,
-              },
-            }),
           });
-          if (!res.ok) throw new Error();
+
           addToast(intl.formatMessage(messages.ntfysettingssaved), {
             appearance: 'success',
             autoDismiss: true,
@@ -146,30 +141,20 @@ const NotificationsNtfy = () => {
                 toastId = id;
               }
             );
-            const res = await fetch(
-              '/api/v1/settings/notifications/ntfy/test',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  enabled: true,
-                  types: values.types,
-                  options: {
-                    url: values.url,
-                    topic: values.topic,
-                    authMethodUsernamePassword:
-                      values.authMethodUsernamePassword,
-                    username: values.username,
-                    password: values.password,
-                    authMethodToken: values.authMethodToken,
-                    token: values.token,
-                  },
-                }),
-              }
-            );
-            if (!res.ok) throw new Error();
+            await axios.post('/api/v1/settings/notifications/ntfy/test', {
+              enabled: true,
+              types: values.types,
+              options: {
+                url: values.url,
+                topic: values.topic,
+                authMethodUsernamePassword: values.authMethodUsernamePassword,
+                username: values.username,
+                password: values.password,
+                authMethodToken: values.authMethodToken,
+                token: values.token,
+              },
+            });
+
             if (toastId) {
               removeToast(toastId);
             }
