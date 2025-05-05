@@ -100,6 +100,7 @@ const NotificationsPushover = () => {
             options: {
               accessToken: values.accessToken,
               userToken: values.userToken,
+              sound: values.sound,
             },
           });
           addToast(intl.formatMessage(messages.pushoversettingssaved), {
