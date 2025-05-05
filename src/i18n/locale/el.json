@@ -518,8 +518,6 @@
   "components.UserProfile.UserSettings.UserPasswordChange.newpassword": "Νέος κωδικός πρόσβασης",
   "components.UserProfile.UserSettings.UserPasswordChange.currentpassword": "Τρέχων κωδικός πρόσβασης",
   "components.UserProfile.UserSettings.UserPasswordChange.confirmpassword": "Επιβεβαίωση κωδικού πρόσβασης",
-  "components.UserProfile.UserSettings.UserNotificationSettings.webpushsettingssaved": "Οι ρυθμίσεις των ειδοποιήσεων push αποθηκεύτηκαν επιτυχώς!",
-  "components.UserProfile.UserSettings.UserNotificationSettings.webpushsettingsfailed": "Οι ρυθμίσεις των ειδοποιήσεων push δεν κατάφεραν να αποθηκευτούν.",
   "components.UserProfile.UserSettings.UserNotificationSettings.webpush": "Web Push",
   "components.UserProfile.UserSettings.UserNotificationSettings.validationTelegramChatId": "Πρέπει να δώσεις ένα έγκυρο αναγνωριστικό συνομιλίας",
   "components.UserProfile.UserSettings.UserNotificationSettings.validationPgpPublicKey": "Πρέπει να βάλεις ένα έγκυρο δημόσιο κλειδί PGP",
