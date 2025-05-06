@@ -615,6 +615,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "JamsRepos",
+      "name": "Jam",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1347620?v=4",
+      "profile": "https://github.com/JamsRepos",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
