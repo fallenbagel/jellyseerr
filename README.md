@@ -11,7 +11,7 @@
 <a href="http://translate.jellyseerr.dev/engage/jellyseerr/"><img src="http://translate.jellyseerr.dev/widget/jellyseerr/jellyseerr-frontend/svg-badge.svg" alt="Translation status" /></a>
 <a href="https://github.com/fallenbagel/jellyseerr/blob/develop/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/fallenbagel/jellyseerr"></a>
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-66-orange.svg"/></a>
+<a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-67-orange.svg"/></a>
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Jellyseerr** is a free and open source software application for managing requests for your media library. It integrates with the media server of your choice: [Jellyfin](https://jellyfin.org), [Plex](https://plex.tv), and [Emby](https://emby.media/). In addition, it integrates with your existing services, such as **[Sonarr](https://sonarr.tv/)**, **[Radarr](https://radarr.video/)**.
@@ -170,6 +170,7 @@ Thanks goes to these wonderful people from Overseerr ([emoji key](https://allcon
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/wolffman122"><img src="https://avatars.githubusercontent.com/u/19178872?v=4?s=100" width="100px;" alt="wolffman122"/><br /><sub><b>wolffman122</b></sub></a><br /><a href="https://github.com/fallenbagel/jellyseerr/commits?author=wolffman122" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Schrottfresser"><img src="https://avatars.githubusercontent.com/u/39998368?v=4?s=100" width="100px;" alt="Schrottfresser"/><br /><sub><b>Schrottfresser</b></sub></a><br /><a href="https://github.com/fallenbagel/jellyseerr/commits?author=Schrottfresser" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/DillionLowry"><img src="https://avatars.githubusercontent.com/u/91228469?v=4?s=100" width="100px;" alt="Dillion"/><br /><sub><b>Dillion</b></sub></a><br /><a href="https://github.com/fallenbagel/jellyseerr/commits?author=DillionLowry" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JamsRepos"><img src="https://avatars.githubusercontent.com/u/1347620?v=4?s=100" width="100px;" alt="Jam"/><br /><sub><b>Jam</b></sub></a><br /><a href="https://github.com/fallenbagel/jellyseerr/commits?author=JamsRepos" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
