@@ -5,7 +5,7 @@ describe('TVDB Integration', () => {
     metadataSettings: '/settings/metadata',
     tomorrowIsOursTvShow: '/tv/72879',
     monsterTvShow: '/tv/225634',
-    dragonnBallZKayAnime: '/tv/61709',
+    dragonnBallZKaiAnime: '/tv/61709',
   };
 
   const SELECTORS = {
@@ -132,7 +132,7 @@ describe('TVDB Integration', () => {
 
   it('should display "Dragon Ball Z Kai" show information with multiple only 2 seasons from TVDB', () => {
     // Navigate to the TV show
-    cy.visit(ROUTES.dragonnBallZKayAnime);
+    cy.visit(ROUTES.dragonnBallZKaiAnime);
 
     // Intercept season 1 request
     cy.intercept('/api/v1/tv/61709/season/1').as('season1');
