@@ -5,6 +5,7 @@ describe('TVDB Integration', () => {
     metadataSettings: '/settings/metadata',
     tomorrowIsOursTvShow: '/tv/72879',
     monsterTvShow: '/tv/225634',
+    dragonnBallZKayAnime: '/tv/61709',
   };
 
   const SELECTORS = {
@@ -20,6 +21,7 @@ describe('TVDB Integration', () => {
     seasonSelector: '[data-testid="season-selector"]',
     season1: 'Season 1',
     season2: 'Season 2',
+    season3: 'Season 3',
     episodeList: '[data-testid="episode-list"]',
     episode9: '9 - Hang Men',
   };
@@ -70,6 +72,9 @@ describe('TVDB Integration', () => {
     // Configure TVDB as TV provider and test connection
     // Supposons que vous avez ajouté data-testid au div parent du Select
     cy.get('[data-testid="tv-indexer-selector"]').click();
+
+    // get id react-select-4-option-1
+    cy.get('[id^="react-select-4-option-"]').contains('TheTVDB').click();
 
     // Test the connection
     testAndVerifyMetadataConnection().then(({ response }) => {
@@ -123,5 +128,22 @@ describe('TVDB Integration', () => {
 
     // Verify specific episode exists
     cy.contains(SELECTORS.episode9).should('be.visible');
+  });
+
+  it('should display "Dragon Ball Z Kai" show information with multiple only 2 seasons from TVDB', () => {
+    // Navigate to the TV show
+    cy.visit(ROUTES.dragonnBallZKayAnime);
+
+    // Intercept season 1 request
+    cy.intercept('/api/v1/tv/61709/season/1').as('season1');
+
+    // Select Season 2 and verify it visible
+    cy.contains(SELECTORS.season2)
+      .should('be.visible')
+      .scrollIntoView()
+      .click();
+
+    // select season 3 and verify it not visible
+    cy.contains(SELECTORS.season3).should('not.exist');
   });
 });

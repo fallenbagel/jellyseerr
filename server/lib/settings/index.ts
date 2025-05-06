@@ -412,7 +412,7 @@ class Settings {
       tautulli: {},
       metadataSettings: {
         tv: IndexerType.TMDB,
-        anime: IndexerType.TVDB,
+        anime: IndexerType.TMDB,
       },
       radarr: [],
       sonarr: [],
