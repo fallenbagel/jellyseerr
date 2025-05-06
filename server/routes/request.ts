@@ -633,7 +633,7 @@ requestRoutes.post<{
         relations: { requestedBy: true, modifiedBy: true },
       });
 
-      const declineReason: string = req.body ? req.body.declineReason : "";
+      const declineReason: string = req.body ? req.body.declineReason : '';
       let newStatus: MediaRequestStatus;
 
       switch (req.params.status) {
