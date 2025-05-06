@@ -223,9 +223,7 @@ const IssueComment = ({
               </Formik>
             ) : (
               <div className="prose w-full max-w-full">
-                <ReactMarkdown skipHtml allowedElements={['p', 'em', 'strong']}>
-                  {comment.message}
-                </ReactMarkdown>
+                <ReactMarkdown skipHtml>{comment.message}</ReactMarkdown>
               </div>
             )}
           </div>
