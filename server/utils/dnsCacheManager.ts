@@ -1,4 +1,3 @@
-import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { LRUCache } from 'lru-cache';
 import dns from 'node:dns';
@@ -303,11 +302,7 @@ class DnsCacheManager {
         // Background refresh
         this.resolveWithTtl(hostname)
           .then((result) => {
-            const preferredFamily = shouldForceIpv4
-              ? 4
-              : getSettings().network.forceIpv4First
-              ? 4
-              : 6;
+            const preferredFamily = shouldForceIpv4 ? 4 : 6;
 
             const activeAddress = this.selectActiveAddress(
               result.addresses,
@@ -344,11 +339,7 @@ class DnsCacheManager {
     try {
       const result = await this.resolveWithTtl(hostname);
 
-      const preferredFamily = shouldForceIpv4
-        ? 4
-        : getSettings().network.forceIpv4First
-        ? 4
-        : 6;
+      const preferredFamily = shouldForceIpv4 ? 4 : 6;
 
       const activeAddress = this.selectActiveAddress(
         result.addresses,
@@ -704,15 +695,10 @@ class DnsCacheManager {
           .filter((a) => a.family === 6)
           .map((a) => a.address);
 
-        const preferIpv4 = getSettings().network.forceIpv4First;
-
         let activeAddress: string;
         let family: number;
 
-        if (preferIpv4 && ipv4Addresses.length > 0) {
-          activeAddress = ipv4Addresses[0];
-          family = 4;
-        } else if (ipv6Addresses.length > 0) {
+        if (ipv6Addresses.length > 0) {
           activeAddress = ipv6Addresses[0];
           family = 6;
         } else if (ipv4Addresses.length > 0) {
@@ -758,14 +744,10 @@ class DnsCacheManager {
       throw new Error('No addresses resolved');
     }
 
-    const preferIpv4 = getSettings().network.forceIpv4First;
     let activeAddress: string;
     let family: number;
 
-    if (preferIpv4 && ipv4Addresses.length > 0) {
-      activeAddress = ipv4Addresses[0];
-      family = 4;
-    } else if (ipv6Addresses.length > 0) {
+    if (ipv6Addresses.length > 0) {
       activeAddress = ipv6Addresses[0];
       family = 6;
     } else {
