@@ -652,5 +652,21 @@
   "components.Settings.Notifications.NotificationsPushover.deviceDefault": "ברירת המחדל של המכשיר",
   "components.Settings.Notifications.NotificationsPushover.pushoversettingsfailed": "הגדרות ההתראות של Pushover נכשלו להישמר.",
   "components.Settings.Notifications.NotificationsPushover.pushoversettingssaved": "הגדרות ההתראות של Pushover נשמרו בהצלחה!",
-  "components.Settings.Notifications.NotificationsPushover.sound": "צליל התראה"
+  "components.Settings.Notifications.NotificationsPushover.sound": "צליל התראה",
+  "components.Settings.Notifications.NotificationsWebhook.resetPayload": "איפוס לברירת מחדל",
+  "components.Settings.Notifications.NotificationsLunaSea.webhookUrlTip": "<LunaSeaLink>קישור Webhook להתראות</LunaSeaLink> מבוסס מכשיר או משתמש",
+  "components.Settings.Notifications.NotificationsWebhook.agentenabled": "הפעל סוכן",
+  "components.Settings.Notifications.NotificationsWebhook.authheader": "כותרת עליונה של הרשאות",
+  "components.Settings.Notifications.NotificationsWebhook.customJson": "מטען JSON",
+  "components.Settings.Notifications.NotificationsWebhook.resetPayloadSuccess": "מטען JSON התאפס בהצלחה!",
+  "components.Settings.Notifications.NotificationsWebhook.toastWebhookTestSuccess": "התראת הבדיקה של ה-Webhook נשלחה!",
+  "components.Settings.Notifications.NotificationsWebhook.validationJsonPayloadRequired": "עליך לספק מטען JSON תקין",
+  "components.Settings.Notifications.NotificationsWebhook.validationTypes": "עליך לבחור לפחות סוג התראה אחד",
+  "components.Settings.Notifications.NotificationsWebhook.validationWebhookUrl": "עליך לספק כתובת URL תקינה",
+  "components.Settings.Notifications.NotificationsWebhook.webhookUrl": "URL של ה-Webhook",
+  "components.Settings.Notifications.NotificationsWebhook.webhooksettingsfailed": "הגדרות ההתראות של ה-Webhook נכשלו להשמר.",
+  "components.Settings.Notifications.NotificationsWebhook.webhooksettingssaved": "הגדרות ההתראות של ה-Webhook נשמרו בהצלחה!",
+  "components.Settings.Notifications.NotificationsWebPush.agentenabled": "הפעל סוכן",
+  "components.Settings.Notifications.NotificationsWebhook.toastWebhookTestFailed": "התראת הבדיקה של ה-Webhook נכשלה להשלח.",
+  "components.Settings.Notifications.NotificationsWebhook.toastWebhookTestSending": "שולח התראת בדיקה של ה-Webhook…"
 }
