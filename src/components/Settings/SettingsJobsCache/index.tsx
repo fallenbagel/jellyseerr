@@ -264,10 +264,7 @@ const SettingsJobs = () => {
   };
 
   const flushDnsCache = async (hostname: string) => {
-    const res = await fetch(`/api/v1/settings/cache/dns/${hostname}/flush`, {
-      method: 'POST',
-    });
-    if (!res.ok) throw new Error();
+    await axios.post(`/api/v1/settings/cache/dns/${hostname}/flush`);
     addToast(
       intl.formatMessage(messages.dnscacheflushed, { hostname: hostname }),
       {
