@@ -531,6 +531,9 @@ class Settings {
           ntfy: {
             enabled: false,
             types: 0,
+            name: '',
+            id: 0,
+            agent: NotificationAgentKey.NTFY,
             options: {
               url: '',
               topic: '',
