@@ -511,7 +511,9 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       case ApiErrorCode.InvalidUrl:
         logger.error(
           `The provided ${
-            process.env.JELLYFIN_TYPE == 'emby' ? 'Emby' : 'Jellyfin'
+            settings.main.mediaServerType === MediaServerType.JELLYFIN
+              ? ServerType.JELLYFIN
+              : ServerType.EMBY
           } is invalid or the server is not reachable.`,
           {
             label: 'Auth',
