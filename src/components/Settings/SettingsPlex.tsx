@@ -8,6 +8,7 @@ import LibraryItem from '@app/components/Settings/LibraryItem';
 import SettingsBadge from '@app/components/Settings/SettingsBadge';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
+import { isValidURL } from '@app/utils/urlValidationHelper';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import {
   ArrowPathIcon,
@@ -191,9 +192,10 @@ const SettingsPlex = ({ onComplete }: SettingsPlexProps) => {
         otherwise: Yup.string().nullable(),
       }),
       tautulliExternalUrl: Yup.string()
-        .matches(
-          /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}(\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*))?$/i,
-          intl.formatMessage(messages.validationUrl)
+        .test(
+          'valid-url',
+          intl.formatMessage(messages.validationUrl),
+          isValidURL
         )
         .test(
           'no-trailing-slash',

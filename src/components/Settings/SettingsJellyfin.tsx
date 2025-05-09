@@ -6,6 +6,7 @@ import LibraryItem from '@app/components/Settings/LibraryItem';
 import useSettings from '@app/hooks/useSettings';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
+import { isValidURL } from '@app/utils/urlValidationHelper';
 import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 import { ApiErrorCode } from '@server/constants/error';
 import { MediaServerType } from '@server/constants/server';
@@ -140,10 +141,7 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
       ),
     jellyfinExternalUrl: Yup.string()
       .nullable()
-      .matches(
-        /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}(\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*))?$/i,
-        intl.formatMessage(messages.validationUrl)
-      )
+      .test('valid-url', intl.formatMessage(messages.validationUrl), isValidURL)
       .test(
         'no-trailing-slash',
         intl.formatMessage(messages.validationUrlTrailingSlash),
@@ -151,10 +149,7 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
       ),
     jellyfinForgotPasswordUrl: Yup.string()
       .nullable()
-      .matches(
-        /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}(\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*))?$/i,
-        intl.formatMessage(messages.validationUrl)
-      )
+      .test('valid-url', intl.formatMessage(messages.validationUrl), isValidURL)
       .test(
         'no-trailing-slash',
         intl.formatMessage(messages.validationUrlTrailingSlash),

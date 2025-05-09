@@ -3,6 +3,7 @@ import SensitiveInput from '@app/components/Common/SensitiveInput';
 import type { RadarrTestResponse } from '@app/components/Settings/SettingsServices';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
+import { isValidURL } from '@app/utils/urlValidationHelper';
 import { Transition } from '@headlessui/react';
 import type { RadarrSettings } from '@server/lib/settings';
 import axios from 'axios';
@@ -117,9 +118,10 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
       intl.formatMessage(messages.validationMinimumAvailabilityRequired)
     ),
     externalUrl: Yup.string()
-      .matches(
-        /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}(\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*))?$/i,
-        intl.formatMessage(messages.validationApplicationUrl)
+      .test(
+        'valid-url',
+        intl.formatMessage(messages.validationApplicationUrl),
+        isValidURL
       )
       .test(
         'no-trailing-slash',
