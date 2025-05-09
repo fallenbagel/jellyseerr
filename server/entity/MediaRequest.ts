@@ -13,18 +13,17 @@ import notificationManager, { Notification } from '@server/lib/notifications';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import { DbAwareColumn } from '@server/utils/DbColumnHelper';
 import { truncate } from 'lodash';
 import {
   AfterInsert,
   AfterUpdate,
   Column,
-  CreateDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   RelationCount,
-  UpdateDateColumn,
 } from 'typeorm';
 import Media from './Media';
 import SeasonRequest from './SeasonRequest';
@@ -535,10 +534,14 @@ export class MediaRequest {
   })
   public modifiedBy?: User;
 
-  @CreateDateColumn()
+  @DbAwareColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   public createdAt: Date;
 
-  @UpdateDateColumn()
+  @DbAwareColumn({
+    type: 'datetime',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
   public updatedAt: Date;
 
   @Column({ type: 'varchar' })
