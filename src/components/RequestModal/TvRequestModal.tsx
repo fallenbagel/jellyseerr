@@ -120,7 +120,7 @@ const TvRequestModal = ({
           languageProfileId: requestOverrides?.language,
           userId: requestOverrides?.user?.id,
           tags: requestOverrides?.tags,
-          seasons: selectedSeasons,
+          seasons: selectedSeasons.sort((a, b) => a - b),
         });
 
         if (alsoApproveRequest) {
