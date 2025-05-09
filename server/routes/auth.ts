@@ -716,17 +716,66 @@ authRoutes.post('/local', async (req, res, next) => {
   }
 });
 
-authRoutes.post('/logout', (req, res, next) => {
-  req.session?.destroy((err) => {
-    if (err) {
-      return next({
-        status: 500,
-        message: 'Something went wrong.',
-      });
+authRoutes.post('/logout', async (req, res, next) => {
+  try {
+    const userId = req.session?.userId;
+    if (!userId) {
+      return res.status(200).json({ status: 'ok' });
     }
 
-    return res.status(200).json({ status: 'ok' });
-  });
+    const user = await getRepository(User)
+      .createQueryBuilder('user')
+      .addSelect(['user.jellyfinUserId', 'user.jellyfinDeviceId'])
+      .where('user.id = :id', { id: userId })
+      .getOne();
+
+    if (user?.jellyfinUserId && user.jellyfinDeviceId) {
+      try {
+        const settings = getSettings();
+        if (!settings.jellyfin.apiKey) {
+          throw new Error('No Jellyfin API key configured');
+        }
+
+        const protocol = settings.jellyfin.useSsl ? 'https' : 'http';
+        const baseUrl = `${protocol}://${settings.jellyfin.ip}:${settings.jellyfin.port}${settings.jellyfin.urlBase}`;
+        const jellyfin = new JellyfinAPI(baseUrl, settings.jellyfin.apiKey);
+        await jellyfin.deleteUserDevice(
+          user.jellyfinUserId,
+          user.jellyfinDeviceId
+        );
+      } catch (error) {
+        logger.error('Failed to delete Jellyfin device', {
+          label: 'Auth',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          userId: user.id,
+          jellyfinUserId: user.jellyfinUserId,
+        });
+      }
+    }
+
+    req.session?.destroy((err: Error | null) => {
+      if (err) {
+        logger.error('Failed to destroy session', {
+          label: 'Auth',
+          error: err.message,
+          userId,
+        });
+        return next({ status: 500, message: 'Failed to destroy session.' });
+      }
+      logger.info('Successfully logged out user', {
+        label: 'Auth',
+        userId,
+      });
+      res.status(200).json({ status: 'ok' });
+    });
+  } catch (error) {
+    logger.error('Error during logout process', {
+      label: 'Auth',
+      error: error instanceof Error ? error.message : 'Unknown error',
+      userId: req.session?.userId,
+    });
+    next({ status: 500, message: 'Error during logout process.' });
+  }
 });
 
 authRoutes.post('/reset-password', async (req, res, next) => {

@@ -22,6 +22,23 @@ export interface JellyfinUserResponse {
   PrimaryImageTag?: string;
 }
 
+export interface JellyfinDevice {
+  Id: string;
+  Name: string;
+  LastUserName: string;
+  AppName: string;
+  AppVersion: string;
+  LastUserId: string;
+  DateLastActivity: string;
+  Capabilities: Record<string, unknown>;
+}
+
+export interface JellyfinDevicesResponse {
+  Items: JellyfinDevice[];
+  TotalRecordCount: number;
+  StartIndex: number;
+}
+
 export interface JellyfinLoginResponse {
   User: JellyfinUserResponse;
   AccessToken: string;
@@ -435,6 +452,51 @@ class JellyfinAPI extends ExternalAPI {
       );
 
       throw new ApiError(e.response?.status, ApiErrorCode.InvalidAuthToken);
+    }
+  }
+
+  public async deleteUserDevice(
+    userId: string,
+    deviceId: string
+  ): Promise<void> {
+    try {
+      const response = await this.get<JellyfinDevicesResponse>('/Devices', {
+        params: { UserId: userId },
+      });
+
+      logger.debug('Found Jellyfin devices', {
+        label: 'Jellyfin API',
+        deviceCount: response.Items.length,
+        userId,
+      });
+
+      const device = response.Items.find(
+        (item: JellyfinDevice) => item.Id === deviceId
+      );
+      if (!device) {
+        logger.debug('No matching Jellyfin device found', {
+          label: 'Jellyfin API',
+          deviceId,
+          userId,
+        });
+        return;
+      }
+
+      await this.delete('/Devices', { params: { Id: device.Id } });
+      logger.info('Successfully deleted Jellyfin device', {
+        label: 'Jellyfin API',
+        deviceId: device.Id,
+        deviceName: device.Name,
+        userId,
+      });
+    } catch (error) {
+      logger.error('Failed to delete Jellyfin device', {
+        label: 'Jellyfin API',
+        error: error instanceof Error ? error.message : 'Unknown error',
+        userId,
+        deviceId,
+      });
+      throw error;
     }
   }
 }
