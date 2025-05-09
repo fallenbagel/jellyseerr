@@ -67,9 +67,7 @@ class Issue {
 
   @AfterLoad()
   sortComments() {
-    this.comments?.sort(
-      (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
-    );
+    this.comments?.sort((a, b) => a.id - b.id);
   }
 
   constructor(init?: Partial<Issue>) {
