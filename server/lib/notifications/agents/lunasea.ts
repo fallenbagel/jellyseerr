@@ -1,6 +1,6 @@
 import { IssueStatus, IssueType } from '@server/constants/issue';
 import { MediaStatus } from '@server/constants/media';
-import type { NotificationAgentLunaSea } from '@server/lib/settings';
+import type { NotificationAgentLunaSea } from '@server/interfaces/settings';
 import logger from '@server/logger';
 import axios from 'axios';
 import { hasNotificationType, Notification } from '..';

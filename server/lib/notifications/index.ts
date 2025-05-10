@@ -1,4 +1,18 @@
 import type { User } from '@server/entity/User';
+import {
+  NotificationAgentKey,
+  type NotificationAgentConfig,
+  type NotificationAgentDiscord,
+  type NotificationAgentEmail,
+  type NotificationAgentGotify,
+  type NotificationAgentLunaSea,
+  type NotificationAgentNtfy,
+  type NotificationAgentPushbullet,
+  type NotificationAgentPushover,
+  type NotificationAgentSlack,
+  type NotificationAgentTelegram,
+  type NotificationAgentWebhook,
+} from '@server/interfaces/settings';
 import DiscordAgent from '@server/lib/notifications/agents/discord';
 import EmailAgent from '@server/lib/notifications/agents/email';
 import GotifyAgent from '@server/lib/notifications/agents/gotify';
@@ -11,20 +25,7 @@ import TelegramAgent from '@server/lib/notifications/agents/telegram';
 import WebhookAgent from '@server/lib/notifications/agents/webhook';
 import WebPushAgent from '@server/lib/notifications/agents/webpush';
 import { Permission } from '@server/lib/permissions';
-import type {
-  NotificationAgentConfig,
-  NotificationAgentDiscord,
-  NotificationAgentEmail,
-  NotificationAgentGotify,
-  NotificationAgentLunaSea,
-  NotificationAgentNtfy,
-  NotificationAgentPushbullet,
-  NotificationAgentPushover,
-  NotificationAgentSlack,
-  NotificationAgentTelegram,
-  NotificationAgentWebhook,
-} from '@server/lib/settings';
-import { getSettings, NotificationAgentKey } from '@server/lib/settings';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import type { NotificationAgent, NotificationPayload } from './agents/agent';
 
