@@ -4,6 +4,7 @@ import PlexAPI from '@server/api/plexapi';
 import type { TmdbTvDetails } from '@server/api/themoviedb/interfaces';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
+import type { Library } from '@server/interfaces/settings';
 import cacheManager from '@server/lib/cache';
 import type {
   MediaIds,
@@ -12,7 +13,6 @@ import type {
   StatusBase,
 } from '@server/lib/scanners/baseScanner';
 import BaseScanner from '@server/lib/scanners/baseScanner';
-import type { Library } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import { uniqWith } from 'lodash';
 
