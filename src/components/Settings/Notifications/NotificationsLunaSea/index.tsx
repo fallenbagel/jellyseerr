@@ -73,6 +73,7 @@ const NotificationsLunaSea = () => {
         try {
           await axios.post('/api/v1/settings/notifications/lunasea', {
             enabled: values.enabled,
+            embedImage: values.embedImage,
             types: values.types,
             options: {
               webhookUrl: values.webhookUrl,
@@ -118,6 +119,7 @@ const NotificationsLunaSea = () => {
             );
             await axios.post('/api/v1/settings/notifications/lunasea/test', {
               enabled: true,
+              embedImage: values.embedImage,
               types: values.types,
               options: {
                 webhookUrl: values.webhookUrl,

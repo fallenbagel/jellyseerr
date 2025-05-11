@@ -152,6 +152,7 @@ const NotificationsEmail = () => {
         try {
           await axios.post('/api/v1/settings/notifications/email', {
             enabled: values.enabled,
+            embedImage: values.embedImage,
             options: {
               userEmailRequired: values.userEmailRequired,
               emailFrom: values.emailFrom,
@@ -201,6 +202,7 @@ const NotificationsEmail = () => {
             );
             await axios.post('/api/v1/settings/notifications/email/test', {
               enabled: true,
+              embedImage: values.embedImage,
               options: {
                 emailFrom: values.emailFrom,
                 smtpHost: values.smtpHost,
