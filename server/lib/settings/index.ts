@@ -504,6 +504,7 @@ class Settings {
           },
           ntfy: {
             enabled: false,
+            embedImage: false,
             types: 0,
             options: {
               url: '',
