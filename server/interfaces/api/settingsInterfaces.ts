@@ -1,7 +1,7 @@
 import type {
   NotificationAgentConfig,
   NotificationAgentTemplates,
-} from '@server/lib/settings';
+} from '@server/interfaces/settings';
 import type { PaginatedResponse } from './common';
 
 export type LogMessage = {
