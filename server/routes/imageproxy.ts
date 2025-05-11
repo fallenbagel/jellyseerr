@@ -3,20 +3,36 @@ import logger from '@server/logger';
 import { Router } from 'express';
 
 const router = Router();
+
 const tmdbImageProxy = new ImageProxy('tmdb', 'https://image.tmdb.org', {
   rateLimitOptions: {
     maxRequests: 20,
     maxRPS: 50,
   },
 });
+const tvdbImageProxy = new ImageProxy('tvdb', 'https://artworks.thetvdb.com', {
+  rateLimitOptions: {
+    maxRequests: 20,
+    maxRPS: 50,
+  },
+});
 
-/**
- * Image Proxy
- */
-router.get('/*', async (req, res) => {
-  const imagePath = req.path.replace('/image', '');
+router.get('/:type/*', async (req, res) => {
+  const imagePath = req.path.replace(/^\/\w+/, '');
   try {
-    const imageData = await tmdbImageProxy.getImage(imagePath);
+    let imageData;
+    if (req.params.type === 'tmdb') {
+      imageData = await tmdbImageProxy.getImage(imagePath);
+    } else if (req.params.type === 'tvdb') {
+      imageData = await tvdbImageProxy.getImage(imagePath);
+    } else {
+      logger.error('Unsupported image type', {
+        imagePath,
+        type: req.params.type,
+      });
+      res.status(400).send('Unsupported image type');
+      return;
+    }
 
     res.writeHead(200, {
       'Content-Type': `image/${imageData.meta.extension}`,
