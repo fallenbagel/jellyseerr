@@ -17,7 +17,7 @@ import useSWR from 'swr';
 
 const messages = defineMessages('components.Settings.SettingsAbout', {
   about: 'About',
-  overseerrinformation: 'About Jellyseerr',
+  overseerrinformation: 'About Seerr',
   version: 'Version',
   totalmedia: 'Total Media',
   totalrequests: 'Total Requests',
@@ -26,7 +26,7 @@ const messages = defineMessages('components.Settings.SettingsAbout', {
   timezone: 'Time Zone',
   appDataPath: 'Data Directory',
   supportoverseerr: 'Support Overseerr',
-  supportjellyseerr: 'Support Jellyseerr',
+  supportseerr: 'Support Seerr',
   helppaycoffee: 'Help Pay for Coffee',
   documentation: 'Documentation',
   preferredmethod: 'Preferred',
@@ -35,7 +35,7 @@ const messages = defineMessages('components.Settings.SettingsAbout', {
   betawarning:
     'This is BETA software. Features may be broken and/or unstable. Please report any issues on GitHub!',
   runningDevelop:
-    'You are running the <code>develop</code> branch of Jellyseerr, which is only recommended for those contributing to development or assisting with bleeding-edge testing.',
+    'You are running the <code>develop</code> branch of Seerr, which is only recommended for those contributing to development or assisting with bleeding-edge testing.',
 });
 
 const SettingsAbout = () => {
@@ -219,7 +219,7 @@ const SettingsAbout = () => {
         </List>
       </div>
       <div className="section">
-        <List title={intl.formatMessage(messages.supportjellyseerr)}>
+        <List title={intl.formatMessage(messages.supportseerr)}>
           <List.Item
             title={`${intl.formatMessage(messages.helppaycoffee)} ☕️`}
           >
