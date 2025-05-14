@@ -97,24 +97,6 @@ class ExternalAPI {
     return response.data;
   }
 
-  protected async delete<T>(
-    endpoint: string,
-    config?: AxiosRequestConfig
-  ): Promise<T> {
-    const cacheKey = this.serializeCacheKey(endpoint, {
-      ...config?.params,
-      headers: config?.headers,
-    });
-
-    const cachedItem = this.cache?.get<T>(cacheKey);
-    if (cachedItem) {
-      return cachedItem;
-    }
-
-    const response = await this.axios.delete<T>(endpoint, config);
-    return response.data;
-  }
-
   protected async getRolling<T>(
     endpoint: string,
     config?: AxiosRequestConfig,

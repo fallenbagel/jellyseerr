@@ -12,7 +12,9 @@ import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { checkAvatarChanged } from '@server/routes/avatarproxy';
 import { ApiError } from '@server/types/error';
+import { getAppVersion } from '@server/utils/appVersion';
 import { getHostname } from '@server/utils/getHostname';
+import axios from 'axios';
 import * as EmailValidator from 'email-validator';
 import { Router } from 'express';
 import net from 'net';
@@ -732,17 +734,24 @@ authRoutes.post('/logout', async (req, res, next) => {
     if (user?.jellyfinUserId && user.jellyfinDeviceId) {
       try {
         const settings = getSettings();
-        if (!settings.jellyfin.apiKey) {
-          throw new Error('No Jellyfin API key configured');
+        const baseUrl = getHostname();
+        try {
+          await axios.delete(`${baseUrl}/Devices`, {
+            params: { Id: user.jellyfinDeviceId },
+            headers: {
+              'X-Emby-Authorization': `MediaBrowser Client="Jellyseerr", Device="Jellyseerr", DeviceId="jellyseerr", Version="${getAppVersion()}", Token="${
+                settings.jellyfin.apiKey
+              }"`,
+            },
+          });
+        } catch (error) {
+          logger.error('Failed to delete Jellyfin device', {
+            label: 'Auth',
+            error: error instanceof Error ? error.message : 'Unknown error',
+            userId: user.id,
+            jellyfinUserId: user.jellyfinUserId,
+          });
         }
-
-        const protocol = settings.jellyfin.useSsl ? 'https' : 'http';
-        const baseUrl = `${protocol}://${settings.jellyfin.ip}:${settings.jellyfin.port}${settings.jellyfin.urlBase}`;
-        const jellyfin = new JellyfinAPI(baseUrl, settings.jellyfin.apiKey);
-        await jellyfin.deleteUserDevice(
-          user.jellyfinUserId,
-          user.jellyfinDeviceId
-        );
       } catch (error) {
         logger.error('Failed to delete Jellyfin device', {
           label: 'Auth',
