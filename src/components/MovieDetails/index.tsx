@@ -1084,6 +1084,9 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                 mediaUrl={
                   data.mediaInfo?.mediaUrl ?? data.mediaInfo?.mediaUrl4k
                 }
+                title={data.title}
+                releaseDate={data.releaseDate}
+                customLinks={settings.currentSettings.customMovieLinks}
               />
             </div>
           </div>

@@ -20,6 +20,12 @@ export interface SettingsAboutResponse {
   appDataPath: string;
 }
 
+export interface CustomMovieLink {
+  text: string;
+  icon: string;
+  url: string;
+}
+
 export interface PublicSettingsResponse {
   jellyfinHost?: string;
   jellyfinExternalHost?: string;
@@ -47,6 +53,7 @@ export interface PublicSettingsResponse {
   emailEnabled: boolean;
   newPlexLogin: boolean;
   youtubeUrl: string;
+  customMovieLinks: CustomMovieLink[];
 }
 
 export interface CacheItem {
