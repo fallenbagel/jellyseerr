@@ -130,15 +130,13 @@ class JellyfinAPI extends ExternalAPI {
     const safeDeviceId =
       deviceId && deviceId.length > 0
         ? deviceId
-        : Buffer.from(`BOT_jellyseerr_fallback_${Date.now()}`).toString(
-            'base64'
-          );
+        : Buffer.from(`BOT_seerr_fallback_${Date.now()}`).toString('base64');
 
     let authHeaderVal: string;
     if (authToken) {
-      authHeaderVal = `MediaBrowser Client="Jellyseerr", Device="Jellyseerr", DeviceId="${safeDeviceId}", Version="${getAppVersion()}", Token="${authToken}"`;
+      authHeaderVal = `MediaBrowser Client="Seerr", Device="Seerr", DeviceId="${safeDeviceId}", Version="${getAppVersion()}", Token="${authToken}"`;
     } else {
-      authHeaderVal = `MediaBrowser Client="Jellyseerr", Device="Jellyseerr", DeviceId="${safeDeviceId}", Version="${getAppVersion()}"`;
+      authHeaderVal = `MediaBrowser Client="Seerr", Device="Seerr", DeviceId="${safeDeviceId}", Version="${getAppVersion()}"`;
     }
 
     super(
