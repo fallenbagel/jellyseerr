@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fallenbagel/jellyseerr.git"
+    "url": "https://github.com/seerr-team/seerr.git"
   },
   "license": "MIT",
   "dependencies": {
@@ -245,8 +245,8 @@
           "COMMIT_TAG": "$GIT_SHA"
         },
         "imageNames": [
-          "fallenbagel/jellyseerr",
-          "ghcr.io/fallenbagel/jellyseerr"
+          "seerr-team/seerr",
+          "ghcr.io/seerr-team/seerr"
         ],
         "platforms": [
           "linux/amd64",
