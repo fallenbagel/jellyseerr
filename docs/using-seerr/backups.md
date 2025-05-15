@@ -25,10 +25,10 @@ Otherwise, you need to stop the Jellyseerr application and back up the `config` 
 For advanced users, it's possible to back up the database without stopping the application by using the [SQLite CLI](https://www.sqlite.org/download.html). Run the following command to create a backup:  
 
 ```bash
-sqlite3 db/db.sqlite3 ".backup '/tmp/jellyseerr_db.sqlite3.bak'"
+sqlite3 db/db.sqlite3 ".backup '/tmp/seerr_db.sqlite3.bak'"
 ```  
 
-Then, copy the `/tmp/jellyseerr_dump.sqlite3.bak` file to your desired backup location.
+Then, copy the `/tmp/seerr_dump.sqlite3.bak` file to your desired backup location.
 
 ### PostgreSQL
 
@@ -45,7 +45,7 @@ Depending on how your PostgreSQL instance is configured, you may need to add the
 :::
 
 ```bash
-pg_dump -U <database_user> -d <database_name> -f /tmp/jellyseerr_db.sql
+pg_dump -U <database_user> -d <database_name> -f /tmp/seerr_db.sql
 ```
 
 # Restore
@@ -78,7 +78,7 @@ Depending on how your PostgreSQL instance is configured, you may need to add the
 :::
 
 ```bash
-pg_restore -U <database_user> -d <database_name> /tmp/jellyseerr_db.sql
+pg_restore -U <database_user> -d <database_name> /tmp/seerr_db.sql
 ```
 
 Optionally, restore the `settings.json` file. The `config` folder structure should look like this:

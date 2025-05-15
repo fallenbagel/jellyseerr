@@ -96,7 +96,7 @@ jobs:
   #     - name: Upload Snap Package
   #       uses: actions/upload-artifact@v4
   #       with:
-  #         name: jellyseerr-snap-package-${{ matrix.architecture }}
+  #         name: seerr-snap-package-${{ matrix.architecture }}
   #         path: ${{ steps.build.outputs.snap }}
   #     - name: Review Snap Package
   #       uses: diddlesnaps/snapcraft-review-tools-action@v1

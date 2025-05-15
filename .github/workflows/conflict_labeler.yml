@@ -13,7 +13,7 @@ jobs:
   label:
     name: Labeling
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'Fallenbagel/jellyseerr' }}
+    if: ${{ github.repository == 'seerr-team/seerr' }}
     permissions:
       contents: read
       pull-requests: write

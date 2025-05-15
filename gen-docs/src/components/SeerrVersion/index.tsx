@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 
-export const JellyseerrVersion = () => {
+export const SeerrVersion = () => {
   const [version, setVersion] = useState<string | null>('0.0.0');
 
   useEffect(() => {
     async function fetchVersion() {
       try {
         const response = await fetch(
-          'https://raw.githubusercontent.com/Fallenbagel/jellyseerr/main/package.json'
+          'https://raw.githubusercontent.com/seerr-team/seerr/main/package.json'
         );
 
         const data = await response.json();
