@@ -3,11 +3,11 @@ kubeVersion: ">=1.23.0-0"
 name: seerr-chart
 description: Seerr helm chart for Kubernetes
 type: application
-version: 2.6.1
-appVersion: "2.7.1"
+version: 2.5.0
+appVersion: "2.6.0"
 maintainers:
   - name: Seerr
     url: https://github.com/seerr-team/seerr
 sources:
-  - https://github.com/seerr-team/seerr/tree/main/charts/jellyseerr
+  - https://github.com/seerr-team/seerr/tree/main/charts/seerr
 home: https://github.com/seerr-team/seerr

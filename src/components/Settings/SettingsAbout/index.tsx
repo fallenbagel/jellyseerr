@@ -73,7 +73,7 @@ const SettingsAbout = () => {
             </p>
             <p className="mt-3 text-sm leading-5 md:mt-0 md:ml-6">
               <a
-                href="http://github.com/fallenbagel/jellyseerr"
+                href="http://github.com/seerr-team/seerr"
                 className="whitespace-nowrap font-medium text-gray-100 transition duration-150 ease-in-out hover:text-white"
                 target="_blank"
                 rel="noreferrer"
@@ -107,8 +107,8 @@ const SettingsAbout = () => {
                 <a
                   href={
                     data.version.startsWith('develop-')
-                      ? `https://github.com/fallenbagel/jellyseerr/compare/${status.commitTag}...develop`
-                      : 'https://github.com/fallenbagel/jellyseerr/releases'
+                      ? `https://github.com/seerr-team/seerr/compare/${status.commitTag}...develop`
+                      : 'https://github.com/seerr-team/seerr/releases'
                   }
                   target="_blank"
                   rel="noopener noreferrer"
@@ -124,8 +124,8 @@ const SettingsAbout = () => {
                 <a
                   href={
                     data.version.startsWith('develop-')
-                      ? 'https://github.com/fallenbagel/jellyseerr/commits/develop'
-                      : 'https://github.com/fallenbagel/jellyseerr/releases'
+                      ? 'https://github.com/seerr-team/seerr/commits/develop'
+                      : 'https://github.com/seerr-team/seerr/releases'
                   }
                   target="_blank"
                   rel="noopener noreferrer"
@@ -169,12 +169,12 @@ const SettingsAbout = () => {
           </List.Item>
           <List.Item title={intl.formatMessage(messages.githubdiscussions)}>
             <a
-              href="https://github.com/fallenbagel/jellyseerr/discussions"
+              href="https://github.com/seerr-team/seerr/discussions"
               target="_blank"
               rel="noreferrer"
               className="text-indigo-500 transition duration-300 hover:underline"
             >
-              https://github.com/fallenbagel/jellyseerr/discussions
+              https://github.com/seerr-team/seerr/discussions
             </a>
           </List.Item>
           <List.Item title="Discord">

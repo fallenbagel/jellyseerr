@@ -11,7 +11,7 @@ The web push notification agent enables you and your users to receive Jellyseerr
 This notification agent does not require any configuration, but is not enabled in Jellyseerr by default.
 
 :::warning
-Web push notifications require a secure connection to your Jellyseerr instance. Refer to the [Reverse Proxy](/extending-jellyseerr/reverse-proxy) documentation for more information.
+Web push notifications require a secure connection to your Jellyseerr instance. Refer to the [Reverse Proxy](/extending-seerr/reverse-proxy) documentation for more information.
 :::
 
 To set up web push notifications, simply enable the agent in **Settings → Notifications → Web Push**. You and your users will then be prompted to allow notifications in your web browser.

@@ -130,11 +130,7 @@ class JellyfinAPI extends ExternalAPI {
     const safeDeviceId =
       deviceId && deviceId.length > 0
         ? deviceId
-<<<<<<< HEAD
         : Buffer.from('BOT_seerr').toString('base64');
-=======
-        : Buffer.from(`BOT_seerr_fallback_${Date.now()}`).toString('base64');
->>>>>>> 908a08a8 (refactor: rename to Seerr)
 
     let authHeaderVal: string;
     if (authToken) {

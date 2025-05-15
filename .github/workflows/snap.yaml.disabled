@@ -45,7 +45,7 @@ jobs:
       - name: Set Up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Configure Git
-        run: git config --add safe.directory /data/parts/jellyseerr/src
+        run: git config --add safe.directory /data/parts/seerr/src
       - name: Build Snap Package
         uses: diddlesnaps/snapcraft-multiarch-action@v1
         id: build
@@ -54,7 +54,7 @@ jobs:
       - name: Upload Snap Package
         uses: actions/upload-artifact@v4
         with:
-          name: jellyseerr-snap-package-${{ matrix.architecture }}
+          name: seerr-snap-package-${{ matrix.architecture }}
           path: ${{ steps.build.outputs.snap }}
       - name: Review Snap Package
         uses: diddlesnaps/snapcraft-review-tools-action@v1

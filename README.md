@@ -2,14 +2,14 @@
 <img src="./public/logo_full.svg" alt="Seerr" style="margin: 20px 0;">
 </p>
 <p align="center">
-<img src="https://github.com/Fallenbagel/jellyseerr/actions/workflows/release.yml/badge.svg" alt="Seerr Release" />
-<img src="https://github.com/Fallenbagel/jellyseerr/actions/workflows/ci.yml/badge.svg" alt="Seerr CI">
+<img src="https://github.com/seerr-team/seerr/actions/workflows/release.yml/badge.svg" alt="Seerr Release" />
+<img src="https://github.com/seerr-team/seerr/actions/workflows/ci.yml/badge.svg" alt="Seerr CI">
 </p>
 <p align="center">
 <a href="https://discord.gg/ckbvBtDJgC"><img src="https://img.shields.io/discord/952656177924300932" alt="Discord"></a>
-<a href="https://hub.docker.com/r/fallenbagel/jellyseerr"><img src="https://img.shields.io/docker/pulls/fallenbagel/jellyseerr" alt="Docker pulls"></a>
+<a href="https://hub.docker.com/r/seerr-team/seerr"><img src="https://img.shields.io/docker/pulls/seerr-team/seerr" alt="Docker pulls"></a>
 <a href="http://translate.jellyseerr.dev/engage/jellyseerr/"><img src="http://translate.jellyseerr.dev/widget/jellyseerr/jellyseerr-frontend/svg-badge.svg" alt="Translation status" /></a>
-<a href="https://github.com/fallenbagel/jellyseerr/blob/develop/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/fallenbagel/jellyseerr"></a>
+<a href="https://github.com/seerr-team/seerr/blob/develop/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/seerr-team/seerr"></a>
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <a href="#contributors-"><img alt="All Contributors" src="https://img.shields.io/badge/all_contributors-69-orange.svg"/></a>
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
@@ -31,7 +31,7 @@
 - Mobile-friendly design, for when you need to approve requests on the go!
 - Support for watchlisting & blacklisting media.
 
-With more features on the way! Check out our [issue tracker](https://github.com/fallenbagel/jellyseerr/issues) to see the features which have already been requested.
+With more features on the way! Check out our [issue tracker](https://github.com/seerr-team/seerr/issues) to see the features which have already been requested.
 
 ## Getting Started
 
@@ -55,8 +55,8 @@ Nix: [Nixpkg](https://search.nixos.org/packages?channel=unstable&show=jellyseerr
 
 - Check out the [Seerr Documentation](https://docs.jellyseerr.dev) before asking for help. Your question might already be in the docs!
 - You can get support on [Discord](https://discord.gg/ckbvBtDJgC).
-- You can ask questions in the Help category of our [GitHub Discussions](https://github.com/fallenbagel/jellyseerr/discussions).
-- Bug reports and feature requests can be submitted via [GitHub Issues](https://github.com/fallenbagel/jellyseerr/issues).
+- You can ask questions in the Help category of our [GitHub Discussions](https://github.com/seerr-team/seerr/discussions).
+- Bug reports and feature requests can be submitted via [GitHub Issues](https://github.com/seerr-team/seerr/issues).
 
 ## API Documentation
 
@@ -64,15 +64,15 @@ You can access the API documentation from your local Seerr install at http://loc
 
 ## Community
 
-You can ask questions, share ideas, and more in [GitHub Discussions](https://github.com/fallenbagel/jellyseerr/discussions).
+You can ask questions, share ideas, and more in [GitHub Discussions](https://github.com/seerr-team/seerr/discussions).
 
 If you would like to chat with other members of our growing community, [join the Seerr Discord server](https://discord.gg/ckbvBtDJgC)!
 
-Our [Code of Conduct](https://github.com/fallenbagel/jellyseerr/blob/develop/CODE_OF_CONDUCT.md) applies to all Seerr community channels.
+Our [Code of Conduct](https://github.com/seerr-team/seerr/blob/develop/CODE_OF_CONDUCT.md) applies to all Seerr community channels.
 
 ## Contributing
 
-You can help improve Seerr too! Check out our [Contribution Guide](https://github.com/fallenbagel/jellyseerr/blob/develop/CONTRIBUTING.md) to get started.
+You can help improve Seerr too! Check out our [Contribution Guide](https://github.com/seerr-team/seerr/blob/develop/CONTRIBUTING.md) to get started.
 
 ## Contributors ✨
 

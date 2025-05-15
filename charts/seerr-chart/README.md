@@ -1,20 +1,20 @@
-# jellyseerr-chart
+# seerr-chart
 
 ![Version: 2.6.1](https://img.shields.io/badge/Version-2.6.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.7.1](https://img.shields.io/badge/AppVersion-2.7.1-informational?style=flat-square)
 
-Jellyseerr helm chart for Kubernetes
+Seerr helm chart for Kubernetes
 
-**Homepage:** <https://github.com/Fallenbagel/jellyseerr>
+**Homepage:** <https://github.com/seerr-team/seerr>
 
 ## Maintainers
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Jellyseerr |  | <https://github.com/Fallenbagel/jellyseerr> |
+| Seerr |  | <https://github.com/seerr-team/seerr> |
 
 ## Source Code
 
-* <https://github.com/Fallenbagel/jellyseerr/tree/main/charts/jellyseerr>
+* <https://github.com/seerr-team/seerr/tree/main/charts/seerr>
 
 ## Requirements
 
@@ -31,12 +31,12 @@ Kubernetes: `>=1.23.0-0`
 | config.persistence.name | string | `""` | Config name |
 | config.persistence.size | string | `"5Gi"` | Size of persistent disk |
 | config.persistence.volumeName | string | `""` | Name of the permanent volume to reference in the claim. Can be used to bind to existing volumes. |
-| extraEnv | list | `[]` | Environment variables to add to the jellyseerr pods |
-| extraEnvFrom | list | `[]` | Environment variables from secrets or configmaps to add to the jellyseerr pods |
+| extraEnv | list | `[]` | Environment variables to add to the Seerr pods |
+| extraEnvFrom | list | `[]` | Environment variables from secrets or configmaps to add to the Seerr pods |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.registry | string | `"ghcr.io"` |  |
-| image.repository | string | `"fallenbagel/jellyseerr"` |  |
+| image.repository | string | `"seerr-team/seerr"` |  |
 | image.sha | string | `""` |  |
 | image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion. |
 | imagePullSecrets | list | `[]` |  |

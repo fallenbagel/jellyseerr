@@ -39,7 +39,7 @@ Add the following to your `compose.yaml` to use Google's DNS:
 ```yaml
 ---
 services:
-  jellyseerr:
+  seerr:
     dns:
       - 8.8.8.8
 ```
@@ -47,7 +47,7 @@ or for Cloudflare's DNS:
 ```yaml
 ---
 services:
-  jellyseerr:
+  seerr:
     dns:
       - 1.1.1.1
 ```
@@ -55,7 +55,7 @@ or for Quad9's DNS:
 ```yaml
 ---
 services:
-  jellyseerr:
+  seerr:
     dns:
       - 9.9.9.9
 ```
@@ -97,13 +97,13 @@ You can try them all and see which one works for your network.
   </TabItem>
 </Tabs>
 
-### Option 2: Use Jellyseerr through a proxy
+### Option 2: Use Seerr through a proxy
 
-If you can't change your DNS servers or force IPV4 resolution, you can use Jellyseerr through a proxy.
+If you can't change your DNS servers or force IPV4 resolution, you can use Seerr through a proxy.
 
 In some places (like China), the ISP blocks not only the DNS resolution but also the connection to the TMDB API.
 
-You can configure Jellyseerr to use a proxy with the [HTTP(S) Proxy](/using-jellyseerr/settings/general#https-proxy) setting.
+You can configure Seerr to use a proxy with the [HTTP(S) Proxy](/using-seerr/settings/general#https-proxy) setting.
 
 ### Option 3: Force IPV4 resolution first
 
@@ -119,7 +119,7 @@ Make sure that your server can reach the TMDB API by running the following comma
   <TabItem value="docker-cli" label="Docker CLI">
 
 ```bash
-docker exec -it jellyseerr sh -c "apk update && apk add curl && curl -L https://api.themoviedb.org"
+docker exec -it seerr sh -c "apk update && apk add curl && curl -L https://api.themoviedb.org"
 ```
 
   </TabItem>
@@ -127,7 +127,7 @@ docker exec -it jellyseerr sh -c "apk update && apk add curl && curl -L https://
   <TabItem value="docker-compose" label="Docker Compose">
 
 ```bash
-docker compose exec jellyseerr sh -c "apk update && apk add curl && curl -L https://api.themoviedb.org"
+docker compose exec seerr sh -c "apk update && apk add curl && curl -L https://api.themoviedb.org"
 ```
 
   </TabItem>

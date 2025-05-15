@@ -1,4 +1,4 @@
-name: Jellyseerr Preview
+name: Seerr Preview
 
 on:
   push:
@@ -36,4 +36,4 @@ jobs:
             BUILD_VERSION=${{ steps.get_version.outputs.VERSION }}
             BUILD_DATE=${{ github.event.repository.updated_at }}
           tags: |
-            fallenbagel/jellyseerr:${{ steps.get_version.outputs.VERSION }}
+            seerr-team/seerr:${{ steps.get_version.outputs.VERSION }}

@@ -9,7 +9,7 @@ sidebar_position: 1
 ## Configuration
 
 :::info
-If the [Application URL](/using-jellyseerr/settings/general#application-title) setting is configured in **Settings → General**, Jellyseerr will explicitly set the origin server hostname when connecting to the SMTP host.
+If the [Application URL](/using-seerr/settings/general#application-title) setting is configured in **Settings → General**, Jellyseerr will explicitly set the origin server hostname when connecting to the SMTP host.
 :::
 
 ### Sender Name (optional)

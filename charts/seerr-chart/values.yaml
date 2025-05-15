@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   registry: ghcr.io
-  repository: fallenbagel/jellyseerr
+  repository: seerr-team/seerr
   pullPolicy: IfNotPresent
   # -- Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -37,9 +37,9 @@ probes:
   #  tcpSocket:
   #    port: http
 
-# -- Environment variables to add to the jellyseerr pods
+# -- Environment variables to add to the Seerr pods
 extraEnv: []
-# -- Environment variables from secrets or configmaps to add to the jellyseerr pods
+# -- Environment variables from secrets or configmaps to add to the Seerr pods
 extraEnvFrom: []
 
 serviceAccount:

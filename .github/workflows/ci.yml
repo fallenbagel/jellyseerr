@@ -1,4 +1,4 @@
-name: Jellyseerr CI
+name: Seerr CI
 
 on:
   pull_request:
@@ -83,8 +83,8 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            fallenbagel/jellyseerr
-            ghcr.io/${{ env.OWNER_LC }}/jellyseerr
+            seerr-team/seerr
+            ghcr.io/${{ env.OWNER_LC }}/seerr
           tags: |
             type=ref,event=branch
             type=sha,prefix=,suffix=,format=short
@@ -101,8 +101,8 @@ jobs:
             BUILD_VERSION=develop
             BUILD_DATE=${{ github.event.repository.updated_at }}
           outputs: |
-            type=image,push-by-digest=true,name=fallenbagel/jellyseerr,push=true
-            type=image,push-by-digest=true,name=ghcr.io/${{ env.OWNER_LC }}/jellyseerr,push=true
+            type=image,push-by-digest=true,name=seerr-team/seerr,push=true
+            type=image,push-by-digest=true,name=ghcr.io/${{ env.OWNER_LC }}/seerr,push=true
           cache-from: type=gha,scope=${{ matrix.platform }}
           cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
           provenance: false
@@ -135,16 +135,16 @@ jobs:
           OWNER: ${{ github.repository_owner }}
       - name: Create and push manifest
         run: |
-          docker manifest create fallenbagel/jellyseerr:develop \
-            --amend fallenbagel/jellyseerr@${{ needs.build.outputs.digest-amd64 }} \
-            --amend fallenbagel/jellyseerr@${{ needs.build.outputs.digest-arm64 }}
-          docker manifest push fallenbagel/jellyseerr:develop
+          docker manifest create seerr-team/seerr:develop \
+            --amend seerr-team/seerr@${{ needs.build.outputs.digest-amd64 }} \
+            --amend seerr-team/seerr@${{ needs.build.outputs.digest-arm64 }}
+          docker manifest push seerr-team/seerr:develop
 
           # GHCR manifest
-          docker manifest create ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop \
-            --amend ghcr.io/${{ env.OWNER_LC }}/jellyseerr@${{ needs.build.outputs.digest-amd64 }} \
-            --amend ghcr.io/${{ env.OWNER_LC }}/jellyseerr@${{ needs.build.outputs.digest-arm64 }}
-          docker manifest push ghcr.io/${{ env.OWNER_LC }}/jellyseerr:develop
+          docker manifest create ghcr.io/${{ env.OWNER_LC }}/seerr:develop \
+            --amend ghcr.io/${{ env.OWNER_LC }}/seerr@${{ needs.build.outputs.digest-amd64 }} \
+            --amend ghcr.io/${{ env.OWNER_LC }}/seerr@${{ needs.build.outputs.digest-arm64 }}
+          docker manifest push ghcr.io/${{ env.OWNER_LC }}/seerr:develop
 
   discord:
     name: Send Discord Notification
