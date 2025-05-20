@@ -251,7 +251,9 @@ const TvRequestModal = ({
         (request) =>
           request.is4k === is4k &&
           request.status !== MediaRequestStatus.DECLINED &&
-          request.status !== MediaRequestStatus.COMPLETED
+          request.status !== MediaRequestStatus.COMPLETED &&
+          (!settings.currentSettings.allowDuplicateRequests ||
+            request.requestedBy.id === user?.id)
       )
       .reduce((requestedSeasons, request) => {
         return [
@@ -356,11 +358,18 @@ const TvRequestModal = ({
         (request) =>
           request.is4k === is4k &&
           request.status !== MediaRequestStatus.DECLINED &&
-          request.status !== MediaRequestStatus.COMPLETED
+          request.status !== MediaRequestStatus.COMPLETED &&
+          (!settings.currentSettings.allowDuplicateRequests ||
+            request.requestedBy.id === user?.id)
       ).length > 0
     ) {
       data.mediaInfo.requests
-        .filter((request) => request.is4k === is4k)
+        .filter(
+          (request) =>
+            request.is4k === is4k &&
+            (!settings.currentSettings.allowDuplicateRequests ||
+              request.requestedBy.id === user?.id)
+        )
         .forEach((request) => {
           if (!seasonRequest) {
             seasonRequest = request.seasons.find(

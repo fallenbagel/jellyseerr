@@ -76,6 +76,26 @@ const RequestButton = ({
     (request) => request.status === MediaRequestStatus.PENDING && request.is4k
   );
 
+  // Check if the current user has any approved requests
+  const userHasApprovedRequest = useMemo(() => {
+    const approvedRequests = media?.requests.filter(
+      (request) =>
+        request.status === MediaRequestStatus.APPROVED &&
+        !request.is4k &&
+        request.requestedBy.id === user?.id
+    );
+    return approvedRequests && approvedRequests.length > 0;
+  }, [user, media?.requests]);
+  const userHasApproved4kRequest = useMemo(() => {
+    const approved4kRequests = media?.requests.filter(
+      (request) =>
+        request.status === MediaRequestStatus.APPROVED &&
+        request.is4k &&
+        request.requestedBy.id === user?.id
+    );
+    return approved4kRequests && approved4kRequests.length > 0;
+  }, [user, media?.requests]);
+
   // Current user's pending request, or the first pending request
   const activeRequest = useMemo(() => {
     return activeRequests && activeRequests.length > 0
@@ -270,7 +290,9 @@ const RequestButton = ({
   if (
     (!media ||
       media.status === MediaStatus.UNKNOWN ||
-      (media.status === MediaStatus.DELETED && !activeRequest)) &&
+      (media.status === MediaStatus.DELETED && !activeRequest) ||
+      (settings.currentSettings.allowDuplicateRequests &&
+        !userHasApprovedRequest)) &&
     hasPermission(
       [
         Permission.REQUEST,
@@ -315,7 +337,9 @@ const RequestButton = ({
   if (
     (!media ||
       media.status4k === MediaStatus.UNKNOWN ||
-      (media.status4k === MediaStatus.DELETED && !active4kRequest)) &&
+      (media.status4k === MediaStatus.DELETED && !active4kRequest) ||
+      (settings.currentSettings.allowDuplicateRequests &&
+        !userHasApproved4kRequest)) &&
     hasPermission(
       [
         Permission.REQUEST_4K,

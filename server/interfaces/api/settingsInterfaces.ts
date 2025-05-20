@@ -26,6 +26,7 @@ export interface PublicSettingsResponse {
   jellyfinServerName?: string;
   jellyfinForgotPasswordUrl?: string;
   initialized: boolean;
+  allowDuplicateRequests: boolean;
   applicationTitle: string;
   applicationUrl: string;
   hideAvailable: boolean;

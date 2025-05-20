@@ -64,6 +64,7 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   validationApplicationUrlTrailingSlash: 'URL must not end in a trailing slash',
   partialRequestsEnabled: 'Allow Partial Series Requests',
   enableSpecialEpisodes: 'Allow Special Episodes Requests',
+  allowDuplicateRequests: 'Allow Duplicate Requests',
   locale: 'Display Language',
   youtubeUrl: 'YouTube URL',
   validationUrl: 'You must provide a valid URL',
@@ -171,6 +172,7 @@ const SettingsMain = () => {
             blacklistedTagsLimit: data?.blacklistedTagsLimit || 50,
             partialRequestsEnabled: data?.partialRequestsEnabled,
             enableSpecialEpisodes: data?.enableSpecialEpisodes,
+            allowDuplicateRequests: data?.allowDuplicateRequests,
             cacheImages: data?.cacheImages,
             youtubeUrl: data?.youtubeUrl,
           }}
@@ -191,6 +193,7 @@ const SettingsMain = () => {
                 blacklistedTagsLimit: values.blacklistedTagsLimit,
                 partialRequestsEnabled: values.partialRequestsEnabled,
                 enableSpecialEpisodes: values.enableSpecialEpisodes,
+                allowDuplicateRequests: values.allowDuplicateRequests,
                 cacheImages: values.cacheImages,
                 youtubeUrl: values.youtubeUrl,
               });
@@ -528,6 +531,29 @@ const SettingsMain = () => {
                         setFieldValue(
                           'enableSpecialEpisodes',
                           !values.enableSpecialEpisodes
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label
+                    htmlFor="allowDuplicateRequests"
+                    className="checkbox-label"
+                  >
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.allowDuplicateRequests)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      type="checkbox"
+                      id="allowDuplicateRequests"
+                      name="allowDuplicateRequests"
+                      onChange={() => {
+                        setFieldValue(
+                          'allowDuplicateRequests',
+                          !values.allowDuplicateRequests
                         );
                       }}
                     />

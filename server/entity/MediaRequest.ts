@@ -168,7 +168,11 @@ export class MediaRequest {
       })
       .getMany();
 
-    if (existing && existing.length > 0) {
+    if (
+      existing &&
+      existing.length > 0 &&
+      !settings.main.allowDuplicateRequests
+    ) {
       // If there is an existing movie request that isn't declined, don't allow a new one.
       if (
         requestBody.mediaType === MediaType.MOVIE &&
@@ -393,13 +397,16 @@ export class MediaRequest {
       // We need to check existing requests on this title to make sure we don't double up on seasons that were
       // already requested. In the case they were, we just throw out any duplicates but still approve the request.
       // (Unless there are no seasons, in which case we abort)
+      // When allowDuplicateRequests is enabled, we only check the requests for the current user.
       if (media.requests) {
         existingSeasons = media.requests
           .filter(
             (request) =>
               request.is4k === requestBody.is4k &&
               request.status !== MediaRequestStatus.DECLINED &&
-              request.status !== MediaRequestStatus.COMPLETED
+              request.status !== MediaRequestStatus.COMPLETED &&
+              (!settings.main.allowDuplicateRequests ||
+                request.requestedBy.id === user.id)
           )
           .reduce((seasons, request) => {
             const combinedSeasons = request.seasons.map(

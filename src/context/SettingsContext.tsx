@@ -10,6 +10,7 @@ export interface SettingsContextProps {
 
 const defaultSettings = {
   initialized: false,
+  allowDuplicateRequests: false,
   applicationTitle: 'Jellyseerr',
   applicationUrl: '',
   hideAvailable: false,
