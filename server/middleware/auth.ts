@@ -27,9 +27,12 @@ export const checkUser: Middleware = async (req, _res, next) => {
   }
 
   if (proxyIP && proxyIP.indexOf('.') != -1) {
-    trustedProxy = settings.network.trustedProxies.v4.includes(proxyIP);
+    trustedProxy =
+      proxyIP == '127.0.0.1' ||
+      settings.network.trustedProxies.v4.includes(proxyIP);
   } else if (proxyIP) {
-    trustedProxy = settings.network.trustedProxies.v6.includes(proxyIP);
+    trustedProxy =
+      proxyIP == '::1' || settings.network.trustedProxies.v6.includes(proxyIP);
   }
 
   if (req.header('X-API-Key') === settings.main.apiKey) {
