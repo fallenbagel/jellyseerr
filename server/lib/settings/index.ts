@@ -92,7 +92,7 @@ class Settings {
         instances: [],
         agentTemplates: {
           email: {
-            enabled: false,
+            enabled: true,
             name: '',
             id: 0,
             agent: NotificationAgentKey.EMAIL,
@@ -109,7 +109,7 @@ class Settings {
             },
           },
           discord: {
-            enabled: false,
+            enabled: true,
             types: 0,
             name: '',
             id: 0,
@@ -121,7 +121,7 @@ class Settings {
             },
           },
           slack: {
-            enabled: false,
+            enabled: true,
             types: 0,
             name: '',
             id: 0,
@@ -131,7 +131,7 @@ class Settings {
             },
           },
           telegram: {
-            enabled: false,
+            enabled: true,
             types: 0,
             name: '',
             id: 0,
@@ -144,7 +144,7 @@ class Settings {
             },
           },
           pushbullet: {
-            enabled: false,
+            enabled: true,
             types: 0,
             name: '',
             id: 0,
@@ -154,7 +154,7 @@ class Settings {
             },
           },
           pushover: {
-            enabled: false,
+            enabled: true,
             types: 0,
             name: '',
             id: 0,
@@ -166,7 +166,7 @@ class Settings {
             },
           },
           webhook: {
-            enabled: false,
+            enabled: true,
             types: 0,
             name: '',
             id: 0,
@@ -177,14 +177,14 @@ class Settings {
             },
           },
           webpush: {
-            enabled: false,
+            enabled: true,
             name: '',
             id: 0,
             agent: NotificationAgentKey.WEBPUSH,
             options: {},
           },
           gotify: {
-            enabled: false,
+            enabled: true,
             types: 0,
             name: '',
             id: 0,
@@ -196,7 +196,7 @@ class Settings {
             },
           },
           ntfy: {
-            enabled: false,
+            enabled: true,
             types: 0,
             name: '',
             id: 0,
