@@ -146,3 +146,26 @@ In a PowerShell window:
 
 If you can't get a response, then your server can't reach the TMDB API.
 This is usually due to a network configuration issue or a firewall blocking the connection.
+
+## Account does not have admin privileges
+
+If your admin account no longer has admin privileges, this is typically because your Jellyfin/Emby user ID has changed on the server side.
+
+This can happen if you have a new installation of Jellyfin/Emby or if you have changed the user ID of your admin account.
+
+### Solution: Reset admin access
+
+1. Back up your `settings.json` file (located in your Jellyseerr data directory)
+2. Stop the Jellyseerr container/service
+3. Delete the `settings.json` file
+4. Start Jellyseerr again
+5. This will force the setup page to appear
+6. Go through the setup process with the same login details
+7. You can skip the services setup
+8. Once you reach the discover page, stop Jellyseerr
+9. Restore your backed-up `settings.json` file
+10. Start Jellyseerr again
+
+This process should restore your admin privileges while preserving your settings.
+
+If you still encounter issues, please reach out on our support channels.
