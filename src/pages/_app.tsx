@@ -99,6 +99,14 @@ const loadLocaleData = (locale: AvailableLocale): Promise<any> => {
   }
 };
 
+const API_BASE = process.env.NEXT_PUBLIC_BASE_PATH || '';
+axios.interceptors.request.use((config) => {
+  if (config.url?.startsWith('/')) {
+    config.url = `${API_BASE}${config.url}`;
+  }
+  return config;
+});
+
 // Custom types so we can correctly type our GetInitialProps function
 // with our combined user prop
 // This is specific to _app.tsx. Other pages will not need to do this!
@@ -185,17 +193,9 @@ const CoreApp: Omit<NextAppComponentType, 'origGetInitialProps'> = ({
   return (
     <SWRConfig
       value={{
-        fetcher: async (url) => {
-          const API_BASE = process.env.NEXT_PUBLIC_BASE_PATH || '';
-          const fullUrl =
-            url.startsWith('/') && !url.startsWith(API_BASE)
-              ? `${API_BASE}${url}`
-              : url;
-          const res = await axios.get(fullUrl);
-          return res.data;
-        },
+        fetcher: async (url) => axios.get(url).then((res) => res.data),
         fallback: {
-          [`${process.env.NEXT_PUBLIC_BASE_PATH}/api/v1/auth/me`]: user,
+          [`${API_BASE}/api/v1/auth/me`]: user,
         },
       }}
     >
@@ -258,7 +258,6 @@ CoreApp.getInitialProps = async (initialProps) => {
     newPlexLogin: true,
     youtubeUrl: '',
   };
-  const API_BASE = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
   if (ctx.res) {
     // Check if app is initialized and redirect if necessary
