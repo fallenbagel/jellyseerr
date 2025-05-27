@@ -139,9 +139,18 @@ const IssueDetails = () => {
     }
   };
 
-  const updateIssueStatus = async (newStatus: 'open' | 'resolved') => {
+  const updateIssueStatus = async (
+    newStatus: 'open' | 'resolved',
+    newMessage?: string
+  ) => {
     try {
-      await axios.post(`/api/v1/issue/${issueData.id}/${newStatus}`);
+      if (newMessage !== undefined) {
+        await axios.post(`/api/v1/issue/${issueData.id}/${newStatus}`, {
+          message: newMessage,
+        });
+      } else {
+        await axios.post(`/api/v1/issue/${issueData.id}/${newStatus}`);
+      }
 
       addToast(intl.formatMessage(messages.toaststatusupdated), {
         appearance: 'success',
@@ -523,11 +532,12 @@ const IssueDetails = () => {
                                   type="button"
                                   buttonType="danger"
                                   onClick={async () => {
-                                    await updateIssueStatus('resolved');
-
-                                    if (values.message) {
-                                      handleSubmit();
-                                    }
+                                    values.message
+                                      ? updateIssueStatus(
+                                          'resolved',
+                                          values.message
+                                        )
+                                      : updateIssueStatus('resolved');
                                   }}
                                 >
                                   <CheckCircleIcon />
