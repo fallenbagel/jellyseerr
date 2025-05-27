@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { getBasedPath } from '@app/utils/navigationUtil';
 import type { Nullable } from '@app/utils/typeHelpers';
 import { useRouter } from 'next/router';
 import type { Dispatch, SetStateAction } from 'react';
@@ -36,7 +35,7 @@ const useSearchInput = (): SearchObject => {
     if (debouncedValue !== '' && searchOpen) {
       if (router.pathname.startsWith('/search')) {
         router.replace({
-          pathname: getBasedPath(router.pathname),
+          pathname: router.pathname,
           query: {
             ...router.query,
             query: debouncedValue,
@@ -46,7 +45,7 @@ const useSearchInput = (): SearchObject => {
         setLastRoute(router.asPath);
         router
           .push({
-            pathname: getBasedPath('/search'),
+            pathname: '/search',
             query: { query: debouncedValue },
           })
           .then(() => window.scrollTo(0, 0));
@@ -67,14 +66,9 @@ const useSearchInput = (): SearchObject => {
       !searchOpen
     ) {
       if (lastRoute) {
-        const route =
-          typeof lastRoute === 'string'
-            ? getBasedPath(lastRoute)
-            : getBasedPath(lastRoute.pathname || '/');
-
-        router.push(route).then(() => window.scrollTo(0, 0));
+        router.push(lastRoute).then(() => window.scrollTo(0, 0));
       } else {
-        router.replace(getBasedPath('/')).then(() => window.scrollTo(0, 0));
+        router.replace('/').then(() => window.scrollTo(0, 0));
       }
     }
   }, [searchOpen]);

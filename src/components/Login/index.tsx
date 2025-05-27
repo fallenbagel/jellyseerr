@@ -45,6 +45,8 @@ const Login = () => {
     settings.currentSettings.mediaServerLogin
   );
 
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
   // Effect that is triggered when the `authToken` comes back from the Plex OAuth
   // We take the token and attempt to sign in. If we get a success message, we will
   // ask swr to revalidate the user which _should_ come back with a valid user.
@@ -130,7 +132,7 @@ const Login = () => {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/os_icon.svg"
+              src={basePath + '/os_icon.svg'}
               alt={settings.currentSettings.applicationTitle}
               className="mr-2 h-5"
             />

@@ -58,7 +58,6 @@ const useDiscover = <
 ): DiscoverResult<T, S> => {
   const settings = useSettings();
   const { hasPermission } = useUser();
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   const { data, error, size, setSize, isValidating, mutate } = useSWRInfinite<
     BaseSearchResult<T> & S
   >(
@@ -79,9 +78,7 @@ const useDiscover = <
         )
         .join('&');
 
-      const fullEndpoint = endpoint.startsWith('/')
-        ? `${basePath}${endpoint}`
-        : endpoint;
+      const fullEndpoint = endpoint.startsWith('/') ? `${endpoint}` : endpoint;
       return `${fullEndpoint}?${finalQueryString}`;
     },
     {

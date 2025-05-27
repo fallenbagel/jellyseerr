@@ -66,7 +66,7 @@ const Setup = () => {
     setIsUpdating(false);
     if (response.data.initialized) {
       await axios.post('/api/v1/settings/main', { locale });
-      mutate(getBasedPath('/api/v1/settings/public'));
+      mutate('/api/v1/settings/public');
 
       router.push('/');
     }
@@ -75,9 +75,9 @@ const Setup = () => {
   const validateLibraries = useCallback(async () => {
     try {
       const endpointMap: Record<MediaServerType, string> = {
-        [MediaServerType.JELLYFIN]: getBasedPath('/api/v1/settings/jellyfin'),
-        [MediaServerType.EMBY]: getBasedPath('/api/v1/settings/jellyfin'),
-        [MediaServerType.PLEX]: getBasedPath('/api/v1/settings/plex'),
+        [MediaServerType.JELLYFIN]: '/api/v1/settings/jellyfin',
+        [MediaServerType.EMBY]: '/api/v1/settings/jellyfin',
+        [MediaServerType.PLEX]: '/api/v1/settings/plex',
         [MediaServerType.NOT_CONFIGURED]: '',
       };
 

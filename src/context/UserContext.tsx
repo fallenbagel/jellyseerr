@@ -32,7 +32,7 @@ export const UserContext = ({ initialUser, children }: UserContextProps) => {
       routing.current = true;
       location.href = `${API_BASE}/login`;
     }
-  }, [router, user, error]);
+  }, [router, user, error, API_BASE]);
 
   return <>{children}</>;
 };
