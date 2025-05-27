@@ -68,7 +68,7 @@ const Setup = () => {
       await axios.post('/api/v1/settings/main', { locale });
       mutate('/api/v1/settings/public');
 
-      router.push('/');
+      router.push(getBasedPath('/'));
     }
   };
 

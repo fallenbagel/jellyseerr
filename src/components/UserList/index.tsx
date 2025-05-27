@@ -718,7 +718,7 @@ const UserList = () => {
                   className="mr-2"
                   onClick={() =>
                     router.push(
-                      '/users/[userId]/settings',
+                      getBasedPath('/users/[userId]/settings'),
                       `/users/${user.id}/settings`
                     )
                   }
