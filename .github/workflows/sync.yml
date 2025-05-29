@@ -1,0 +1,22 @@
+name: 'Sync'
+
+on:
+  schedule:
+    - cron: '0 13 * * 1'
+
+jobs:
+  sync_upstream:
+    name: Sync fork with upstream
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Sync fork with upstream
+      uses: dabreadman/sync-upstream-repo@v1.0.0.b
+      with:
+        # URL of gitHub public upstream repo
+        upstream_repo: "https://github.com/fallenbagel/jellyseerr.git"
+        # Branch to merge from upstream (defaults to downstream branch)
+        upstream_branch: develop
+        # Branch to merge into downstream
+        downstream_branch: develop
+        # GitHub Bot token
+        token: ${{ secrets.GITHUB_TOKEN }}
