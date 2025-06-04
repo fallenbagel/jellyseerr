@@ -51,8 +51,6 @@ const DiscoverMovies = () => {
 
   const preparedFilters = prepareFilterValues(router.query);
 
-  console.log('DiscoverMovies preparedFilters:', preparedFilters);
-
   const {
     isLoadingInitialData,
     isEmpty,
