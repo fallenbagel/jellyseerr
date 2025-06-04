@@ -1183,7 +1183,7 @@
   "i18n.collection": "Sammlung",
   "components.Discover.FilterSlideover.tmdbuservotecount": "Anzahl an TMDB-Benutzerbewertungen",
   "components.Settings.RadarrModal.tagRequestsInfo": "Füge automatisch ein Tag hinzu mit der ID und dem Namen des anfordernden Nutzers",
-  "components.MovieDetails.imdbuserscore": "IMDB Nutzerbewertung – Stimmen: {formattedCount}",
+  "components.MovieDetails.imdbuserscore": "IMDB Nutzer Bewertung",
   "components.Settings.SonarrModal.tagRequests": "Tag Anforderungen",
   "components.Discover.FilterSlideover.voteCount": "Anzahl Abstimmungen zwischen {minValue} und {maxValue}",
   "components.Settings.SonarrModal.tagRequestsInfo": "Füge automatisch einen zusätzlichen Tag mit der ID & Namen des anfordernden Nutzers",

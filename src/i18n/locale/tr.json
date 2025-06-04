@@ -517,7 +517,7 @@
   "components.RequestModal.requestApproved": "<strong>{title}</strong> için gönderdiğiniz talep onaylandı!",
   "components.Settings.Notifications.NotificationsGotify.toastGotifyTestSending": "Gotify deneme bildirimi gönderiliyor…",
   "components.Settings.Notifications.NotificationsGotify.validationTypes": "En azından bir adet bildirim türü seçmelisiniz",
-  "components.MovieDetails.imdbuserscore": "IMDB Kullanıcı Puanı – oylar: {formattedCount}",
+  "components.MovieDetails.imdbuserscore": "IMDB Kullanıcı Puanı",
   "components.MovieDetails.overviewunavailable": "Özet mevcut değil.",
   "components.MovieDetails.productioncountries": "Yapımcı {countryCount, plural, one {Ülke} other {Ülkeler}}",
   "components.MovieDetails.streamingproviders": "İçeriğin Erişilebilir Olduğu Platformlar",

@@ -1213,7 +1213,7 @@
   "components.Discover.CreateSlider.validationTitlerequired": "يجب تقديم عنوان.",
   "components.Discover.DiscoverMovieKeyword.keywordMovies": "{keywordTitle} الأفلام",
   "components.Discover.CreateSlider.providetmdbkeywordid": "قم بتوفير معرّف كلمات بحث رئيسية من (TMDB)",
-  "components.MovieDetails.imdbuserscore": "تقييم مستخدمي IMDB – {formattedCount} تصويت",
+  "components.MovieDetails.imdbuserscore": "تقييم مستخدمين IMDB",
   "components.Settings.Notifications.NotificationsPushover.sound": "صوت التنبيه",
   "components.UserProfile.UserSettings.UserNotificationSettings.deviceDefault": "الجهاز الإفتراضي",
   "components.Settings.SonarrModal.animeSeriesType": "نوع مسلسل الإنمي",

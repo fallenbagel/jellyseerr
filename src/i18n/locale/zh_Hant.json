@@ -1215,7 +1215,7 @@
   "components.Settings.RadarrModal.tagRequestsInfo": "自動新增帶有請求者的用户 ID 和顯示名稱的附加標籤",
   "components.UserProfile.UserSettings.UserNotificationSettings.sound": "通知提示聲",
   "i18n.collection": "合集",
-  "components.MovieDetails.imdbuserscore": "IMDB 用戶評分 – {formattedCount} 票",
+  "components.MovieDetails.imdbuserscore": "IMDB 用戶評分",
   "components.UserProfile.UserSettings.UserNotificationSettings.deviceDefault": "預設裝置",
   "components.Settings.SonarrModal.animeSeriesType": "動漫劇集類型"
 }

@@ -1230,7 +1230,7 @@
   "components.ManageSlideOver.manageModalRemoveMediaWarning": "* 这将不可逆地从{arr}中删除{mediaType}，包括所有文件。",
   "components.ManageSlideOver.removearr4k": "移除4K {arr}",
   "components.MovieDetails.downloadstatus": "下载状态",
-  "components.MovieDetails.imdbuserscore": "IMDB用户评分 – {formattedCount} 票",
+  "components.MovieDetails.imdbuserscore": "IMDB用户评分",
   "components.MovieDetails.openradarr": "在Radarr中打开电影",
   "components.MovieDetails.play": "播放{mediaServerName}",
   "components.MovieDetails.play4k": "播放 4K {mediaServerName}",

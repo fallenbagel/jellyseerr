@@ -357,7 +357,7 @@
   "components.Discover.updatesuccess": "Setări de personalizare a descoperirii actualizate.",
   "components.Discover.tmdbstudio": "Studio de pe TMDB",
   "components.PermissionEdit.requestDescription": "Acordați permisiunea de a face cereri pentru seriale non-4K.",
-  "components.MovieDetails.imdbuserscore": "Scor Utilizatori IMDB – voturi: {formattedCount}",
+  "components.MovieDetails.imdbuserscore": "Scor Utilizatori IMDB",
   "components.PermissionEdit.request4kTvDescription": "Acordați permisiunea de a face cereri pentru seriale 4K.",
   "components.PermissionEdit.requestMovies": "Solicită Filme",
   "components.PermissionEdit.requestTvDescription": "Acordați permisiunea de a trimite solicitări pentru seriale non-4K.",

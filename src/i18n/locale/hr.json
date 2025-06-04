@@ -1188,7 +1188,7 @@
   "components.Settings.SettingsMain.originallanguage": "Jezik otkrivanja",
   "components.Discover.tmdbstudio": "TMDB studio",
   "components.Settings.SettingsMain.generalsettings": "Opće postavke",
-  "components.MovieDetails.imdbuserscore": "IMDB ocjena korisnika – {formattedCount} glasova",
+  "components.MovieDetails.imdbuserscore": "IMDB ocjena korisnika",
   "components.Discover.tmdbtvstreamingservices": "TMDB streaming usluge za TV",
   "components.Settings.SettingsMain.apikey": "API ključ",
   "components.Settings.SettingsMain.cacheImages": "Aktiviraj predmemoriranje slika",

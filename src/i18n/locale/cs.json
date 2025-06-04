@@ -1219,7 +1219,7 @@
   "components.Settings.SonarrModal.tagRequestsInfo": "Automatické přidání dodatočné značky s ID uživatele a zobrazovaným jménem žadatele",
   "components.Discover.tmdbtvstreamingservices": "Televizní streamovací služby TMDB",
   "components.Settings.Notifications.NotificationsPushover.sound": "Zvuk upozornění",
-  "components.MovieDetails.imdbuserscore": "Uživatelské skóre IMDB – hlasy: {formattedCount}",
+  "components.MovieDetails.imdbuserscore": "Uživatelské skóre IMDB",
   "components.UserProfile.UserSettings.UserNotificationSettings.sound": "Zvuk upozornění",
   "components.Settings.SonarrModal.animeSeriesType": "Typ anime série",
   "components.Settings.Notifications.NotificationsPushover.deviceDefault": "Výchozí zařízení",

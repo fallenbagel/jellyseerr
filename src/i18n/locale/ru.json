@@ -1220,7 +1220,7 @@
   "components.Login.validationusernamerequired": "Необходимо имя пользователя",
   "components.ManageSlideOver.removearr": "Удалить из {arr}",
   "components.ManageSlideOver.removearr4k": "Удалить из 4К {arr}",
-  "components.MovieDetails.imdbuserscore": "Оценка пользователей IMDB – голосов: {formattedCount}",
+  "components.MovieDetails.imdbuserscore": "Оценка пользователей IMDB",
   "components.MovieDetails.openradarr": "Открыть фильм в Radarr",
   "components.MovieDetails.play": "Запустить на {mediaServerName}",
   "components.MovieDetails.play4k": "Запустить 4К на {mediaServerName}",

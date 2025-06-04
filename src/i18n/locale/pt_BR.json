@@ -1227,7 +1227,7 @@
   "components.ManageSlideOver.removearr": "Remover de {arr}",
   "components.ManageSlideOver.removearr4k": "Remover de {arr} 4K",
   "components.MovieDetails.downloadstatus": "Status de download",
-  "components.MovieDetails.imdbuserscore": "Avaliação de usuário no IMDB – votos: {formattedCount}",
+  "components.MovieDetails.imdbuserscore": "Avaliação de usuário no IMDB",
   "components.MovieDetails.openradarr": "Abrir filme no Radarr",
   "components.Settings.Notifications.NotificationsPushover.sound": "Som de notificação",
   "components.Login.emailtooltip": "Endereço não precisa ser associado à sua instância de {mediaServerName}.",

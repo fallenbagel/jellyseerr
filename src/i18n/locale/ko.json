@@ -1214,5 +1214,5 @@
   "components.QuotaSelector.seasons": "{count, plural, one {시즌} other {시즌}}",
   "components.RequestModal.QuotaDisplay.requestsremaining": "{remaining, plural, =0 {없음} other {<strong>#</strong>개의}} {type} {remaining, plural, one {요청} other {요청}} 남음",
   "components.Settings.SettingsJobsCache.editJobScheduleSelectorHours": "매 {jobScheduleHours, plural, one {시간} other {{jobScheduleHours} 시간}}",
-  "components.MovieDetails.imdbuserscore": "IMDB 사용자 점수 – {formattedCount} 표"
+  "components.MovieDetails.imdbuserscore": "IMDB 사용자 점수"
 }

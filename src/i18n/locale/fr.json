@@ -1139,7 +1139,7 @@
   "components.Login.validationhostformat": "URL valide requise",
   "components.Login.validationhostrequired": "{mediaServerName} URL requise",
   "components.Login.validationusernamerequired": "Nom d'utilisateur requis",
-  "components.MovieDetails.imdbuserscore": "Note des utilisateurs IMDB – votes: {formattedCount}",
+  "components.MovieDetails.imdbuserscore": "Note des utilisateurs IMDB",
   "components.ManageSlideOver.manageModalRemoveMediaWarning": "* Cela supprimera irréversiblement ce(tte) {mediaType} de {arr}, y compris tous les fichiers.",
   "components.ManageSlideOver.removearr": "Supprimer de {arr}",
   "components.ManageSlideOver.removearr4k": "Supprimer de {arr} 4K",
