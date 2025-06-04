@@ -1214,7 +1214,7 @@
   "components.Settings.SonarrModal.tagRequestsInfo": "Tilføj automatisk et ekstra tag med forespørgerens bruger ID og viste navn",
   "i18n.collection": "Samling",
   "components.Settings.RadarrModal.tagRequestsInfo": "Tilføj automatisk et ekstra tag med forespørgerens bruger id og viste navn",
-  "components.MovieDetails.imdbuserscore": "IMDB Bruger Score",
+  "components.MovieDetails.imdbuserscore": "IMDB Bruger Score – {formattedCount} stemmer",
   "components.Settings.SonarrModal.animeSeriesType": "Anime Serie Type",
   "components.Settings.SonarrModal.seriesType": "Serie Type",
   "components.Settings.Notifications.NotificationsPushover.deviceDefault": "Enhedsstandard",

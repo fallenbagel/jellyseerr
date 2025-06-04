@@ -778,7 +778,7 @@
   "components.ManageSlideOver.opentautulli": "Ireki Tautullin",
   "components.ManageSlideOver.removearr": "Kendu {arr}-etik",
   "components.MovieDetails.addtowatchlist": "Gehitu jarraipen zerrendara",
-  "components.MovieDetails.imdbuserscore": "IMDB erabiltzaileen puntuazioa",
+  "components.MovieDetails.imdbuserscore": "IMDB erabiltzaileen puntuazioa – {formattedCount} boto",
   "components.MovieDetails.markavailable": "Markatu eskuragarri gisa",
   "components.MovieDetails.openradarr4k": "Ireki filma 4K Radarr-en",
   "components.MovieDetails.studio": "{studioCount, plural, one {Estudio} other {Estudio}}",

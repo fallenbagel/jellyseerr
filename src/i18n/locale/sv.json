@@ -1212,7 +1212,7 @@
   "components.Discover.FilterSlideover.tmdbuservotecount": "Antal röster från TMDB-användare",
   "components.Discover.FilterSlideover.voteCount": "Antal röster mellan {minValue} och {maxValue}",
   "components.Settings.RadarrModal.tagRequests": "Tagga förfrågningar",
-  "components.MovieDetails.imdbuserscore": "IMDB-användarbetyg",
+  "components.MovieDetails.imdbuserscore": "IMDB-användarbetyg – röster: {formattedCount}",
   "components.Settings.SonarrModal.tagRequests": "Tagga förfrågningar",
   "components.Settings.RadarrModal.tagRequestsInfo": "Lägg automatiskt till en extra tagg med användarens ID och visningsnamn för den som gjort förfrågan",
   "components.Settings.SonarrModal.tagRequestsInfo": "Lägg automatiskt till en extra tagg med användarens ID och visningsnamn för den som gjort förfrågan",

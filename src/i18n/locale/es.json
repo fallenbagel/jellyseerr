@@ -1185,7 +1185,7 @@
   "i18n.collection": "Colección",
   "components.Settings.RadarrModal.tagRequestsInfo": "Añadir automáticamente una etiqueta adicional con el nombre de usuario y el nombre para mostrar del solicitante",
   "components.Settings.SonarrModal.tagRequestsInfo": "Añadir automáticamente una etiqueta adicional con el nombre de usuario y el nombre para mostrar del solicitante",
-  "components.MovieDetails.imdbuserscore": "Puntuación de los usuarios de IMDB",
+  "components.MovieDetails.imdbuserscore": "Puntuación de los usuarios de IMDB – votos: {formattedCount}",
   "components.Layout.UserWarnings.passwordRequired": "Se requiere una contraseña.",
   "components.Login.credentialerror": "El usuario o contraseña es incorrecto.",
   "components.Login.initialsignin": "Conectar",

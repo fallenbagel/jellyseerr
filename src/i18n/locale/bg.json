@@ -458,7 +458,7 @@
   "components.RequestModal.requesterror": "Нещо се обърка при изпращане на заявката.",
   "components.Settings.Notifications.pgpPasswordTip": "Подписвайте шифровани имейл съобщения с помощта на <OpenPgpLink>OpenPGP</OpenPgpLink>",
   "components.RequestList.RequestItem.failedretry": "Нещо се обърка при повторен опит за заявка.",
-  "components.MovieDetails.imdbuserscore": "IMDB потребителска оценка",
+  "components.MovieDetails.imdbuserscore": "IMDB потребителска оценка – {formattedCount} гласа",
   "components.RequestButton.decline4krequests": "Отхвърляне {requestCount, plural, one {заявка} other {{requestCount} заявки}}",
   "components.RequestButton.declinerequest4k": "Отказ на 4К заявка",
   "components.Settings.Notifications.NotificationsLunaSea.profileName": "Профилно име",

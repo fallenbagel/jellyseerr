@@ -1257,7 +1257,7 @@
   "components.Login.validationusernamerequired": "Gebruikersnaam vereist",
   "components.ManageSlideOver.removearr4k": "Verwijderen van 4K-{arr}",
   "components.MovieDetails.downloadstatus": "Downloadstatus",
-  "components.MovieDetails.imdbuserscore": "Gebruikersbeoordeling IMDB",
+  "components.MovieDetails.imdbuserscore": "Gebruikersbeoordeling IMDB – stemmen: {formattedCount}",
   "components.MovieDetails.openradarr": "Film openen in Radarr",
   "components.MovieDetails.play": "Afspelen op {mediaServerName}",
   "components.MovieDetails.play4k": "Afspelen op {mediaServerName} in 4K",

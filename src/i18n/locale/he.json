@@ -264,7 +264,7 @@
   "components.MovieDetails.cast": "ליהוק",
   "components.MovieDetails.digitalrelease": "מהדורה דיגיטלית",
   "components.MovieDetails.downloadstatus": "מצב הורדה",
-  "components.MovieDetails.imdbuserscore": "דירוג משתמש ב-IMDB",
+  "components.MovieDetails.imdbuserscore": "IMDB उपयोगकर्ता स्कोर – मत: {formattedCount}",
   "components.MovieDetails.mark4kavailable": "סמן כזמין באיכות 4K",
   "components.MovieDetails.markavailable": "סמן כזמין",
   "components.MovieDetails.openradarr": "הפעל סרט ב-Radarr",

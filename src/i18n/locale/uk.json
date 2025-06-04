@@ -1134,7 +1134,7 @@
   "components.Login.username": "Ім'я користувача",
   "components.ManageSlideOver.removearr4k": "Видалити з 4K {arr}",
   "components.MovieDetails.downloadstatus": "Статус завантаження",
-  "components.MovieDetails.imdbuserscore": "Оцінка користувачів IMDB",
+  "components.MovieDetails.imdbuserscore": "Оцінка користувачів IMDB – голосів: {formattedCount}",
   "components.MovieDetails.openradarr4k": "Відкрити фільм у 4К Radarr",
   "components.Selector.searchKeywords": "Ключові слова пошуку…",
   "components.Selector.searchStudios": "Пошук студій…",

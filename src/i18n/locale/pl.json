@@ -1274,7 +1274,7 @@
   "components.Settings.jellyfinSyncFailedNoLibrariesFound": "Nie znaleziono żadnych bibliotek",
   "components.Discover.FilterSlideover.activefilters": "{count, plural, one {# Aktywny filtr} other {# Aktywne filtry}}",
   "components.Login.hostname": "{mediaServerName} URL",
-  "components.MovieDetails.imdbuserscore": "Ocena użytkowników IMDB",
+  "components.MovieDetails.imdbuserscore": "Ocena użytkowników IMDB – głosy: {formattedCount}",
   "components.RequestCard.tmdbid": "TMDB ID",
   "components.RequestCard.tvdbid": "TheTVDB ID",
   "components.RequestList.RequestItem.profileName": "Profil",

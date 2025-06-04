@@ -1160,7 +1160,7 @@
   "components.ManageSlideOver.removearr4k": "Rimuovi da 4K {arr}",
   "components.MovieDetails.addtowatchlist": "Aggiungi alla lista di visione",
   "components.MovieDetails.downloadstatus": "Stato del download",
-  "components.MovieDetails.imdbuserscore": "Punteggio utente IMDb",
+  "components.MovieDetails.imdbuserscore": "Punteggio degli utenti IMDB – voti: {formattedCount}",
   "components.MovieDetails.openradarr": "Apri il film in Radarr",
   "components.MovieDetails.removefromwatchlist": "Rimuovi dalla lista di visione",
   "components.MovieDetails.rtaudiencescore": "Punteggio del pubblico di Rotten Tomatoes",
