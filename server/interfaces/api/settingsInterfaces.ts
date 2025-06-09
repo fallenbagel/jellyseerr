@@ -29,6 +29,7 @@ export interface PublicSettingsResponse {
   applicationTitle: string;
   applicationUrl: string;
   hideAvailable: boolean;
+  hideBlacklisted: boolean;
   localLogin: boolean;
   mediaServerLogin: boolean;
   movie4kEnabled: boolean;
@@ -45,6 +46,7 @@ export interface PublicSettingsResponse {
   locale: string;
   emailEnabled: boolean;
   newPlexLogin: boolean;
+  youtubeUrl: string;
 }
 
 export interface CacheItem {

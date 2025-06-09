@@ -38,13 +38,13 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
       const requestedBy = req.query.requestedBy
         ? Number(req.query.requestedBy)
         : null;
+      const mediaType = (req.query.mediaType as MediaType | 'all') || 'all';
 
       let statusFilter: MediaRequestStatus[];
 
       switch (req.query.filter) {
         case 'approved':
         case 'processing':
-        case 'available':
           statusFilter = [MediaRequestStatus.APPROVED];
           break;
         case 'pending':
@@ -59,12 +59,18 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
         case 'failed':
           statusFilter = [MediaRequestStatus.FAILED];
           break;
+        case 'completed':
+        case 'available':
+        case 'deleted':
+          statusFilter = [MediaRequestStatus.COMPLETED];
+          break;
         default:
           statusFilter = [
             MediaRequestStatus.PENDING,
             MediaRequestStatus.APPROVED,
             MediaRequestStatus.DECLINED,
             MediaRequestStatus.FAILED,
+            MediaRequestStatus.COMPLETED,
           ];
       }
 
@@ -83,6 +89,9 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
             MediaStatus.PARTIALLY_AVAILABLE,
           ];
           break;
+        case 'deleted':
+          mediaStatusFilter = [MediaStatus.DELETED];
+          break;
         default:
           mediaStatusFilter = [
             MediaStatus.UNKNOWN,
@@ -90,6 +99,7 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
             MediaStatus.PROCESSING,
             MediaStatus.PARTIALLY_AVAILABLE,
             MediaStatus.AVAILABLE,
+            MediaStatus.DELETED,
           ];
       }
 
@@ -148,6 +158,21 @@ requestRoutes.get<Record<string, unknown>, RequestResultsResponse>(
         query = query.andWhere('requestedBy.id = :id', {
           id: requestedBy,
         });
+      }
+
+      switch (mediaType) {
+        case 'all':
+          break;
+        case 'movie':
+          query = query.andWhere('request.type = :type', {
+            type: MediaType.MOVIE,
+          });
+          break;
+        case 'tv':
+          query = query.andWhere('request.type = :type', {
+            type: MediaType.TV,
+          });
+          break;
       }
 
       const [requests, requestCount] = await query
@@ -298,7 +323,7 @@ requestRoutes.get('/count', async (_req, res, next) => {
   try {
     const query = requestRepository
       .createQueryBuilder('request')
-      .leftJoinAndSelect('request.media', 'media');
+      .innerJoinAndSelect('request.media', 'media');
 
     const totalCount = await query.getCount();
 
@@ -492,7 +517,8 @@ requestRoutes.put<{ requestId: string }>(
             (r) =>
               r.is4k === request.is4k &&
               r.id !== request.id &&
-              r.status !== MediaRequestStatus.DECLINED
+              r.status !== MediaRequestStatus.DECLINED &&
+              r.status !== MediaRequestStatus.COMPLETED
           )
           .reduce((seasons, r) => {
             const combinedSeasons = r.seasons.map(

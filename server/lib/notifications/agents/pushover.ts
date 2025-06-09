@@ -5,6 +5,7 @@ import { User } from '@server/entity/User';
 import type { NotificationAgentPushover } from '@server/lib/settings';
 import { getSettings, NotificationAgentKey } from '@server/lib/settings';
 import logger from '@server/logger';
+import axios from 'axios';
 import {
   hasNotificationType,
   Notification,
@@ -51,15 +52,12 @@ class PushoverAgent
     imageUrl: string
   ): Promise<Partial<PushoverImagePayload>> {
     try {
-      const response = await fetch(imageUrl);
-      if (!response.ok) {
-        throw new Error(response.statusText, { cause: response });
-      }
-      const arrayBuffer = await response.arrayBuffer();
-      const base64 = Buffer.from(arrayBuffer).toString('base64');
+      const response = await axios.get(imageUrl, {
+        responseType: 'arraybuffer',
+      });
+      const base64 = Buffer.from(response.data, 'binary').toString('base64');
       const contentType = (
-        response.headers.get('Content-Type') ||
-        response.headers.get('content-type')
+        response.headers['Content-Type'] || response.headers['content-type']
       )?.toString();
 
       return {
@@ -67,17 +65,10 @@ class PushoverAgent
         attachment_type: contentType,
       };
     } catch (e) {
-      let errorData;
-      try {
-        errorData = await e.cause?.text();
-        errorData = JSON.parse(errorData);
-      } catch {
-        /* empty */
-      }
       logger.error('Error getting image payload', {
         label: 'Notifications',
         errorMessage: e.message,
-        response: errorData,
+        response: e.response?.data,
       });
       return {};
     }
@@ -210,35 +201,19 @@ class PushoverAgent
       });
 
       try {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...notificationPayload,
-            token: settings.options.accessToken,
-            user: settings.options.userToken,
-            sound: settings.options.sound,
-          } as PushoverPayload),
-        });
-        if (!response.ok) {
-          throw new Error(response.statusText, { cause: response });
-        }
+        await axios.post(endpoint, {
+          ...notificationPayload,
+          token: settings.options.accessToken,
+          user: settings.options.userToken,
+          sound: settings.options.sound,
+        } as PushoverPayload);
       } catch (e) {
-        let errorData;
-        try {
-          errorData = await e.cause?.text();
-          errorData = JSON.parse(errorData);
-        } catch {
-          /* empty */
-        }
         logger.error('Error sending Pushover notification', {
           label: 'Notifications',
           type: Notification[type],
           subject: payload.subject,
           errorMessage: e.message,
-          response: errorData,
+          response: e.response?.data,
         });
 
         return false;
@@ -266,36 +241,20 @@ class PushoverAgent
         });
 
         try {
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              ...notificationPayload,
-              token: payload.notifyUser.settings.pushoverApplicationToken,
-              user: payload.notifyUser.settings.pushoverUserKey,
-              sound: payload.notifyUser.settings.pushoverSound,
-            } as PushoverPayload),
-          });
-          if (!response.ok) {
-            throw new Error(response.statusText, { cause: response });
-          }
+          await axios.post(endpoint, {
+            ...notificationPayload,
+            token: payload.notifyUser.settings.pushoverApplicationToken,
+            user: payload.notifyUser.settings.pushoverUserKey,
+            sound: payload.notifyUser.settings.pushoverSound,
+          } as PushoverPayload);
         } catch (e) {
-          let errorData;
-          try {
-            errorData = await e.cause?.text();
-            errorData = JSON.parse(errorData);
-          } catch {
-            /* empty */
-          }
           logger.error('Error sending Pushover notification', {
             label: 'Notifications',
             recipient: payload.notifyUser.displayName,
             type: Notification[type],
             subject: payload.subject,
             errorMessage: e.message,
-            response: errorData,
+            response: e.response?.data,
           });
 
           return false;
@@ -332,35 +291,19 @@ class PushoverAgent
               });
 
               try {
-                const response = await fetch(endpoint, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    ...notificationPayload,
-                    token: user.settings.pushoverApplicationToken,
-                    user: user.settings.pushoverUserKey,
-                  } as PushoverPayload),
-                });
-                if (!response.ok) {
-                  throw new Error(response.statusText, { cause: response });
-                }
+                await axios.post(endpoint, {
+                  ...notificationPayload,
+                  token: user.settings.pushoverApplicationToken,
+                  user: user.settings.pushoverUserKey,
+                } as PushoverPayload);
               } catch (e) {
-                let errorData;
-                try {
-                  errorData = await e.cause?.text();
-                  errorData = JSON.parse(errorData);
-                } catch {
-                  /* empty */
-                }
                 logger.error('Error sending Pushover notification', {
                   label: 'Notifications',
                   recipient: user.displayName,
                   type: Notification[type],
                   subject: payload.subject,
                   errorMessage: e.message,
-                  response: errorData,
+                  response: e.response?.data,
                 });
 
                 return false;

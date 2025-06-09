@@ -191,9 +191,6 @@ components:
         csrfProtection:
           type: boolean
           example: false
-        forceIpv4First:
-          type: boolean
-          example: false
         trustProxy:
           type: boolean
           example: true
@@ -1160,7 +1157,7 @@ components:
         status:
           type: number
           example: 0
-          description: Availability of the media. 1 = `UNKNOWN`, 2 = `PENDING`, 3 = `PROCESSING`, 4 = `PARTIALLY_AVAILABLE`, 5 = `AVAILABLE`
+          description: Availability of the media. 1 = `UNKNOWN`, 2 = `PENDING`, 3 = `PROCESSING`, 4 = `PARTIALLY_AVAILABLE`, 5 = `AVAILABLE`, 6 = `DELETED`
         requests:
           type: array
           readOnly: true
@@ -1400,6 +1397,32 @@ components:
           properties:
             url:
               type: string
+            token:
+              type: string
+    NtfySettings:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          example: false
+        types:
+          type: number
+          example: 2
+        options:
+          type: object
+          properties:
+            url:
+              type: string
+            topic:
+              type: string
+            authMethodUsernamePassword:
+              type: boolean
+            username:
+              type: string
+            password:
+              type: string
+            authMethodToken:
+              type: boolean
             token:
               type: string
     LunaSeaSettings:
@@ -1953,6 +1976,41 @@ components:
       properties:
         id:
           type: string
+    Certification:
+      type: object
+      properties:
+        certification:
+          type: string
+          example: 'PG-13'
+        meaning:
+          type: string
+          example: 'Some material may be inappropriate for children under 13.'
+          nullable: true
+        order:
+          type: number
+          example: 3
+          nullable: true
+      required:
+        - certification
+
+    CertificationResponse:
+      type: object
+      properties:
+        certifications:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/Certification'
+      example:
+        certifications:
+          US:
+            - certification: 'G'
+              meaning: 'All ages admitted'
+              order: 1
+            - certification: 'PG'
+              meaning: 'Some material may not be suitable for children under 10.'
+              order: 2
   securitySchemes:
     cookieAuth:
       type: apiKey
@@ -3252,6 +3310,52 @@ paths:
       responses:
         '204':
           description: Test notification attempted
+  /settings/notifications/ntfy:
+    get:
+      summary: Get ntfy.sh notification settings
+      description: Returns current ntfy.sh notification settings in a JSON object.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Returned ntfy.sh settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NtfySettings'
+    post:
+      summary: Update ntfy.sh notification settings
+      description: Update ntfy.sh notification settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NtfySettings'
+      responses:
+        '200':
+          description: 'Values were sucessfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NtfySettings'
+  /settings/notifications/ntfy/test:
+    post:
+      summary: Test ntfy.sh settings
+      description: Sends a test notification to the ntfy.sh agent.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NtfySettings'
+      responses:
+        '204':
+          description: Test notification attempted
   /settings/notifications/slack:
     get:
       summary: Get Slack notification settings
@@ -4242,6 +4346,12 @@ paths:
             type: string
             nullable: true
             example: dune
+        - in: query
+          name: filter
+          schema:
+            type: string
+            enum: [all, manual, blacklistedTags]
+            default: manual
       responses:
         '200':
           description: Blacklisted items returned
@@ -4951,6 +5061,37 @@ paths:
           schema:
             type: string
             example: 8|9
+        - in: query
+          name: certification
+          schema:
+            type: string
+            example: PG-13
+          description: Exact certification to filter by (used when certificationMode is 'exact')
+        - in: query
+          name: certificationGte
+          schema:
+            type: string
+            example: G
+          description: Minimum certification to filter by (used when certificationMode is 'range')
+        - in: query
+          name: certificationLte
+          schema:
+            type: string
+            example: PG-13
+          description: Maximum certification to filter by (used when certificationMode is 'range')
+        - in: query
+          name: certificationCountry
+          schema:
+            type: string
+            example: US
+          description: Country code for the certification system (e.g., US, GB, CA)
+        - in: query
+          name: certificationMode
+          schema:
+            type: string
+            enum: [exact, range]
+            example: exact
+          description: Determines whether to use exact certification matching or a certification range (internal use only, not sent to TMDB API)
       responses:
         '200':
           description: Results
@@ -5245,6 +5386,37 @@ paths:
           schema:
             type: string
             example: 3|4
+        - in: query
+          name: certification
+          schema:
+            type: string
+            example: TV-14
+          description: Exact certification to filter by (used when certificationMode is 'exact')
+        - in: query
+          name: certificationGte
+          schema:
+            type: string
+            example: TV-PG
+          description: Minimum certification to filter by (used when certificationMode is 'range')
+        - in: query
+          name: certificationLte
+          schema:
+            type: string
+            example: TV-MA
+          description: Maximum certification to filter by (used when certificationMode is 'range')
+        - in: query
+          name: certificationCountry
+          schema:
+            type: string
+            example: US
+          description: Country code for the certification system (e.g., US, GB, CA)
+        - in: query
+          name: certificationMode
+          schema:
+            type: string
+            enum: [exact, range]
+            example: exact
+          description: Determines whether to use exact certification matching or a certification range (internal use only, not sent to TMDB API)
       responses:
         '200':
           description: Results
@@ -5673,6 +5845,8 @@ paths:
                 processing,
                 unavailable,
                 failed,
+                deleted,
+                completed,
               ]
         - in: query
           name: sort
@@ -5693,6 +5867,13 @@ paths:
             type: number
             nullable: true
             example: 1
+        - in: query
+          name: mediaType
+          schema:
+            type: string
+            enum: [movie, tv, all]
+            nullable: true
+            default: all
       responses:
         '200':
           description: Requests returned
@@ -6419,7 +6600,16 @@ paths:
           schema:
             type: string
             nullable: true
-            enum: [all, available, partial, allavailable, processing, pending]
+            enum:
+              [
+                all,
+                available,
+                partial,
+                allavailable,
+                processing,
+                pending,
+                deleted,
+              ]
         - in: query
           name: sort
           schema:
@@ -6495,7 +6685,7 @@ paths:
           example: available
           schema:
             type: string
-            enum: [available, partial, processing, pending, unknown]
+            enum: [available, partial, processing, pending, unknown, deleted]
       requestBody:
         content:
           application/json:
@@ -7207,6 +7397,64 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/WatchProviderDetails'
+  /certifications/movie:
+    get:
+      summary: Get movie certifications
+      description: Returns list of movie certifications from TMDB.
+      tags:
+        - other
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: Movie certifications returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificationResponse'
+        '500':
+          description: Unable to retrieve movie certifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Unable to retrieve movie certifications.
+  /certifications/tv:
+    get:
+      summary: Get TV certifications
+      description: Returns list of TV show certifications from TMDB.
+      tags:
+        - other
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: TV certifications returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificationResponse'
+        '500':
+          description: Unable to retrieve TV certifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Unable to retrieve TV certifications.
   /overrideRule:
     get:
       summary: Get override rules

@@ -122,21 +122,24 @@ export interface MainSettings {
     tv: Quota;
   };
   hideAvailable: boolean;
+  hideBlacklisted: boolean;
   localLogin: boolean;
   mediaServerLogin: boolean;
   newPlexLogin: boolean;
   discoverRegion: string;
   streamingRegion: string;
   originalLanguage: string;
+  blacklistedTags: string;
+  blacklistedTagsLimit: number;
   mediaServerType: number;
   partialRequestsEnabled: boolean;
   enableSpecialEpisodes: boolean;
   locale: string;
+  youtubeUrl: string;
 }
 
 export interface NetworkSettings {
   csrfProtection: boolean;
-  forceIpv4First: boolean;
   trustProxy: boolean;
   proxy: ProxySettings;
 }
@@ -149,6 +152,7 @@ interface FullPublicSettings extends PublicSettings {
   applicationTitle: string;
   applicationUrl: string;
   hideAvailable: boolean;
+  hideBlacklisted: boolean;
   localLogin: boolean;
   mediaServerLogin: boolean;
   movie4kEnabled: boolean;
@@ -169,6 +173,7 @@ interface FullPublicSettings extends PublicSettings {
   emailEnabled: boolean;
   userEmailRequired: boolean;
   newPlexLogin: boolean;
+  youtubeUrl: string;
 }
 
 export interface NotificationAgentConfig {
@@ -254,6 +259,19 @@ export interface NotificationAgentGotify extends NotificationAgentConfig {
   options: {
     url: string;
     token: string;
+    priority: number;
+  };
+}
+
+export interface NotificationAgentNtfy extends NotificationAgentConfig {
+  options: {
+    url: string;
+    topic: string;
+    authMethodUsernamePassword?: boolean;
+    username?: string;
+    password?: string;
+    authMethodToken?: boolean;
+    token?: string;
   };
 }
 
@@ -261,6 +279,7 @@ export enum NotificationAgentKey {
   DISCORD = 'discord',
   EMAIL = 'email',
   GOTIFY = 'gotify',
+  NTFY = 'ntfy',
   PUSHBULLET = 'pushbullet',
   PUSHOVER = 'pushover',
   SLACK = 'slack',
@@ -273,6 +292,7 @@ interface NotificationAgents {
   discord: NotificationAgentDiscord;
   email: NotificationAgentEmail;
   gotify: NotificationAgentGotify;
+  ntfy: NotificationAgentNtfy;
   lunasea: NotificationAgentLunaSea;
   pushbullet: NotificationAgentPushbullet;
   pushover: NotificationAgentPushover;
@@ -302,7 +322,8 @@ export type JobId =
   | 'jellyfin-recently-added-scan'
   | 'jellyfin-full-scan'
   | 'image-cache-cleanup'
-  | 'availability-sync';
+  | 'availability-sync'
+  | 'process-blacklisted-tags';
 
 export interface AllSettings {
   clientId: string;
@@ -343,16 +364,20 @@ class Settings {
           tv: {},
         },
         hideAvailable: false,
+        hideBlacklisted: false,
         localLogin: true,
         mediaServerLogin: true,
         newPlexLogin: true,
         discoverRegion: '',
         streamingRegion: '',
         originalLanguage: '',
+        blacklistedTags: '',
+        blacklistedTagsLimit: 50,
         mediaServerType: MediaServerType.NOT_CONFIGURED,
         partialRequestsEnabled: true,
         enableSpecialEpisodes: false,
         locale: 'en',
+        youtubeUrl: '',
       },
       plex: {
         name: '',
@@ -463,6 +488,15 @@ class Settings {
             options: {
               url: '',
               token: '',
+              priority: 0,
+            },
+          },
+          ntfy: {
+            enabled: false,
+            types: 0,
+            options: {
+              url: '',
+              topic: '',
             },
           },
         },
@@ -504,11 +538,13 @@ class Settings {
         'image-cache-cleanup': {
           schedule: '0 0 5 * * *',
         },
+        'process-blacklisted-tags': {
+          schedule: '0 30 1 */7 * *',
+        },
       },
       network: {
         csrfProtection: false,
         trustProxy: false,
-        forceIpv4First: false,
         proxy: {
           enabled: false,
           hostname: '',
@@ -588,6 +624,7 @@ class Settings {
       applicationTitle: this.data.main.applicationTitle,
       applicationUrl: this.data.main.applicationUrl,
       hideAvailable: this.data.main.hideAvailable,
+      hideBlacklisted: this.data.main.hideBlacklisted,
       localLogin: this.data.main.localLogin,
       mediaServerLogin: this.data.main.mediaServerLogin,
       jellyfinExternalHost: this.data.jellyfin.externalHostname,
@@ -612,6 +649,7 @@ class Settings {
       userEmailRequired:
         this.data.notifications.agents.email.options.userEmailRequired,
       newPlexLogin: this.data.main.newPlexLogin,
+      youtubeUrl: this.data.main.youtubeUrl,
     };
   }
 

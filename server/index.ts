@@ -10,6 +10,7 @@ import DiscordAgent from '@server/lib/notifications/agents/discord';
 import EmailAgent from '@server/lib/notifications/agents/email';
 import GotifyAgent from '@server/lib/notifications/agents/gotify';
 import LunaSeaAgent from '@server/lib/notifications/agents/lunasea';
+import NtfyAgent from '@server/lib/notifications/agents/ntfy';
 import PushbulletAgent from '@server/lib/notifications/agents/pushbullet';
 import PushoverAgent from '@server/lib/notifications/agents/pushover';
 import SlackAgent from '@server/lib/notifications/agents/slack';
@@ -35,8 +36,6 @@ import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
 import session from 'express-session';
 import next from 'next';
-import dns from 'node:dns';
-import net from 'node:net';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
@@ -74,15 +73,6 @@ app
     const settings = await getSettings().load();
     restartFlag.initializeSettings(settings);
 
-    // Check if we force IPv4 first
-    if (
-      process.env.forceIpv4First === 'true' ||
-      settings.network.forceIpv4First
-    ) {
-      dns.setDefaultResultOrder('ipv4first');
-      net.setDefaultAutoSelectFamily(false);
-    }
-
     // Register HTTP proxy
     if (settings.network.proxy.enabled) {
       await createCustomProxyAgent(settings.network.proxy);
@@ -114,6 +104,7 @@ app
       new DiscordAgent(),
       new EmailAgent(),
       new GotifyAgent(),
+      new NtfyAgent(),
       new LunaSeaAgent(),
       new PushbulletAgent(),
       new PushoverAgent(),

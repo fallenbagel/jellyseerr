@@ -16,6 +16,7 @@ import {
 } from '@heroicons/react/24/solid';
 import type { UserPushSubscription } from '@server/entity/UserPushSubscription';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -84,21 +85,12 @@ const UserWebPushSettings = () => {
             const parsedSub = JSON.parse(JSON.stringify(sub));
 
             if (parsedSub.keys.p256dh && parsedSub.keys.auth) {
-              const res = await fetch('/api/v1/user/registerPushSubscription', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  endpoint: parsedSub.endpoint,
-                  p256dh: parsedSub.keys.p256dh,
-                  auth: parsedSub.keys.auth,
-                  userAgent: navigator.userAgent,
-                }),
+              await axios.post('/api/v1/user/registerPushSubscription', {
+                endpoint: parsedSub.endpoint,
+                p256dh: parsedSub.keys.p256dh,
+                auth: parsedSub.keys.auth,
+                userAgent: navigator.userAgent,
               });
-              if (!res.ok) {
-                throw new Error(res.statusText);
-              }
               setWebPushEnabled(true);
               addToast(intl.formatMessage(messages.webpushhasbeenenabled), {
                 appearance: 'success',
@@ -129,17 +121,11 @@ const UserWebPushSettings = () => {
           .then(async (subscription) => {
             const parsedSub = JSON.parse(JSON.stringify(subscription));
 
-            const res = await fetch(
+            await axios.delete(
               `/api/v1/user/${user?.id}/pushSubscription/${
                 p256dh ? p256dh : parsedSub.keys.p256dh
-              }`,
-              {
-                method: 'DELETE',
-              }
+              }`
             );
-            if (!res.ok) {
-              throw new Error(res.statusText);
-            }
             if (subscription && (p256dh === parsedSub.keys.p256dh || !p256dh)) {
               subscription.unsubscribe();
               setWebPushEnabled(false);
@@ -188,17 +174,10 @@ const UserWebPushSettings = () => {
             .then(async (subscription) => {
               if (subscription) {
                 const parsedKey = JSON.parse(JSON.stringify(subscription));
-                const response = await fetch(
-                  `/api/v1/user/${user.id}/pushSubscription/${parsedKey.keys.p256dh}`
-                );
-
-                if (!response.ok) {
-                  throw new Error(response.statusText);
-                }
-
-                const currentUserPushSub = {
-                  data: (await response.json()) as UserPushSubscription,
-                };
+                const currentUserPushSub =
+                  await axios.get<UserPushSubscription>(
+                    `/api/v1/user/${user.id}/pushSubscription/${parsedKey.keys.p256dh}`
+                  );
 
                 if (currentUserPushSub.data.p256dh !== parsedKey.keys.p256dh) {
                   return;
@@ -233,30 +212,21 @@ const UserWebPushSettings = () => {
         enableReinitialize
         onSubmit={async (values) => {
           try {
-            const res = await fetch(
+            await axios.post(
               `/api/v1/user/${user?.id}/settings/notifications`,
               {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
+                pgpKey: data?.pgpKey,
+                discordId: data?.discordId,
+                pushbulletAccessToken: data?.pushbulletAccessToken,
+                pushoverApplicationToken: data?.pushoverApplicationToken,
+                pushoverUserKey: data?.pushoverUserKey,
+                telegramChatId: data?.telegramChatId,
+                telegramSendSilently: data?.telegramSendSilently,
+                notificationTypes: {
+                  webpush: values.types,
                 },
-                body: JSON.stringify({
-                  pgpKey: data?.pgpKey,
-                  discordId: data?.discordId,
-                  pushbulletAccessToken: data?.pushbulletAccessToken,
-                  pushoverApplicationToken: data?.pushoverApplicationToken,
-                  pushoverUserKey: data?.pushoverUserKey,
-                  telegramChatId: data?.telegramChatId,
-                  telegramSendSilently: data?.telegramSendSilently,
-                  notificationTypes: {
-                    webpush: values.types,
-                  },
-                }),
               }
             );
-            if (!res.ok) {
-              throw new Error(res.statusText);
-            }
             mutate('/api/v1/settings/public');
             addToast(intl.formatMessage(messages.webpushsettingssaved), {
               appearance: 'success',

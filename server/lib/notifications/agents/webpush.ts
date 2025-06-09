@@ -241,7 +241,7 @@ class WebPushAgent
       const allSubs = await userPushSubRepository
         .createQueryBuilder('pushSub')
         .leftJoinAndSelect('pushSub.user', 'user')
-        .where('pushSub.userId IN (:users)', {
+        .where('pushSub.userId IN (:...users)', {
           users: manageUsers.map((user) => user.id),
         })
         .getMany();
