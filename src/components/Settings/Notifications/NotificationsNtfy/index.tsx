@@ -303,7 +303,7 @@ const NotificationsNtfy = () => {
               </div>
             )}
             <NotificationTypeSelector
-              currentTypes={values.enabled ? values.types : 0}
+              currentTypes={values.enabled ? values.types || 0 : 0}
               onUpdate={(newTypes) => {
                 setFieldValue('types', newTypes);
                 setFieldTouched('types');
