@@ -28,6 +28,7 @@ import { getAppVersion } from '@server/utils/appVersion';
 import createCustomProxyAgent from '@server/utils/customProxyAgent';
 import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
+import axios from 'axios';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
 import type { NextFunction, Request, Response } from 'express';
@@ -35,10 +36,15 @@ import express from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
 import session from 'express-session';
+import http from 'http';
+import https from 'https';
 import next from 'next';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+
+axios.defaults.httpAgent = new http.Agent({ family: 4 });
+axios.defaults.httpsAgent = new https.Agent({ family: 4 });
 
 const API_SPEC_PATH = path.join(__dirname, '../jellyseerr-api.yml');
 
