@@ -278,12 +278,18 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
     });
 
     let deviceId = '';
-    if (user) {
-      deviceId = user.jellyfinDeviceId ?? '';
-    } else {
-      deviceId = Buffer.from(`BOT_jellyseerr_${body.username ?? ''}`).toString(
+    if (user && user.id === 1) {
+      // Admin is always BOT_jellyseerr
+      deviceId = 'BOT_jellyseerr';
+    } else if (user && user.jellyfinDeviceId) {
+      deviceId = user.jellyfinDeviceId;
+    } else if (body.username) {
+      deviceId = Buffer.from(`BOT_jellyseerr_${body.username}`).toString(
         'base64'
       );
+    } else {
+      // Fallback for when username is not provided
+      deviceId = 'BOT_jellyseerr';
     }
 
     // First we need to attempt to log the user in to jellyfin
