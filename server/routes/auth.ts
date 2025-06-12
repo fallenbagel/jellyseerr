@@ -277,7 +277,7 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       select: { id: true, jellyfinDeviceId: true },
     });
 
-    let deviceId = '';
+    let deviceId = 'BOT_jellyseerr';
     if (user && user.id === 1) {
       // Admin is always BOT_jellyseerr
       deviceId = 'BOT_jellyseerr';
@@ -287,9 +287,6 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       deviceId = Buffer.from(`BOT_jellyseerr_${body.username}`).toString(
         'base64'
       );
-    } else {
-      // Fallback for when username is not provided
-      deviceId = 'BOT_jellyseerr';
     }
 
     // First we need to attempt to log the user in to jellyfin
