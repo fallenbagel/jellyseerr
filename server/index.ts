@@ -26,6 +26,7 @@ import imageproxy from '@server/routes/imageproxy';
 import { appDataPermissions } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
 import createCustomProxyAgent from '@server/utils/customProxyAgent';
+import { dnsCache } from '@server/utils/dnsCacheManager';
 import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
 import { TypeormStore } from 'connect-typeorm/out';
@@ -39,6 +40,7 @@ import next from 'next';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import dns from 'node:dns';
 
 const API_SPEC_PATH = path.join(__dirname, '../jellyseerr-api.yml');
 
@@ -72,6 +74,11 @@ app
     // Load Settings
     const settings = await getSettings().load();
     restartFlag.initializeSettings(settings);
+
+    // Add DNS caching
+    if (settings.network.dnsCache) {
+      dnsCache.initialize();
+    }
 
     // Register HTTP proxy
     if (settings.network.proxy.enabled) {

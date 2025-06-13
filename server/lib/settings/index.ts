@@ -142,6 +142,7 @@ export interface NetworkSettings {
   csrfProtection: boolean;
   trustProxy: boolean;
   proxy: ProxySettings;
+  dnsCache: boolean;
 }
 
 interface PublicSettings {
@@ -555,6 +556,7 @@ class Settings {
           bypassFilter: '',
           bypassLocalAddresses: true,
         },
+        dnsCache: false,
       },
     };
     if (initialSettings) {

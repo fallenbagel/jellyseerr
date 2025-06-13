@@ -28,6 +28,7 @@ import discoverSettingRoutes from '@server/routes/settings/discover';
 import { ApiError } from '@server/types/error';
 import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
+import { dnsCache } from '@server/utils/dnsCacheManager';
 import { getHostname } from '@server/utils/getHostname';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
@@ -755,11 +756,18 @@ settingsRoutes.get('/cache', async (_req, res) => {
   const tmdbImageCache = await ImageProxy.getImageStats('tmdb');
   const avatarImageCache = await ImageProxy.getImageStats('avatar');
 
+  const stats = dnsCache.getStats();
+  const entries = dnsCache.getCacheEntries();
+
   return res.status(200).json({
     apiCaches,
     imageCache: {
       tmdb: tmdbImageCache,
       avatar: avatarImageCache,
+    },
+    dnsCache: {
+      stats,
+      entries,
     },
   });
 });
@@ -771,6 +779,20 @@ settingsRoutes.post<{ cacheId: AvailableCacheIds }>(
 
     if (cache) {
       cache.flush();
+      return res.status(204).send();
+    }
+
+    next({ status: 404, message: 'Cache not found.' });
+  }
+);
+
+settingsRoutes.post<{ dnsEntry: string }>(
+  '/cache/dns/:dnsEntry/flush',
+  (req, res, next) => {
+    const dnsEntry = req.params.dnsEntry;
+
+    if (dnsCache) {
+      dnsCache.clear(dnsEntry);
       return res.status(204).send();
     }
 
