@@ -35,7 +35,7 @@ jobs:
       - name: Pnpm Setup
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
       - name: Get pnpm store directory
         shell: sh
         run: |
