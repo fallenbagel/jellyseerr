@@ -1,6 +1,6 @@
 import RottenTomatoes from '@server/api/rating/rottentomatoes';
 import TheMovieDb from '@server/api/themoviedb';
-import { MediaType } from '@server/constants/media';
+import { MediaStatus, MediaType } from '@server/constants/media';
 import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';
 import { Watchlist } from '@server/entity/Watchlist';
@@ -62,7 +62,30 @@ tvRoutes.get('/:id/season/:seasonNumber', async (req, res, next) => {
       language: (req.query.language as string) ?? req.locale,
     });
 
-    return res.status(200).json(mapSeasonWithEpisodes(season));
+    const media = await Media.getMedia(Number(req.params.id), MediaType.TV);
+    const availableMap: Record<number, boolean> = {};
+
+    if (media?.seasons) {
+      const dbSeason = media.seasons.find(
+        (s) => s.seasonNumber === Number(req.params.seasonNumber)
+      );
+      if (dbSeason) {
+        if (dbSeason.status === MediaStatus.AVAILABLE) {
+          for (const episode of season.episodes) {
+            availableMap[episode.episode_number] = true;
+          }
+        } else if (dbSeason.status === MediaStatus.PARTIALLY_AVAILABLE) {
+          if (dbSeason.episodes) {
+            for (const episode of dbSeason.episodes) {
+              availableMap[episode.episodeNumber] =
+                episode.status === MediaStatus.AVAILABLE;
+            }
+          }
+        }
+      }
+    }
+
+    return res.status(200).json(mapSeasonWithEpisodes(season, availableMap));
   } catch (e) {
     logger.debug('Something went wrong retrieving season', {
       label: 'API',
