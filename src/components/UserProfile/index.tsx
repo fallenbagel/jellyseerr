@@ -160,9 +160,12 @@ const UserProfile = () => {
                 <dd className="mt-1 text-3xl font-semibold text-white">
                   <Link
                     href={
-                      user.id === currentUser?.id
-                        ? '/profile/requests?filter=all'
-                        : `/users/${user?.id}/requests?filter=all`
+                      currentHasPermission(
+                        [Permission.MANAGE_REQUESTS, Permission.REQUEST_VIEW],
+                        { type: 'or' }
+                      )
+                        ? `/users/${user?.id}/requests?filter=all`
+                        : '/requests'
                     }
                   >
                     {intl.formatNumber(user.requestCount)}
@@ -293,9 +296,12 @@ const UserProfile = () => {
             <div className="slider-header">
               <Link
                 href={
-                  user.id === currentUser?.id
-                    ? '/profile/requests?filter=all'
-                    : `/users/${user?.id}/requests?filter=all`
+                  currentHasPermission(
+                    [Permission.MANAGE_REQUESTS, Permission.REQUEST_VIEW],
+                    { type: 'or' }
+                  )
+                    ? `/users/${user?.id}/requests?filter=all`
+                    : '/requests'
                 }
                 className="slider-title"
               >
