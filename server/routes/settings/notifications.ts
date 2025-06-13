@@ -279,6 +279,7 @@ notificationRoutes.get('/webhook', (_req, res) => {
           'utf8'
         )
       ),
+      supportPlaceholders: webhookSettings.options.supportPlaceholders ?? false,
     },
   };
 
@@ -299,6 +300,7 @@ notificationRoutes.post('/webhook', async (req, res, next) => {
         ),
         webhookUrl: req.body.options.webhookUrl,
         authHeader: req.body.options.authHeader,
+        supportPlaceholders: req.body.options.supportPlaceholders ?? false,
       },
     };
     await settings.save();
@@ -329,6 +331,7 @@ notificationRoutes.post('/webhook/test', async (req, res, next) => {
         ),
         webhookUrl: req.body.options.webhookUrl,
         authHeader: req.body.options.authHeader,
+        supportPlaceholders: req.body.options.supportPlaceholders ?? false,
       },
     };
 
