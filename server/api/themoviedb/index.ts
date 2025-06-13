@@ -1,4 +1,5 @@
 import ExternalAPI from '@server/api/externalapi';
+import type { TvShowProvider } from '@server/api/provider';
 import cacheManager from '@server/lib/cache';
 import { getSettings } from '@server/lib/settings';
 import { sortBy } from 'lodash';
@@ -120,7 +121,7 @@ interface DiscoverTvOptions {
   certificationCountry?: string;
 }
 
-class TheMovieDb extends ExternalAPI {
+class TheMovieDb extends ExternalAPI implements TvShowProvider {
   private locale: string;
   private discoverRegion?: string;
   private originalLanguage?: string;
@@ -340,6 +341,13 @@ class TheMovieDb extends ExternalAPI {
           },
         }
       );
+
+      data.episodes = data.episodes.map((episode) => {
+        if (episode.still_path) {
+          episode.still_path = `https://image.tmdb.org/t/p/original/${episode.still_path}`;
+        }
+        return episode;
+      });
 
       return data;
     } catch (e) {
