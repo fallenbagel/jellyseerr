@@ -13,7 +13,7 @@ export interface SonarrSeason {
     percentOfEpisodes: number;
   };
 }
-interface EpisodeResult {
+export interface EpisodeResult {
   seriesId: number;
   episodeFileId: number;
   seasonNumber: number;
@@ -26,6 +26,9 @@ interface EpisodeResult {
   monitored: boolean;
   absoluteEpisodeNumber: number;
   unverifiedSceneNumbering: boolean;
+  series: SonarrSeries;
+  runtime: number;
+  finaleType: string;
   id: number;
 }
 
@@ -54,6 +57,7 @@ export interface SonarrSeries {
   tvdbId: number;
   tvRageId: number;
   tvMazeId: number;
+  tmdbId: number;
   firstAired: string;
   lastInfoSync?: string;
   seriesType: 'standard' | 'daily' | 'anime';
@@ -178,6 +182,31 @@ class SonarrAPI extends ServarrBase<{
         tvdbId: id,
       });
       throw new Error('Series not found');
+    }
+  }
+
+  public async getCalendarByDate(
+    startDate: Date,
+    endDate: Date
+  ): Promise<EpisodeResult[]> {
+    try {
+      const response = await this.axios.get<EpisodeResult[]>('/calendar', {
+        params: {
+          start: startDate,
+          end: endDate,
+          unmonitored: false,
+          includeSeries: true,
+          includeEpisodeFile: false,
+          includeEpisodeImages: false,
+        },
+      });
+      if (!response) {
+        throw new Error('Calendar not found');
+      }
+
+      return response.data;
+    } catch (e) {
+      throw new Error('Calendar not found');
     }
   }
 

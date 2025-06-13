@@ -29,6 +29,9 @@ export interface RadarrMovie {
   added: string;
   hasFile: boolean;
   tags: number[];
+  overview: string;
+  releaseDate: string;
+  runtime: number;
   movieFile?: {
     id: number;
     movieId: number;
@@ -108,6 +111,28 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
         tmdbId: id,
       });
       throw new Error('Movie not found');
+    }
+  }
+
+  public async getCalendarByDate(
+    startDate: Date,
+    endDate: Date
+  ): Promise<RadarrMovie[]> {
+    try {
+      const response = await this.axios.get<RadarrMovie[]>('/calendar', {
+        params: {
+          start: startDate,
+          end: endDate,
+          unmonitored: false,
+        },
+      });
+      if (!response) {
+        throw new Error('Calendar not found');
+      }
+
+      return response.data;
+    } catch (e) {
+      throw new Error('Calendar not found');
     }
   }
 

@@ -61,6 +61,9 @@ components:
         userId:
           type: number
           example: 1
+    Calendar:
+      type: object
+
     Watchlist:
       type: object
       properties:
@@ -2072,6 +2075,39 @@ paths:
                   appDataPermissions:
                     type: boolean
                     example: true
+  /calendar/{filter}/{startDate}/{endDate}:
+    get:
+      summary: Get Calendar by filter, startDate and endDate
+      description: |
+        Returns calendar events between the startDate and endDate and filtered
+      tags:
+        - other
+      parameters:
+        - in: path
+          name: filter
+          required: true
+          schema:
+            type: string
+            example: all
+        - in: path
+          name: startDate
+          required: true
+          schema:
+            type: string
+            example:
+        - in: path
+          name: endDate
+          required: true
+          schema:
+            type: string
+            example: all
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Calendar'
   /settings/main:
     get:
       summary: Get main settings
