@@ -333,6 +333,15 @@ issueRoutes.post<{ issueId: string; status: string }, Issue>(
         });
       }
 
+      if (req.body.message !== undefined) {
+        const comment = new IssueComment({
+          message: req.body.message,
+          user: req.user,
+        });
+
+        issue.comments = [...issue.comments, comment];
+      }
+
       let newStatus: IssueStatus | undefined;
 
       switch (req.params.status) {
