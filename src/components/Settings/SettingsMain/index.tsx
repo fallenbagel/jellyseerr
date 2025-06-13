@@ -66,6 +66,8 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   enableSpecialEpisodes: 'Allow Special Episodes Requests',
   locale: 'Display Language',
   youtubeUrl: 'YouTube URL',
+  youtubeUrlTip:
+    'Base URL for YouTube videos if a self-hosted YouTube instance is used.',
   validationUrl: 'You must provide a valid URL',
   validationUrlTrailingSlash: 'URL must not end in a trailing slash',
 });
@@ -536,6 +538,9 @@ const SettingsMain = () => {
                 <div className="form-row">
                   <label htmlFor="youtubeUrl" className="text-label">
                     {intl.formatMessage(messages.youtubeUrl)}
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.youtubeUrlTip)}
+                    </span>
                   </label>
                   <div className="form-input-area">
                     <div className="form-input-field">
