@@ -1,3 +1,7 @@
+import type {
+  NotificationAgentConfig,
+  NotificationAgentTemplates,
+} from '@server/interfaces/settings';
 import type { PaginatedResponse } from './common';
 
 export type LogMessage = {
@@ -72,4 +76,9 @@ export interface StatusResponse {
   updateAvailable: boolean;
   commitsBehind: number;
   restartRequired: boolean;
+}
+
+export interface NotificationSettingsResultResponse extends PaginatedResponse {
+  results: NotificationAgentConfig[];
+  agentTemplates: NotificationAgentTemplates;
 }

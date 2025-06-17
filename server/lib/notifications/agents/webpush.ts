@@ -4,8 +4,11 @@ import { getRepository } from '@server/datasource';
 import MediaRequest from '@server/entity/MediaRequest';
 import { User } from '@server/entity/User';
 import { UserPushSubscription } from '@server/entity/UserPushSubscription';
-import type { NotificationAgentConfig } from '@server/lib/settings';
-import { getSettings, NotificationAgentKey } from '@server/lib/settings';
+import {
+  NotificationAgentKey,
+  type NotificationAgentConfig,
+} from '@server/interfaces/settings';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import webpush from 'web-push';
 import { Notification, shouldSendAdminNotification } from '..';
@@ -28,16 +31,6 @@ class WebPushAgent
   extends BaseAgent<NotificationAgentConfig>
   implements NotificationAgent
 {
-  protected getSettings(): NotificationAgentConfig {
-    if (this.settings) {
-      return this.settings;
-    }
-
-    const settings = getSettings();
-
-    return settings.notifications.agents.webpush;
-  }
-
   private getNotificationPayload(
     type: Notification,
     payload: NotificationPayload
