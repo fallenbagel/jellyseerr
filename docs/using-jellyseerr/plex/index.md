@@ -6,7 +6,7 @@ sidebar_position: 1
 
 # Plex Features Overview
 
-Jellyseerr offers several features that integrate with your Plex media server. This section will help you understand and configure these features.
+Jellyseerr provides integration features that connect with your Plex media server to automate media management tasks.
 
 ## Available Features
 
@@ -15,29 +15,22 @@ Jellyseerr offers several features that integrate with your Plex media server. T
 
 ## Prerequisites
 
-:::info
+:::info Authentication Required
 To use any Plex integration features, you must have logged into Jellyseerr at least once with your Plex account.
 :::
 
-To use Plex integration features, you need:
-
-- A Plex account
-- Your Plex account connected to Jellyseerr
-- You must have logged into Jellyseerr at least once
-- Appropriate permissions (if required by the feature)
+**Requirements:**
+- Plex account with access to the configured Plex server
+- Jellyseerr configured with Plex as the media server
+- User authentication via Plex login
+- Appropriate user permissions for specific features
 
 ## Getting Started
 
-1. **Connect Your Plex Account**
-   - Go to Settings > Media Server
-   - Select Plex as your media server
-   - Follow the connection process (see [Mediaserver Settings](/using-jellyseerr/settings/mediaserver?media-server-type=plex))
-   - Log in to Jellyseerr at least once with your Plex account
+1. Authenticate at least once using your Plex credentials
+2. Verify you have the necessary permissions for desired features
+3. Follow individual feature guides for setup instructions
 
-2. **Check Your Permissions**
-   - Some features require specific permissions
-   - Contact your administrator if you need access to certain features
-
-3. **Enable Features**
-   - Each feature has its own configuration
-   - Follow the specific feature's guide to enable it
+:::note Server Configuration
+Plex server configuration is handled by your administrator. If you cannot log in with your Plex account, contact your administrator to verify the server setup.
+:::
