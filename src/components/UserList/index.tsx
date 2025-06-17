@@ -110,6 +110,7 @@ const UserList = () => {
   const { user: currentUser, hasPermission: currentHasPermission } = useUser();
   const [currentSort, setCurrentSort] = useState<Sort>('displayname');
   const [currentPageSize, setCurrentPageSize] = useState<number>(10);
+  const [localUsers, setLocalUsers] = useState<User[]>([]);
 
   const page = router.query.page ? Number(router.query.page) : 1;
   const pageIndex = page - 1;
@@ -123,16 +124,75 @@ const UserList = () => {
   } = useSWR<UserResultsResponse>(
     `/api/v1/user?take=${currentPageSize}&skip=${
       pageIndex * currentPageSize
-    }&sort=${currentSort}&sortDirection=${sortDirection}`
+    }&sort=created&sortDirection=desc`
   );
 
-  const handleSortChange = (sortKey: Sort) => {
-    if (currentSort === sortKey) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setCurrentSort(sortKey);
-      setSortDirection('desc');
+  useEffect(() => {
+    if (data?.results) {
+      const sortedUsers = [...data.results].sort((a, b) => {
+        let comparison = 0;
+        switch (currentSort) {
+          case 'displayname':
+            comparison = a.displayName.localeCompare(b.displayName);
+            break;
+          case 'requests':
+            comparison = (a.requestCount ?? 0) - (b.requestCount ?? 0);
+            break;
+          case 'usertype':
+            comparison = a.userType - b.userType;
+            break;
+          case 'role':
+            comparison = a.permissions - b.permissions;
+            break;
+          case 'created':
+            comparison =
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+            break;
+          default:
+            comparison = 0;
+        }
+        return sortDirection === 'asc' ? comparison : -comparison;
+      });
+      setLocalUsers(sortedUsers);
     }
+  }, [data, currentSort, sortDirection]);
+
+  const handleSortChange = (sortKey: Sort) => {
+    const newSortDirection =
+      currentSort === sortKey
+        ? sortDirection === 'asc'
+          ? 'desc'
+          : 'asc'
+        : 'desc';
+
+    setCurrentSort(sortKey);
+    setSortDirection(newSortDirection);
+
+    const sortedUsers = [...localUsers].sort((a, b) => {
+      let comparison = 0;
+      switch (sortKey) {
+        case 'displayname':
+          comparison = a.displayName.localeCompare(b.displayName);
+          break;
+        case 'requests':
+          comparison = (a.requestCount ?? 0) - (b.requestCount ?? 0);
+          break;
+        case 'usertype':
+          comparison = a.userType - b.userType;
+          break;
+        case 'role':
+          comparison = a.permissions - b.permissions;
+          break;
+        case 'created':
+          comparison =
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          break;
+        default:
+          comparison = 0;
+      }
+      return newSortDirection === 'asc' ? comparison : -comparison;
+    });
+    setLocalUsers(sortedUsers);
   };
 
   const [isDeleting, setDeleting] = useState(false);
@@ -752,7 +812,7 @@ const UserList = () => {
           </tr>
         </thead>
         <Table.TBody>
-          {data?.results.map((user) => (
+          {localUsers.map((user) => (
             <tr key={`user-list-${user.id}`} data-testid="user-list-row">
               <Table.TD>
                 {isUserPermsEditable(user.id) && (
