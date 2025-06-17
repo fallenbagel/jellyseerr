@@ -127,48 +127,12 @@ const UserList = () => {
     }&sort=created&sortDirection=desc`
   );
 
-  useEffect(() => {
-    if (data?.results) {
-      const sortedUsers = [...data.results].sort((a, b) => {
-        let comparison = 0;
-        switch (currentSort) {
-          case 'displayname':
-            comparison = a.displayName.localeCompare(b.displayName);
-            break;
-          case 'requests':
-            comparison = (a.requestCount ?? 0) - (b.requestCount ?? 0);
-            break;
-          case 'usertype':
-            comparison = a.userType - b.userType;
-            break;
-          case 'role':
-            comparison = a.permissions - b.permissions;
-            break;
-          case 'created':
-            comparison =
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-            break;
-          default:
-            comparison = 0;
-        }
-        return sortDirection === 'asc' ? comparison : -comparison;
-      });
-      setLocalUsers(sortedUsers);
-    }
-  }, [data, currentSort, sortDirection]);
-
-  const handleSortChange = (sortKey: Sort) => {
-    const newSortDirection =
-      currentSort === sortKey
-        ? sortDirection === 'asc'
-          ? 'desc'
-          : 'asc'
-        : 'desc';
-
-    setCurrentSort(sortKey);
-    setSortDirection(newSortDirection);
-
-    const sortedUsers = [...localUsers].sort((a, b) => {
+  const sortUsers = (
+    users: User[],
+    sortKey: Sort,
+    direction: SortDirection
+  ) => {
+    return [...users].sort((a, b) => {
       let comparison = 0;
       switch (sortKey) {
         case 'displayname':
@@ -190,9 +154,27 @@ const UserList = () => {
         default:
           comparison = 0;
       }
-      return newSortDirection === 'asc' ? comparison : -comparison;
+      return direction === 'asc' ? comparison : -comparison;
     });
-    setLocalUsers(sortedUsers);
+  };
+
+  useEffect(() => {
+    if (data?.results) {
+      setLocalUsers(sortUsers(data.results, currentSort, sortDirection));
+    }
+  }, [data, currentSort, sortDirection]);
+
+  const handleSortChange = (sortKey: Sort) => {
+    const newSortDirection =
+      currentSort === sortKey
+        ? sortDirection === 'asc'
+          ? 'desc'
+          : 'asc'
+        : 'desc';
+
+    setCurrentSort(sortKey);
+    setSortDirection(newSortDirection);
+    setLocalUsers(sortUsers(localUsers, sortKey, newSortDirection));
   };
 
   const [isDeleting, setDeleting] = useState(false);
