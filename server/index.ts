@@ -28,6 +28,7 @@ import { getAppVersion } from '@server/utils/appVersion';
 import createCustomProxyAgent from '@server/utils/customProxyAgent';
 import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
+import axios from 'axios';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
 import type { NextFunction, Request, Response } from 'express';
@@ -35,6 +36,8 @@ import express from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
 import session from 'express-session';
+import http from 'http';
+import https from 'https';
 import next from 'next';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
@@ -72,6 +75,11 @@ app
     // Load Settings
     const settings = await getSettings().load();
     restartFlag.initializeSettings(settings);
+
+    if (settings.network.forceIpv4First) {
+      axios.defaults.httpAgent = new http.Agent({ family: 4 });
+      axios.defaults.httpsAgent = new https.Agent({ family: 4 });
+    }
 
     // Register HTTP proxy
     if (settings.network.proxy.enabled) {
