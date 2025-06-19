@@ -30,6 +30,7 @@ import { getClientIp } from '@supercharge/request-ip';
 import axios from 'axios';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
+import { DnsCacheManager } from 'dns-caching';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
@@ -78,6 +79,12 @@ app
     if (settings.network.forceIpv4First) {
       axios.defaults.httpAgent = new http.Agent({ family: 4 });
       axios.defaults.httpsAgent = new https.Agent({ family: 4 });
+    }
+
+    // Add DNS caching
+    if (settings.network.dnsCache) {
+      const dnsCache = new DnsCacheManager({ logger });
+      dnsCache.initialize();
     }
 
     // Register HTTP proxy
