@@ -83,6 +83,9 @@ importers:
       dayjs:
         specifier: 1.11.7
         version: 1.11.7
+      dns-caching:
+        specifier: ^0.1.3
+        version: 0.1.3
       email-templates:
         specifier: 12.0.1
         version: 12.0.1(@babel/core@7.24.7)(encoding@0.1.13)(handlebars@4.7.8)(mustache@4.2.0)(pug@3.0.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.7)
@@ -4869,6 +4872,9 @@ packages:
   dlv@1.1.3:
     resolution: {integrity: sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==}
 
+  dns-caching@0.1.3:
+    resolution: {integrity: sha512-uLDVeq546NuvS5bx3uLSnz38yNoR90UPP7+jlyL93z9OYkVIIk+ky5I+5VowVQ/I54C/rfF7DiUXzJPivmk5mw==}
+
   doctrine@2.1.0:
     resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}
     engines: {node: '>=0.10.0'}
@@ -6749,6 +6755,10 @@ packages:
 
   lru-cache@11.0.2:
     resolution: {integrity: sha512-123qHRfJBmo2jXDbo/a5YOQrJoHF/GNQTLzQ5+IdK5pWpceK17yRc6ozlWd25FxvGKQbIUs91fDFkXmDHTKcyA==}
+    engines: {node: 20 || >=22}
+
+  lru-cache@11.1.0:
+    resolution: {integrity: sha512-QIXZUBJUx+2zHUdQujWejBkcD9+cs94tLn0+YL8UrCh+D5sCXZ4c7LaEH48pNwRY3MLDgqUFyhlCyjJPf1WP0A==}
     engines: {node: 20 || >=22}
 
   lru-cache@5.1.1:
@@ -15705,6 +15715,10 @@ snapshots:
 
   dlv@1.1.3: {}
 
+  dns-caching@0.1.3:
+    dependencies:
+      lru-cache: 11.1.0
+
   doctrine@2.1.0:
     dependencies:
       esutils: 2.0.3
@@ -18044,6 +18058,8 @@ snapshots:
   lru-cache@10.2.2: {}
 
   lru-cache@11.0.2: {}
+
+  lru-cache@11.1.0: {}
 
   lru-cache@5.1.1:
     dependencies:
