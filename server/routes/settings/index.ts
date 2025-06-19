@@ -28,7 +28,7 @@ import discoverSettingRoutes from '@server/routes/settings/discover';
 import { ApiError } from '@server/types/error';
 import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
-import { dnsCache } from '@server/utils/dnsCacheManager';
+import dnsCache from '@server/utils/dnsCache';
 import { getHostname } from '@server/utils/getHostname';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';

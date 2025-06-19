@@ -25,12 +25,12 @@ import imageproxy from '@server/routes/imageproxy';
 import { appDataPermissions } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
 import createCustomProxyAgent from '@server/utils/customProxyAgent';
+import dnsCache from '@server/utils/dnsCache';
 import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
 import axios from 'axios';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
-import { DnsCacheManager } from 'dns-caching';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
@@ -83,7 +83,6 @@ app
 
     // Add DNS caching
     if (settings.network.dnsCache) {
-      const dnsCache = new DnsCacheManager({ logger });
       dnsCache.initialize();
     }
 
