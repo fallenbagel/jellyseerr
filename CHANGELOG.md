@@ -1,3 +1,20 @@
+# [2.7.0](https://github.com/fallenbagel/jellyseerr/compare/v2.6.0...v2.7.0) (2025-06-20)
+
+
+### Bug Fixes
+
+* **blacklist:** hide items from MediaSliders when hideBlacklisted is enabled ([#1713](https://github.com/fallenbagel/jellyseerr/issues/1713)) ([d4a6cb2](https://github.com/fallenbagel/jellyseerr/commit/d4a6cb268a33d96c03f1f76c207b5597e4eae6e7))
+* correct typing issue ([#1715](https://github.com/fallenbagel/jellyseerr/issues/1715)) ([bb95c70](https://github.com/fallenbagel/jellyseerr/commit/bb95c7009faaf22103c1c8e84e3403823377ce0f))
+* **jellyfin:** use the same deviceId for admins ([#1710](https://github.com/fallenbagel/jellyseerr/issues/1710)) ([c7284f4](https://github.com/fallenbagel/jellyseerr/commit/c7284f473c43634b3a324f3b11a9a60990b3c0da))
+* **proxy:** apply http proxy settings to axios ([#1716](https://github.com/fallenbagel/jellyseerr/issues/1716)) ([7c969f4](https://github.com/fallenbagel/jellyseerr/commit/7c969f4235aa052234084c3cb951d485c6fff9cd))
+* redirect the 'Request' button to the right page ([#1711](https://github.com/fallenbagel/jellyseerr/issues/1711)) ([9cb7e14](https://github.com/fallenbagel/jellyseerr/commit/9cb7e1495ab2860cea614d10f6f7b62cf77b4def)), closes [#1588](https://github.com/fallenbagel/jellyseerr/issues/1588)
+* **settings:** add a tip for youtube URL setting ([#1714](https://github.com/fallenbagel/jellyseerr/issues/1714)) ([fb8677f](https://github.com/fallenbagel/jellyseerr/commit/fb8677f29cfe2a7f0e0c465a1a742be119517886))
+
+
+### Features
+
+* add force ipv4 first setting ([#1719](https://github.com/fallenbagel/jellyseerr/issues/1719)) ([0357d17](https://github.com/fallenbagel/jellyseerr/commit/0357d172058ceda7d49a0c18c13009e0031e034d))
+
 # [2.6.0](https://github.com/fallenbagel/jellyseerr/compare/v2.5.2...v2.6.0) (2025-06-09)
 
 
