@@ -277,11 +277,14 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       select: { id: true, jellyfinDeviceId: true },
     });
 
-    let deviceId = '';
-    if (user) {
-      deviceId = user.jellyfinDeviceId ?? '';
-    } else {
-      deviceId = Buffer.from(`BOT_jellyseerr_${body.username ?? ''}`).toString(
+    let deviceId = 'BOT_jellyseerr';
+    if (user && user.id === 1) {
+      // Admin is always BOT_jellyseerr
+      deviceId = 'BOT_jellyseerr';
+    } else if (user && user.jellyfinDeviceId) {
+      deviceId = user.jellyfinDeviceId;
+    } else if (body.username) {
+      deviceId = Buffer.from(`BOT_jellyseerr_${body.username}`).toString(
         'base64'
       );
     }

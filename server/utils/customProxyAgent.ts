@@ -1,6 +1,8 @@
 import type { ProxySettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import axios from 'axios';
+import { HttpProxyAgent } from 'http-proxy-agent';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import type { Dispatcher } from 'undici';
 import { Agent, ProxyAgent, setGlobalDispatcher } from 'undici';
 
@@ -54,17 +56,29 @@ export default async function createCustomProxyAgent(
       : undefined;
 
   try {
+    const proxyUrl =
+      (proxySettings.useSsl ? 'https://' : 'http://') +
+      proxySettings.hostname +
+      ':' +
+      proxySettings.port;
+
     const proxyAgent = new ProxyAgent({
-      uri:
-        (proxySettings.useSsl ? 'https://' : 'http://') +
-        proxySettings.hostname +
-        ':' +
-        proxySettings.port,
+      uri: proxyUrl,
       token,
       keepAliveTimeout: 5000,
     });
 
     setGlobalDispatcher(proxyAgent.compose(noProxyInterceptor));
+
+    axios.defaults.httpAgent = new HttpProxyAgent(proxyUrl);
+    axios.defaults.httpsAgent = new HttpsProxyAgent(proxyUrl);
+    axios.interceptors.request.use((config) => {
+      if (config.url && skipUrl(config.url)) {
+        config.httpAgent = false;
+        config.httpsAgent = false;
+      }
+      return config;
+    });
   } catch (e) {
     logger.error('Failed to connect to the proxy: ' + e.message, {
       label: 'Proxy',

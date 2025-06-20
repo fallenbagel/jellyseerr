@@ -105,6 +105,12 @@ In some places (like China), the ISP blocks not only the DNS resolution but also
 
 You can configure Jellyseerr to use a proxy with the [HTTP(S) Proxy](/using-jellyseerr/settings/general#https-proxy) setting.
 
+### Option 3: Force IPV4 resolution first
+
+Sometimes there are configuration issues with IPV6 that prevent the hostname resolution from working correctly.
+
+You can try to force the resolution to use IPV4 first by going to `Settings > Networking > Advanced Networking` and enabling `Force IPv4 Resolution First` setting and restarting Jellyseerr.
+
 ### Option 4: Check that your server can reach TMDB API
 
 Make sure that your server can reach the TMDB API by running the following command:
