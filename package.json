@@ -69,7 +69,6 @@
     "http-proxy-agent": "^7.0.2",
     "https-proxy-agent": "^7.0.6",
     "lodash": "4.17.21",
-    "lru-cache": "^11.0.2",
     "mime": "3",
     "next": "^14.2.25",
     "node-cache": "5.1.2",
