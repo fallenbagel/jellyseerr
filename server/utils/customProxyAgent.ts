@@ -70,8 +70,12 @@ export default async function createCustomProxyAgent(
 
     setGlobalDispatcher(proxyAgent.compose(noProxyInterceptor));
 
-    axios.defaults.httpAgent = new HttpProxyAgent(proxyUrl);
-    axios.defaults.httpsAgent = new HttpsProxyAgent(proxyUrl);
+    axios.defaults.httpAgent = new HttpProxyAgent(proxyUrl, {
+      headers: { 'proxy-authorization': token },
+    });
+    axios.defaults.httpsAgent = new HttpsProxyAgent(proxyUrl, {
+      headers: { 'proxy-authorization': token },
+    });
     axios.interceptors.request.use((config) => {
       if (config.url && skipUrl(config.url)) {
         config.httpAgent = false;
