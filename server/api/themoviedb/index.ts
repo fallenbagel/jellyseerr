@@ -31,6 +31,7 @@ interface SearchOptions {
   query: string;
   page?: number;
   includeAdult?: boolean;
+  includeVideo?: boolean;
   language?: string;
 }
 
@@ -72,6 +73,7 @@ export interface TmdbCertificationResponse {
 interface DiscoverMovieOptions {
   page?: number;
   includeAdult?: boolean;
+  includeVideo?: boolean;
   language?: string;
   primaryReleaseDateGte?: string;
   primaryReleaseDateLte?: string;
@@ -150,12 +152,17 @@ class TheMovieDb extends ExternalAPI {
     query,
     page = 1,
     includeAdult = false,
+    includeVideo = false,
     language = this.locale,
   }: SearchOptions): Promise<TmdbSearchMultiResponse> => {
     try {
       const data = await this.get<TmdbSearchMultiResponse>('/search/multi', {
         params: { query, page, include_adult: includeAdult, language },
       });
+
+      if (!includeVideo) {
+        data.results = data.results.filter((result: any) => !result.video)
+      }
 
       return data;
     } catch (e) {
@@ -172,6 +179,7 @@ class TheMovieDb extends ExternalAPI {
     query,
     page = 1,
     includeAdult = false,
+    includeVideo = false,
     language = this.locale,
     year,
   }: SingleSearchOptions): Promise<TmdbSearchMovieResponse> => {
@@ -185,6 +193,10 @@ class TheMovieDb extends ExternalAPI {
           primary_release_year: year,
         },
       });
+
+      if (!includeVideo) {
+        data.results = data.results.filter((result: any) => !result.video)
+      }
 
       return data;
     } catch (e) {
@@ -480,6 +492,7 @@ class TheMovieDb extends ExternalAPI {
     sortBy = 'popularity.desc',
     page = 1,
     includeAdult = false,
+    includeVideo = false,
     language = this.locale,
     primaryReleaseDateGte,
     primaryReleaseDateLte,
@@ -516,14 +529,15 @@ class TheMovieDb extends ExternalAPI {
           sort_by: sortBy,
           page,
           include_adult: includeAdult,
+          include_video: includeVideo,
           language,
           region: this.discoverRegion || '',
           with_original_language:
             originalLanguage && originalLanguage !== 'all'
               ? originalLanguage
               : originalLanguage === 'all'
-              ? undefined
-              : this.originalLanguage,
+                ? undefined
+                : this.originalLanguage,
           // Set our release date values, but check if one is set and not the other,
           // so we can force a past date or a future date. TMDB Requires both values if one is set!
           'primary_release_date.gte':
@@ -614,8 +628,8 @@ class TheMovieDb extends ExternalAPI {
             originalLanguage && originalLanguage !== 'all'
               ? originalLanguage
               : originalLanguage === 'all'
-              ? undefined
-              : this.originalLanguage,
+                ? undefined
+                : this.originalLanguage,
           include_null_first_air_dates: includeEmptyReleaseDate,
           with_genres: genre,
           with_networks: network,
@@ -747,15 +761,15 @@ class TheMovieDb extends ExternalAPI {
     language = this.locale,
   }:
     | {
-        externalId: string;
-        type: 'imdb';
-        language?: string;
-      }
+      externalId: string;
+      type: 'imdb';
+      language?: string;
+    }
     | {
-        externalId: number;
-        type: 'tvdb';
-        language?: string;
-      }): Promise<TmdbExternalIdResponse> {
+      externalId: number;
+      type: 'tvdb';
+      language?: string;
+    }): Promise<TmdbExternalIdResponse> {
     try {
       const data = await this.get<TmdbExternalIdResponse>(
         `/find/${externalId}`,
