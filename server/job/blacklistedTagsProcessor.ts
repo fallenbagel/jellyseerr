@@ -18,7 +18,7 @@ import { createTmdbWithRegionLanguage } from '@server/routes/discover';
 import type { EntityManager } from 'typeorm';
 
 const TMDB_API_DELAY_MS = 250;
-class AbortTransaction extends Error {}
+class AbortTransaction extends Error { }
 
 class BlacklistedTagProcessor implements RunnableScanner<StatusBase> {
   private running = false;
@@ -106,6 +106,8 @@ class BlacklistedTagProcessor implements RunnableScanner<StatusBase> {
             page,
             sortBy,
             keywords: tag,
+            includeAdult: true,
+            includeVideo: true
           });
           await this.processResults(response, tag, type, em);
           await new Promise((res) => setTimeout(res, TMDB_API_DELAY_MS));
