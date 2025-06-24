@@ -37,6 +37,8 @@ class ExternalAPI {
         ...options.headers,
       },
     });
+    this.axios.interceptors.request = axios.interceptors.request;
+    this.axios.interceptors.response = axios.interceptors.response;
 
     if (options.rateLimit) {
       this.axios = rateLimit(this.axios, {

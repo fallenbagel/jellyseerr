@@ -56,12 +56,9 @@ export default async function createCustomProxyAgent(
       : undefined;
 
   try {
-    const proxyUrl =
-      (proxySettings.useSsl ? 'https://' : 'http://') +
-      proxySettings.hostname +
-      ':' +
-      proxySettings.port;
-
+    const proxyUrl = `${proxySettings.useSsl ? 'https' : 'http'}://${
+      proxySettings.hostname
+    }:${proxySettings.port}`;
     const proxyAgent = new ProxyAgent({
       uri: proxyUrl,
       token,
@@ -70,10 +67,17 @@ export default async function createCustomProxyAgent(
 
     setGlobalDispatcher(proxyAgent.compose(noProxyInterceptor));
 
-    axios.defaults.httpAgent = new HttpProxyAgent(proxyUrl);
-    axios.defaults.httpsAgent = new HttpsProxyAgent(proxyUrl);
+    axios.defaults.httpAgent = new HttpProxyAgent(proxyUrl, {
+      headers: token ? { 'proxy-authorization': token } : undefined,
+    });
+    axios.defaults.httpsAgent = new HttpsProxyAgent(proxyUrl, {
+      headers: token ? { 'proxy-authorization': token } : undefined,
+    });
     axios.interceptors.request.use((config) => {
-      if (config.url && skipUrl(config.url)) {
+      const url = config.baseURL
+        ? new URL(config.baseURL + (config.url || ''))
+        : config.url;
+      if (url && skipUrl(url)) {
         config.httpAgent = false;
         config.httpsAgent = false;
       }
