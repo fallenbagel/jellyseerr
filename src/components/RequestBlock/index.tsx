@@ -1,5 +1,6 @@
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
+import CachedImage from '@app/components/Common/CachedImage';
 import Tooltip from '@app/components/Common/Tooltip';
 import RequestModal from '@app/components/RequestModal';
 import useRequestOverride from '@app/hooks/useRequestOverride';
@@ -98,6 +99,16 @@ const RequestBlock = ({ request, onUpdate }: RequestBlockProps) => {
               <Tooltip content={intl.formatMessage(messages.requestedby)}>
                 <UserIcon className="mr-1.5 h-5 w-5 min-w-0 flex-shrink-0" />
               </Tooltip>
+              <span className="avatar-sm ml-1.5">
+                <CachedImage
+                  type="avatar"
+                  src={request.requestedBy.avatar}
+                  alt=""
+                  className="avatar-sm object-cover"
+                  width={20}
+                  height={20}
+                />
+              </span>
               <span className="w-40 truncate md:w-auto">
                 <Link
                   href={
@@ -116,6 +127,16 @@ const RequestBlock = ({ request, onUpdate }: RequestBlockProps) => {
                 <Tooltip content={intl.formatMessage(messages.lastmodifiedby)}>
                   <EyeIcon className="mr-1.5 h-5 w-5 flex-shrink-0" />
                 </Tooltip>
+                <span className="avatar-sm ml-1.5">
+                  <CachedImage
+                    type="avatar"
+                    src={request.modifiedBy.avatar}
+                    alt=""
+                    className="avatar-sm object-cover"
+                    width={20}
+                    height={20}
+                  />
+                </span>
                 <span className="w-40 truncate md:w-auto">
                   <Link
                     href={
