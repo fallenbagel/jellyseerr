@@ -108,7 +108,7 @@ const RequestBlock = ({ request, onUpdate }: RequestBlockProps) => {
                   }
                   className="flex items-center font-semibold text-gray-100 transition duration-300 hover:text-white hover:underline"
                 >
-                  <span className="avatar-sm mr-1.5">
+                  <span className="avatar-sm">
                     <CachedImage
                       type="avatar"
                       src={request.requestedBy.avatar}
@@ -138,7 +138,7 @@ const RequestBlock = ({ request, onUpdate }: RequestBlockProps) => {
                     }
                     className="flex items-center font-semibold text-gray-100 transition duration-300 hover:text-white hover:underline"
                   >
-                    <span className="avatar-sm mr-1.5">
+                    <span className="avatar-sm">
                       <CachedImage
                         type="avatar"
                         src={request.modifiedBy.avatar}
