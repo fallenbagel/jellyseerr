@@ -2,6 +2,7 @@ import AutoApprovalSpecificationBase from '@server/entity/AutoApproval/AutoAppro
 
 class GenreSpecification extends AutoApprovalSpecificationBase {
   public implementationName = 'genre';
+  public badgeText: string;
   public isSatisfiedBy(): boolean {
     return false;
   }
@@ -13,6 +14,7 @@ class GenreSpecification extends AutoApprovalSpecificationBase {
     super();
     this.comparator = comparator ?? 'is';
     this.value = value ?? '';
+    this.badgeText = `Genre ${this.comparator} ${this.value}`;
   }
 }
 

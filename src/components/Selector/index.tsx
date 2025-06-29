@@ -622,3 +622,32 @@ export const UserSelector = ({
     />
   );
 };
+
+export const ApprovalSpecificationSelector = ({
+  defaultValue,
+  onChange,
+}: BaseSelectorSingleProps) => {
+  const loadApprovalSpecOptions = () => {
+    return [
+      { label: 'Genre', value: 'genre' },
+      { label: 'Release Year', value: 'release-year' },
+      { label: 'User', value: 'user' },
+    ];
+  };
+
+  return (
+    <AsyncSelect
+      key={`user-select-${defaultValue}`}
+      className="react-select-container"
+      classNamePrefix="react-select"
+      defaultValue={defaultValue}
+      defaultOptions
+      cacheOptions
+      isMulti={false}
+      loadOptions={loadApprovalSpecOptions}
+      onChange={(value) => {
+        onChange(value as any);
+      }}
+    />
+  );
+};

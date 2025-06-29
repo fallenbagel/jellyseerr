@@ -24,21 +24,9 @@ const ApprovalRuleInstance = ({
   currentRule,
   onEdit,
 }: ApprovalRuleInstanceProps) => {
-  const comparisonNames = new Map<string, string>([
-    ['equals', '='],
-    ['greaterthan', '>'],
-    ['lessthan', '<'],
-    ['is', 'is'],
-    ['isnot', 'is not'],
-    ['contains', 'contains'],
-    ['does not contain'],
-  ]);
   const conditionBadges = currentRule.conditions.map((condition) => (
     <Badge key={`auto-approval-badge-`} className="m-0.5">
-      <>
-        {condition.implementationName}{' '}
-        {comparisonNames.get(condition.comparator)} {condition.value}
-      </>
+      <>{condition.badgeText}</>
     </Badge>
   ));
 
@@ -143,24 +131,7 @@ const SettingsAutoApproval = () => {
                       open: true,
                       approvalRule: {
                         name: 'Test rule',
-                        conditions: [
-                          {
-                            implementationName: 'genre',
-                            comparator: 'is',
-                            value: 'Documentary',
-                            isSatisfiedBy: () => {
-                              return false;
-                            },
-                          },
-                          {
-                            implementationName: 'release-year',
-                            comparator: 'lessthan',
-                            value: '2012',
-                            isSatisfiedBy: () => {
-                              return false;
-                            },
-                          },
-                        ],
+                        conditions: [],
                       },
                     })
                   }

@@ -12,8 +12,15 @@ autoApprovalRuleRoutes.get('/', isAuthenticated(), async (req, res, next) => {
       {
         name: 'Test Rule',
         conditions: [
-          new UserSpecification('is', 1),
+          new UserSpecification('is', '1'),
           new GenreSpecification('is', '16,14'),
+        ],
+      },
+      {
+        name: 'Mom',
+        conditions: [
+          new UserSpecification('isnot', '1'),
+          new GenreSpecification('contains', '12,19,3'),
         ],
       },
     ];
