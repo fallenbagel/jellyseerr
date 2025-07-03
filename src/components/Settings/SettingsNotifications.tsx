@@ -1,6 +1,5 @@
 import DiscordLogo from '@app/assets/extlogos/discord.svg';
 import GotifyLogo from '@app/assets/extlogos/gotify.svg';
-import LunaSeaLogo from '@app/assets/extlogos/lunasea.svg';
 import NtfyLogo from '@app/assets/extlogos/ntfy.svg';
 import PushbulletLogo from '@app/assets/extlogos/pushbullet.svg';
 import PushoverLogo from '@app/assets/extlogos/pushover.svg';
@@ -86,17 +85,6 @@ const SettingsNotifications = ({ children }: SettingsNotificationsProps) => {
       ),
       route: '/settings/notifications/ntfy',
       regex: /^\/settings\/notifications\/ntfy/,
-    },
-    {
-      text: 'LunaSea',
-      content: (
-        <span className="flex items-center">
-          <LunaSeaLogo className="mr-2 h-4" />
-          LunaSea
-        </span>
-      ),
-      route: '/settings/notifications/lunasea',
-      regex: /^\/settings\/notifications\/lunasea/,
     },
     {
       text: 'Pushbullet',

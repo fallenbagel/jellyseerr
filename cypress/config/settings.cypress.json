@@ -83,13 +83,6 @@
           "enableMentions": true
         }
       },
-      "lunasea": {
-        "enabled": false,
-        "types": 0,
-        "options": {
-          "webhookUrl": ""
-        }
-      },
       "slack": {
         "enabled": false,
         "types": 0,
