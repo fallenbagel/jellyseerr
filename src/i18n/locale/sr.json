@@ -494,6 +494,7 @@
   "i18n.notrequested": "Nije zahtevano",
   "components.Settings.Notifications.validationEmail": "Morate uneti validnu email adresu",
   "components.UserList.usercreatedfailedexisting": "Email adresa je već iskorišćena od strane drugog korisnika.",
+  "components.Settings.Notifications.NotificationsLunaSea.toastLunaSeaTestSending": "Šaljem LunaSea probno obaveštenje…",
   "components.CollectionDetails.requestcollection4k": "Zahtevaj kolekciju u 4K",
   "components.Login.signinheader": "Uloguj se za nastavak",
   "components.Login.signinwithoverseerr": "Iskoristi nalog od {applicationTitle}",
