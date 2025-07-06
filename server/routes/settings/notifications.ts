@@ -5,6 +5,7 @@ import DiscordAgent from '@server/lib/notifications/agents/discord';
 import EmailAgent from '@server/lib/notifications/agents/email';
 import GotifyAgent from '@server/lib/notifications/agents/gotify';
 import LunaSeaAgent from '@server/lib/notifications/agents/lunasea';
+import NtfyAgent from '@server/lib/notifications/agents/ntfy';
 import PushbulletAgent from '@server/lib/notifications/agents/pushbullet';
 import PushoverAgent from '@server/lib/notifications/agents/pushover';
 import SlackAgent from '@server/lib/notifications/agents/slack';
@@ -409,6 +410,40 @@ notificationRoutes.post('/gotify/test', async (req, res, next) => {
     return next({
       status: 500,
       message: 'Failed to send Gotify notification.',
+    });
+  }
+});
+
+notificationRoutes.get('/ntfy', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.notifications.agents.ntfy);
+});
+
+notificationRoutes.post('/ntfy', async (req, res) => {
+  const settings = getSettings();
+
+  settings.notifications.agents.ntfy = req.body;
+  await settings.save();
+
+  res.status(200).json(settings.notifications.agents.ntfy);
+});
+
+notificationRoutes.post('/ntfy/test', async (req, res, next) => {
+  if (!req.user) {
+    return next({
+      status: 500,
+      message: 'User information is missing from the request.',
+    });
+  }
+
+  const ntfyAgent = new NtfyAgent(req.body);
+  if (await sendTestNotification(ntfyAgent, req.user)) {
+    return res.status(204).send();
+  } else {
+    return next({
+      status: 500,
+      message: 'Failed to send ntfy notification.',
     });
   }
 });

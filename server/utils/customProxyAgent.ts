@@ -1,5 +1,8 @@
 import type { ProxySettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import axios from 'axios';
+import { HttpProxyAgent } from 'http-proxy-agent';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import type { Dispatcher } from 'undici';
 import { Agent, ProxyAgent, setGlobalDispatcher } from 'undici';
 
@@ -53,17 +56,33 @@ export default async function createCustomProxyAgent(
       : undefined;
 
   try {
+    const proxyUrl = `${proxySettings.useSsl ? 'https' : 'http'}://${
+      proxySettings.hostname
+    }:${proxySettings.port}`;
     const proxyAgent = new ProxyAgent({
-      uri:
-        (proxySettings.useSsl ? 'https://' : 'http://') +
-        proxySettings.hostname +
-        ':' +
-        proxySettings.port,
+      uri: proxyUrl,
       token,
       keepAliveTimeout: 5000,
     });
 
     setGlobalDispatcher(proxyAgent.compose(noProxyInterceptor));
+
+    axios.defaults.httpAgent = new HttpProxyAgent(proxyUrl, {
+      headers: token ? { 'proxy-authorization': token } : undefined,
+    });
+    axios.defaults.httpsAgent = new HttpsProxyAgent(proxyUrl, {
+      headers: token ? { 'proxy-authorization': token } : undefined,
+    });
+    axios.interceptors.request.use((config) => {
+      const url = config.baseURL
+        ? new URL(config.baseURL + (config.url || ''))
+        : config.url;
+      if (url && skipUrl(url)) {
+        config.httpAgent = false;
+        config.httpsAgent = false;
+      }
+      return config;
+    });
   } catch (e) {
     logger.error('Failed to connect to the proxy: ' + e.message, {
       label: 'Proxy',
@@ -73,15 +92,8 @@ export default async function createCustomProxyAgent(
   }
 
   try {
-    const res = await fetch('https://www.google.com', { method: 'HEAD' });
-    if (res.ok) {
-      logger.debug('HTTP(S) proxy connected successfully', { label: 'Proxy' });
-    } else {
-      logger.error('Proxy responded, but with a non-OK status: ' + res.status, {
-        label: 'Proxy',
-      });
-      setGlobalDispatcher(defaultAgent);
-    }
+    await axios.head('https://www.google.com');
+    logger.debug('HTTP(S) proxy connected successfully', { label: 'Proxy' });
   } catch (e) {
     logger.error(
       'Failed to connect to the proxy: ' + e.message + ': ' + e.cause,

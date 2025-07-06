@@ -19,11 +19,12 @@
     "discoverRegion": "",
     "streamingRegion": "",
     "originalLanguage": "",
+    "blacklistedTags": "",
+    "blacklistedTagsLimit": 50,
     "trustProxy": false,
     "mediaServerType": 1,
     "partialRequestsEnabled": true,
     "enableSpecialEpisodes": false,
-    "forceIpv4First": false,
     "locale": "en"
   },
   "plex": {
@@ -138,7 +139,16 @@
         "types": 0,
         "options": {
           "url": "",
-          "token": ""
+          "token": "",
+          "priority": 0
+        }
+      },
+      "ntfy": {
+        "enabled": false,
+        "types": 0,
+        "options": {
+          "url": "",
+          "topic": ""
         }
       }
     }

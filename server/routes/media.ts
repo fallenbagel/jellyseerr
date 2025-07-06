@@ -5,6 +5,7 @@ import TheMovieDb from '@server/api/themoviedb';
 import { MediaStatus, MediaType } from '@server/constants/media';
 import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';
+import Season from '@server/entity/Season';
 import { User } from '@server/entity/User';
 import type {
   MediaResultsResponse,
@@ -101,6 +102,7 @@ mediaRoutes.post<
   isAuthenticated(Permission.MANAGE_REQUESTS),
   async (req, res, next) => {
     const mediaRepository = getRepository(Media);
+    const seasonRepository = getRepository(Season);
 
     const media = await mediaRepository.findOne({
       where: { id: Number(req.params.id) },
@@ -115,11 +117,25 @@ mediaRoutes.post<
     switch (req.params.status) {
       case 'available':
         media[is4k ? 'status4k' : 'status'] = MediaStatus.AVAILABLE;
+
         if (media.mediaType === MediaType.TV) {
-          // Mark all seasons available
-          media.seasons.forEach((season) => {
+          const expectedSeasons = req.body.seasons ?? [];
+
+          for (const expectedSeason of expectedSeasons) {
+            let season = media.seasons.find(
+              (s) => s.seasonNumber === expectedSeason?.seasonNumber
+            );
+
+            if (!season) {
+              // Create the season if it doesn't exist
+              season = seasonRepository.create({
+                seasonNumber: expectedSeason?.seasonNumber,
+              });
+              media.seasons.push(season);
+            }
+
             season[is4k ? 'status4k' : 'status'] = MediaStatus.AVAILABLE;
-          });
+          }
         }
         break;
       case 'partial':

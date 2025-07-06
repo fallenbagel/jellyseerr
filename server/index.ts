@@ -10,6 +10,7 @@ import DiscordAgent from '@server/lib/notifications/agents/discord';
 import EmailAgent from '@server/lib/notifications/agents/email';
 import GotifyAgent from '@server/lib/notifications/agents/gotify';
 import LunaSeaAgent from '@server/lib/notifications/agents/lunasea';
+import NtfyAgent from '@server/lib/notifications/agents/ntfy';
 import PushbulletAgent from '@server/lib/notifications/agents/pushbullet';
 import PushoverAgent from '@server/lib/notifications/agents/pushover';
 import SlackAgent from '@server/lib/notifications/agents/slack';
@@ -27,6 +28,7 @@ import { getAppVersion } from '@server/utils/appVersion';
 import createCustomProxyAgent from '@server/utils/customProxyAgent';
 import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
+import axios from 'axios';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
 import type { NextFunction, Request, Response } from 'express';
@@ -34,9 +36,9 @@ import express from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
 import session from 'express-session';
+import http from 'http';
+import https from 'https';
 import next from 'next';
-import dns from 'node:dns';
-import net from 'node:net';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
@@ -74,13 +76,9 @@ app
     const settings = await getSettings().load();
     restartFlag.initializeSettings(settings);
 
-    // Check if we force IPv4 first
-    if (
-      process.env.forceIpv4First === 'true' ||
-      settings.network.forceIpv4First
-    ) {
-      dns.setDefaultResultOrder('ipv4first');
-      net.setDefaultAutoSelectFamily(false);
+    if (settings.network.forceIpv4First) {
+      axios.defaults.httpAgent = new http.Agent({ family: 4 });
+      axios.defaults.httpsAgent = new https.Agent({ family: 4 });
     }
 
     // Register HTTP proxy
@@ -114,6 +112,7 @@ app
       new DiscordAgent(),
       new EmailAgent(),
       new GotifyAgent(),
+      new NtfyAgent(),
       new LunaSeaAgent(),
       new PushbulletAgent(),
       new PushoverAgent(),

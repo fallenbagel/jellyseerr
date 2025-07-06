@@ -4,6 +4,7 @@ import NotificationTypeSelector from '@app/components/NotificationTypeSelector';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -64,20 +65,13 @@ const NotificationsSlack = () => {
       validationSchema={NotificationsSlackSchema}
       onSubmit={async (values) => {
         try {
-          const res = await fetch('/api/v1/settings/notifications/slack', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+          await axios.post('/api/v1/settings/notifications/slack', {
+            enabled: values.enabled,
+            types: values.types,
+            options: {
+              webhookUrl: values.webhookUrl,
             },
-            body: JSON.stringify({
-              enabled: values.enabled,
-              types: values.types,
-              options: {
-                webhookUrl: values.webhookUrl,
-              },
-            }),
           });
-          if (!res.ok) throw new Error();
           addToast(intl.formatMessage(messages.slacksettingssaved), {
             appearance: 'success',
             autoDismiss: true,
@@ -115,23 +109,13 @@ const NotificationsSlack = () => {
                 toastId = id;
               }
             );
-            const res = await fetch(
-              '/api/v1/settings/notifications/slack/test',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  enabled: true,
-                  types: values.types,
-                  options: {
-                    webhookUrl: values.webhookUrl,
-                  },
-                }),
-              }
-            );
-            if (!res.ok) throw new Error();
+            await axios.post('/api/v1/settings/notifications/slack/test', {
+              enabled: true,
+              types: values.types,
+              options: {
+                webhookUrl: values.webhookUrl,
+              },
+            });
 
             if (toastId) {
               removeToast(toastId);
