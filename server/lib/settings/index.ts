@@ -140,6 +140,7 @@ export interface MainSettings {
 
 export interface NetworkSettings {
   csrfProtection: boolean;
+  forceIpv4First: boolean;
   trustProxy: boolean;
   trustedProxies: TrustedProxies;
   forwardAuth: ForwardAuthSettings;
@@ -557,6 +558,7 @@ class Settings {
       },
       network: {
         csrfProtection: false,
+        forceIpv4First: false,
         trustProxy: false,
         trustedProxies: {
           v4: [],

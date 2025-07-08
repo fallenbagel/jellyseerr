@@ -4133,7 +4133,7 @@ paths:
                     type: string
                   userAgent:
                     type: string
-  /user/{userId}/pushSubscription/{key}:
+  /user/{userId}/pushSubscription/{endpoint}:
     get:
       summary: Get web push notification settings for a user
       description: |
@@ -4147,7 +4147,7 @@ paths:
           schema:
             type: number
         - in: path
-          name: key
+          name: endpoint
           required: true
           schema:
             type: string
@@ -4179,7 +4179,7 @@ paths:
           schema:
             type: number
         - in: path
-          name: key
+          name: endpoint
           required: true
           schema:
             type: string
