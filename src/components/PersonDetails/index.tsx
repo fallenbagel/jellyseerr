@@ -271,9 +271,11 @@ const PersonDetails = () => {
           </div>
         )}
         <div className="w-full text-center text-gray-300 lg:text-left">
-          <div className="flex w-full items-center justify-between">
+          <div className="flex w-full items-center justify-center lg:justify-between">
             <h1 className="text-3xl text-white lg:text-4xl">{data.name}</h1>
-            <div className="flex-shrink-0">{mediaTypePicker}</div>
+            <div className="hidden flex-shrink-0 lg:block">
+              {mediaTypePicker}
+            </div>
           </div>
           <div className="mt-1 mb-2 space-y-1 text-xs text-white sm:text-sm lg:text-base">
             <div>{personAttributes.join(' | ')}</div>
@@ -312,6 +314,7 @@ const PersonDetails = () => {
           )}
         </div>
       </div>
+      <div className="lg:hidden">{mediaTypePicker}</div>
       {data.knownForDepartment === 'Acting' ? [cast, crew] : [crew, cast]}
       {isLoading && <LoadingSpinner />}
     </>

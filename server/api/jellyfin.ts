@@ -22,6 +22,23 @@ export interface JellyfinUserResponse {
   PrimaryImageTag?: string;
 }
 
+export interface JellyfinDevice {
+  Id: string;
+  Name: string;
+  LastUserName: string;
+  AppName: string;
+  AppVersion: string;
+  LastUserId: string;
+  DateLastActivity: string;
+  Capabilities: Record<string, unknown>;
+}
+
+export interface JellyfinDevicesResponse {
+  Items: JellyfinDevice[];
+  TotalRecordCount: number;
+  StartIndex: number;
+}
+
 export interface JellyfinLoginResponse {
   User: JellyfinUserResponse;
   AccessToken: string;
@@ -113,9 +130,7 @@ class JellyfinAPI extends ExternalAPI {
     const safeDeviceId =
       deviceId && deviceId.length > 0
         ? deviceId
-        : Buffer.from(`BOT_jellyseerr_fallback_${Date.now()}`).toString(
-            'base64'
-          );
+        : Buffer.from('BOT_jellyseerr').toString('base64');
 
     let authHeaderVal: string;
     if (authToken) {

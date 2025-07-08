@@ -6,6 +6,7 @@ import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
 import { isValidURL } from '@app/utils/urlValidationHelper';
 import { ArrowDownOnSquareIcon, BeakerIcon } from '@heroicons/react/24/outline';
+import type { NotificationAgentNtfy } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
@@ -45,7 +46,7 @@ const NotificationsNtfy = () => {
     data,
     error,
     mutate: revalidate,
-  } = useSWR('/api/v1/settings/notifications/ntfy');
+  } = useSWR<NotificationAgentNtfy>('/api/v1/settings/notifications/ntfy');
 
   const NotificationsNtfySchema = Yup.object().shape({
     url: Yup.string()
@@ -79,16 +80,16 @@ const NotificationsNtfy = () => {
   return (
     <Formik
       initialValues={{
-        enabled: data.enabled,
+        enabled: data?.enabled,
         embedImage: data?.embedImage,
-        types: data.types,
-        url: data.options.url,
-        topic: data.options.topic,
-        authMethodUsernamePassword: data.options.authMethod,
-        username: data.options.username,
-        password: data.options.password,
-        authMethodToken: data.options.authMethodToken,
-        token: data.options.token,
+        types: data?.types,
+        url: data?.options.url,
+        topic: data?.options.topic,
+        authMethodUsernamePassword: data?.options.authMethodUsernamePassword,
+        username: data?.options.username,
+        password: data?.options.password,
+        authMethodToken: data?.options.authMethodToken,
+        token: data?.options.token,
       }}
       validationSchema={NotificationsNtfySchema}
       onSubmit={async (values) => {
@@ -313,7 +314,7 @@ const NotificationsNtfy = () => {
               </div>
             )}
             <NotificationTypeSelector
-              currentTypes={values.enabled ? values.types : 0}
+              currentTypes={values.enabled ? values.types || 0 : 0}
               onUpdate={(newTypes) => {
                 setFieldValue('types', newTypes);
                 setFieldTouched('types');

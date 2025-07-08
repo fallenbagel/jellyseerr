@@ -17,6 +17,7 @@ import { DbAwareColumn } from '@server/utils/DbColumnHelper';
 import { truncate } from 'lodash';
 import {
   AfterInsert,
+  AfterLoad,
   AfterUpdate,
   Column,
   Entity,
@@ -698,6 +699,13 @@ export class MediaRequest {
   public async autoapprovalNotification(): Promise<void> {
     if (this.status === MediaRequestStatus.APPROVED) {
       this.notifyApprovedOrDeclined(true);
+    }
+  }
+
+  @AfterLoad()
+  private sortSeasons() {
+    if (Array.isArray(this.seasons)) {
+      this.seasons.sort((a, b) => a.id - b.id);
     }
   }
 

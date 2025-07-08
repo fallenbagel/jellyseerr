@@ -123,6 +123,8 @@ class TautulliAPI {
       }${settings.urlBase ?? ''}`,
       params: { apikey: settings.apiKey },
     });
+    this.axios.interceptors.request = axios.interceptors.request;
+    this.axios.interceptors.response = axios.interceptors.response;
   }
 
   public async getInfo(): Promise<TautulliInfo> {
