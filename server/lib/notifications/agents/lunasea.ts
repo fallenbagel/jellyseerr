@@ -23,12 +23,13 @@ class LunaSeaAgent
   }
 
   private buildPayload(type: Notification, payload: NotificationPayload) {
+    const { embedImage } = getSettings().notifications.agents.lunasea;
     return {
       notification_type: Notification[type],
       event: payload.event,
       subject: payload.subject,
       message: payload.message,
-      image: payload.image ?? null,
+      image: embedImage && payload.image != null ? payload.image : null,
       email: payload.notifyUser?.email,
       username: payload.notifyUser?.displayName,
       avatar: payload.notifyUser?.avatar,
