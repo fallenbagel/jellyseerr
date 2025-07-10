@@ -36,16 +36,20 @@ docker run -d \
   -e PORT=5055 \
   -p 5055:5055 \
   -v /path/to/appdata/config:/app/config \
-  --health-cmd "wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1" \
-  --health-start-period 20s \
-  --health-timeout 3s \
-  --health-interval 15s \
-  --health-retries 3 \
   --restart unless-stopped \
   fallenbagel/jellyseerr
 ```
 
 The argument `-e PORT=5055` is optional.
+
+If you want to add a healthcheck to the above command, you can add the following flags :
+```
+  --health-cmd "wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1" \
+  --health-start-period 20s \
+  --health-timeout 3s \
+  --health-interval 15s \
+  --health-retries 3 \
+```
 
 To run the container as a specific user/group, you may optionally add `--user=[ user | user:group | uid | uid:gid | user:gid | uid:group ]` to the above command.
 
@@ -157,16 +161,20 @@ docker run -d \
   -e PORT=5055 \
   -p 5055:5055 \
   -v jellyseerr-data:/app/config \
-  --health-cmd "wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1" \
-  --health-start-period 20s \
-  --health-timeout 3s \
-  --health-interval 15s \
-  --health-retries 3 \
   --restart unless-stopped \
   fallenbagel/jellyseerr
 ```
 
 The argument `-e PORT=5055` is optional.
+
+If you want to add a healthcheck to the above command, you can add the following flags :
+```
+  --health-cmd "wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1" \
+  --health-start-period 20s \
+  --health-timeout 3s \
+  --health-interval 15s \
+  --health-retries 3 \
+```
 
 #### Updating:
 Pull the latest image:
