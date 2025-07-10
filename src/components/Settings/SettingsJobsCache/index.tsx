@@ -22,6 +22,7 @@ import type {
 import type { JobId } from '@server/lib/settings';
 import axios from 'axios';
 import cronstrue from 'cronstrue/i18n';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { Fragment, useReducer, useState } from 'react';
 import type { MessageDescriptor } from 'react-intl';
 import { FormattedRelativeTime, useIntl } from 'react-intl';
@@ -55,6 +56,26 @@ const messages: { [messageName: string]: MessageDescriptor } = defineMessages(
     cacheksize: 'Key Size',
     cachevsize: 'Value Size',
     flushcache: 'Flush Cache',
+    dnsCache: 'DNS Cache',
+    dnsCacheDescription:
+      'Jellyseerr caches DNS lookups to optimize performance and avoid making unnecessary API calls.',
+    dnscacheflushed: '{hostname} dns cache flushed.',
+    dnscachename: 'Hostname',
+    dnscacheactiveaddress: 'Active Address',
+    dnscachehits: 'Hits',
+    dnscachemisses: 'Misses',
+    dnscacheage: 'Age',
+    dnscachenetworkerrors: 'Network Errors',
+    flushdnscache: 'Flush DNS Cache',
+    dnsCacheGlobalStats: 'Global DNS Cache Stats',
+    dnsCacheGlobalStatsDescription:
+      'These stats are aggregated across all DNS cache entries.',
+    size: 'Size',
+    hits: 'Hits',
+    misses: 'Misses',
+    failures: 'Failures',
+    ipv4Fallbacks: 'IPv4 Fallbacks',
+    hitRate: 'Hit Rate',
     unknownJob: 'Unknown Job',
     'plex-recently-added-scan': 'Plex Recently Added Scan',
     'plex-full-scan': 'Plex Full Library Scan',
@@ -242,6 +263,18 @@ const SettingsJobs = () => {
     cacheRevalidate();
   };
 
+  const flushDnsCache = async (hostname: string) => {
+    await axios.post(`/api/v1/settings/cache/dns/${hostname}/flush`);
+    addToast(
+      intl.formatMessage(messages.dnscacheflushed, { hostname: hostname }),
+      {
+        appearance: 'success',
+        autoDismiss: true,
+      }
+    );
+    cacheRevalidate();
+  };
+
   const scheduleJob = async () => {
     const jobScheduleCron = ['0', '0', '*', '*', '*', '*'];
 
@@ -283,6 +316,18 @@ const SettingsJobs = () => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const formatAge = (milliseconds: number): string => {
+    const duration = intervalToDuration({
+      start: 0,
+      end: milliseconds,
+    });
+
+    return formatDuration(duration, {
+      format: ['minutes', 'seconds'],
+      zero: false,
+    });
   };
 
   return (
@@ -564,6 +609,95 @@ const SettingsJobs = () => {
                   </Table.TD>
                 </tr>
               ))}
+          </Table.TBody>
+        </Table>
+      </div>
+      <div>
+        <h3 className="heading">{intl.formatMessage(messages.dnsCache)}</h3>
+        <p className="description">
+          {intl.formatMessage(messages.dnsCacheDescription)}
+        </p>
+      </div>
+      <div className="section">
+        <Table>
+          <thead>
+            <tr>
+              <Table.TH>{intl.formatMessage(messages.dnscachename)}</Table.TH>
+              <Table.TH>
+                {intl.formatMessage(messages.dnscacheactiveaddress)}
+              </Table.TH>
+              <Table.TH>{intl.formatMessage(messages.dnscachehits)}</Table.TH>
+              <Table.TH>{intl.formatMessage(messages.dnscachemisses)}</Table.TH>
+              <Table.TH>{intl.formatMessage(messages.dnscacheage)}</Table.TH>
+              <Table.TH>
+                {intl.formatMessage(messages.dnscachenetworkerrors)}
+              </Table.TH>
+              <Table.TH></Table.TH>
+            </tr>
+          </thead>
+          <Table.TBody>
+            {Object.entries(cacheData?.dnsCache.entries || {}).map(
+              ([hostname, data]) => (
+                <tr key={`cache-list-${hostname}`}>
+                  <Table.TD>{hostname}</Table.TD>
+                  <Table.TD>{data.activeAddress}</Table.TD>
+                  <Table.TD>{intl.formatNumber(data.hits)}</Table.TD>
+                  <Table.TD>{intl.formatNumber(data.misses)}</Table.TD>
+                  <Table.TD>{formatAge(data.age)}</Table.TD>
+                  <Table.TD>{intl.formatNumber(data.networkErrors)}</Table.TD>
+                  <Table.TD alignText="right">
+                    <Button
+                      buttonType="danger"
+                      onClick={() => flushDnsCache(hostname)}
+                    >
+                      <TrashIcon />
+                      <span>{intl.formatMessage(messages.flushdnscache)}</span>
+                    </Button>
+                  </Table.TD>
+                </tr>
+              )
+            )}
+          </Table.TBody>
+        </Table>
+      </div>
+      <div>
+        <h3 className="heading">
+          {intl.formatMessage(messages.dnsCacheGlobalStats)}
+        </h3>
+        <p className="description">
+          {intl.formatMessage(messages.dnsCacheGlobalStatsDescription)}
+        </p>
+      </div>
+      <div className="section">
+        <Table>
+          <thead>
+            <tr>
+              {Object.entries(cacheData?.dnsCache.stats || {})
+                .filter(([statName]) => statName !== 'maxSize')
+                .map(([statName]) => (
+                  <Table.TH key={`dns-stat-header-${statName}`}>
+                    {messages[statName]
+                      ? intl.formatMessage(messages[statName])
+                      : statName}
+                  </Table.TH>
+                ))}
+            </tr>
+          </thead>
+          <Table.TBody>
+            <tr>
+              {Object.entries(cacheData?.dnsCache.stats || {})
+                .filter(([statName]) => statName !== 'maxSize')
+                .map(([statName, statValue]) => (
+                  <Table.TD key={`dns-stat-${statName}`}>
+                    {statName === 'hitRate'
+                      ? intl.formatNumber(statValue, {
+                          style: 'percent',
+                          maximumFractionDigits: 2,
+                        })
+                      : intl.formatNumber(statValue)}
+                  </Table.TD>
+                ))}
+            </tr>
           </Table.TBody>
         </Table>
       </div>
