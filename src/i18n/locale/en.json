@@ -269,7 +269,6 @@
   "components.Login.username": "Username",
   "components.Login.validationEmailFormat": "Invalid email",
   "components.Login.validationEmailRequired": "You must provide an email",
-  "components.Login.validationHostnameRequired": "You must provide a valid hostname or IP address",
   "components.Login.validationPortRequired": "You must provide a valid port number",
   "components.Login.validationUrlBaseLeadingSlash": "URL base must have a leading slash",
   "components.Login.validationUrlBaseTrailingSlash": "URL base must not end in a trailing slash",

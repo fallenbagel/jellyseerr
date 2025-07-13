@@ -96,12 +96,9 @@ const RadarrModal = ({ onClose, radarr, onSave }: RadarrModalProps) => {
     name: Yup.string().required(
       intl.formatMessage(messages.validationNameRequired)
     ),
-    hostname: Yup.string()
-      .required(intl.formatMessage(messages.validationHostnameRequired))
-      .matches(
-        /^(((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])):((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))@)?(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
-        intl.formatMessage(messages.validationHostnameRequired)
-      ),
+    hostname: Yup.string().required(
+      intl.formatMessage(messages.validationHostnameRequired)
+    ),
     port: Yup.number()
       .nullable()
       .required(intl.formatMessage(messages.validationPortRequired)),
