@@ -33,11 +33,22 @@ docker run -d \
   --name jellyseerr \
   -e LOG_LEVEL=debug \
   -e TZ=Asia/Tashkent \
-  -e PORT=5055 `#optional` \
+  -e PORT=5055 \
   -p 5055:5055 \
   -v /path/to/appdata/config:/app/config \
   --restart unless-stopped \
   fallenbagel/jellyseerr
+```
+
+The argument `-e PORT=5055` is optional.
+
+If you want to add a healthcheck to the above command, you can add the following flags :
+```
+  --health-cmd "wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1" \
+  --health-start-period 20s \
+  --health-timeout 3s \
+  --health-interval 15s \
+  --health-retries 3 \
 ```
 
 To run the container as a specific user/group, you may optionally add `--user=[ user | user:group | uid | uid:gid | user:gid | uid:group ]` to the above command.
@@ -46,7 +57,7 @@ To run the container as a specific user/group, you may optionally add `--user=[ 
 
 Stop and remove the existing container:
 ```bash
-docker stop jellyseerr && docker rm Jellyseerr
+docker stop jellyseerr && docker rm jellyseerr
 ```
 Pull the latest image:
 ```bash
@@ -83,6 +94,12 @@ services:
       - 5055:5055
     volumes:
       - /path/to/appdata/config:/app/config
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
     restart: unless-stopped
 ```
 
@@ -137,7 +154,26 @@ Then, create and start the Jellyseerr container:
 <Tabs groupId="docker-methods" queryString>
   <TabItem value="docker-cli" label="Docker CLI">
 ```bash
-docker run -d --name jellyseerr -e LOG_LEVEL=debug -e TZ=Asia/Tashkent -p 5055:5055 -v "jellyseerr-data:/app/config" --restart unless-stopped fallenbagel/jellyseerr:latest
+docker run -d \
+  --name jellyseerr \
+  -e LOG_LEVEL=debug \
+  -e TZ=Asia/Tashkent \
+  -e PORT=5055 \
+  -p 5055:5055 \
+  -v jellyseerr-data:/app/config \
+  --restart unless-stopped \
+  fallenbagel/jellyseerr
+```
+
+The argument `-e PORT=5055` is optional.
+
+If you want to add a healthcheck to the above command, you can add the following flags :
+```
+  --health-cmd "wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1" \
+  --health-start-period 20s \
+  --health-timeout 3s \
+  --health-interval 15s \
+  --health-retries 3 \
 ```
 
 #### Updating:
@@ -165,6 +201,12 @@ services:
       - 5055:5055
     volumes:
       - jellyseerr-data:/app/config
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
     restart: unless-stopped
 
 volumes:

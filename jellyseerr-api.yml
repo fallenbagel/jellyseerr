@@ -1425,22 +1425,6 @@ components:
               type: boolean
             token:
               type: string
-    LunaSeaSettings:
-      type: object
-      properties:
-        enabled:
-          type: boolean
-          example: false
-        types:
-          type: number
-          example: 2
-        options:
-          type: object
-          properties:
-            webhookUrl:
-              type: string
-            profileName:
-              type: string
     NotificationEmailSettings:
       type: object
       properties:
@@ -3096,52 +3080,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/DiscordSettings'
-      responses:
-        '204':
-          description: Test notification attempted
-  /settings/notifications/lunasea:
-    get:
-      summary: Get LunaSea notification settings
-      description: Returns current LunaSea notification settings in a JSON object.
-      tags:
-        - settings
-      responses:
-        '200':
-          description: Returned LunaSea settings
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LunaSeaSettings'
-    post:
-      summary: Update LunaSea notification settings
-      description: Updates LunaSea notification settings with the provided values.
-      tags:
-        - settings
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LunaSeaSettings'
-      responses:
-        '200':
-          description: 'Values were sucessfully updated'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LunaSeaSettings'
-  /settings/notifications/lunasea/test:
-    post:
-      summary: Test LunaSea settings
-      description: Sends a test notification to the LunaSea agent.
-      tags:
-        - settings
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LunaSeaSettings'
       responses:
         '204':
           description: Test notification attempted

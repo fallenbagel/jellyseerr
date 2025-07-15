@@ -150,6 +150,8 @@ class ImageProxy {
       baseURL: baseUrl,
       headers: options.headers,
     });
+    this.axios.interceptors.request = axios.interceptors.request;
+    this.axios.interceptors.response = axios.interceptors.response;
 
     if (options.rateLimitOptions) {
       this.axios = rateLimit(this.axios, options.rateLimitOptions);

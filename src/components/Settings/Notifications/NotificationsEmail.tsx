@@ -77,18 +77,13 @@ const NotificationsEmail = () => {
           otherwise: Yup.string().nullable(),
         })
         .email(intl.formatMessage(messages.validationEmail)),
-      smtpHost: Yup.string()
-        .when('enabled', {
-          is: true,
-          then: Yup.string()
-            .nullable()
-            .required(intl.formatMessage(messages.validationSmtpHostRequired)),
-          otherwise: Yup.string().nullable(),
-        })
-        .matches(
-          /^(((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])):((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))@)?(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
-          intl.formatMessage(messages.validationSmtpHostRequired)
-        ),
+      smtpHost: Yup.string().when('enabled', {
+        is: true,
+        then: Yup.string()
+          .nullable()
+          .required(intl.formatMessage(messages.validationSmtpHostRequired)),
+        otherwise: Yup.string().nullable(),
+      }),
       smtpPort: Yup.number().when('enabled', {
         is: true,
         then: Yup.number()
