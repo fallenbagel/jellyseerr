@@ -1,3 +1,13 @@
+## [2.7.1](https://github.com/fallenbagel/jellyseerr/compare/v2.7.0...v2.7.1) (2025-07-15)
+
+
+### Bug Fixes
+
+* allow setting IPv6 as an IP address in hostname field ([#1782](https://github.com/fallenbagel/jellyseerr/issues/1782)) ([844b1ab](https://github.com/fallenbagel/jellyseerr/commit/844b1abad9589c57ea6f56717212d9219b2aa954))
+* **gotify:** notifications blocked when priority set to 0 ([#1763](https://github.com/fallenbagel/jellyseerr/issues/1763)) ([8c43db2](https://github.com/fallenbagel/jellyseerr/commit/8c43db2abf3b504dbb789369c9a9ac92bb820722))
+* **proxy:** apply all proxy settings to Axios ([#1741](https://github.com/fallenbagel/jellyseerr/issues/1741)) ([b83367c](https://github.com/fallenbagel/jellyseerr/commit/b83367cbf2e0470cc1ad4eed8ec6eafaafafdbad))
+* remove LunaSea ([#1759](https://github.com/fallenbagel/jellyseerr/issues/1759)) ([510108f](https://github.com/fallenbagel/jellyseerr/commit/510108f9bbec9651a5d91e11ea411e688b5043fe)), closes [#1756](https://github.com/fallenbagel/jellyseerr/issues/1756)
+
 # [2.7.0](https://github.com/fallenbagel/jellyseerr/compare/v2.6.0...v2.7.0) (2025-06-20)
 
 
