@@ -211,13 +211,6 @@ export interface NotificationAgentEmail extends NotificationAgentConfig {
   };
 }
 
-export interface NotificationAgentLunaSea extends NotificationAgentConfig {
-  options: {
-    webhookUrl: string;
-    profileName?: string;
-  };
-}
-
 export interface NotificationAgentTelegram extends NotificationAgentConfig {
   options: {
     botUsername?: string;
@@ -276,7 +269,6 @@ export enum NotificationAgentKey {
   EMAIL = 'email',
   GOTIFY = 'gotify',
   NTFY = 'ntfy',
-  LUNASEA = 'lunasea',
   PUSHBULLET = 'pushbullet',
   PUSHOVER = 'pushover',
   SLACK = 'slack',
@@ -290,7 +282,6 @@ export interface NotificationAgentTemplates {
   email: NotificationAgentEmail;
   gotify: NotificationAgentGotify;
   ntfy: NotificationAgentNtfy;
-  lunasea: NotificationAgentLunaSea;
   pushbullet: NotificationAgentPushbullet;
   pushover: NotificationAgentPushover;
   slack: NotificationAgentSlack;
