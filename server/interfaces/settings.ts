@@ -131,6 +131,7 @@ export interface MainSettings {
 
 export interface NetworkSettings {
   csrfProtection: boolean;
+  forceIpv4First: boolean;
   trustProxy: boolean;
   proxy: ProxySettings;
 }
