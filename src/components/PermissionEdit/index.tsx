@@ -85,6 +85,9 @@ export const messages = defineMessages('components.PermissionEdit', {
   viewblacklistedItems: 'View blacklisted media.',
   viewblacklistedItemsDescription:
     'Grant permission to view blacklisted media.',
+  requestDelete: 'Request Deletion',
+  requestDeleteDescription:
+    'Grant permission to request deletion of available media from Radarr/Sonarr.',
 });
 
 interface PermissionEditProps {
@@ -354,6 +357,12 @@ export const PermissionEdit = ({
           permission: Permission.VIEW_BLACKLIST,
         },
       ],
+    },
+    {
+      id: 'requestdelete',
+      name: intl.formatMessage(messages.requestDelete),
+      description: intl.formatMessage(messages.requestDeleteDescription),
+      permission: Permission.REQUEST_DELETE,
     },
   ];
 

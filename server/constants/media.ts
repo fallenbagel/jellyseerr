@@ -4,6 +4,9 @@ export enum MediaRequestStatus {
   DECLINED,
   FAILED,
   COMPLETED,
+  DELETION_PENDING,
+  DELETION_APPROVED,
+  DELETION_DECLINED,
 }
 
 export enum MediaType {

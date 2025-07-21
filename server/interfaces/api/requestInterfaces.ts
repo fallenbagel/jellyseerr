@@ -23,3 +23,11 @@ export type MediaRequestBody = {
   userId?: number;
   tags?: number[];
 };
+
+export type DeletionRequestBody = {
+  mediaType: MediaType;
+  mediaId: number;
+  is4k?: boolean;
+  userId?: number;
+  reason?: string;
+};
