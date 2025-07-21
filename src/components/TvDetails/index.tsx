@@ -8,6 +8,7 @@ import BlacklistModal from '@app/components/BlacklistModal';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import CachedImage from '@app/components/Common/CachedImage';
+import DeletionRequestButton from '@app/components/DeletionRequestButton';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
 import type { PlayButtonLink } from '@app/components/Common/PlayButton';
@@ -669,6 +670,27 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
             isShowComplete={isComplete}
             is4kShowComplete={is4kComplete}
           />
+          <DeletionRequestButton
+            mediaType="tv"
+            media={data?.mediaInfo}
+            tmdbId={data?.id}
+            onUpdate={() => revalidate()}
+          />
+          {settings.currentSettings.series4kEnabled &&
+            hasPermission(
+              [Permission.REQUEST_4K, Permission.REQUEST_4K_TV],
+              {
+                type: 'or',
+              }
+            ) && (
+              <DeletionRequestButton
+                mediaType="tv"
+                media={data?.mediaInfo}
+                tmdbId={data?.id}
+                onUpdate={() => revalidate()}
+                is4k
+              />
+            )}
           {(data.mediaInfo?.status === MediaStatus.AVAILABLE ||
             data.mediaInfo?.status === MediaStatus.PARTIALLY_AVAILABLE ||
             (settings.currentSettings.series4kEnabled &&

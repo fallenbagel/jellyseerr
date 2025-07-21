@@ -8,6 +8,7 @@ import TmdbLogo from '@app/assets/tmdb_logo.svg';
 import BlacklistModal from '@app/components/BlacklistModal';
 import Button from '@app/components/Common/Button';
 import CachedImage from '@app/components/Common/CachedImage';
+import DeletionRequestButton from '@app/components/DeletionRequestButton';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
 import type { PlayButtonLink } from '@app/components/Common/PlayButton';
@@ -623,6 +624,27 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
             tmdbId={data.id}
             onUpdate={() => revalidate()}
           />
+          <DeletionRequestButton
+            mediaType="movie"
+            media={data.mediaInfo}
+            tmdbId={data.id}
+            onUpdate={() => revalidate()}
+          />
+          {settings.currentSettings.movie4kEnabled &&
+            hasPermission(
+              [Permission.REQUEST_4K, Permission.REQUEST_4K_MOVIE],
+              {
+                type: 'or',
+              }
+            ) && (
+              <DeletionRequestButton
+                mediaType="movie"
+                media={data.mediaInfo}
+                tmdbId={data.id}
+                onUpdate={() => revalidate()}
+                is4k
+              />
+            )}
           {(data.mediaInfo?.status === MediaStatus.AVAILABLE ||
             (settings.currentSettings.movie4kEnabled &&
               hasPermission(

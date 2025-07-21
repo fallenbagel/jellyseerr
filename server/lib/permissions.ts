@@ -29,6 +29,7 @@ export enum Permission {
   WATCHLIST_VIEW = 134217728,
   MANAGE_BLACKLIST = 268435456,
   VIEW_BLACKLIST = 1073741824,
+  REQUEST_DELETE = 2147483648,
 }
 
 export interface PermissionCheckOptions {
