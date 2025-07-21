@@ -1,3 +1,10 @@
+## [2.7.2](https://github.com/fallenbagel/jellyseerr/compare/v2.7.1...v2.7.2) (2025-07-21)
+
+
+### Bug Fixes
+
+* **proxy:** modify the registration of the axios interceptors ([#1791](https://github.com/fallenbagel/jellyseerr/issues/1791)) ([75a7279](https://github.com/fallenbagel/jellyseerr/commit/75a7279ea24874548fece12bb5e7c97d78d088a9)), closes [#1787](https://github.com/fallenbagel/jellyseerr/issues/1787)
+
 ## [2.7.1](https://github.com/fallenbagel/jellyseerr/compare/v2.7.0...v2.7.1) (2025-07-15)
 
 
