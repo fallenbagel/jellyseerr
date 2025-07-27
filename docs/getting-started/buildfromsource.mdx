@@ -26,8 +26,7 @@ sudo mkdir -p /opt/jellyseerr && cd /opt/jellyseerr
 ```
 2. Clone the Jellyseerr repository and checkout the develop branch:
 ```bash
-git clone https://github.com/Fallenbagel/jellyseerr.git
-cd jellyseerr
+git clone https://github.com/Fallenbagel/jellyseerr.git .
 git checkout main
 ```
 3. Install the dependencies:
@@ -65,9 +64,9 @@ PORT=5055
 ```
 2. Then run the following commands:
 ```bash
-which node
+which pnpm
 ```
-Copy the path to node, it should be something like `/usr/bin/node`.
+Copy the path to node, it may be something like `/usr/bin/node/bin/pnpm`.
 
 3. Create the systemd service file at `/etc/systemd/system/jellyseerr.service`, using either `sudo systemctl edit jellyseerr` or `sudo nano /etc/systemd/system/jellyseerr.service`:
 ```bash
@@ -82,13 +81,13 @@ Environment=NODE_ENV=production
 Type=exec
 Restart=on-failure
 WorkingDirectory=/opt/jellyseerr
-ExecStart=/usr/bin/node dist/index.js
+ExecStart=/usr/bin/node/bin/pnpm start
 
 [Install]
 WantedBy=multi-user.target
 ```
 :::note
-If you are using a different path to node, replace `/usr/bin/node` with the path to node.
+If you are using a different path to node, replace `/usr/bin/node/bin/pnpm` with the path to node.
 :::
 
 4. Enable and start the service:
