@@ -1064,6 +1064,9 @@ class TheMovieDb extends ExternalAPI {
 
       return data;
     } catch (e) {
+      if (e.response?.status === 404) {
+        throw e;
+      }
       throw new Error(`[TMDB] Failed to fetch keyword: ${e.message}`);
     }
   }

@@ -330,6 +330,10 @@ router.get('/keyword/:keywordId', async (req, res, next) => {
 
     return res.status(200).json(result);
   } catch (e) {
+    if (e.response?.status === 404) {
+      return res.status(404).json({ message: 'Keyword not found' });
+    }
+
     logger.debug('Something went wrong retrieving keyword data', {
       label: 'API',
       errorMessage: e.message,

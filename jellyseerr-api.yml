@@ -7273,6 +7273,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Keyword'
+        '404':
+          description: Keyword not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Keyword not found'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Unable to retrieve keyword data.'
   /watchproviders/regions:
     get:
       summary: Get watch provider regions

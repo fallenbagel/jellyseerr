@@ -124,17 +124,23 @@ const ControlledKeywordSelector = ({
 
       const keywords = await Promise.all(
         defaultValue.split(',').map(async (keywordId) => {
-          const { data } = await axios.get<Keyword>(
-            `/api/v1/keyword/${keywordId}`
-          );
-          return data;
+          try {
+            const { data } = await axios.get<Keyword>(
+              `/api/v1/keyword/${keywordId}`
+            );
+            return data;
+          } catch (error) {
+            return null;
+          }
         })
       );
 
+      const validKeywords = keywords.filter((keyword) => keyword !== null);
+
       onChange(
-        keywords.map((keyword) => ({
-          label: keyword.name,
-          value: keyword.id,
+        validKeywords.map((keyword) => ({
+          label: keyword!.name,
+          value: keyword!.id,
         }))
       );
     };

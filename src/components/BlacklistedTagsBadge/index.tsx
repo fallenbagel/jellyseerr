@@ -35,11 +35,15 @@ const BlacklistedTagsBadge = ({ data }: BlacklistedTagsBadgeProps) => {
           );
           return data.name;
         } catch (err) {
+          if (err.response?.status === 404) {
+            return `[Invalid: ${keywordId}]`;
+          }
           return '';
         }
       })
     ).then((keywords) => {
-      setTagNamesBlacklistedFor(keywords.join(', '));
+      const validKeywords = keywords.filter((name) => name !== '');
+      setTagNamesBlacklistedFor(validKeywords.join(', '));
     });
   }, [data.blacklistedTags]);
 
