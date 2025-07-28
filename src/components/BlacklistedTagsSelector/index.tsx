@@ -5,7 +5,10 @@ import { encodeURIExtraParams } from '@app/hooks/useDiscover';
 import defineMessages from '@app/utils/defineMessages';
 import { Transition } from '@headlessui/react';
 import { ArrowDownIcon } from '@heroicons/react/24/solid';
-import type { TmdbKeywordSearchResponse } from '@server/api/themoviedb/interfaces';
+import type {
+  TmdbKeyword,
+  TmdbKeywordSearchResponse,
+} from '@server/api/themoviedb/interfaces';
 import type { Keyword } from '@server/models/common';
 import axios from 'axios';
 import { useFormikContext } from 'formik';
@@ -135,12 +138,14 @@ const ControlledKeywordSelector = ({
         })
       );
 
-      const validKeywords = keywords.filter((keyword) => keyword !== null);
+      const validKeywords: TmdbKeyword[] = keywords.filter(
+        (keyword) => keyword !== null
+      );
 
       onChange(
         validKeywords.map((keyword) => ({
-          label: keyword!.name,
-          value: keyword!.id,
+          label: keyword.name,
+          value: keyword.id,
         }))
       );
     };
