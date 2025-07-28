@@ -91,12 +91,21 @@ class BlacklistedTagProcessor implements RunnableScanner<StatusBase> {
         try {
           await tmdb.getKeywordDetails({ keywordId: Number(tag) });
         } catch (error) {
-          logger.warn('Skipping invalid keyword in blacklisted tags', {
-            label: 'Blacklisted Tags Processor',
-            keywordId: tag,
-          });
-          invalidKeywords.add(tag);
-          continue;
+          if (error.response?.status === 404) {
+            logger.warn('Skipping invalid keyword in blacklisted tags', {
+              label: 'Blacklisted Tags Processor',
+              keywordId: tag,
+            });
+            invalidKeywords.add(tag);
+            continue;
+          } else {
+            // Might be temporary service issues so do nothing
+            logger.error('Error checking keyword validity', {
+              label: 'Blacklisted Tags Processor',
+              keywordId: tag,
+              errorMessage: error.message,
+            });
+          }
         }
 
         let queryMax = pageLimit * SortOptionsIterable.length;
