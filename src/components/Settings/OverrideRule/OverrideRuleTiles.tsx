@@ -119,7 +119,7 @@ const OverrideRuleTiles = ({
             return response.data;
           })
       );
-      const validKeywords = keywords.filter(
+      const validKeywords: Keyword[] = keywords.filter(
         (keyword): keyword is Keyword => keyword !== null
       );
       setKeywords(validKeywords);

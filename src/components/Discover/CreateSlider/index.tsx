@@ -84,7 +84,7 @@ const CreateSlider = ({ onCreate, slider }: CreateSliderProps) => {
           })
         );
 
-        const validKeywords = keywords.filter(
+        const validKeywords: Keyword[] = keywords.filter(
           (keyword): keyword is Keyword => keyword !== null
         );
 

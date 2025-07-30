@@ -316,7 +316,7 @@ export const KeywordSelector = ({
         })
       );
 
-      const validKeywords = keywords.filter(
+      const validKeywords: TmdbKeyword[] = keywords.filter(
         (keyword): keyword is Keyword => keyword !== null
       );
 
