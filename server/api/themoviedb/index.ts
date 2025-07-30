@@ -1054,7 +1054,7 @@ class TheMovieDb extends ExternalAPI {
     keywordId,
   }: {
     keywordId: number;
-  }): Promise<TmdbKeyword> {
+  }): Promise<TmdbKeyword | null> {
     try {
       const data = await this.get<TmdbKeyword>(
         `/keyword/${keywordId}`,
@@ -1065,7 +1065,7 @@ class TheMovieDb extends ExternalAPI {
       return data;
     } catch (e) {
       if (e.response?.status === 404) {
-        throw e;
+        return null;
       }
       throw new Error(`[TMDB] Failed to fetch keyword: ${e.message}`);
     }

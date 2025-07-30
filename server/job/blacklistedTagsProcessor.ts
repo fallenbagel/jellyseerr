@@ -88,24 +88,17 @@ class BlacklistedTagProcessor implements RunnableScanner<StatusBase> {
 
       // Iterate for each tag
       for (const tag of blacklistedTagsArr) {
-        try {
-          await tmdb.getKeywordDetails({ keywordId: Number(tag) });
-        } catch (error) {
-          if (error.response?.status === 404) {
-            logger.warn('Skipping invalid keyword in blacklisted tags', {
-              label: 'Blacklisted Tags Processor',
-              keywordId: tag,
-            });
-            invalidKeywords.add(tag);
-            continue;
-          } else {
-            // Might be temporary service issues so do nothing
-            logger.error('Error checking keyword validity', {
-              label: 'Blacklisted Tags Processor',
-              keywordId: tag,
-              errorMessage: error.message,
-            });
-          }
+        const keywordDetails = await tmdb.getKeywordDetails({
+          keywordId: Number(tag),
+        });
+
+        if (keywordDetails === null) {
+          logger.warn('Skipping invalid keyword in blacklisted tags', {
+            label: 'Blacklisted Tags Processor',
+            keywordId: tag,
+          });
+          invalidKeywords.add(tag);
+          continue;
         }
 
         let queryMax = pageLimit * SortOptionsIterable.length;

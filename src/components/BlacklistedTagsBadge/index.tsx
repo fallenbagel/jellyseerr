@@ -29,21 +29,13 @@ const BlacklistedTagsBadge = ({ data }: BlacklistedTagsBadgeProps) => {
     const keywordIds = data.blacklistedTags.slice(1, -1).split(',');
     Promise.all(
       keywordIds.map(async (keywordId) => {
-        try {
-          const { data } = await axios.get<Keyword>(
-            `/api/v1/keyword/${keywordId}`
-          );
-          return data.name;
-        } catch (err) {
-          if (err.response?.status === 404) {
-            return `[Invalid: ${keywordId}]`;
-          }
-          return '';
-        }
+        const { data } = await axios.get<Keyword | null>(
+          `/api/v1/keyword/${keywordId}`
+        );
+        return data?.name || `[Invalid: ${keywordId}]`;
       })
     ).then((keywords) => {
-      const validKeywords = keywords.filter((name) => name !== '');
-      setTagNamesBlacklistedFor(validKeywords.join(', '));
+      setTagNamesBlacklistedFor(keywords.join(', '));
     });
   }, [data.blacklistedTags]);
 

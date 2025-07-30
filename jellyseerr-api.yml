@@ -7268,21 +7268,12 @@ paths:
             example: 1
       responses:
         '200':
-          description: Keyword returned
+          description: Keyword returned (null if not found)
           content:
             application/json:
               schema:
+                nullable: true
                 $ref: '#/components/schemas/Keyword'
-        '404':
-          description: Keyword not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: 'Keyword not found'
         '500':
           description: Internal server error
           content:

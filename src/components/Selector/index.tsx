@@ -309,16 +309,19 @@ export const KeywordSelector = ({
 
       const keywords = await Promise.all(
         defaultValue.split(',').map(async (keywordId) => {
-          const keyword = await axios.get<Keyword>(
+          const keyword = await axios.get<Keyword | null>(
             `/api/v1/keyword/${keywordId}`
           );
-
           return keyword.data;
         })
       );
 
+      const validKeywords = keywords.filter(
+        (keyword): keyword is Keyword => keyword !== null
+      );
+
       setDefaultDataValue(
-        keywords.map((keyword) => ({
+        validKeywords.map((keyword) => ({
           label: keyword.name,
           value: keyword.id,
         }))
