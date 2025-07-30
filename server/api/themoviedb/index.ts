@@ -31,6 +31,7 @@ interface SearchOptions {
   query: string;
   page?: number;
   includeAdult?: boolean;
+  includeVideo?: boolean;
   language?: string;
 }
 
@@ -72,6 +73,7 @@ export interface TmdbCertificationResponse {
 interface DiscoverMovieOptions {
   page?: number;
   includeAdult?: boolean;
+  includeVideo?: boolean;
   language?: string;
   primaryReleaseDateGte?: string;
   primaryReleaseDateLte?: string;
@@ -150,12 +152,17 @@ class TheMovieDb extends ExternalAPI {
     query,
     page = 1,
     includeAdult = false,
+    includeVideo = false,
     language = this.locale,
   }: SearchOptions): Promise<TmdbSearchMultiResponse> => {
     try {
       const data = await this.get<TmdbSearchMultiResponse>('/search/multi', {
         params: { query, page, include_adult: includeAdult, language },
       });
+
+      if (!includeVideo) {
+        data.results = data.results.filter((result: any) => !result.video);
+      }
 
       return data;
     } catch (e) {
@@ -172,6 +179,7 @@ class TheMovieDb extends ExternalAPI {
     query,
     page = 1,
     includeAdult = false,
+    includeVideo = false,
     language = this.locale,
     year,
   }: SingleSearchOptions): Promise<TmdbSearchMovieResponse> => {
@@ -185,6 +193,10 @@ class TheMovieDb extends ExternalAPI {
           primary_release_year: year,
         },
       });
+
+      if (!includeVideo) {
+        data.results = data.results.filter((result: any) => !result.video);
+      }
 
       return data;
     } catch (e) {
@@ -480,6 +492,7 @@ class TheMovieDb extends ExternalAPI {
     sortBy = 'popularity.desc',
     page = 1,
     includeAdult = false,
+    includeVideo = false,
     language = this.locale,
     primaryReleaseDateGte,
     primaryReleaseDateLte,
@@ -516,6 +529,7 @@ class TheMovieDb extends ExternalAPI {
           sort_by: sortBy,
           page,
           include_adult: includeAdult,
+          include_video: includeVideo,
           language,
           region: this.discoverRegion || '',
           with_original_language:
