@@ -159,10 +159,14 @@ const UserLinkedAccountsSettings = () => {
     ...settings.currentSettings.openIdProviders.map((p) => ({
       name: p.name,
       action: async () => {
-        const res = await fetch(`/api/v1/auth/oidc/login/${p.slug}`);
-        if (!res.ok) setError(intl.formatMessage(messages.errorUnknown));
-        const json = await res.json();
-        window.location.href = json.redirectUrl;
+        try {
+          const res = await axios.get<{ redirectUrl: string }>(
+            `/api/v1/auth/oidc/login/${p.slug}`
+          );
+          window.location.href = res.data.redirectUrl;
+        } catch (e) {
+          setError(intl.formatMessage(messages.errorUnknown));
+        }
       },
       hide: accounts.some(
         (a) =>

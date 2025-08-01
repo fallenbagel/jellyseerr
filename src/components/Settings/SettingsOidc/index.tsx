@@ -8,6 +8,7 @@ import { Transition } from '@headlessui/react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
 import type { OidcProvider, OidcSettings } from '@server/lib/settings';
+import axios from 'axios'; // <-- Import axios
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -47,14 +48,12 @@ export default function SettingsOidc(props: SettingsOidcProps) {
 
   async function onDelete(provider: OidcProvider) {
     try {
-      const response = await fetch(`/api/v1/settings/oidc/${provider.slug}`, {
-        method: 'DELETE',
-      });
-
-      if (response.status !== 200)
-        throw new Error(`Request failed with status ${response.status}`);
-
-      revalidate(await response.json());
+      // The fetch call is replaced with axios.delete.
+      // Axios automatically throws for non-2xx responses and handles JSON parsing.
+      const response = await axios.delete<OidcSettings>(
+        `/api/v1/settings/oidc/${provider.slug}`
+      );
+      revalidate(response.data);
     } catch (e) {
       addToast(intl.formatMessage(messages.deleteError), {
         autoDismiss: true,

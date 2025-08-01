@@ -1,6 +1,7 @@
 import defineMessages from '@app/utils/defineMessages';
 import { processCallback } from '@app/utils/oidc';
 import type { PublicOidcProvider } from '@server/lib/settings';
+import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -26,15 +27,11 @@ export default function OidcLoginButton({
   const [loading, setLoading] = useState(false);
 
   const redirectToLogin = useCallback(async () => {
-    let redirectUrl: string;
     try {
-      const res = await fetch(`/api/v1/auth/oidc/login/${provider.slug}`);
-      if (res.ok) {
-        const data = await res.json();
-        redirectUrl = data.redirectUrl;
-      } else {
-        throw new Error();
-      }
+      const res = await axios.get<{ redirectUrl: string }>(
+        `/api/v1/auth/oidc/login/${provider.slug}`
+      );
+      window.location.href = res.data.redirectUrl;
     } catch (e) {
       setLoading(false);
       onError?.(
@@ -42,10 +39,7 @@ export default function OidcLoginButton({
           provider: provider.name,
         })
       );
-      return;
     }
-
-    window.location.href = redirectUrl;
   }, [provider, intl, onError]);
 
   const handleCallback = useCallback(async () => {
