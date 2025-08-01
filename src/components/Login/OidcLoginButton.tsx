@@ -1,6 +1,6 @@
 import defineMessages from '@app/utils/defineMessages';
 import type { PublicOidcProvider } from '@server/lib/settings';
-import axios, { isAxiosError } from 'axios'; // <-- isAxiosError is now needed here
+import axios, { isAxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -10,7 +10,6 @@ const messages = defineMessages('components.Login', {
   oidcLoginError: 'An error occurred while logging in with {provider}.',
 });
 
-// The function from src/utils/oidc.ts is now here as a local helper
 async function processCallback(params: URLSearchParams, provider: string) {
   const url = new URL(
     `/api/v1/auth/oidc/callback/${encodeURIComponent(provider)}`,
@@ -69,7 +68,6 @@ export default function OidcLoginButton({
   }, [provider, intl, onError]);
 
   const handleCallback = useCallback(async () => {
-    // This now calls the local helper function
     const result = await processCallback(searchParams, provider.slug);
     if (result.type === 'success') {
       // redirect to homepage

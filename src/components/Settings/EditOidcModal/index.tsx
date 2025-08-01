@@ -8,13 +8,7 @@ import { ChevronRightIcon } from '@heroicons/react/20/solid';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import type { OidcProvider } from '@server/lib/settings';
 import axios from 'axios';
-import {
-  // ErrorMessage has been removed from the import
-  Field,
-  Formik,
-  useFormikContext,
-  type FieldAttributes,
-} from 'formik';
+import { Field, Formik, useFormikContext, type FieldAttributes } from 'formik';
 import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -134,7 +128,6 @@ export default function EditOidcModal(props: EditOidcModalProps) {
         onSubmit={onSubmit}
         enableReinitialize
       >
-        {/* Get errors and touched from Formik render props */}
         {({ handleSubmit, isValid, errors, touched }) => (
           <Modal
             onCancel={props.onClose}
@@ -162,7 +155,6 @@ export default function EditOidcModal(props: EditOidcModalProps) {
               </label>
               <div className="form-input-area">
                 <Field id="oidcName" name="name" type="text" />
-                {/* Replaced ErrorMessage component with manual div */}
                 {errors.name &&
                   touched.name &&
                   typeof errors.name === 'string' && (
