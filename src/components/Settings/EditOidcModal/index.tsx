@@ -7,6 +7,7 @@ import { Transition } from '@headlessui/react';
 import { ChevronRightIcon } from '@heroicons/react/20/solid';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import type { OidcProvider } from '@server/lib/settings';
+import axios from 'axios'; // <-- Import axios
 import {
   ErrorMessage,
   Field,
@@ -99,24 +100,14 @@ export default function EditOidcModal(props: EditOidcModalProps) {
 
   const onSubmit = async ({ slug, ...provider }: OidcProvider) => {
     try {
-      const res = await fetch(`/api/v1/settings/oidc/${slug}`, {
-        method: 'PUT',
-        body: JSON.stringify(provider),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      await axios.put(`/api/v1/settings/oidc/${slug}`, provider);
+
+      addToast(intl.formatMessage(messages.saveSuccess), {
+        appearance: 'success',
+        autoDismiss: true,
       });
 
-      if (res.status === 200) {
-        addToast(intl.formatMessage(messages.saveSuccess), {
-          appearance: 'success',
-          autoDismiss: true,
-        });
-
-        props.onOk();
-      } else {
-        throw new Error(`Request failed with code ${res.status}`);
-      }
+      props.onOk();
     } catch (e) {
       addToast(intl.formatMessage(messages.saveError), {
         appearance: 'error',
