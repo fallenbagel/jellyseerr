@@ -33,99 +33,195 @@ import { EventSubscriber } from 'typeorm';
 export class MediaRequestSubscriber
   implements EntitySubscriberInterface<MediaRequest>
 {
-  private async notifyAvailableMovie(entity: MediaRequest) {
-    if (
-      entity.media[entity.is4k ? 'status4k' : 'status'] ===
-      MediaStatus.AVAILABLE
-    ) {
-      const tmdb = new TheMovieDb();
+  /**
+   * Get the latest media state using event manager or fallback to repository
+   */
+  private async getLatestMediaState(
+    entity: MediaRequest,
+    event?: UpdateEvent<MediaRequest>
+  ): Promise<Media | null> {
+    let latestMedia: Media | null = null;
 
-      try {
-        const movie = await tmdb.getMovie({
-          movieId: entity.media.tmdbId,
-        });
+    if (event?.manager) {
+      latestMedia = await event.manager.findOne(Media, {
+        where: { id: entity.media.id },
+      });
+    }
 
-        notificationManager.sendNotification(Notification.MEDIA_AVAILABLE, {
-          event: `${entity.is4k ? '4K ' : ''}Movie Request Now Available`,
-          notifyAdmin: false,
-          notifySystem: true,
-          notifyUser: entity.requestedBy,
-          subject: `${movie.title}${
-            movie.release_date ? ` (${movie.release_date.slice(0, 4)})` : ''
-          }`,
-          message: truncate(movie.overview, {
-            length: 500,
-            separator: /\s/,
-            omission: '…',
-          }),
-          media: entity.media,
-          image: `https://image.tmdb.org/t/p/w600_and_h900_bestv2${movie.poster_path}`,
-          request: entity,
-        });
-      } catch (e) {
-        logger.error('Something went wrong sending media notification(s)', {
-          label: 'Notifications',
-          errorMessage: e.message,
-          mediaId: entity.id,
-        });
-      }
+    if (!latestMedia) {
+      const mediaRepository = getRepository(Media);
+      latestMedia = await mediaRepository.findOne({
+        where: { id: entity.media.id },
+      });
+    }
+
+    return latestMedia;
+  }
+
+  /**
+   * Check if media is available for notification
+   */
+  private isMediaAvailable(entity: MediaRequest, media: Media): boolean {
+    const mediaStatus = media[entity.is4k ? 'status4k' : 'status'];
+    return mediaStatus === MediaStatus.AVAILABLE;
+  }
+
+  /**
+   * Send notification for available media
+   */
+  private async sendAvailableNotification(
+    entity: MediaRequest,
+    media: Media,
+    notificationData: {
+      event: string;
+      subject: string;
+      message: string;
+      image: string;
+      extra?: { name: string; value: string }[];
+    }
+  ): Promise<void> {
+    try {
+      notificationManager.sendNotification(Notification.MEDIA_AVAILABLE, {
+        ...notificationData,
+        notifyAdmin: false,
+        notifySystem: true,
+        notifyUser: entity.requestedBy,
+        media,
+        request: entity,
+      });
+    } catch (e) {
+      logger.error('Something went wrong sending media notification(s)', {
+        label: 'Notifications',
+        errorMessage: e.message,
+        requestId: entity.id,
+        mediaId: entity.media.id,
+      });
     }
   }
 
-  private async notifyAvailableSeries(entity: MediaRequest) {
-    // Find all seasons in the related media entity
-    // and see if they are available, then we can check
-    // if the request contains the same seasons
+  private async notifyAvailableMovie(
+    entity: MediaRequest,
+    event?: UpdateEvent<MediaRequest>
+  ) {
+    const latestMedia = await this.getLatestMediaState(entity, event);
+
+    if (!latestMedia || !this.isMediaAvailable(entity, latestMedia)) {
+      return;
+    }
+
+    const tmdb = new TheMovieDb();
+    const movie = await tmdb.getMovie({ movieId: entity.media.tmdbId });
+
+    await this.sendAvailableNotification(entity, latestMedia, {
+      event: `${entity.is4k ? '4K ' : ''}Movie Request Now Available`,
+      subject: `${movie.title}${
+        movie.release_date ? ` (${movie.release_date.slice(0, 4)})` : ''
+      }`,
+      message: truncate(movie.overview, {
+        length: 500,
+        separator: /\s/,
+        omission: '…',
+      }),
+      image: `https://image.tmdb.org/t/p/w600_and_h900_bestv2${movie.poster_path}`,
+    });
+  }
+
+  /**
+   * Get the latest media state with seasons for series
+   */
+  private async getLatestMediaStateWithSeasons(
+    entity: MediaRequest,
+    event?: UpdateEvent<MediaRequest>
+  ): Promise<Media | null> {
+    let latestMedia: Media | null = null;
+
+    if (event?.manager) {
+      latestMedia = await event.manager.findOne(Media, {
+        where: { id: entity.media.id },
+        relations: { seasons: true },
+      });
+    }
+
+    if (!latestMedia) {
+      const mediaRepository = getRepository(Media);
+      latestMedia = await mediaRepository.findOne({
+        where: { id: entity.media.id },
+        relations: { seasons: true },
+      });
+    }
+
+    return latestMedia;
+  }
+
+  /**
+   * Check if series is available for notification
+   */
+  private isSeriesAvailable(
+    entity: MediaRequest,
+    media: Media
+  ): {
+    isAvailable: boolean;
+    requestedSeasons: number[];
+    availableSeasons: number[];
+  } {
     const requestedSeasons =
       entity.seasons?.map((entitySeason) => entitySeason.seasonNumber) ?? [];
-    const availableSeasons = entity.media.seasons.filter(
+    const availableSeasons = media.seasons.filter(
       (season) =>
         season[entity.is4k ? 'status4k' : 'status'] === MediaStatus.AVAILABLE &&
         requestedSeasons.includes(season.seasonNumber)
     );
-    const isMediaAvailable =
+    const isAvailable =
       availableSeasons.length > 0 &&
       availableSeasons.length === requestedSeasons.length;
 
-    if (isMediaAvailable) {
-      const tmdb = new TheMovieDb();
+    return {
+      isAvailable,
+      requestedSeasons,
+      availableSeasons: availableSeasons.map((s) => s.seasonNumber),
+    };
+  }
 
-      try {
-        const tv = await tmdb.getTvShow({ tvId: entity.media.tmdbId });
+  private async notifyAvailableSeries(
+    entity: MediaRequest,
+    event?: UpdateEvent<MediaRequest>
+  ) {
+    const latestMedia = await this.getLatestMediaStateWithSeasons(
+      entity,
+      event
+    );
 
-        notificationManager.sendNotification(Notification.MEDIA_AVAILABLE, {
-          event: `${entity.is4k ? '4K ' : ''}Series Request Now Available`,
-          subject: `${tv.name}${
-            tv.first_air_date ? ` (${tv.first_air_date.slice(0, 4)})` : ''
-          }`,
-          message: truncate(tv.overview, {
-            length: 500,
-            separator: /\s/,
-            omission: '…',
-          }),
-          notifyAdmin: false,
-          notifySystem: true,
-          notifyUser: entity.requestedBy,
-          image: `https://image.tmdb.org/t/p/w600_and_h900_bestv2${tv.poster_path}`,
-          media: entity.media,
-          extra: [
-            {
-              name: 'Requested Seasons',
-              value: entity.seasons
-                .map((season) => season.seasonNumber)
-                .join(', '),
-            },
-          ],
-          request: entity,
-        });
-      } catch (e) {
-        logger.error('Something went wrong sending media notification(s)', {
-          label: 'Notifications',
-          errorMessage: e.message,
-          mediaId: entity.id,
-        });
-      }
+    if (!latestMedia) {
+      return;
     }
+
+    const { isAvailable } = this.isSeriesAvailable(entity, latestMedia);
+
+    if (!isAvailable) {
+      return;
+    }
+
+    const tmdb = new TheMovieDb();
+    const tv = await tmdb.getTvShow({ tvId: entity.media.tmdbId });
+
+    await this.sendAvailableNotification(entity, latestMedia, {
+      event: `${entity.is4k ? '4K ' : ''}Series Request Now Available`,
+      subject: `${tv.name}${
+        tv.first_air_date ? ` (${tv.first_air_date.slice(0, 4)})` : ''
+      }`,
+      message: truncate(tv.overview, {
+        length: 500,
+        separator: /\s/,
+        omission: '…',
+      }),
+      image: `https://image.tmdb.org/t/p/w600_and_h900_bestv2${tv.poster_path}`,
+      extra: [
+        {
+          name: 'Requested Seasons',
+          value: entity.seasons.map((season) => season.seasonNumber).join(', '),
+        },
+      ],
+    });
   }
 
   public async sendToRadarr(entity: MediaRequest): Promise<void> {
@@ -782,10 +878,10 @@ export class MediaRequestSubscriber
 
     if (event.entity.status === MediaRequestStatus.COMPLETED) {
       if (event.entity.media.mediaType === MediaType.MOVIE) {
-        this.notifyAvailableMovie(event.entity as MediaRequest);
+        this.notifyAvailableMovie(event.entity as MediaRequest, event);
       }
       if (event.entity.media.mediaType === MediaType.TV) {
-        this.notifyAvailableSeries(event.entity as MediaRequest);
+        this.notifyAvailableSeries(event.entity as MediaRequest, event);
       }
     }
   }
