@@ -235,7 +235,7 @@ const UserLinkedAccountsSettings = () => {
           <div>
             <Dropdown text="Link Account" buttonType="ghost">
               {linkable.map(({ name, action }) => (
-                <Dropdown.Item key={name} onClick={action}>
+                <Dropdown.Item key={name} onClick={action} buttonType="ghost">
                   {name}
                 </Dropdown.Item>
               ))}
