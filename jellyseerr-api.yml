@@ -6655,9 +6655,16 @@ paths:
           example: '1'
           schema:
             type: string
+        - in: query
+          name: is4k
+          description: Whether to remove from 4K service instance (true) or regular service instance (false)
+          required: false
+          example: false
+          schema:
+            type: boolean
       responses:
         '204':
-          description: Succesfully removed media item
+          description: Successfully removed media item
   /media/{mediaId}/{status}:
     post:
       summary: Update media status
