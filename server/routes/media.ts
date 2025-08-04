@@ -189,7 +189,7 @@ mediaRoutes.delete(
 
 mediaRoutes.delete(
   '/:id/file',
-  isAuthenticated(Permission.ADMIN),
+  isAuthenticated(Permission.MANAGE_REQUESTS),
   async (req, res, next) => {
     try {
       const settings = getSettings();
