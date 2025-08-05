@@ -65,6 +65,7 @@
     "express-session": "1.17.3",
     "formik": "^2.4.6",
     "gravatar-url": "3.1.0",
+    "ip-address": "^10.0.1",
     "http-proxy-agent": "^7.0.2",
     "https-proxy-agent": "^7.0.6",
     "lodash": "4.17.21",
