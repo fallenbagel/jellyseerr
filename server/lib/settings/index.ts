@@ -100,6 +100,16 @@ interface Quota {
   quotaDays?: number;
 }
 
+export enum IndexerType {
+  TMDB = 'tmdb',
+  TVDB = 'tvdb',
+}
+
+export interface MetadataSettings {
+  tv: IndexerType;
+  anime: IndexerType;
+}
+
 export interface ProxySettings {
   enabled: boolean;
   hostname: string;
@@ -332,6 +342,7 @@ export interface AllSettings {
   notifications: NotificationSettings;
   jobs: Record<JobId, JobSettings>;
   network: NetworkSettings;
+  metadataSettings: MetadataSettings;
 }
 
 const SETTINGS_PATH = process.env.CONFIG_DIRECTORY
@@ -392,6 +403,10 @@ class Settings {
         apiKey: '',
       },
       tautulli: {},
+      metadataSettings: {
+        tv: IndexerType.TMDB,
+        anime: IndexerType.TMDB,
+      },
       radarr: [],
       sonarr: [],
       public: {
@@ -579,6 +594,14 @@ class Settings {
 
   set tautulli(data: TautulliSettings) {
     this.data.tautulli = data;
+  }
+
+  get metadataSettings(): MetadataSettings {
+    return this.data.metadataSettings;
+  }
+
+  set metadataSettings(data: MetadataSettings) {
+    this.data.metadataSettings = data;
   }
 
   get radarr(): RadarrSettings[] {
