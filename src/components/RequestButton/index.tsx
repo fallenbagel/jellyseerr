@@ -1,5 +1,6 @@
 import ButtonWithDropdown from '@app/components/Common/ButtonWithDropdown';
 import RequestModal from '@app/components/RequestModal';
+import DeclineRequestModal from '@app/components/RequestModal/DeclineRequestModal';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
@@ -66,6 +67,7 @@ const RequestButton = ({
   const { user, hasPermission } = useUser();
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showRequest4kModal, setShowRequest4kModal] = useState(false);
+  const [showDeclineCommentModal, setShowDeclineCommentModal] = useState(false);
   const [editRequest, setEditRequest] = useState(false);
 
   // All pending requests
@@ -160,7 +162,7 @@ const RequestButton = ({
           id: 'decline-request',
           text: intl.formatMessage(messages.declinerequest),
           action: () => {
-            modifyRequest(activeRequest, 'decline');
+            setShowDeclineCommentModal(true);
           },
           svg: <XMarkIcon />,
         }
@@ -188,7 +190,7 @@ const RequestButton = ({
             requestCount: activeRequests.length,
           }),
           action: () => {
-            modifyRequests(activeRequests, 'decline');
+            setShowDeclineCommentModal(true);
           },
           svg: <XMarkIcon />,
         }
@@ -230,7 +232,7 @@ const RequestButton = ({
           id: 'decline-4k-request',
           text: intl.formatMessage(messages.declinerequest4k),
           action: () => {
-            modifyRequest(active4kRequest, 'decline');
+            setShowDeclineCommentModal(true);
           },
           svg: <XMarkIcon />,
         }
@@ -258,7 +260,7 @@ const RequestButton = ({
             requestCount: active4kRequests.length,
           }),
           action: () => {
-            modifyRequests(active4kRequests, 'decline');
+            setShowDeclineCommentModal(true);
           },
           svg: <XMarkIcon />,
         }
@@ -390,6 +392,19 @@ const RequestButton = ({
         }}
         onCancel={() => setShowRequest4kModal(false)}
       />
+      {(activeRequest || (activeRequests && activeRequests.length > 0)) && (
+        <DeclineRequestModal
+          show={showDeclineCommentModal}
+          requests={activeRequest ? [activeRequest] : active4kRequests}
+          type={mediaType}
+          onCancel={() => setShowDeclineCommentModal(false)}
+          onComplete={() => {
+            onUpdate();
+            mutate('/api/v1/request/count');
+            setShowDeclineCommentModal(false);
+          }}
+        />
+      )}
       <ButtonWithDropdown
         text={
           <>
