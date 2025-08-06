@@ -84,6 +84,7 @@ const SettingsTabs = ({
           Select a Tab
         </label>
         <select
+          id="tabs" // <-- ajouté pour corriger l’erreur de label
           onChange={(e) => {
             router.push(e.target.value);
           }}
