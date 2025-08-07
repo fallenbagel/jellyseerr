@@ -36,6 +36,7 @@ import {
   CloudIcon,
   CogIcon,
   ExclamationTriangleIcon,
+  EyeIcon,
   EyeSlashIcon,
   FilmIcon,
   MinusCircleIcon,
@@ -425,6 +426,35 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
     closeBlacklistModal();
   };
 
+  const onClickUnblacklistBtn = async (): Promise<void> => {
+    setIsBlacklistUpdating(true);
+
+    try {
+      const res = await axios.delete(`/api/v1/blacklist/${movie?.id}`);
+
+      if (res.status === 204) {
+        addToast(
+          <span>
+            {intl.formatMessage(globalMessages.removeFromBlacklistSuccess, {
+              title: data.title,
+              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+            })}
+          </span>,
+          { appearance: 'success', autoDismiss: true }
+        );
+
+        revalidate();
+      }
+    } catch (e) {
+      addToast(intl.formatMessage(globalMessages.blacklistError), {
+        appearance: 'error',
+        autoDismiss: true,
+      });
+    }
+
+    setIsBlacklistUpdating(false);
+  };
+
   const showHideButton = hasPermission([Permission.MANAGE_BLACKLIST], {
     type: 'or',
   });
@@ -565,7 +595,21 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
             data?.mediaInfo?.status !== MediaStatus.AVAILABLE &&
             data?.mediaInfo?.status !== MediaStatus.PARTIALLY_AVAILABLE &&
             data?.mediaInfo?.status !== MediaStatus.PENDING &&
-            data?.mediaInfo?.status !== MediaStatus.BLACKLISTED && (
+            (data?.mediaInfo?.status === MediaStatus.BLACKLISTED ? (
+              <Tooltip
+                content={intl.formatMessage(globalMessages.removefromBlacklist)}
+              >
+                <Button
+                  buttonType={'ghost'}
+                  className="z-40 mr-2"
+                  buttonSize={'md'}
+                  onClick={onClickUnblacklistBtn}
+                  disabled={isBlacklistUpdating}
+                >
+                  <EyeIcon />
+                </Button>
+              </Tooltip>
+            ) : (
               <Tooltip
                 content={intl.formatMessage(globalMessages.addToBlacklist)}
               >
@@ -578,7 +622,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                   <EyeSlashIcon />
                 </Button>
               </Tooltip>
-            )}
+            ))}
           {data?.mediaInfo?.status !== MediaStatus.BLACKLISTED &&
             user?.userType !== UserType.PLEX && (
               <>

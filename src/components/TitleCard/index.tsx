@@ -224,24 +224,53 @@ const TitleCard = ({
     const topNode = cardRef.current;
 
     if (topNode) {
-      const res = await axios.delete('/api/v1/blacklist/' + id);
+      if (mediaType === 'collection') {
+        try {
+          const res = await axios.delete(`/api/v1/blacklist/collection/${id}`);
 
-      if (res.status === 204) {
-        addToast(
-          <span>
-            {intl.formatMessage(globalMessages.removeFromBlacklistSuccess, {
-              title,
-              strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
-            })}
-          </span>,
-          { appearance: 'success', autoDismiss: true }
-        );
-        setCurrentStatus(MediaStatus.UNKNOWN);
+          if (res.status === 204) {
+            addToast(
+              <span>
+                {intl.formatMessage(globalMessages.removeFromBlacklistSuccess, {
+                  title,
+                  strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+                })}
+              </span>,
+              { appearance: 'success', autoDismiss: true }
+            );
+            setCurrentStatus(MediaStatus.UNKNOWN);
+          } else {
+            addToast(intl.formatMessage(globalMessages.blacklistError), {
+              appearance: 'error',
+              autoDismiss: true,
+            });
+          }
+        } catch (e) {
+          addToast(intl.formatMessage(globalMessages.blacklistError), {
+            appearance: 'error',
+            autoDismiss: true,
+          });
+        }
       } else {
-        addToast(intl.formatMessage(globalMessages.blacklistError), {
-          appearance: 'error',
-          autoDismiss: true,
-        });
+        const res = await axios.delete('/api/v1/blacklist/' + id);
+
+        if (res.status === 204) {
+          addToast(
+            <span>
+              {intl.formatMessage(globalMessages.removeFromBlacklistSuccess, {
+                title,
+                strong: (msg: React.ReactNode) => <strong>{msg}</strong>,
+              })}
+            </span>,
+            { appearance: 'success', autoDismiss: true }
+          );
+          setCurrentStatus(MediaStatus.UNKNOWN);
+        } else {
+          addToast(intl.formatMessage(globalMessages.blacklistError), {
+            appearance: 'error',
+            autoDismiss: true,
+          });
+        }
       }
     } else {
       addToast(intl.formatMessage(globalMessages.blacklistError), {
@@ -356,9 +385,10 @@ const TitleCard = ({
                   : intl.formatMessage(globalMessages.tvshow)}
               </div>
             </div>
-            {showDetail && currentStatus !== MediaStatus.BLACKLISTED && (
-              <div className="flex flex-col gap-1">
+            {showDetail && (
+              <div className="flex flex-col items-end gap-1">
                 {user?.userType !== UserType.PLEX &&
+                  currentStatus !== MediaStatus.BLACKLISTED &&
                   (toggleWatchlist ? (
                     <Button
                       buttonType={'ghost'}
@@ -381,47 +411,51 @@ const TitleCard = ({
                   currentStatus !== MediaStatus.PROCESSING &&
                   currentStatus !== MediaStatus.AVAILABLE &&
                   currentStatus !== MediaStatus.PARTIALLY_AVAILABLE &&
-                  currentStatus !== MediaStatus.PENDING && (
-                    <Button
-                      buttonType={'ghost'}
-                      className="z-40"
-                      buttonSize={'sm'}
-                      onClick={() => setShowBlacklistModal(true)}
+                  currentStatus !== MediaStatus.PENDING &&
+                  (currentStatus === MediaStatus.BLACKLISTED ? (
+                    <Tooltip
+                      content={intl.formatMessage(
+                        globalMessages.removefromBlacklist
+                      )}
                     >
-                      <EyeSlashIcon className={'h-3'} />
-                    </Button>
-                  )}
+                      <Button
+                        buttonType={'ghost'}
+                        className="z-40 transition-colors"
+                        buttonSize={'sm'}
+                        onClick={() => onClickShowBlacklistBtn()}
+                      >
+                        <EyeIcon className={'h-3'} />
+                      </Button>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip
+                      content={intl.formatMessage(globalMessages.blacklist)}
+                    >
+                      <Button
+                        buttonType={'ghost'}
+                        className="z-40 transition-colors"
+                        buttonSize={'sm'}
+                        onClick={() => setShowBlacklistModal(true)}
+                      >
+                        <EyeSlashIcon className={'h-3'} />
+                      </Button>
+                    </Tooltip>
+                  ))}
               </div>
             )}
-            {showDetail &&
-              showHideButton &&
-              currentStatus == MediaStatus.BLACKLISTED && (
-                <Tooltip
-                  content={intl.formatMessage(
-                    globalMessages.removefromBlacklist
-                  )}
-                >
-                  <Button
-                    buttonType={'ghost'}
-                    className="z-40"
-                    buttonSize={'sm'}
-                    onClick={() => onClickShowBlacklistBtn()}
-                  >
-                    <EyeIcon className={'h-3'} />
-                  </Button>
-                </Tooltip>
-              )}
-            {currentStatus && currentStatus !== MediaStatus.UNKNOWN && (
-              <div className="flex flex-col items-center gap-1">
-                <div className="pointer-events-none z-40 flex">
-                  <StatusBadgeMini
-                    status={currentStatus}
-                    inProgress={inProgress}
-                    shrink
-                  />
+            {currentStatus &&
+              currentStatus !== MediaStatus.UNKNOWN &&
+              !(currentStatus === MediaStatus.BLACKLISTED && showDetail) && (
+                <div className="flex flex-col items-end">
+                  <div className="pointer-events-none z-40 flex">
+                    <StatusBadgeMini
+                      status={currentStatus}
+                      inProgress={inProgress}
+                      shrink
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
           <Transition
             as={Fragment}

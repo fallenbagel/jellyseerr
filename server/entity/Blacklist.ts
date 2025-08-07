@@ -65,11 +65,13 @@ export class Blacklist implements BlacklistItem {
         blacklistedTags?: string;
       };
     },
-    entityManager?: EntityManager
+    entityManager?: EntityManager,
+    user?: User
   ): Promise<void> {
     const em = entityManager ?? dataSource;
     const blacklist = new this({
       ...blacklistRequest,
+      user: user,
     });
 
     const mediaRepository = em.getRepository(Media);
