@@ -92,9 +92,9 @@ blacklistRoutes.get(
   }),
   async (req, res, next) => {
     try {
-      const blacklisteRepository = getRepository(Blacklist);
+      const blacklistRepository = getRepository(Blacklist);
 
-      const blacklistItem = await blacklisteRepository.findOneOrFail({
+      const blacklistItem = await blacklistRepository.findOneOrFail({
         where: { tmdbId: Number(req.params.id) },
       });
 
@@ -277,10 +277,10 @@ blacklistRoutes.delete(
   }),
   async (req, res, next) => {
     try {
-      const blacklisteRepository = getRepository(Blacklist);
+      const blacklistRepository = getRepository(Blacklist);
       const mediaRepository = getRepository(Media);
 
-      const blacklistItem = await blacklisteRepository.findOne({
+      const blacklistItem = await blacklistRepository.findOne({
         where: { tmdbId: Number(req.params.id) },
       });
 
@@ -289,7 +289,7 @@ blacklistRoutes.delete(
       }
 
       if (blacklistItem.mediaType === MediaType.MOVIE) {
-        await blacklisteRepository.remove(blacklistItem);
+        await blacklistRepository.remove(blacklistItem);
 
         try {
           const mediaItem = await mediaRepository.findOneOrFail({
@@ -304,7 +304,7 @@ blacklistRoutes.delete(
           // Media entity doesn't exist, which is fine
         }
       } else {
-        await blacklisteRepository.remove(blacklistItem);
+        await blacklistRepository.remove(blacklistItem);
 
         try {
           const mediaItem = await mediaRepository.findOneOrFail({
