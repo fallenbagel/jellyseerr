@@ -33,52 +33,93 @@ import { EventSubscriber } from 'typeorm';
 export class MediaRequestSubscriber
   implements EntitySubscriberInterface<MediaRequest>
 {
-  private async notifyAvailableMovie(entity: MediaRequest) {
+  private async notifyAvailableMovie(
+    entity: MediaRequest,
+    event?: UpdateEvent<MediaRequest>
+  ) {
+    // Get fresh media state using event manager
+    let latestMedia: Media | null = null;
+    if (event?.manager) {
+      latestMedia = await event.manager.findOne(Media, {
+        where: { id: entity.media.id },
+      });
+    }
+    if (!latestMedia) {
+      const mediaRepository = getRepository(Media);
+      latestMedia = await mediaRepository.findOne({
+        where: { id: entity.media.id },
+      });
+    }
+
+    // Check availability using fresh media state
     if (
-      entity.media[entity.is4k ? 'status4k' : 'status'] ===
-      MediaStatus.AVAILABLE
+      !latestMedia ||
+      latestMedia[entity.is4k ? 'status4k' : 'status'] !== MediaStatus.AVAILABLE
     ) {
-      const tmdb = new TheMovieDb();
+      return;
+    }
 
-      try {
-        const movie = await tmdb.getMovie({
-          movieId: entity.media.tmdbId,
-        });
+    const tmdb = new TheMovieDb();
 
-        notificationManager.sendNotification(Notification.MEDIA_AVAILABLE, {
-          event: `${entity.is4k ? '4K ' : ''}Movie Request Now Available`,
-          notifyAdmin: false,
-          notifySystem: true,
-          notifyUser: entity.requestedBy,
-          subject: `${movie.title}${
-            movie.release_date ? ` (${movie.release_date.slice(0, 4)})` : ''
-          }`,
-          message: truncate(movie.overview, {
-            length: 500,
-            separator: /\s/,
-            omission: '…',
-          }),
-          media: entity.media,
-          image: `https://image.tmdb.org/t/p/w600_and_h900_bestv2${movie.poster_path}`,
-          request: entity,
-        });
-      } catch (e) {
-        logger.error('Something went wrong sending media notification(s)', {
-          label: 'Notifications',
-          errorMessage: e.message,
-          mediaId: entity.id,
-        });
-      }
+    try {
+      const movie = await tmdb.getMovie({
+        movieId: entity.media.tmdbId,
+      });
+
+      notificationManager.sendNotification(Notification.MEDIA_AVAILABLE, {
+        event: `${entity.is4k ? '4K ' : ''}Movie Request Now Available`,
+        notifyAdmin: false,
+        notifySystem: true,
+        notifyUser: entity.requestedBy,
+        subject: `${movie.title}${
+          movie.release_date ? ` (${movie.release_date.slice(0, 4)})` : ''
+        }`,
+        message: truncate(movie.overview, {
+          length: 500,
+          separator: /\s/,
+          omission: '…',
+        }),
+        media: latestMedia,
+        image: `https://image.tmdb.org/t/p/w600_and_h900_bestv2${movie.poster_path}`,
+        request: entity,
+      });
+    } catch (e) {
+      logger.error('Something went wrong sending media notification(s)', {
+        label: 'Notifications',
+        errorMessage: e.message,
+        mediaId: entity.id,
+      });
     }
   }
 
-  private async notifyAvailableSeries(entity: MediaRequest) {
-    // Find all seasons in the related media entity
-    // and see if they are available, then we can check
-    // if the request contains the same seasons
+  private async notifyAvailableSeries(
+    entity: MediaRequest,
+    event?: UpdateEvent<MediaRequest>
+  ) {
+    // Get fresh media state with seasons using event manager
+    let latestMedia: Media | null = null;
+    if (event?.manager) {
+      latestMedia = await event.manager.findOne(Media, {
+        where: { id: entity.media.id },
+        relations: { seasons: true },
+      });
+    }
+    if (!latestMedia) {
+      const mediaRepository = getRepository(Media);
+      latestMedia = await mediaRepository.findOne({
+        where: { id: entity.media.id },
+        relations: { seasons: true },
+      });
+    }
+
+    if (!latestMedia) {
+      return;
+    }
+
+    // Check availability using fresh media state
     const requestedSeasons =
       entity.seasons?.map((entitySeason) => entitySeason.seasonNumber) ?? [];
-    const availableSeasons = entity.media.seasons.filter(
+    const availableSeasons = latestMedia.seasons.filter(
       (season) =>
         season[entity.is4k ? 'status4k' : 'status'] === MediaStatus.AVAILABLE &&
         requestedSeasons.includes(season.seasonNumber)
@@ -87,44 +128,46 @@ export class MediaRequestSubscriber
       availableSeasons.length > 0 &&
       availableSeasons.length === requestedSeasons.length;
 
-    if (isMediaAvailable) {
-      const tmdb = new TheMovieDb();
+    if (!isMediaAvailable) {
+      return;
+    }
 
-      try {
-        const tv = await tmdb.getTvShow({ tvId: entity.media.tmdbId });
+    const tmdb = new TheMovieDb();
 
-        notificationManager.sendNotification(Notification.MEDIA_AVAILABLE, {
-          event: `${entity.is4k ? '4K ' : ''}Series Request Now Available`,
-          subject: `${tv.name}${
-            tv.first_air_date ? ` (${tv.first_air_date.slice(0, 4)})` : ''
-          }`,
-          message: truncate(tv.overview, {
-            length: 500,
-            separator: /\s/,
-            omission: '…',
-          }),
-          notifyAdmin: false,
-          notifySystem: true,
-          notifyUser: entity.requestedBy,
-          image: `https://image.tmdb.org/t/p/w600_and_h900_bestv2${tv.poster_path}`,
-          media: entity.media,
-          extra: [
-            {
-              name: 'Requested Seasons',
-              value: entity.seasons
-                .map((season) => season.seasonNumber)
-                .join(', '),
-            },
-          ],
-          request: entity,
-        });
-      } catch (e) {
-        logger.error('Something went wrong sending media notification(s)', {
-          label: 'Notifications',
-          errorMessage: e.message,
-          mediaId: entity.id,
-        });
-      }
+    try {
+      const tv = await tmdb.getTvShow({ tvId: entity.media.tmdbId });
+
+      notificationManager.sendNotification(Notification.MEDIA_AVAILABLE, {
+        event: `${entity.is4k ? '4K ' : ''}Series Request Now Available`,
+        subject: `${tv.name}${
+          tv.first_air_date ? ` (${tv.first_air_date.slice(0, 4)})` : ''
+        }`,
+        message: truncate(tv.overview, {
+          length: 500,
+          separator: /\s/,
+          omission: '…',
+        }),
+        notifyAdmin: false,
+        notifySystem: true,
+        notifyUser: entity.requestedBy,
+        image: `https://image.tmdb.org/t/p/w600_and_h900_bestv2${tv.poster_path}`,
+        media: latestMedia,
+        extra: [
+          {
+            name: 'Requested Seasons',
+            value: entity.seasons
+              .map((season) => season.seasonNumber)
+              .join(', '),
+          },
+        ],
+        request: entity,
+      });
+    } catch (e) {
+      logger.error('Something went wrong sending media notification(s)', {
+        label: 'Notifications',
+        errorMessage: e.message,
+        mediaId: entity.id,
+      });
     }
   }
 
@@ -782,10 +825,10 @@ export class MediaRequestSubscriber
 
     if (event.entity.status === MediaRequestStatus.COMPLETED) {
       if (event.entity.media.mediaType === MediaType.MOVIE) {
-        this.notifyAvailableMovie(event.entity as MediaRequest);
+        this.notifyAvailableMovie(event.entity as MediaRequest, event);
       }
       if (event.entity.media.mediaType === MediaType.TV) {
-        this.notifyAvailableSeries(event.entity as MediaRequest);
+        this.notifyAvailableSeries(event.entity as MediaRequest, event);
       }
     }
   }
