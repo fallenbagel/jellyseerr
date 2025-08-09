@@ -1,3 +1,733 @@
+## [2.7.2](https://github.com/fallenbagel/jellyseerr/compare/v2.7.1...v2.7.2) (2025-07-21)
+
+
+### Bug Fixes
+
+* **proxy:** modify the registration of the axios interceptors ([#1791](https://github.com/fallenbagel/jellyseerr/issues/1791)) ([75a7279](https://github.com/fallenbagel/jellyseerr/commit/75a7279ea24874548fece12bb5e7c97d78d088a9)), closes [#1787](https://github.com/fallenbagel/jellyseerr/issues/1787)
+
+## [2.7.1](https://github.com/fallenbagel/jellyseerr/compare/v2.7.0...v2.7.1) (2025-07-15)
+
+
+### Bug Fixes
+
+* allow setting IPv6 as an IP address in hostname field ([#1782](https://github.com/fallenbagel/jellyseerr/issues/1782)) ([844b1ab](https://github.com/fallenbagel/jellyseerr/commit/844b1abad9589c57ea6f56717212d9219b2aa954))
+* **gotify:** notifications blocked when priority set to 0 ([#1763](https://github.com/fallenbagel/jellyseerr/issues/1763)) ([8c43db2](https://github.com/fallenbagel/jellyseerr/commit/8c43db2abf3b504dbb789369c9a9ac92bb820722))
+* **proxy:** apply all proxy settings to Axios ([#1741](https://github.com/fallenbagel/jellyseerr/issues/1741)) ([b83367c](https://github.com/fallenbagel/jellyseerr/commit/b83367cbf2e0470cc1ad4eed8ec6eafaafafdbad))
+* remove LunaSea ([#1759](https://github.com/fallenbagel/jellyseerr/issues/1759)) ([510108f](https://github.com/fallenbagel/jellyseerr/commit/510108f9bbec9651a5d91e11ea411e688b5043fe)), closes [#1756](https://github.com/fallenbagel/jellyseerr/issues/1756)
+
+# [2.7.0](https://github.com/fallenbagel/jellyseerr/compare/v2.6.0...v2.7.0) (2025-06-20)
+
+
+### Bug Fixes
+
+* **blacklist:** hide items from MediaSliders when hideBlacklisted is enabled ([#1713](https://github.com/fallenbagel/jellyseerr/issues/1713)) ([d4a6cb2](https://github.com/fallenbagel/jellyseerr/commit/d4a6cb268a33d96c03f1f76c207b5597e4eae6e7))
+* correct typing issue ([#1715](https://github.com/fallenbagel/jellyseerr/issues/1715)) ([bb95c70](https://github.com/fallenbagel/jellyseerr/commit/bb95c7009faaf22103c1c8e84e3403823377ce0f))
+* **jellyfin:** use the same deviceId for admins ([#1710](https://github.com/fallenbagel/jellyseerr/issues/1710)) ([c7284f4](https://github.com/fallenbagel/jellyseerr/commit/c7284f473c43634b3a324f3b11a9a60990b3c0da))
+* **proxy:** apply http proxy settings to axios ([#1716](https://github.com/fallenbagel/jellyseerr/issues/1716)) ([7c969f4](https://github.com/fallenbagel/jellyseerr/commit/7c969f4235aa052234084c3cb951d485c6fff9cd))
+* redirect the 'Request' button to the right page ([#1711](https://github.com/fallenbagel/jellyseerr/issues/1711)) ([9cb7e14](https://github.com/fallenbagel/jellyseerr/commit/9cb7e1495ab2860cea614d10f6f7b62cf77b4def)), closes [#1588](https://github.com/fallenbagel/jellyseerr/issues/1588)
+* **settings:** add a tip for youtube URL setting ([#1714](https://github.com/fallenbagel/jellyseerr/issues/1714)) ([fb8677f](https://github.com/fallenbagel/jellyseerr/commit/fb8677f29cfe2a7f0e0c465a1a742be119517886))
+
+
+### Features
+
+* add force ipv4 first setting ([#1719](https://github.com/fallenbagel/jellyseerr/issues/1719)) ([0357d17](https://github.com/fallenbagel/jellyseerr/commit/0357d172058ceda7d49a0c18c13009e0031e034d))
+
+# [2.6.0](https://github.com/fallenbagel/jellyseerr/compare/v2.5.2...v2.6.0) (2025-06-09)
+
+
+### Bug Fixes
+
+* add missing cache for some tmdb images ([#1656](https://github.com/fallenbagel/jellyseerr/issues/1656)) ([8949ede](https://github.com/fallenbagel/jellyseerr/commit/8949edea7edcb64546f2c8b9363120102509a2a5))
+* **entity:** use TIMESTAMPTZ in Postgres and sort issue comments oldest-first ([#1654](https://github.com/fallenbagel/jellyseerr/issues/1654)) ([8da1c92](https://github.com/fallenbagel/jellyseerr/commit/8da1c9292391a39b8c08ed9f7cd7a2bb10217588)), closes [#1569](https://github.com/fallenbagel/jellyseerr/issues/1569) [#1568](https://github.com/fallenbagel/jellyseerr/issues/1568)
+* **filters:** display the right value when resetting the filter options ([#1695](https://github.com/fallenbagel/jellyseerr/issues/1695)) ([c0dd2e5](https://github.com/fallenbagel/jellyseerr/commit/c0dd2e5e27ad9927c52c54cd66bfb2b3cf7890d0)), closes [#1693](https://github.com/fallenbagel/jellyseerr/issues/1693)
+* **imagecache:** fix avatar cache folder creation ([#1581](https://github.com/fallenbagel/jellyseerr/issues/1581)) ([355b76d](https://github.com/fallenbagel/jellyseerr/commit/355b76de5cc029a76708bb754c6c4fd72ce99e3d)), closes [#1520](https://github.com/fallenbagel/jellyseerr/issues/1520)
+* **issuecomment:** fix issue display lists in IssueComment ([#1638](https://github.com/fallenbagel/jellyseerr/issues/1638)) ([515124b](https://github.com/fallenbagel/jellyseerr/commit/515124bab4b5e13759cb9497489dea828a6cef52)), closes [#1328](https://github.com/fallenbagel/jellyseerr/issues/1328) [#1328](https://github.com/fallenbagel/jellyseerr/issues/1328) [#1328](https://github.com/fallenbagel/jellyseerr/issues/1328)
+* **jellyfin:** clean up Jellyfin sessions on Jellyseerr logout ([#1651](https://github.com/fallenbagel/jellyseerr/issues/1651)) ([b27dbd7](https://github.com/fallenbagel/jellyseerr/commit/b27dbd7a155bed9490afdd9dc25ef8a7ca9311eb))
+* **mediarequests:** properly sort season numbers in media requests ([#1688](https://github.com/fallenbagel/jellyseerr/issues/1688)) ([6b8c0bd](https://github.com/fallenbagel/jellyseerr/commit/6b8c0bd8f3ac7a5c74bc0cb2c81edd2c22a7a618)), closes [#1336](https://github.com/fallenbagel/jellyseerr/issues/1336)
+* **pushover notificatons:** the sound setting will now be stored correctly ([#1630](https://github.com/fallenbagel/jellyseerr/issues/1630)) ([5fd65eb](https://github.com/fallenbagel/jellyseerr/commit/5fd65eb1ba4e8f383e8a11cb1004acc3bace26c0)), closes [#1614](https://github.com/fallenbagel/jellyseerr/issues/1614)
+* **requestlist:** remove unnecessary semicolon ([#1647](https://github.com/fallenbagel/jellyseerr/issues/1647)) ([6b9aedb](https://github.com/fallenbagel/jellyseerr/commit/6b9aedb97062e6b551cc7e023f699b8b26f730f0))
+* **ui:** correct seasons badge order ([#1648](https://github.com/fallenbagel/jellyseerr/issues/1648)) ([123894b](https://github.com/fallenbagel/jellyseerr/commit/123894b475fae421b416781587432ecc4e50acc2))
+* **ui:** make person media type filter consistent on mobile ([#1669](https://github.com/fallenbagel/jellyseerr/issues/1669)) ([24e1e94](https://github.com/fallenbagel/jellyseerr/commit/24e1e94747c9a070bc84a64ace47166efe52f7f1))
+* **url validation:** correct URL validation for empty fields ([#1657](https://github.com/fallenbagel/jellyseerr/issues/1657)) ([d226dbb](https://github.com/fallenbagel/jellyseerr/commit/d226dbb9b4279c3d649fb0c72656d35ba065491c))
+* **usediscover hook:** detect end of pagination when totalSize is a multiple of pageSize ([#1649](https://github.com/fallenbagel/jellyseerr/issues/1649)) ([45f2540](https://github.com/fallenbagel/jellyseerr/commit/45f25408c62f87e4a2b73e270644fb2f1f79a290)), closes [#1623](https://github.com/fallenbagel/jellyseerr/issues/1623)
+* **usersettings:** exclude current user when checking for existing email ([#1689](https://github.com/fallenbagel/jellyseerr/issues/1689)) ([ea7e68f](https://github.com/fallenbagel/jellyseerr/commit/ea7e68fc99bbc783277891b3408f07b7a70765be))
+
+
+### Features
+
+* add caching for TVDB images ([#1655](https://github.com/fallenbagel/jellyseerr/issues/1655)) ([e69649d](https://github.com/fallenbagel/jellyseerr/commit/e69649d71d19d23cafac363792a7e89c897bcad0))
+* add content certification/age-rating filter ([#1418](https://github.com/fallenbagel/jellyseerr/issues/1418)) ([149d79e](https://github.com/fallenbagel/jellyseerr/commit/149d79e5404cae48217806079b0ac0a34fbaeb35)), closes [#501](https://github.com/fallenbagel/jellyseerr/issues/501) [#501](https://github.com/fallenbagel/jellyseerr/issues/501)
+* allow changing YouTube host for trailers ([#643](https://github.com/fallenbagel/jellyseerr/issues/643)) ([d01f9a0](https://github.com/fallenbagel/jellyseerr/commit/d01f9a058042657ae1ce39537cdf0029ef878c8e))
+* **blacklist:** Automatically add media with blacklisted tags to the blacklist ([#1306](https://github.com/fallenbagel/jellyseerr/issues/1306)) ([4a5ac3c](https://github.com/fallenbagel/jellyseerr/commit/4a5ac3cc42fd924e8c83d64e5b01de44bed6b8ab))
+* **blacklist:** hide blacklisted items from discover pages for admins ([#1601](https://github.com/fallenbagel/jellyseerr/issues/1601)) ([185167a](https://github.com/fallenbagel/jellyseerr/commit/185167a0a75eb710a8696b58f7bc0a3f5939cee8))
+* **discord.ts:** adds a link to the pending approval discord notification ([#436](https://github.com/fallenbagel/jellyseerr/issues/436)) ([14ee52e](https://github.com/fallenbagel/jellyseerr/commit/14ee52e93e7e6b2c1c5ec6cf05abcac3c0d8163a))
+* filter by media type on PersonDetails ([#1566](https://github.com/fallenbagel/jellyseerr/issues/1566)) ([a19dcaf](https://github.com/fallenbagel/jellyseerr/commit/a19dcaf5e5c5cc4072a7e4733bbbf149a352915b)), closes [#1513](https://github.com/fallenbagel/jellyseerr/issues/1513) [#1513](https://github.com/fallenbagel/jellyseerr/issues/1513)
+* **gotify:** added priority input for gotify ([#1410](https://github.com/fallenbagel/jellyseerr/issues/1410)) ([21400ce](https://github.com/fallenbagel/jellyseerr/commit/21400cecdc1b964023087bce479bb7d141049080))
+* **issuecomment:** fix translation issue ([#1635](https://github.com/fallenbagel/jellyseerr/issues/1635)) ([8a42fe1](https://github.com/fallenbagel/jellyseerr/commit/8a42fe16b5ebca80e76d98fb05006cf41f5a953a)), closes [#1604](https://github.com/fallenbagel/jellyseerr/issues/1604)
+* make chart probes configurable ([#1574](https://github.com/fallenbagel/jellyseerr/issues/1574)) ([c3b8574](https://github.com/fallenbagel/jellyseerr/commit/c3b8574515de4f5a2c13f36b3a00708d0858966e))
+* now uses markdown linebreaks instead of relying purely on newlines ([#1514](https://github.com/fallenbagel/jellyseerr/issues/1514)) ([7d36dc1](https://github.com/fallenbagel/jellyseerr/commit/7d36dc182b462c12a31833ee08e74255d7964c24))
+* **ntfy:** add native ntfy notification support ([#1599](https://github.com/fallenbagel/jellyseerr/issues/1599)) ([fc4db7f](https://github.com/fallenbagel/jellyseerr/commit/fc4db7fa002acbb31f1fd8d20da019291d8096d8)), closes [#499](https://github.com/fallenbagel/jellyseerr/issues/499)
+* **requestlist:** add requests list media type filtering ([#1511](https://github.com/fallenbagel/jellyseerr/issues/1511)) ([e8f1edc](https://github.com/fallenbagel/jellyseerr/commit/e8f1edc0621387921dca73a8c9ad1d15f6b3a847))
+
+## [2.5.2](https://github.com/fallenbagel/jellyseerr/compare/v2.5.1...v2.5.2) (2025-04-03)
+
+
+### Bug Fixes
+
+* **auth:** Bitwarden autofill fix on local/Jellyfin login (2) ([#1487](https://github.com/fallenbagel/jellyseerr/issues/1487)) ([85bbc85](https://github.com/fallenbagel/jellyseerr/commit/85bbc857141d38bcf5244078437ed6a3318bba67))
+* **avatar:** fix avatar cache busting by using avatarVersion  ([#1537](https://github.com/fallenbagel/jellyseerr/issues/1537)) ([29034b3](https://github.com/fallenbagel/jellyseerr/commit/29034b350d35ebaed52556448e46436aeb644e77))
+* correct "Remove from *arr" button ([#1544](https://github.com/fallenbagel/jellyseerr/issues/1544)) ([8dc1d81](https://github.com/fallenbagel/jellyseerr/commit/8dc1d8196c67bee0e772941445c294f0ca367961)), closes [#1476](https://github.com/fallenbagel/jellyseerr/issues/1476) [#1494](https://github.com/fallenbagel/jellyseerr/issues/1494)
+* **helm:** apply annotations to pvc ([#1489](https://github.com/fallenbagel/jellyseerr/issues/1489)) ([e5ab847](https://github.com/fallenbagel/jellyseerr/commit/e5ab847547564869c3aa6443b1e22208c09a7810))
+* **jellyfin:** ensure deviceID is never empty ([#1538](https://github.com/fallenbagel/jellyseerr/issues/1538)) ([7438042](https://github.com/fallenbagel/jellyseerr/commit/7438042757cb0e81534cf9f766d84dd3ff57fd84))
+* **job:** handle media removal for 4k on the same server ([#1543](https://github.com/fallenbagel/jellyseerr/issues/1543)) ([63dc27d](https://github.com/fallenbagel/jellyseerr/commit/63dc27d400ecc80a18442fc42dd417cc03c3f9e1))
+* **job:** rename Plex Sync to Jellyfin Sync ([#1549](https://github.com/fallenbagel/jellyseerr/issues/1549)) ([2f6be95](https://github.com/fallenbagel/jellyseerr/commit/2f6be955b51e8920c8954413286577e6fea4aee2))
+* **migrations:** add missing Postgres migration and fix SQLite migration ([#1532](https://github.com/fallenbagel/jellyseerr/issues/1532)) ([0b0b76e](https://github.com/fallenbagel/jellyseerr/commit/0b0b76e58c583fc7c31d7821e7825e32065f7944)), closes [#1466](https://github.com/fallenbagel/jellyseerr/issues/1466)
+* **ui:** handle import-from-plex response as array ([#1510](https://github.com/fallenbagel/jellyseerr/issues/1510)) ([4cd02ba](https://github.com/fallenbagel/jellyseerr/commit/4cd02babbace98c01bcef153a50d34cb36dd1d4b))
+* **ui:** resolve discover language dropdown overlap ([#1497](https://github.com/fallenbagel/jellyseerr/issues/1497)) ([f5b3a52](https://github.com/fallenbagel/jellyseerr/commit/f5b3a526cb9b12c19e5ff6a79240e3d85685ff9b)), closes [#1475](https://github.com/fallenbagel/jellyseerr/issues/1475)
+
+## [2.5.1](https://github.com/fallenbagel/jellyseerr/compare/v2.5.0...v2.5.1) (2025-03-17)
+
+
+### Bug Fixes
+
+* **auth:** Bitwarden autofill fix on local/Jellyfin login ([#1459](https://github.com/fallenbagel/jellyseerr/issues/1459)) ([b085e12](https://github.com/fallenbagel/jellyseerr/commit/b085e12ff9df9f57d71ca1fe27fefa8319229a2a))
+* **blacklist:** add back the blacklist button on TitleCard for Plex ([#1463](https://github.com/fallenbagel/jellyseerr/issues/1463)) ([4d1163c](https://github.com/fallenbagel/jellyseerr/commit/4d1163c34384efa59fe9b5401c5bd42d7f0435fc)), closes [#1398](https://github.com/fallenbagel/jellyseerr/issues/1398)
+* check if the file still exists in the service before deleting ([#1476](https://github.com/fallenbagel/jellyseerr/issues/1476)) ([f773e0f](https://github.com/fallenbagel/jellyseerr/commit/f773e0fb2a62f4f316ca7f8fe3d8dabdebae2ab7))
+* **job:** resolve edge case issue with season availability updates ([#1483](https://github.com/fallenbagel/jellyseerr/issues/1483)) ([77a36f9](https://github.com/fallenbagel/jellyseerr/commit/77a36f971444ee5dc0d15b2d34a8daaf4e1f28b5))
+* **mediarequest:** correct download sync for Radarr ([#1484](https://github.com/fallenbagel/jellyseerr/issues/1484)) ([c2d9d00](https://github.com/fallenbagel/jellyseerr/commit/c2d9d00b415fecbb5a8d7ca28a6ed76ea3ba3c19)), closes [#1376](https://github.com/fallenbagel/jellyseerr/issues/1376)
+* **proxy:** update http proxy to accept bypass list with undici v7 ([#1456](https://github.com/fallenbagel/jellyseerr/issues/1456)) ([9891a75](https://github.com/fallenbagel/jellyseerr/commit/9891a7577cc0874f41c38ff0e6e5a6b4d8315281)), closes [#1454](https://github.com/fallenbagel/jellyseerr/issues/1454)
+* **requestlist:** hide the remove from *arr button when no service exists ([#1457](https://github.com/fallenbagel/jellyseerr/issues/1457)) ([33e7a15](https://github.com/fallenbagel/jellyseerr/commit/33e7a153aa64461a715595d070fba53d52b34767)), closes [#1449](https://github.com/fallenbagel/jellyseerr/issues/1449)
+* **smtp-notification-test:** missing allowSelfSigned option in test function ([#1461](https://github.com/fallenbagel/jellyseerr/issues/1461)) ([b8425d6](https://github.com/fallenbagel/jellyseerr/commit/b8425d6388003322edd7b4b2473aeb24c06e4802))
+* **ui:** correct seasons badge order ([#1485](https://github.com/fallenbagel/jellyseerr/issues/1485)) ([f884ac9](https://github.com/fallenbagel/jellyseerr/commit/f884ac9c660d1931c8b3815dcaefd109da249f2a))
+* **ui:** move watch trailer button above the 4k request button ([#1465](https://github.com/fallenbagel/jellyseerr/issues/1465)) ([a6dd4a8](https://github.com/fallenbagel/jellyseerr/commit/a6dd4a8fedb9af9810581b1cc18cfea53b3cfd39)), closes [#1462](https://github.com/fallenbagel/jellyseerr/issues/1462)
+* **ui:** resolve streaming region dropdown overlap ([#1477](https://github.com/fallenbagel/jellyseerr/issues/1477)) ([767a241](https://github.com/fallenbagel/jellyseerr/commit/767a24164d6c9d101e613c53960985f4fbe2ce93)), closes [#1475](https://github.com/fallenbagel/jellyseerr/issues/1475)
+
+
+### Reverts
+
+* **airdate:** reverts airdate offset & changes relative time to only display date (not time) ([#1467](https://github.com/fallenbagel/jellyseerr/issues/1467)) ([8394eb5](https://github.com/fallenbagel/jellyseerr/commit/8394eb5ad405a90e840952d5977712e1ab890530)), closes [#1390](https://github.com/fallenbagel/jellyseerr/issues/1390)
+
+# [2.5.0](https://github.com/fallenbagel/jellyseerr/compare/v2.4.0...v2.5.0) (2025-03-11)
+
+
+### Bug Fixes
+
+* **ui:** correct media action icon size ([#1444](https://github.com/fallenbagel/jellyseerr/issues/1444)) ([771ecdf](https://github.com/fallenbagel/jellyseerr/commit/771ecdf7812004eec0f516cc424f9982936c8a2a)), closes [#1440](https://github.com/fallenbagel/jellyseerr/issues/1440)
+* **users:** correct user list for Postgres ([#1443](https://github.com/fallenbagel/jellyseerr/issues/1443)) ([5b998be](https://github.com/fallenbagel/jellyseerr/commit/5b998bef82388dccaaa462ff2ff3a526dd03338c)), closes [#1333](https://github.com/fallenbagel/jellyseerr/issues/1333)
+
+
+### Features
+
+* **helm:** upgrade jellyseerr to 2.4.0 ([#1438](https://github.com/fallenbagel/jellyseerr/issues/1438)) ([077e355](https://github.com/fallenbagel/jellyseerr/commit/077e355c775af92ff4dd2341543555d473c1abbb))
+
+
+### Reverts
+
+* reverts csrf-csrf back to csurf ([#1442](https://github.com/fallenbagel/jellyseerr/issues/1442)) ([21ab20b](https://github.com/fallenbagel/jellyseerr/commit/21ab20bba97102fe9eb9d4af4213a604c05e0acc)), closes [#1393](https://github.com/fallenbagel/jellyseerr/issues/1393)
+
+# [2.4.0](https://github.com/fallenbagel/jellyseerr/compare/v2.3.0...v2.4.0) (2025-03-10)
+
+
+### Bug Fixes
+
+* add email requirement for local users ([#1389](https://github.com/fallenbagel/jellyseerr/issues/1389)) ([f0a6055](https://github.com/fallenbagel/jellyseerr/commit/f0a605577469248a2a7c2170be8310e106131c59)), closes [#900](https://github.com/fallenbagel/jellyseerr/issues/900) [#1367](https://github.com/fallenbagel/jellyseerr/issues/1367)
+* **api:** make item endpoints user-independent ([#1413](https://github.com/fallenbagel/jellyseerr/issues/1413)) ([9cc6930](https://github.com/fallenbagel/jellyseerr/commit/9cc6930fed31c834201fe4e8a2a2f456b878dec6))
+* assign the keep-alive value explicitly ([#1368](https://github.com/fallenbagel/jellyseerr/issues/1368)) ([438ccfe](https://github.com/fallenbagel/jellyseerr/commit/438ccfe9c37f4848b84e60a2ce64687e0b4e4dc0)), closes [#1365](https://github.com/fallenbagel/jellyseerr/issues/1365)
+* corrected spelling errors in function names ([#1366](https://github.com/fallenbagel/jellyseerr/issues/1366)) ([e035cd8](https://github.com/fallenbagel/jellyseerr/commit/e035cd84ae24502f43cf842d6d10621f28719682))
+* disable first page revalidation in useSWRInfinite ([#1386](https://github.com/fallenbagel/jellyseerr/issues/1386)) ([d563b36](https://github.com/fallenbagel/jellyseerr/commit/d563b361869d8183041cb6aea91279e17a513070)), closes [#1380](https://github.com/fallenbagel/jellyseerr/issues/1380)
+* disallow admins to edit other admins in bulk edit ([#1340](https://github.com/fallenbagel/jellyseerr/issues/1340)) ([2dbd109](https://github.com/fallenbagel/jellyseerr/commit/2dbd1096d2756a7213209419d1d4da36e7267959)), closes [#1309](https://github.com/fallenbagel/jellyseerr/issues/1309)
+* **emby:** throw the right error message if no library exists ([#1415](https://github.com/fallenbagel/jellyseerr/issues/1415)) ([67bd639](https://github.com/fallenbagel/jellyseerr/commit/67bd639a432d724bb34b7d6fed76c0bb66d94147))
+* fix remove from *arr in item details ([#1387](https://github.com/fallenbagel/jellyseerr/issues/1387)) ([9712f56](https://github.com/fallenbagel/jellyseerr/commit/9712f5605471a673edb3d25048dc08d1addd58db))
+* **helm:** no change, fixing OCI manifest corruption ([#1310](https://github.com/fallenbagel/jellyseerr/issues/1310)) ([418f0c2](https://github.com/fallenbagel/jellyseerr/commit/418f0c2eb844e8814aca0d280292e9fb372cc118))
+* **jobs:** run plex/jellyfin jobs only for the relevant media server ([#1331](https://github.com/fallenbagel/jellyseerr/issues/1331)) ([2b7974f](https://github.com/fallenbagel/jellyseerr/commit/2b7974fa06f196b40de270ad24e54b227143b081)), closes [#1329](https://github.com/fallenbagel/jellyseerr/issues/1329)
+* make watchlist buttons consistent ([#1272](https://github.com/fallenbagel/jellyseerr/issues/1272)) ([f247642](https://github.com/fallenbagel/jellyseerr/commit/f247642b76ebefd9eeb8aed485573b5d6b133673)), closes [#1270](https://github.com/fallenbagel/jellyseerr/issues/1270)
+* **mediarequest:** optimise more typeorm lifecycle triggers ([#1376](https://github.com/fallenbagel/jellyseerr/issues/1376)) ([80927b9](https://github.com/fallenbagel/jellyseerr/commit/80927b97058a219fca9fa580243cb3f966fb0b37)), closes [#513](https://github.com/fallenbagel/jellyseerr/issues/513)
+* missing plex.tv url in images remotePatterns ([#1356](https://github.com/fallenbagel/jellyseerr/issues/1356)) ([b29959b](https://github.com/fallenbagel/jellyseerr/commit/b29959b0637fd8add9598d2a3d05f9a0972b65df))
+* **overriderules:** allows every user to be added to the override rules ([#1333](https://github.com/fallenbagel/jellyseerr/issues/1333)) ([af8d6b4](https://github.com/fallenbagel/jellyseerr/commit/af8d6b475c0040f7b96f04e3783ac8b4c702b3db))
+* **overriderules:** correct disabled condition for override rule creation ([#1419](https://github.com/fallenbagel/jellyseerr/issues/1419)) ([1de518d](https://github.com/fallenbagel/jellyseerr/commit/1de518d9154ea7809688c73ebefdcac66d27bdf8))
+* **overriderules:** enable override rules only when a service exists ([#1417](https://github.com/fallenbagel/jellyseerr/issues/1417)) ([4e44282](https://github.com/fallenbagel/jellyseerr/commit/4e44282387e7b511daecd961cdc9da98cb4b0139))
+* resolve a vulnerability with admin token ([#1345](https://github.com/fallenbagel/jellyseerr/issues/1345)) ([620135a](https://github.com/fallenbagel/jellyseerr/commit/620135aeac6d9fc284a3daddcafd1964474d2789))
+* **settings:** remove dns server option ([#1416](https://github.com/fallenbagel/jellyseerr/issues/1416)) ([ada467e](https://github.com/fallenbagel/jellyseerr/commit/ada467ecf40c7c27d57ae69ad515bd245d7bb639)), closes [#1266](https://github.com/fallenbagel/jellyseerr/issues/1266)
+* **setup:** resolve looping library validation error message ([#1316](https://github.com/fallenbagel/jellyseerr/issues/1316)) ([6ab4632](https://github.com/fallenbagel/jellyseerr/commit/6ab463285d566c18ef0b4034fbfd0b5863a4f7a5))
+* **watchlist:** disable Jellyseerr's watchlist for Plex users ([#1398](https://github.com/fallenbagel/jellyseerr/issues/1398)) ([4eddbaa](https://github.com/fallenbagel/jellyseerr/commit/4eddbaa71b7972b6db33976102501fb8b6333206)), closes [#1344](https://github.com/fallenbagel/jellyseerr/issues/1344)
+
+
+### Features
+
+* add a robots.txt file ([#1335](https://github.com/fallenbagel/jellyseerr/issues/1335)) ([24d3f52](https://github.com/fallenbagel/jellyseerr/commit/24d3f523fc07ff4b28d041b2a74cfb5ab0a788a7)), closes [#1323](https://github.com/fallenbagel/jellyseerr/issues/1323)
+* add linked accounts page ([#883](https://github.com/fallenbagel/jellyseerr/issues/883)) ([64f05bc](https://github.com/fallenbagel/jellyseerr/commit/64f05bcad6956f7e8cbe3fdf5f430af1f30ddd6d))
+* **airdatebadge:** convert airDate from UTC to local timezone ([#1390](https://github.com/fallenbagel/jellyseerr/issues/1390)) ([a790b1a](https://github.com/fallenbagel/jellyseerr/commit/a790b1abccfa9c3f8272ade8cd055017905dd87f)), closes [#1373](https://github.com/fallenbagel/jellyseerr/issues/1373)
+* **api:** make rottentomatoes matching more robust ([#1265](https://github.com/fallenbagel/jellyseerr/issues/1265)) ([907ba6f](https://github.com/fallenbagel/jellyseerr/commit/907ba6fdea0341e8d0f429eaf6aaa404dbc7daff))
+* **helm:** Add possibility to pass volumes and volume mounts ([#1291](https://github.com/fallenbagel/jellyseerr/issues/1291)) ([62c1a70](https://github.com/fallenbagel/jellyseerr/commit/62c1a70b373ee574ad9ff98d322085976dbc7868))
+* revamp login page and support disabling media server login ([#1286](https://github.com/fallenbagel/jellyseerr/issues/1286)) ([73d8efa](https://github.com/fallenbagel/jellyseerr/commit/73d8efaa54888b5282624e618c1461c23653f0b9))
+* **settings:** add a disclaimer for dns servers and ipv4 first settings ([#1375](https://github.com/fallenbagel/jellyseerr/issues/1375)) ([1176171](https://github.com/fallenbagel/jellyseerr/commit/117617188ed988bd8a90e9fbe8bada08d5b14513))
+* **ui:** prevent password manager interference & improve service links ([#1396](https://github.com/fallenbagel/jellyseerr/issues/1396)) ([e97a13e](https://github.com/fallenbagel/jellyseerr/commit/e97a13e1e46298be9f334c8e6c6028fb8a99c53d)), closes [#3989](https://github.com/fallenbagel/jellyseerr/issues/3989)
+* update Jellyfin logo ([#1359](https://github.com/fallenbagel/jellyseerr/issues/1359)) ([c181cee](https://github.com/fallenbagel/jellyseerr/commit/c181cee328eb867f90d906757b8bddaeb74ba9f2))
+* upgrade chart to 2.0.0 ([#1268](https://github.com/fallenbagel/jellyseerr/issues/1268)) ([0ee3e69](https://github.com/fallenbagel/jellyseerr/commit/0ee3e69a6101f5a8818b6d4c5654d84f6aac322b))
+
+# [2.3.0](https://github.com/fallenbagel/jellyseerr/compare/v2.2.3...v2.3.0) (2025-01-16)
+
+
+### Bug Fixes
+
+* correct typos for the special episodes setting ([#1209](https://github.com/fallenbagel/jellyseerr/issues/1209)) ([ebe7d11](https://github.com/fallenbagel/jellyseerr/commit/ebe7d11a5393f3d444dd9613854d6054af1ec58b)), closes [#1193](https://github.com/fallenbagel/jellyseerr/issues/1193) [#1208](https://github.com/fallenbagel/jellyseerr/issues/1208)
+* **externalapi:** clear cache after a request is made ([#1217](https://github.com/fallenbagel/jellyseerr/issues/1217)) ([f718cec](https://github.com/fallenbagel/jellyseerr/commit/f718cec23fccbfd16fdb792c2778cd543b751799)), closes [#1207](https://github.com/fallenbagel/jellyseerr/issues/1207)
+* **jellyfinlogin:** add proper error message when no admin user exists ([#1216](https://github.com/fallenbagel/jellyseerr/issues/1216)) ([ac90802](https://github.com/fallenbagel/jellyseerr/commit/ac908026dbb7ca06c0fb520bbb360120d6b87feb))
+* optimize media status update to avoid lifecycle hook triggers ([#1218](https://github.com/fallenbagel/jellyseerr/issues/1218)) ([656cd91](https://github.com/fallenbagel/jellyseerr/commit/656cd91c9c90e57914b7fedb097f29e21fb18090))
+* **overriderules:** allow override rules only when the service is created ([#1259](https://github.com/fallenbagel/jellyseerr/issues/1259)) ([ce1b39f](https://github.com/fallenbagel/jellyseerr/commit/ce1b39f73b953b6fa0a00948e72d24c43476bc5f))
+* prevent TypeORM subscribers from calling itself over and over ([#1215](https://github.com/fallenbagel/jellyseerr/issues/1215)) ([d67ec57](https://github.com/fallenbagel/jellyseerr/commit/d67ec571c5950f04b85f5a268b38eb026a156320))
+* resolve plex user mismatch due to caching issues ([#1242](https://github.com/fallenbagel/jellyseerr/issues/1242)) ([131a5a2](https://github.com/fallenbagel/jellyseerr/commit/131a5a2b0b1a235599940affc183b93c36f12ade)), closes [#1227](https://github.com/fallenbagel/jellyseerr/issues/1227)
+* **settingsmigrator:** prevent region migration from running multiple times ([#1255](https://github.com/fallenbagel/jellyseerr/issues/1255)) ([1c6f536](https://github.com/fallenbagel/jellyseerr/commit/1c6f5362d773c850a5e58b5013f0d65474467e9c)), closes [#1251](https://github.com/fallenbagel/jellyseerr/issues/1251)
+* **setup:** fix continue button disabled on refresh in setup 3 ([#1211](https://github.com/fallenbagel/jellyseerr/issues/1211)) ([0b331ca](https://github.com/fallenbagel/jellyseerr/commit/0b331ca579c75e546dcdbf0f1896e0f0ec3a89f1))
+* **setup:** plex library setting validation ([#1233](https://github.com/fallenbagel/jellyseerr/issues/1233)) ([b8dbfaa](https://github.com/fallenbagel/jellyseerr/commit/b8dbfaaed083734b05a28a05bf100941dc673ea7))
+* specify cached image type ([#1237](https://github.com/fallenbagel/jellyseerr/issues/1237)) ([d71ee58](https://github.com/fallenbagel/jellyseerr/commit/d71ee58302fe95c9c79e27b4edf317a98faf6f5c))
+* **ui:** resolve streaming region dropdown overlap ([#1210](https://github.com/fallenbagel/jellyseerr/issues/1210)) ([2f0e493](https://github.com/fallenbagel/jellyseerr/commit/2f0e4932572497322df0d7d7f4377aeb9cc35d5b)), closes [#1206](https://github.com/fallenbagel/jellyseerr/issues/1206)
+* **users:** correct request count query for PostgreSQL compatibility ([#1213](https://github.com/fallenbagel/jellyseerr/issues/1213)) ([f3ebf60](https://github.com/fallenbagel/jellyseerr/commit/f3ebf6028b23f803a1c8801b1541a444e8856421))
+
+
+### Features
+
+* Add latest tag to ghcr container image ([#1224](https://github.com/fallenbagel/jellyseerr/issues/1224)) ([b9dc9bc](https://github.com/fallenbagel/jellyseerr/commit/b9dc9bceb5805889c1ea3157c3ace880865eaf9c))
+* Add release charts workflow ([#1140](https://github.com/fallenbagel/jellyseerr/issues/1140)) ([3cc34b0](https://github.com/fallenbagel/jellyseerr/commit/3cc34b0db6b868a6133408a69a60b7eab69d9ea3))
+* **settings:** add settings for custom DNS servers and IPv4 resolution first ([#1266](https://github.com/fallenbagel/jellyseerr/issues/1266)) ([7fcc0eb](https://github.com/fallenbagel/jellyseerr/commit/7fcc0eb66d907e74b72197d6abee511150ab5e1e))
+
+# [2.3.0](https://github.com/fallenbagel/jellyseerr/compare/v2.2.3...v2.3.0) (2025-01-16)
+
+
+### Bug Fixes
+
+* correct typos for the special episodes setting ([#1209](https://github.com/fallenbagel/jellyseerr/issues/1209)) ([ebe7d11](https://github.com/fallenbagel/jellyseerr/commit/ebe7d11a5393f3d444dd9613854d6054af1ec58b)), closes [#1193](https://github.com/fallenbagel/jellyseerr/issues/1193) [#1208](https://github.com/fallenbagel/jellyseerr/issues/1208)
+* **externalapi:** clear cache after a request is made ([#1217](https://github.com/fallenbagel/jellyseerr/issues/1217)) ([f718cec](https://github.com/fallenbagel/jellyseerr/commit/f718cec23fccbfd16fdb792c2778cd543b751799)), closes [#1207](https://github.com/fallenbagel/jellyseerr/issues/1207)
+* **jellyfinlogin:** add proper error message when no admin user exists ([#1216](https://github.com/fallenbagel/jellyseerr/issues/1216)) ([ac90802](https://github.com/fallenbagel/jellyseerr/commit/ac908026dbb7ca06c0fb520bbb360120d6b87feb))
+* optimize media status update to avoid lifecycle hook triggers ([#1218](https://github.com/fallenbagel/jellyseerr/issues/1218)) ([656cd91](https://github.com/fallenbagel/jellyseerr/commit/656cd91c9c90e57914b7fedb097f29e21fb18090))
+* **overriderules:** allow override rules only when the service is created ([#1259](https://github.com/fallenbagel/jellyseerr/issues/1259)) ([ce1b39f](https://github.com/fallenbagel/jellyseerr/commit/ce1b39f73b953b6fa0a00948e72d24c43476bc5f))
+* prevent TypeORM subscribers from calling itself over and over ([#1215](https://github.com/fallenbagel/jellyseerr/issues/1215)) ([d67ec57](https://github.com/fallenbagel/jellyseerr/commit/d67ec571c5950f04b85f5a268b38eb026a156320))
+* resolve plex user mismatch due to caching issues ([#1242](https://github.com/fallenbagel/jellyseerr/issues/1242)) ([131a5a2](https://github.com/fallenbagel/jellyseerr/commit/131a5a2b0b1a235599940affc183b93c36f12ade)), closes [#1227](https://github.com/fallenbagel/jellyseerr/issues/1227)
+* **settingsmigrator:** prevent region migration from running multiple times ([#1255](https://github.com/fallenbagel/jellyseerr/issues/1255)) ([1c6f536](https://github.com/fallenbagel/jellyseerr/commit/1c6f5362d773c850a5e58b5013f0d65474467e9c)), closes [#1251](https://github.com/fallenbagel/jellyseerr/issues/1251)
+* **setup:** fix continue button disabled on refresh in setup 3 ([#1211](https://github.com/fallenbagel/jellyseerr/issues/1211)) ([0b331ca](https://github.com/fallenbagel/jellyseerr/commit/0b331ca579c75e546dcdbf0f1896e0f0ec3a89f1))
+* **setup:** plex library setting validation ([#1233](https://github.com/fallenbagel/jellyseerr/issues/1233)) ([b8dbfaa](https://github.com/fallenbagel/jellyseerr/commit/b8dbfaaed083734b05a28a05bf100941dc673ea7))
+* specify cached image type ([#1237](https://github.com/fallenbagel/jellyseerr/issues/1237)) ([d71ee58](https://github.com/fallenbagel/jellyseerr/commit/d71ee58302fe95c9c79e27b4edf317a98faf6f5c))
+* **ui:** resolve streaming region dropdown overlap ([#1210](https://github.com/fallenbagel/jellyseerr/issues/1210)) ([2f0e493](https://github.com/fallenbagel/jellyseerr/commit/2f0e4932572497322df0d7d7f4377aeb9cc35d5b)), closes [#1206](https://github.com/fallenbagel/jellyseerr/issues/1206)
+* **users:** correct request count query for PostgreSQL compatibility ([#1213](https://github.com/fallenbagel/jellyseerr/issues/1213)) ([f3ebf60](https://github.com/fallenbagel/jellyseerr/commit/f3ebf6028b23f803a1c8801b1541a444e8856421))
+
+
+### Features
+
+* Add latest tag to ghcr container image ([#1224](https://github.com/fallenbagel/jellyseerr/issues/1224)) ([b9dc9bc](https://github.com/fallenbagel/jellyseerr/commit/b9dc9bceb5805889c1ea3157c3ace880865eaf9c))
+* Add release charts workflow ([#1140](https://github.com/fallenbagel/jellyseerr/issues/1140)) ([3cc34b0](https://github.com/fallenbagel/jellyseerr/commit/3cc34b0db6b868a6133408a69a60b7eab69d9ea3))
+* **settings:** add settings for custom DNS servers and IPv4 resolution first ([#1266](https://github.com/fallenbagel/jellyseerr/issues/1266)) ([7fcc0eb](https://github.com/fallenbagel/jellyseerr/commit/7fcc0eb66d907e74b72197d6abee511150ab5e1e))
+
+## [2.2.3](https://github.com/fallenbagel/jellyseerr/compare/v2.2.2...v2.2.3) (2024-12-30)
+
+
+### Bug Fixes
+
+* properly fetch sonarr/radarr specific override rules ([#1199](https://github.com/fallenbagel/jellyseerr/issues/1199)) ([814a735](https://github.com/fallenbagel/jellyseerr/commit/814a7357c0c7418091e8d3e911adc403811c9dfe))
+* **usersettings:** fix the streaming region setting toggling itself ([#1203](https://github.com/fallenbagel/jellyseerr/issues/1203)) ([7e94ad7](https://github.com/fallenbagel/jellyseerr/commit/7e94ad721026a03d3ae640ee2deb60e321cabf10)), closes [#1200](https://github.com/fallenbagel/jellyseerr/issues/1200)
+
+## [2.2.2](https://github.com/fallenbagel/jellyseerr/compare/v2.2.1...v2.2.2) (2024-12-30)
+
+
+### Bug Fixes
+
+* **overriderules:** apply override rules to tv shows during request ([#1198](https://github.com/fallenbagel/jellyseerr/issues/1198)) ([f8a8ebd](https://github.com/fallenbagel/jellyseerr/commit/f8a8ebdf76f939ccc28ce7b39343e3a606c90b33)), closes [#1197](https://github.com/fallenbagel/jellyseerr/issues/1197) [#1195](https://github.com/fallenbagel/jellyseerr/issues/1195)
+
+## [2.2.1](https://github.com/fallenbagel/jellyseerr/compare/v2.2.0...v2.2.1) (2024-12-30)
+
+
+### Bug Fixes
+
+* **overriderules:** apply override rules during request only for non-admin/non-auto-approve users ([#1197](https://github.com/fallenbagel/jellyseerr/issues/1197)) ([8da4870](https://github.com/fallenbagel/jellyseerr/commit/8da48709977fa0111225c3519f9128bea41867fc)), closes [#1195](https://github.com/fallenbagel/jellyseerr/issues/1195)
+
+# [2.2.0](https://github.com/fallenbagel/jellyseerr/compare/v2.1.0...v2.2.0) (2024-12-29)
+
+
+### Bug Fixes
+
+* **avatarproxy:** add support for Emby avatars ([#1128](https://github.com/fallenbagel/jellyseerr/issues/1128)) ([17418f8](https://github.com/fallenbagel/jellyseerr/commit/17418f82af53362338aebe9602373a3c8fa027f7)), closes [#1101](https://github.com/fallenbagel/jellyseerr/issues/1101)
+* **blacklist:** remove a "undefined" appearing when the blacklist modal closes ([#1142](https://github.com/fallenbagel/jellyseerr/issues/1142)) ([b01f98f](https://github.com/fallenbagel/jellyseerr/commit/b01f98f7e280a037eba303eeaa836f6623daa440))
+* **discover:** display recent requests even if there is an error with *arr ([#1141](https://github.com/fallenbagel/jellyseerr/issues/1141)) ([fa443c0](https://github.com/fallenbagel/jellyseerr/commit/fa443c05bedfca8208bfb05ab02c3b0e678e4ca0))
+* **discover:** resolve a typing issue with the WatchlistItem interface ([#1156](https://github.com/fallenbagel/jellyseerr/issues/1156)) ([de6e591](https://github.com/fallenbagel/jellyseerr/commit/de6e591baedacb33704216842dddaa2b96bfae19))
+* **emby:** change default value of Accept-Encoding header ([#1157](https://github.com/fallenbagel/jellyseerr/issues/1157)) ([7c734bc](https://github.com/fallenbagel/jellyseerr/commit/7c734bc8732a511e62edfcc371028ead6b6f1b12))
+* fix PostgreSQL migrations and TelegramMessageThreadId migration ([#1171](https://github.com/fallenbagel/jellyseerr/issues/1171)) ([0491a04](https://github.com/fallenbagel/jellyseerr/commit/0491a04ef1816e81bb495746cc529fc621e4e147))
+* handle non-existent rottentomatoes rating for movies ([#1169](https://github.com/fallenbagel/jellyseerr/issues/1169)) ([347a24a](https://github.com/fallenbagel/jellyseerr/commit/347a24a97b354725c4ccb3b5a07793b96ff60b80))
+* remove non-null requirement for some fields ([#1175](https://github.com/fallenbagel/jellyseerr/issues/1175)) ([13d15d1](https://github.com/fallenbagel/jellyseerr/commit/13d15d1dcf4a80bc0b544fecbeced706f2dbd816)), closes [#628](https://github.com/fallenbagel/jellyseerr/issues/628)
+* **requestlist:** use default value of sort direction only if valid ([#1174](https://github.com/fallenbagel/jellyseerr/issues/1174)) ([59c22cc](https://github.com/fallenbagel/jellyseerr/commit/59c22ccc089c960b523ccfb69efc680b2687c353)), closes [#1147](https://github.com/fallenbagel/jellyseerr/issues/1147)
+* **server/settings:** write settings to a temp file then move to avoid corruption ([#1067](https://github.com/fallenbagel/jellyseerr/issues/1067)) ([01bbece](https://github.com/fallenbagel/jellyseerr/commit/01bbeced65b82f5041462cd7a6c9016274acade4))
+* **ui:** allow thetvdb images for unmatched series ([#1105](https://github.com/fallenbagel/jellyseerr/issues/1105)) ([9b151fe](https://github.com/fallenbagel/jellyseerr/commit/9b151feb4f44d631b44c88c089f184c4c93161c5)), closes [#1075](https://github.com/fallenbagel/jellyseerr/issues/1075)
+* **ui:** display Rotten Tomatoes for 0% ratings ([#1178](https://github.com/fallenbagel/jellyseerr/issues/1178)) ([5345207](https://github.com/fallenbagel/jellyseerr/commit/534520794071d8530d6325460e61dabfcb46fbf0)), closes [#1166](https://github.com/fallenbagel/jellyseerr/issues/1166)
+* **ui:** resize streaming service logos ([#1106](https://github.com/fallenbagel/jellyseerr/issues/1106)) ([fe5d016](https://github.com/fallenbagel/jellyseerr/commit/fe5d016929d18c38aef7a3d48e4828188131e025)), closes [#1103](https://github.com/fallenbagel/jellyseerr/issues/1103)
+* use less strict validation for external URLs ([#1104](https://github.com/fallenbagel/jellyseerr/issues/1104)) ([14f316a](https://github.com/fallenbagel/jellyseerr/commit/14f316a9a6d91c25c43e07ae66923785f90b1fdf)), closes [#1068](https://github.com/fallenbagel/jellyseerr/issues/1068)
+* use links instead of buttons for external links in movie/tv details page ([#923](https://github.com/fallenbagel/jellyseerr/issues/923)) ([5776715](https://github.com/fallenbagel/jellyseerr/commit/57767156f79cb0bcb761f6fc0907d747f126e146))
+* use tmdb first as metadata provider and fallback to tvdb ([#1138](https://github.com/fallenbagel/jellyseerr/issues/1138)) ([84fd884](https://github.com/fallenbagel/jellyseerr/commit/84fd884052ea2177c92d144367c4b4ed1dde3b73)), closes [#1137](https://github.com/fallenbagel/jellyseerr/issues/1137)
+* **usediscover hook:** fixing duplicate movies ([#708](https://github.com/fallenbagel/jellyseerr/issues/708)) ([39dbb7f](https://github.com/fallenbagel/jellyseerr/commit/39dbb7f7e59cf4b1b5f029089c6b1ea6a0d7e5f5))
+* **usersettings:** allow unset email and add more explicit email error message ([#1096](https://github.com/fallenbagel/jellyseerr/issues/1096)) ([39a5ccb](https://github.com/fallenbagel/jellyseerr/commit/39a5ccb7f3a6ed4e93b12e11021bb30515936ce7))
+
+
+### Features
+
+* add a setting for special episodes ([#1193](https://github.com/fallenbagel/jellyseerr/issues/1193)) ([b6e2e6c](https://github.com/fallenbagel/jellyseerr/commit/b6e2e6ce615cb94cea8d2335140fe245a0ca2d8a))
+* add postgres support + migrations ([#628](https://github.com/fallenbagel/jellyseerr/issues/628)) ([44a9221](https://github.com/fallenbagel/jellyseerr/commit/44a9221a9dca501fa57c0bcbd743aed9889059ff)), closes [#186](https://github.com/fallenbagel/jellyseerr/issues/186)
+* **helm:** add base helm chart ([#1116](https://github.com/fallenbagel/jellyseerr/issues/1116)) ([27e3d46](https://github.com/fallenbagel/jellyseerr/commit/27e3d465bd7eaa3f382c961220f8af1860a15c7f))
+* **notifications:** added telegram thread id's ([#1145](https://github.com/fallenbagel/jellyseerr/issues/1145)) ([d76d794](https://github.com/fallenbagel/jellyseerr/commit/d76d79441142ccc6fe2357549f39a1fba3546ff9))
+* **notifications:** improve discord notifications ([#1102](https://github.com/fallenbagel/jellyseerr/issues/1102)) ([5c24e79](https://github.com/fallenbagel/jellyseerr/commit/5c24e79b1dddc3c8421e57e67302fa3dc064f87f))
+* override rules ([#945](https://github.com/fallenbagel/jellyseerr/issues/945)) ([9a59529](https://github.com/fallenbagel/jellyseerr/commit/9a595296dbdd00bb3477052b53412e6019667740))
+* **requestlist:** sort direction ([#1147](https://github.com/fallenbagel/jellyseerr/issues/1147)) ([66a5ab4](https://github.com/fallenbagel/jellyseerr/commit/66a5ab41ab646501f72a658782e8a89f9faf939f))
+* **usersettings:** add separate setting for streaming region ([#993](https://github.com/fallenbagel/jellyseerr/issues/993)) ([89831f7](https://github.com/fallenbagel/jellyseerr/commit/89831f70909df0a76dfa8a027702e4e5f9b57be8)), closes [#890](https://github.com/fallenbagel/jellyseerr/issues/890)
+
+# [2.1.0](https://github.com/fallenbagel/jellyseerr/compare/v2.0.1...v2.1.0) (2024-11-12)
+
+
+### Bug Fixes
+
+* **blacklist:** request data only when modal is shown, remove useless ratelimit and lazy load blacklist ([#1084](https://github.com/fallenbagel/jellyseerr/issues/1084)) ([694913c](https://github.com/fallenbagel/jellyseerr/commit/694913c767c558147f413e2375b2512567541127))
+* cache Jellyfin/Emby avatars from API ([#1045](https://github.com/fallenbagel/jellyseerr/issues/1045)) ([0bbcfcb](https://github.com/fallenbagel/jellyseerr/commit/0bbcfcbd5e03137aba35ceb07e42f623aefa41d7))
+* **externalapi:** extract basic auth and pass it through header ([#1062](https://github.com/fallenbagel/jellyseerr/issues/1062)) ([cf59102](https://github.com/fallenbagel/jellyseerr/commit/cf59102ef91fa0e907cc6369b0fe60b503c823ca)), closes [#1027](https://github.com/fallenbagel/jellyseerr/issues/1027)
+* fixes wrong avatar rendered for the modifiedBy user in request list ([#1028](https://github.com/fallenbagel/jellyseerr/issues/1028)) ([cbb1a74](https://github.com/fallenbagel/jellyseerr/commit/cbb1a74526ef5c003b7081c31146c52e7e551d60)), closes [#1017](https://github.com/fallenbagel/jellyseerr/issues/1017)
+* **i18n:** update extractMessages function for better escaping of characters ([#1079](https://github.com/fallenbagel/jellyseerr/issues/1079)) ([a2d2fd3](https://github.com/fallenbagel/jellyseerr/commit/a2d2fd3c2a53fc98d6288bd049fd8e37a1914280))
+* remove language profiles dropdown for Sonarr v4 ([#1000](https://github.com/fallenbagel/jellyseerr/issues/1000)) ([d331798](https://github.com/fallenbagel/jellyseerr/commit/d331798b28a7bd32a27fc0ccbad2354be2e15b02)), closes [#207](https://github.com/fallenbagel/jellyseerr/issues/207)
+* resolve error when setup on second attempt ([#1061](https://github.com/fallenbagel/jellyseerr/issues/1061)) ([64f4610](https://github.com/fallenbagel/jellyseerr/commit/64f4610b9ffcad01c24ecdd81b8b3a2f3db4c98d))
+* **setup:** add leading slash validation for baseUrl ([#1083](https://github.com/fallenbagel/jellyseerr/issues/1083)) ([2829c25](https://github.com/fallenbagel/jellyseerr/commit/2829c2548aa0cd03f92433d3bc3b9b2739e98486))
+* update i18n translations ([#1090](https://github.com/fallenbagel/jellyseerr/issues/1090)) ([f25b32a](https://github.com/fallenbagel/jellyseerr/commit/f25b32aec8ec3c2fd40ccfc6a83f18ddc99c1a15))
+* use fs/promises for settings ([#1057](https://github.com/fallenbagel/jellyseerr/issues/1057)) ([f2ed101](https://github.com/fallenbagel/jellyseerr/commit/f2ed101e522561dab8563b744d908ff036c957c5))
+
+
+### Features
+
+* add a warning if permissions are missing from config folder ([#1030](https://github.com/fallenbagel/jellyseerr/issues/1030)) ([f2b6315](https://github.com/fallenbagel/jellyseerr/commit/f2b63156d1d4aa903eb261d2c80c059c39d9091b))
+* add bypass list, bypass local addresses and username/password to proxy setting ([#1059](https://github.com/fallenbagel/jellyseerr/issues/1059)) ([ca838a0](https://github.com/fallenbagel/jellyseerr/commit/ca838a00fa4acb0ccdfbac8be4cf7fde493346f7))
+* add more logs to migrations and create a settings backup ([#1036](https://github.com/fallenbagel/jellyseerr/issues/1036)) ([326001c](https://github.com/fallenbagel/jellyseerr/commit/326001c3ecc92dc730f327130a71e797882a62b9))
+* exit Jellyseerr when migration fails ([#1026](https://github.com/fallenbagel/jellyseerr/issues/1026)) ([a2b3408](https://github.com/fallenbagel/jellyseerr/commit/a2b3408c9aa5e22e1193f535c969325254f08193))
+* proxy setting ([#1031](https://github.com/fallenbagel/jellyseerr/issues/1031)) ([4b4eeb6](https://github.com/fallenbagel/jellyseerr/commit/4b4eeb6ec707e0971fe8745910edbfb546bf25fe))
+
+## [2.0.1](https://github.com/fallenbagel/jellyseerr/compare/v2.0.0...v2.0.1) (2024-10-17)
+
+
+### Bug Fixes
+
+* fetch override to attach XSRF token to fix csrfProtection issue ([#1014](https://github.com/fallenbagel/jellyseerr/issues/1014)) ([4945b54](https://github.com/fallenbagel/jellyseerr/commit/4945b5429848b36fc0ee41cf0277ed79f53d8286)), closes [#1011](https://github.com/fallenbagel/jellyseerr/issues/1011)
+* handle non-existent rottentomatoes rating ([#1018](https://github.com/fallenbagel/jellyseerr/issues/1018)) ([a351264](https://github.com/fallenbagel/jellyseerr/commit/a351264b878b2660ae7a6415f26d38b52015c591))
+* rewrite avatarproxy and CachedImage ([#1016](https://github.com/fallenbagel/jellyseerr/issues/1016)) ([4e48fdf](https://github.com/fallenbagel/jellyseerr/commit/4e48fdf2cb9f76ae5c25073b585718650abd3288)), closes [#1012](https://github.com/fallenbagel/jellyseerr/issues/1012) [#1013](https://github.com/fallenbagel/jellyseerr/issues/1013)
+* use jellyfinMediaId4k for mediaUrl4k ([#1006](https://github.com/fallenbagel/jellyseerr/issues/1006)) ([a0f80fe](https://github.com/fallenbagel/jellyseerr/commit/a0f80fe7647ef4a9025ca93407cd21ddc640fed1)), closes [#520](https://github.com/fallenbagel/jellyseerr/issues/520)
+
+# [2.0.0](https://github.com/fallenbagel/jellyseerr/compare/v1.9.2...v2.0.0) (2024-10-15)
+
+
+### Bug Fixes
+
+* abort availability sync job if auth token invalid/connection lost ([#845](https://github.com/fallenbagel/jellyseerr/issues/845)) ([bdee340](https://github.com/fallenbagel/jellyseerr/commit/bdee34053080c8975a88ba16a9e8f402e10fe7e1))
+* add an error message to say when an email is already taken ([#947](https://github.com/fallenbagel/jellyseerr/issues/947)) ([89e0a83](https://github.com/fallenbagel/jellyseerr/commit/89e0a831ec85a6905f539f59b7523bb1feb90bcf))
+* add missing brackets ([#888](https://github.com/fallenbagel/jellyseerr/issues/888)) ([6cea8bb](https://github.com/fallenbagel/jellyseerr/commit/6cea8bba592b8db566b4d8147630385f5c377f1b))
+* add missing content-type header ([#887](https://github.com/fallenbagel/jellyseerr/issues/887)) ([2be9c7d](https://github.com/fallenbagel/jellyseerr/commit/2be9c7dcc1f418726a19e99cfdb3933257a03c6f))
+* add missing header when creating an issue ([#879](https://github.com/fallenbagel/jellyseerr/issues/879)) ([084e1b2](https://github.com/fallenbagel/jellyseerr/commit/084e1b224e109f0f8279741b9a5ead138396d7f8))
+* add missing parameter to delete requests from ExternalAPI ([#904](https://github.com/fallenbagel/jellyseerr/issues/904)) ([36d98a2](https://github.com/fallenbagel/jellyseerr/commit/36d98a2681921a8770027b78878688f2782e8b77)), closes [#903](https://github.com/fallenbagel/jellyseerr/issues/903)
+* **api:** fix nextjs error handler ([#882](https://github.com/fallenbagel/jellyseerr/issues/882)) ([0116c13](https://github.com/fallenbagel/jellyseerr/commit/0116c13e0632d1ccec43299fbb10cd71db45bc29))
+* **api:** handle non-existent ratings on IMDb ([#822](https://github.com/fallenbagel/jellyseerr/issues/822)) ([74a2d25](https://github.com/fallenbagel/jellyseerr/commit/74a2d25f153b07a0cae5b44adca5fa1fed5a3b9e))
+* **api:** save new password when reset password of local account ([#886](https://github.com/fallenbagel/jellyseerr/issues/886)) ([5cc4389](https://github.com/fallenbagel/jellyseerr/commit/5cc43898256b130c2576f34a3d4e7ce6a3940d3e))
+* **blacklist:** add blacklist to mobile menu ([#980](https://github.com/fallenbagel/jellyseerr/issues/980)) ([f390da4](https://github.com/fallenbagel/jellyseerr/commit/f390da486625a22951956ba96867de63f73bfc2b)), closes [#979](https://github.com/fallenbagel/jellyseerr/issues/979)
+* change SeriesSearch to MissingEpisodeSearch for season requests ([#711](https://github.com/fallenbagel/jellyseerr/issues/711)) ([ee7e91c](https://github.com/fallenbagel/jellyseerr/commit/ee7e91c7c948b17b556a625919eb1252a721bb6e))
+* **docker:** add postinstall script ([#839](https://github.com/fallenbagel/jellyseerr/issues/839)) ([f714132](https://github.com/fallenbagel/jellyseerr/commit/f7141329094d88eb0940b1db1f21376142cb8893))
+* enhance error messages when Fetch API fails ([#893](https://github.com/fallenbagel/jellyseerr/issues/893)) ([fccfca6](https://github.com/fallenbagel/jellyseerr/commit/fccfca6ed06c8dc599e1ea4b1b3dbac48eb3a7f6))
+* handle status badge for season packs ([#927](https://github.com/fallenbagel/jellyseerr/issues/927)) ([80f6301](https://github.com/fallenbagel/jellyseerr/commit/80f63017ac5e9b1720a19c761dbef4dd517f1c2c))
+* length of undefined on users warnings ([#875](https://github.com/fallenbagel/jellyseerr/issues/875)) ([c600566](https://github.com/fallenbagel/jellyseerr/commit/c600566ac0045c2314f9013b063007b087ee4327))
+* remove DNS caching ([#837](https://github.com/fallenbagel/jellyseerr/issues/837)) ([268c7df](https://github.com/fallenbagel/jellyseerr/commit/268c7df28eea8b911d6a53297f5ce296983067ce))
+* remove email requirement for the user, and use the username if no email provided ([#900](https://github.com/fallenbagel/jellyseerr/issues/900)) ([d5f817e](https://github.com/fallenbagel/jellyseerr/commit/d5f817e734131cdacc229361d9498a095af57950))
+* remove protocol-relative URLs from next/image ([#889](https://github.com/fallenbagel/jellyseerr/issues/889)) ([c80d9a8](https://github.com/fallenbagel/jellyseerr/commit/c80d9a853a2a3451293a5382ef183c18add0c040))
+* resize episode preview image ([#842](https://github.com/fallenbagel/jellyseerr/issues/842)) ([96ba53f](https://github.com/fallenbagel/jellyseerr/commit/96ba53fecc7b9d269f0d974051ab62836b0102bc))
+* resize header image in network and studio pages ([#902](https://github.com/fallenbagel/jellyseerr/issues/902)) ([4220855](https://github.com/fallenbagel/jellyseerr/commit/422085523e5dfc132f3c3ca19eaa87117828b7be))
+* rewrite request from axios to Fetch ([#920](https://github.com/fallenbagel/jellyseerr/issues/920)) ([9aee888](https://github.com/fallenbagel/jellyseerr/commit/9aee8887d3cca6e018f4be1c8400c22e86bf8dab))
+* rewrite the rate limit utility ([#896](https://github.com/fallenbagel/jellyseerr/issues/896)) ([3fc14c9](https://github.com/fallenbagel/jellyseerr/commit/3fc14c9e2262463afec666e7f54e38d0d36cff68))
+* **session:** set the correct TTL for the cookie store ([#992](https://github.com/fallenbagel/jellyseerr/issues/992)) ([96e1d40](https://github.com/fallenbagel/jellyseerr/commit/96e1d40304749ce00d2ff7359efc39a1d9724358)), closes [#991](https://github.com/fallenbagel/jellyseerr/issues/991)
+* set correct user type when importing from emby ([#949](https://github.com/fallenbagel/jellyseerr/issues/949)) ([e57d265](https://github.com/fallenbagel/jellyseerr/commit/e57d2654d1c634a91649722d3a2bf4d73c4a02ca)), closes [#948](https://github.com/fallenbagel/jellyseerr/issues/948)
+* **setup:** page display when homepage is loading ([#940](https://github.com/fallenbagel/jellyseerr/issues/940)) ([7423bbb](https://github.com/fallenbagel/jellyseerr/commit/7423bbbffc5bee2e52e3348254f035dc8527d973))
+* **tmdb:** fallback movie/show overview to English when none is available in requested locale ([#928](https://github.com/fallenbagel/jellyseerr/issues/928)) ([12f908d](https://github.com/fallenbagel/jellyseerr/commit/12f908de7f5fbd717a5f151858b6edee3be13ed9)), closes [#925](https://github.com/fallenbagel/jellyseerr/issues/925)
+* update the filter removing existing users from Jellyfin import modal ([#924](https://github.com/fallenbagel/jellyseerr/issues/924)) ([61dcd8e](https://github.com/fallenbagel/jellyseerr/commit/61dcd8e487d7886773ccb12501623c17838476e5))
+
+
+### Code Refactoring
+
+* **jellyfin:** abstract jellyfin hostname, updated ui to reflect it, better validation ([#773](https://github.com/fallenbagel/jellyseerr/issues/773)) ([38ad875](https://github.com/fallenbagel/jellyseerr/commit/38ad875dd7848b4e92ac3ccdd16dbf785f6a5c4d))
+
+
+### Features
+
+* add environment variable for API key ([#831](https://github.com/fallenbagel/jellyseerr/issues/831)) ([45ef150](https://github.com/fallenbagel/jellyseerr/commit/45ef150e36944d456cc9440574b5ac75f2e4bbc1))
+* adds status filter for tv shows ([#796](https://github.com/fallenbagel/jellyseerr/issues/796)) ([cfd1bc2](https://github.com/fallenbagel/jellyseerr/commit/cfd1bc253557d6e19725743b8aa9a2fa33bbe760)), closes [#605](https://github.com/fallenbagel/jellyseerr/issues/605)
+* allow request managers to delete data from sonarr/radarr ([#644](https://github.com/fallenbagel/jellyseerr/issues/644)) ([a5d22ba](https://github.com/fallenbagel/jellyseerr/commit/a5d22ba5b83dd0e812b16f06476d993b5d59cb2a))
+* blacklist items from Discover page ([#632](https://github.com/fallenbagel/jellyseerr/issues/632)) ([818aa60](https://github.com/fallenbagel/jellyseerr/commit/818aa60aac185da07bfb71b08e0448939b63a736)), closes [#490](https://github.com/fallenbagel/jellyseerr/issues/490)
+* Jellyfin/Emby server type setup ([#685](https://github.com/fallenbagel/jellyseerr/issues/685)) ([15cb949](https://github.com/fallenbagel/jellyseerr/commit/15cb949f1f2e617853f90ae7bb8ae5d6622f610e))
+* **jellyfinapi:** switch to API tokens instead of auth tokens ([#868](https://github.com/fallenbagel/jellyseerr/issues/868)) ([bd4da6d](https://github.com/fallenbagel/jellyseerr/commit/bd4da6d5fc8cb55c2bc3d9a8336787cbd30814d0))
+* Option on item's page to add/remove from watchlist ([#781](https://github.com/fallenbagel/jellyseerr/issues/781)) ([2348f23](https://github.com/fallenbagel/jellyseerr/commit/2348f23f433195d64dee3e6eeede296fca5fdbc9)), closes [#730](https://github.com/fallenbagel/jellyseerr/issues/730)
+* refresh monitored downloads before getting queue items ([#994](https://github.com/fallenbagel/jellyseerr/issues/994)) ([92ba262](https://github.com/fallenbagel/jellyseerr/commit/92ba26207dcb1ddd696e0f01931d2609c521ae45)), closes [#866](https://github.com/fallenbagel/jellyseerr/issues/866)
+* show quality profile on request ([#847](https://github.com/fallenbagel/jellyseerr/issues/847)) ([6445332](https://github.com/fallenbagel/jellyseerr/commit/64453320d36595e75dcb710dfd43997bf2d2acd5))
+* **translation:** added full Hebrew translation ([#871](https://github.com/fallenbagel/jellyseerr/issues/871)) ([c96ca67](https://github.com/fallenbagel/jellyseerr/commit/c96ca6742e0a6d5685319c52f995fe06e439a450))
+* update Plex logo ([#884](https://github.com/fallenbagel/jellyseerr/issues/884)) ([3a363ae](https://github.com/fallenbagel/jellyseerr/commit/3a363ae1ffa7f384be6f7d25f8558b1e55a73fb3))
+
+
+### Reverts
+
+* fix(api): fix nextjs error handler ([#882](https://github.com/fallenbagel/jellyseerr/issues/882)) ([#892](https://github.com/fallenbagel/jellyseerr/issues/892)) ([62dbde4](https://github.com/fallenbagel/jellyseerr/commit/62dbde448c7f7d530de8534bb8538452d0f91276))
+
+
+### BREAKING CHANGES
+
+* This commit deprecates the JELLYFIN_TYPE variable to identify Emby media server and
+instead rely on the mediaServerType that is set in the `settings.json`. Existing environment
+variable users can log out and log back in to set the mediaServerType to `3` (Emby).
+
+* feat(api): add severType to the api
+* This adds a serverType to the `/auth/jellyfin` which requires a serverType to be
+set (`jellyfin`/`emby`)
+
+* refactor: use enums for serverType and rename selectedservice to serverType
+
+* refactor(auth): jellyfin/emby authentication to set MediaServerType
+
+* fix: issue page formatMessage for 4k media
+
+* refactor: cleaner way of handling serverType change using MediaServerType instead of strings
+
+instead of using strings now it will use MediaServerType enums for serverType
+
+* revert: removed conditional render of the auto-request permission
+
+reverts the conditional render toshow the auto-request permission if the mediaServerType was set to
+Plex as this should be handled in a different PR and Cypress tests should be modified
+accordingly(currently cypress test would fail if this conditional check is there)
+
+* feat: add server type step to setup
+
+* feat: migrate existing emby setups to use emby mediaServerType
+
+* fix: scan jobs not running when media server type is emby
+
+* fix: emby media server type migration
+
+* refactor: change emby logo to full logo
+
+* style: decrease emby logo size in setup screen
+
+* refactor: use title case for servertype i18n message
+
+* refactor(i18n): fix a typo
+
+* refactor: use enums instead of numbers
+
+* fix: remove old references to JELLYFIN_TYPE environment variable
+
+* fix: go back to the last step when refresh the setup page
+
+* fix: move "scanning in background" tip next to the scanning section
+
+* fix: redirect the setup page when Jellyseerr is already setup
+* **jellyfin:** Jellyfin settings now does not include a hostname. Instead it abstracted it to ip,
+port, useSsl, and urlBase. However, migration of old settings to new settings should work
+automatically.
+
+* refactor: remove console logs and use getHostname and ApiErrorCodes
+
+* fix: store req.body jellyfin settings temporarily and store only if valid
+
+This should fix the issue where settings are saved even if the url
+was invalid. Now the settings will only be saved if the url is
+valid. Sort of like a test connection.
+
+* refactor: clean up commented out code
+
+* refactor(i18n): extract translation keys
+
+* fix(auth): auth failing with jellyfin login is disabled
+
+* fix(settings): jellyfin migrations replacing the rest of the settings
+
+* fix(settings): jellyfin hostname should be carried out if hostname exists
+
+* fix(settings): merging the wrong settings source
+
+* refactor(settings): use migrator for dynamic settings migrations
+
+* refactor(settingsmigrator): settings migration handler and the migrations
+
+* test(cypress): fix cypress tests failing
+
+cypress settings were lacking some of the jobs so when the startJobs() is called when the app
+starts, it was failing to schedule the jobs where their cron timings were not specified in the
+cypress settings. Therefore, this commit adds those jobs back. In addition, other setting options
+were added to keep cypress settings consistent with a normal user.
+
+* chore(prettierignore): ignore cypress/config/settings.cypress.json as it does not need prettier
+
+* chore(prettier): ran formatter on cypress config to fix format check error
+
+format check locally passes on this file. However, it fails during the github actions format check.
+Therefore, json language features formatter was run instead of prettier to see if that fixes the
+issue.
+
+* test(cypress): add only missing jobs to the cypress settings
+
+* ci: attempt at trying to get formatter to pass on cypress config json file
+
+* refactor: revert the changes brought to try and fix formatter
+
+added back the rest of the cypress settings and removed cypress settings from .prettierignore
+
+* refactor(settings): better erorr logging when jellyfin connection test fails in settings page
+
+## [1.9.2](https://github.com/fallenbagel/jellyseerr/compare/v1.9.1...v1.9.2) (2024-06-13)
+
+
+### Bug Fixes
+
+* **auth:** improve login resilience with headerless fallback authentication ([#814](https://github.com/fallenbagel/jellyseerr/issues/814)) ([a9741fa](https://github.com/fallenbagel/jellyseerr/commit/a9741fa36d06710aa00d28db3dd2c29f2b0973d3))
+* **auth:** validation of ipv6/ipv4 ([#812](https://github.com/fallenbagel/jellyseerr/issues/812)) ([9aeb360](https://github.com/fallenbagel/jellyseerr/commit/9aeb3604e6498c388df1d30dd0b613ba84160fc0)), closes [#795](https://github.com/fallenbagel/jellyseerr/issues/795)
+* bypass cache-able lookups when resolving localhost ([#813](https://github.com/fallenbagel/jellyseerr/issues/813)) ([b5a0699](https://github.com/fallenbagel/jellyseerr/commit/b5a069901a9545772deaa9c491f2075261da0189))
+
+## [1.9.1](https://github.com/fallenbagel/jellyseerr/compare/v1.9.0...v1.9.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* **api:** add DNS caching ([#810](https://github.com/fallenbagel/jellyseerr/issues/810)) ([46ee8a4](https://github.com/fallenbagel/jellyseerr/commit/46ee8a4ca13b026bd929b4027eb001cc74064bb8)), closes [#387](https://github.com/fallenbagel/jellyseerr/issues/387) [#657](https://github.com/fallenbagel/jellyseerr/issues/657) [#728](https://github.com/fallenbagel/jellyseerr/issues/728)
+* empty email in user settings ([#807](https://github.com/fallenbagel/jellyseerr/issues/807)) ([20863d4](https://github.com/fallenbagel/jellyseerr/commit/20863d4a8dabe78fb5c52995b5bcb2da557a804e)), closes [#803](https://github.com/fallenbagel/jellyseerr/issues/803)
+* **jellyfinscanner:** assign only 4k available badge for a 4k request instead of both badges ([#805](https://github.com/fallenbagel/jellyseerr/issues/805)) ([d31a2c3](https://github.com/fallenbagel/jellyseerr/commit/d31a2c37e639c1126b446277fa5d666d8102fef5))
+* remove the settings button of media when useless ([#809](https://github.com/fallenbagel/jellyseerr/issues/809)) ([f52939e](https://github.com/fallenbagel/jellyseerr/commit/f52939e4cdcbee94fc35165f613f6b3e21599e3c))
+
+
+### Reverts
+
+* Revert "ci: update format check command to ignore .prettierignore files (#787)" (#788) ([4757f1c](https://github.com/fallenbagel/jellyseerr/commit/4757f1c3e599304410a737c11f97db92a2bfcefd)), closes [#787](https://github.com/fallenbagel/jellyseerr/issues/787) [#788](https://github.com/fallenbagel/jellyseerr/issues/788)
+
+# [1.9.0](https://github.com/fallenbagel/jellyseerr/compare/v1.8.1...v1.9.0) (2024-05-29)
+
+
+### Bug Fixes
+
+* **api:** save user email on the first try ([#760](https://github.com/fallenbagel/jellyseerr/issues/760)) ([0bbcfdc](https://github.com/fallenbagel/jellyseerr/commit/0bbcfdc4f9ff9735f45232a2412ac8444f525de9)), closes [#227](https://github.com/fallenbagel/jellyseerr/issues/227) [#748](https://github.com/fallenbagel/jellyseerr/issues/748)
+* **api:** small errors on overseerr-api.yaml ([#721](https://github.com/fallenbagel/jellyseerr/issues/721)) ([0eea109](https://github.com/fallenbagel/jellyseerr/commit/0eea1090dfdba4333646280c84b09b0197fefa74))
+* **auth:** case-sensitive logins not updating authtokens ([#778](https://github.com/fallenbagel/jellyseerr/issues/778)) ([2bd125d](https://github.com/fallenbagel/jellyseerr/commit/2bd125d9a55d15a398ceb5f2996105a5e861b6e0))
+* **jellyfinapi:** use external api class for jellyfin api requests ([#762](https://github.com/fallenbagel/jellyseerr/issues/762)) ([650c339](https://github.com/fallenbagel/jellyseerr/commit/650c339d74d4fe85ef7f76184901e86f4eeada85)), closes [#728](https://github.com/fallenbagel/jellyseerr/issues/728) [#387](https://github.com/fallenbagel/jellyseerr/issues/387)
+* **logging:** handle media server connection refused error/toast ([#748](https://github.com/fallenbagel/jellyseerr/issues/748)) ([f486fb5](https://github.com/fallenbagel/jellyseerr/commit/f486fb5e75f9ea21456952b6a52cb841e30f3556))
+* use UTF8 encoding for webhook JSON ([#714](https://github.com/fallenbagel/jellyseerr/issues/714)) ([c0a0b9c](https://github.com/fallenbagel/jellyseerr/commit/c0a0b9c8a8b0c2eeaf3fa9159f10742baa9f6c1f))
+
+
+### Features
+
+* add Latin American Spanish translation ([#725](https://github.com/fallenbagel/jellyseerr/issues/725)) ([783fda9](https://github.com/fallenbagel/jellyseerr/commit/783fda9621aef8ffd46e5f036136de82ed502ccc)), closes [#677](https://github.com/fallenbagel/jellyseerr/issues/677)
+* add merge conflict labeler workflow ([#719](https://github.com/fallenbagel/jellyseerr/issues/719)) ([d9d07c7](https://github.com/fallenbagel/jellyseerr/commit/d9d07c705a24d5c49905066aac45a3c6a2e36a53))
+* **auth:** send real information on login ([#470](https://github.com/fallenbagel/jellyseerr/issues/470)) ([d765055](https://github.com/fallenbagel/jellyseerr/commit/d765055da83ee94546399f6348aee14d8427d462))
+* **settings:** stores jellyfin/emby server name in the settings ([#763](https://github.com/fallenbagel/jellyseerr/issues/763)) ([7a5e8d6](https://github.com/fallenbagel/jellyseerr/commit/7a5e8d69bf620c8e7bf5f284840b1a5fe757ae5f))
+
+## [1.8.1](https://github.com/fallenbagel/jellyseerr/compare/v1.8.0...v1.8.1) (2024-04-17)
+
+
+### Reverts
+
+* Revert "fix: disable seasonfolder option in sonarr for jellyfin/Emby users" (#718) ([cd0fa3e](https://github.com/fallenbagel/jellyseerr/commit/cd0fa3e2232dcb522673143f113fc382fb2ff0a3)), closes [#718](https://github.com/fallenbagel/jellyseerr/issues/718)
+
+# [1.8.0](https://github.com/fallenbagel/jellyseerr/compare/v1.7.0...v1.8.0) (2024-04-15)
+
+
+### Bug Fixes
+
+* correct width issue in datepicker of filterSliderOver ([f564cdd](https://github.com/fallenbagel/jellyseerr/commit/f564cddff4525ccebffbf304672d49c57aefe635)), closes [#415](https://github.com/fallenbagel/jellyseerr/issues/415)
+* disable seasonfolder option in sonarr for jellyfin/Emby users ([8ec8f2a](https://github.com/fallenbagel/jellyseerr/commit/8ec8f2ac5730aad3b12dcd8ed95bb553b46b399c)), closes [#126](https://github.com/fallenbagel/jellyseerr/issues/126) [#575](https://github.com/fallenbagel/jellyseerr/issues/575)
+* **embyauth:** remove the accidentally added mediaServerType change code from another PR ([#684](https://github.com/fallenbagel/jellyseerr/issues/684)) ([c2e8771](https://github.com/fallenbagel/jellyseerr/commit/c2e87714b4c4aa11bf68dcd82b76979f82990f3c))
+* ensure watchlist updates are immediately reflected ([b85d7f3](https://github.com/fallenbagel/jellyseerr/commit/b85d7f37b931735ca2ad955dccb6599bf445fc73))
+* fix german translation for "components.Discover.FilterSlideover.tmdbuservotecount" ([e032c02](https://github.com/fallenbagel/jellyseerr/commit/e032c02f5f84dc4b6b470eecb18ba2c376c55f37))
+* fix the translations for watchlist permissions and userSettings page ([8c82a61](https://github.com/fallenbagel/jellyseerr/commit/8c82a61450a7525c0e2f1b64e6939da47a7c715d))
+* **i18n:** fixed jellyfin jobs ([7eed236](https://github.com/fallenbagel/jellyseerr/commit/7eed23637ddfb10bdcb19698e7ae171f07299502))
+* **jellyfin.ts:** process virtual seasons if they have non virtual episodes ([#639](https://github.com/fallenbagel/jellyseerr/issues/639)) ([db84f65](https://github.com/fallenbagel/jellyseerr/commit/db84f6529ab285be26c96daaab065dfabf347417))
+* **jellyfinapi:** refactors jellyfin library sync to support automatic grouping and collections ([#700](https://github.com/fallenbagel/jellyseerr/issues/700)) ([3856061](https://github.com/fallenbagel/jellyseerr/commit/3856061fe1ee4d3457996586b4979ad9dd60765a)), closes [#450](https://github.com/fallenbagel/jellyseerr/issues/450) [#524](https://github.com/fallenbagel/jellyseerr/issues/524) [#256](https://github.com/fallenbagel/jellyseerr/issues/256) [#489](https://github.com/fallenbagel/jellyseerr/issues/489) [#450](https://github.com/fallenbagel/jellyseerr/issues/450) [#524](https://github.com/fallenbagel/jellyseerr/issues/524) [#515](https://github.com/fallenbagel/jellyseerr/issues/515) [#474](https://github.com/fallenbagel/jellyseerr/issues/474) [#473](https://github.com/fallenbagel/jellyseerr/issues/473)
+* **jellyfinlogin:** use externalHostname if set for forgetpassword link ([405f6bb](https://github.com/fallenbagel/jellyseerr/commit/405f6bbb7ffc390327c99dcef2cbbf9b3bc75f01)), closes [#199](https://github.com/fallenbagel/jellyseerr/issues/199) [#424](https://github.com/fallenbagel/jellyseerr/issues/424) [#212](https://github.com/fallenbagel/jellyseerr/issues/212)
+* **jellyfinscanner:** conditionally assign the jellyfinMediaId and jellyfinMediaId4k ([#686](https://github.com/fallenbagel/jellyseerr/issues/686)) ([530be42](https://github.com/fallenbagel/jellyseerr/commit/530be4272cce1b0d74d7f4156b8d794cda6ea03f)), closes [#681](https://github.com/fallenbagel/jellyseerr/issues/681)
+* **langcode:** fixes the ukranian language code ([dc67aaa](https://github.com/fallenbagel/jellyseerr/commit/dc67aaaf53eae86ba20c6c2798c92ec40962d85f)), closes [#504](https://github.com/fallenbagel/jellyseerr/issues/504)
+* nullable type for jellyfinMediaId(4k) ([#702](https://github.com/fallenbagel/jellyseerr/issues/702)) ([0900a95](https://github.com/fallenbagel/jellyseerr/commit/0900a95532501b6f4d9698de7530a771512924fc)), closes [#668](https://github.com/fallenbagel/jellyseerr/issues/668)
+* request watchlist items sequentially to prevent bypassing quota ([#3667](https://github.com/fallenbagel/jellyseerr/issues/3667)) ([b40ba07](https://github.com/fallenbagel/jellyseerr/commit/b40ba07a4de5857b8392f667038eeb0b22aa5d9a))
+* resolved issue with region selector and all regions value ([#3652](https://github.com/fallenbagel/jellyseerr/issues/3652)) ([28a2c50](https://github.com/fallenbagel/jellyseerr/commit/28a2c50495d0ce531da7f8c442bd488a54b1e84c))
+* typos on readme ([#655](https://github.com/fallenbagel/jellyseerr/issues/655)) ([eee9a02](https://github.com/fallenbagel/jellyseerr/commit/eee9a025d246c72bcd3aca753d9e49c1f8f064ea))
+* **watchlist:** added missing prop for watchlist item removal button in watchlist page ([a0ec992](https://github.com/fallenbagel/jellyseerr/commit/a0ec992028093257e9fa043622e236014f02dea3))
+* **watchlist:** discover local watchlist item display and profile local watchlist slider visibility ([3cb9494](https://github.com/fallenbagel/jellyseerr/commit/3cb9494e6210151716587d8c4b22e0a21692cf88))
+
+
+### Features
+
+* add ko language ([#3619](https://github.com/fallenbagel/jellyseerr/issues/3619)) ([9250735](https://github.com/fallenbagel/jellyseerr/commit/92507359b48db08b0066047d6505660b8c8b0b12))
+* add Peacock to Network Slider ([#3545](https://github.com/fallenbagel/jellyseerr/issues/3545)) ([0c39057](https://github.com/fallenbagel/jellyseerr/commit/0c39057ca58743697e9dcc3b678440ac3688c65a))
+* add tooltips to tautulli avatars ([#3601](https://github.com/fallenbagel/jellyseerr/issues/3601)) ([c484810](https://github.com/fallenbagel/jellyseerr/commit/c484810f965f8d04643c25c6d283dd83f4bd4a23))
+* added Letterboxd links for the external link blocks for movies ([981f5e6](https://github.com/fallenbagel/jellyseerr/commit/981f5e679c4c707e119741240a58de8bb07f9d6c))
+* check if first jellyfin user is admin ([#635](https://github.com/fallenbagel/jellyseerr/issues/635)) ([010df62](https://github.com/fallenbagel/jellyseerr/commit/010df62776191fe4c195e590df338f8d8523f55b)), closes [#610](https://github.com/fallenbagel/jellyseerr/issues/610)
+* jellyseerr makeover ([#715](https://github.com/fallenbagel/jellyseerr/issues/715)) ([0c27132](https://github.com/fallenbagel/jellyseerr/commit/0c2713213c56de342f76300d12ce01fd543d2ce3))
+* **job:** media availability support for jellyfin/emby ([#522](https://github.com/fallenbagel/jellyseerr/issues/522)) ([3eb1bb3](https://github.com/fallenbagel/jellyseerr/commit/3eb1bb3d8ff22391acb2e629bbec7b6e4b65ca95)), closes [#406](https://github.com/fallenbagel/jellyseerr/issues/406) [#193](https://github.com/fallenbagel/jellyseerr/issues/193) [#516](https://github.com/fallenbagel/jellyseerr/issues/516) [#362](https://github.com/fallenbagel/jellyseerr/issues/362) [#84](https://github.com/fallenbagel/jellyseerr/issues/84)
+* **notif:** add Pushover sound options ([#2403](https://github.com/fallenbagel/jellyseerr/issues/2403)) ([3ea5076](https://github.com/fallenbagel/jellyseerr/commit/3ea5076053359b518b1b4d537e7b61580d9275a3))
+* select default seriesType for anime ([#3627](https://github.com/fallenbagel/jellyseerr/issues/3627)) ([f628635](https://github.com/fallenbagel/jellyseerr/commit/f6286359cfd2ed93fc692aa2efda37310e02c11c)), closes [#3626](https://github.com/fallenbagel/jellyseerr/issues/3626)
+* standard series type selector ([#3628](https://github.com/fallenbagel/jellyseerr/issues/3628)) ([7bdd25e](https://github.com/fallenbagel/jellyseerr/commit/7bdd25e5a45843a3e530d3fa2b0887664b53eec8))
+* translations update from Hosted Weblate ([#3258](https://github.com/fallenbagel/jellyseerr/issues/3258)) ([e62a078](https://github.com/fallenbagel/jellyseerr/commit/e62a078298ced7dec627fb3ff9fc8f99a39d5e1b))
+* update SameSite policy of session cookie to Lax ([#3650](https://github.com/fallenbagel/jellyseerr/issues/3650)) ([c84ca43](https://github.com/fallenbagel/jellyseerr/commit/c84ca4307465af4278f3dad5cf9c2b8cbae3fada))
+
+
+### Reverts
+
+* **jellyfinapi:** reverts [#450](https://github.com/fallenbagel/jellyseerr/issues/450) as it broke library sync support for local accounts using LDAP ([b5acc09](https://github.com/fallenbagel/jellyseerr/commit/b5acc09ba98e2dd9b61e6b78721e4dd9f42a996c)), closes [#489](https://github.com/fallenbagel/jellyseerr/issues/489)
+
+# [1.7.0](https://github.com/fallenbagel/jellyseerr/compare/v1.6.0...v1.7.0) (2023-09-14)
+
+
+### Bug Fixes
+
+* adjust the plex watchlist sync schedule to have fuzziness ([#3502](https://github.com/fallenbagel/jellyseerr/issues/3502)) ([2c3f533](https://github.com/fallenbagel/jellyseerr/commit/2c3f5330764492e1323afd2d1f25e28ad78a2f2f))
+* handle issue causing incorrect media to change to unknown ([#3516](https://github.com/fallenbagel/jellyseerr/issues/3516)) ([83b008c](https://github.com/fallenbagel/jellyseerr/commit/83b008c8391459bd02dc74bcdb0d8caf27207bdf))
+* improved handling of edge case that could cause availability sync to fail ([#3497](https://github.com/fallenbagel/jellyseerr/issues/3497)) ([d0836ce](https://github.com/fallenbagel/jellyseerr/commit/d0836ce0efd55fccf2546087a0c4f94f7cb2e82a))
+* Include all defaults in payload ([#3538](https://github.com/fallenbagel/jellyseerr/issues/3538)) ([cb63bf2](https://github.com/fallenbagel/jellyseerr/commit/cb63bf217b9e8810a5210b4bf475b2a96583cc84))
+* multiple notifications for available media ([048fa96](https://github.com/fallenbagel/jellyseerr/commit/048fa967f2e5b23831ac9917c703934c50ef75f0))
+* repeat notifications for available 4k media ([30361f2](https://github.com/fallenbagel/jellyseerr/commit/30361f2ab751d9a882a9120e0f3df28dc42cc2cd))
+* resolved issue with create slider causing incorrect form submission ([#3514](https://github.com/fallenbagel/jellyseerr/issues/3514)) ([a761b7d](https://github.com/fallenbagel/jellyseerr/commit/a761b7dd35a5bd61bb4eb0275b75d1e0977e6a2d))
+* resolved user access check issue ([#3551](https://github.com/fallenbagel/jellyseerr/issues/3551)) ([2816c66](https://github.com/fallenbagel/jellyseerr/commit/2816c66300bf870d493c0665b0e984d60f707dfd))
+* **server/api/jellyfin.ts:** use /Library/VirtualFolders Jellyfin API call to fetch Jellyfin libs ([8685f57](https://github.com/fallenbagel/jellyseerr/commit/8685f5796a99d9700146bae9892319db10508d68)), closes [#256](https://github.com/fallenbagel/jellyseerr/issues/256)
+* **statusbadge:** handle missing season/episode number ([#3526](https://github.com/fallenbagel/jellyseerr/issues/3526)) ([01de972](https://github.com/fallenbagel/jellyseerr/commit/01de972a8fe2ea3c18d5b2f426d01b5b14d142d4))
+* **tautulli:** only test connection if hostname is defined ([#3573](https://github.com/fallenbagel/jellyseerr/issues/3573)) ([f7b4dfc](https://github.com/fallenbagel/jellyseerr/commit/f7b4dfcac472d08c54779a14fc1ad3c90927df26))
+* **ui:** corrected issues icon color ([#3498](https://github.com/fallenbagel/jellyseerr/issues/3498)) ([c1a47bd](https://github.com/fallenbagel/jellyseerr/commit/c1a47bd9de332cb4925974690f5a33448b5cc2e6))
+
+
+### Features
+
+* **rating:** added IMDB Radarr proxy ([#3496](https://github.com/fallenbagel/jellyseerr/issues/3496)) ([b4191f9](https://github.com/fallenbagel/jellyseerr/commit/b4191f9c65b7ff08764e61d18e7a75bc8d4b3325))
+
+# [1.6.0](https://github.com/fallenbagel/jellyseerr/compare/v1.5.0...v1.6.0) (2023-08-04)
+
+
+### Bug Fixes
+
+* availability sync file detection ([#3371](https://github.com/fallenbagel/jellyseerr/issues/3371)) ([7522aa3](https://github.com/fallenbagel/jellyseerr/commit/7522aa31743b169c903ebdf9d4d698645d27514c))
+* corrected initial fallback data load on details page ([#3395](https://github.com/fallenbagel/jellyseerr/issues/3395)) ([4bd8764](https://github.com/fallenbagel/jellyseerr/commit/4bd87647d0551c20e13589a62690a6f3e5ad8ff7))
+* correctly load series fallback modal with sonarr v4 ([#3451](https://github.com/fallenbagel/jellyseerr/issues/3451)) ([e051b1d](https://github.com/fallenbagel/jellyseerr/commit/e051b1dfea9c9320cc9dd420c475ae74cff0d901))
+* **deps:** update all non-major dependencies ([#3223](https://github.com/fallenbagel/jellyseerr/issues/3223)) ([f5191ad](https://github.com/fallenbagel/jellyseerr/commit/f5191aded680357522a65bbdcc40d162b8fbf594))
+* error deleting users with over 1000 requests ([#3376](https://github.com/fallenbagel/jellyseerr/issues/3376)) ([ac77b03](https://github.com/fallenbagel/jellyseerr/commit/ac77b037d5fb0c54f5edf4b29d04adb57aef388f))
+* external url regex is now consistent with internal url ([33ec443](https://github.com/fallenbagel/jellyseerr/commit/33ec4436fb82e1eb1bc97dd650088c27785e9d94))
+* externalLinkBlock ([46cd4d0](https://github.com/fallenbagel/jellyseerr/commit/46cd4d01d9a3cf17d79350c5e678202820272299))
+* fix regex for internal url to use a more effecient one ([e848386](https://github.com/fallenbagel/jellyseerr/commit/e848386d10f05f157e7a6dde8847ecab50c169ac))
+* fixes RT ratings for tv shows ([#3492](https://github.com/fallenbagel/jellyseerr/issues/3492)) ([04fbd00](https://github.com/fallenbagel/jellyseerr/commit/04fbd00d4ac29045592588ef8b664d1916991e37)), closes [#3491](https://github.com/fallenbagel/jellyseerr/issues/3491)
+* **genreselector:** fix searching in Genre filter ([#3468](https://github.com/fallenbagel/jellyseerr/issues/3468)) ([d7fa35e](https://github.com/fallenbagel/jellyseerr/commit/d7fa35e066cf371797aaa46ca464aa531ba8fb35))
+* handle search results with collections ([#3393](https://github.com/fallenbagel/jellyseerr/issues/3393)) ([70b1540](https://github.com/fallenbagel/jellyseerr/commit/70b1540ae23e83e01013856a9e06ad39e600922d))
+* lock body scroll when using webkit ([#3399](https://github.com/fallenbagel/jellyseerr/issues/3399)) ([c27f960](https://github.com/fallenbagel/jellyseerr/commit/c27f96096ac8cc6c387f9d1dde5b263576ac2132))
+* **logs:** jellyfin auth error now has the severity warn consistent with local login ([cc041b5](https://github.com/fallenbagel/jellyseerr/commit/cc041b5e0aa2b67573edba5919772b77a5111162)), closes [#224](https://github.com/fallenbagel/jellyseerr/issues/224)
+* make a (shallow) copy of radarr/sonarr tags into a request before adding user tags ([#3485](https://github.com/fallenbagel/jellyseerr/issues/3485)) ([48f7666](https://github.com/fallenbagel/jellyseerr/commit/48f76662d5c08156f1da3f47e216c5f02668f64b))
+* **ui:** corrected default badge hover opacity ([#3369](https://github.com/fallenbagel/jellyseerr/issues/3369)) ([a4d07f5](https://github.com/fallenbagel/jellyseerr/commit/a4d07f5afab613317d96c9c6e9b47157a5a28986))
+* **ui:** corrected mobile menu spacing in collection details ([#3432](https://github.com/fallenbagel/jellyseerr/issues/3432)) ([77a33cb](https://github.com/fallenbagel/jellyseerr/commit/77a33cb74d744bb747b791785799b632af8c7862))
+* **ui:** Make play symbol white ([1fe4bb8](https://github.com/fallenbagel/jellyseerr/commit/1fe4bb8a0415a72791ced75a2fba1027287398d5))
+* **ui:** Resize Emby icon and add margins ([ad69d67](https://github.com/fallenbagel/jellyseerr/commit/ad69d6715e976630092bfbbb1843886523551014))
+* **watchlist:** add validation for creation request ([03316c6](https://github.com/fallenbagel/jellyseerr/commit/03316c642d1ecf89753789af08caf6e3aac80113))
+* **watchlist:** fix github code scanning ([c08897b](https://github.com/fallenbagel/jellyseerr/commit/c08897bdc1cff65862c62347572bbbd01b6c36ac))
+
+
+### Features
+
+* **add watchlist:** adding midding functionality from overserr ([5f1c10d](https://github.com/fallenbagel/jellyseerr/commit/5f1c10d50aaa430bcda96218ef2cc12a0eb926f3))
+* adds streaming services custom slider ([#3361](https://github.com/fallenbagel/jellyseerr/issues/3361)) ([2520d8f](https://github.com/fallenbagel/jellyseerr/commit/2520d8f739abfde608f3ef66a9fbe6b7b5c6647a))
+* auto tagging requested media with username ([#3338](https://github.com/fallenbagel/jellyseerr/issues/3338)) ([24f268b](https://github.com/fallenbagel/jellyseerr/commit/24f268b6cb67d9a8d8675cd6e09dd83a7f499add))
+* **discover:** support filtering by tmdb user vote count on discover page ([#3407](https://github.com/fallenbagel/jellyseerr/issues/3407)) ([aa84977](https://github.com/fallenbagel/jellyseerr/commit/aa849776809dfe891e67ff4db6861ef44df1a774))
+* **settings:** add internal url to jellyfin settings form ([0a30cd3](https://github.com/fallenbagel/jellyseerr/commit/0a30cd356d217a39546c016cc8bfa6ff6ad75e3e)), closes [#194](https://github.com/fallenbagel/jellyseerr/issues/194)
+* **src/components/externallinkblock/index.tsx:** support Emby icon ([672061c](https://github.com/fallenbagel/jellyseerr/commit/672061cd646c97c9954790c8e50eac88ea2666e9))
+* **tooltip:** email tooltip now appears when hovered over info icon ([cd7930e](https://github.com/fallenbagel/jellyseerr/commit/cd7930eef98451a781e5c9dc5ec223600a379f42))
+* translations update ([47287c3](https://github.com/fallenbagel/jellyseerr/commit/47287c368885d14bd1a56e3e8318ce22dd0f6ddf)), closes [#381](https://github.com/fallenbagel/jellyseerr/issues/381)
+* **watchlist:** add translation for en ([b7e3d28](https://github.com/fallenbagel/jellyseerr/commit/b7e3d285ed35b623062eceb0d99035cafbf075a6))
+
+# [1.5.0](https://github.com/fallenbagel/jellyseerr/compare/v1.4.1...v1.5.0) (2023-04-20)
+
+
+### Bug Fixes
+
+* add better checks on 4k detection of series ([bc9017f](https://github.com/fallenbagel/jellyseerr/commit/bc9017f54d84ec24c4d74d38e1b4e24219425d41))
+* added a refresh interval if download status is in progress ([#3275](https://github.com/fallenbagel/jellyseerr/issues/3275)) ([1e2c6f4](https://github.com/fallenbagel/jellyseerr/commit/1e2c6f46ab66c836f321b5d8e34f1e8124c0b542))
+* **build:** increase threshold for amount of data to be fetched when SSR'ing ([#3320](https://github.com/fallenbagel/jellyseerr/issues/3320)) ([d7b83d2](https://github.com/fallenbagel/jellyseerr/commit/d7b83d22cee3d20db564cc0564d42802b02327e3))
+* disable availability sync temporarily ([2e5cf22](https://github.com/fallenbagel/jellyseerr/commit/2e5cf226265686012329248e7f729fec324c3deb))
+* hide remove button when default service is not configured ([7d4455b](https://github.com/fallenbagel/jellyseerr/commit/7d4455ba6bfd12e2730f7085cbb87df246f01d22))
+* **jellyfin scan:** temporary workaround fix for jellyfin scan when display specials within season ([38fb66d](https://github.com/fallenbagel/jellyseerr/commit/38fb66d31e41232c01898d0d362af8338eb7b960)), closes [#215](https://github.com/fallenbagel/jellyseerr/issues/215) [#176](https://github.com/fallenbagel/jellyseerr/issues/176) [#246](https://github.com/fallenbagel/jellyseerr/issues/246)
+* lint issues ([bcd2bb7](https://github.com/fallenbagel/jellyseerr/commit/bcd2bb7c96810f5a6932f42468a628d2db1bc771))
+* logger was set to info for the wrong logs ([#3354](https://github.com/fallenbagel/jellyseerr/issues/3354)) ([c36a4ba](https://github.com/fallenbagel/jellyseerr/commit/c36a4ba2b8df05873f5dfd0946a9bc3dc4ecfd1d))
+* remove unnecessary parenthesis from api key generation ([#3336](https://github.com/fallenbagel/jellyseerr/issues/3336)) ([6bd3f01](https://github.com/fallenbagel/jellyseerr/commit/6bd3f015d65507efca60279007bd2b86ee860643))
+* **snapcraft:** use the correct config folder for image cache ([#3302](https://github.com/fallenbagel/jellyseerr/issues/3302)) ([c93467b](https://github.com/fallenbagel/jellyseerr/commit/c93467b3acf2c256324297e7e8f21e9944005dd4))
+* **ui:** hide mini status badge if non-4K media status is unknown ([#3346](https://github.com/fallenbagel/jellyseerr/issues/3346)) ([50f06da](https://github.com/fallenbagel/jellyseerr/commit/50f06dabbffc693f0843584a64d1d96e77982820))
+* **ui:** hide search bar behind slideover when opened ([#3348](https://github.com/fallenbagel/jellyseerr/issues/3348)) ([b3882de](https://github.com/fallenbagel/jellyseerr/commit/b3882de8930a70adb2f93a27be6370bfa1826587))
+* **ui:** prevent title cards from flickering when quickly hovering across them ([#3349](https://github.com/fallenbagel/jellyseerr/issues/3349)) ([eb5502a](https://github.com/fallenbagel/jellyseerr/commit/eb5502a16f86e37a933f6beca0678c2d228e77d5))
+* **watchlist:** correctly load more than 20 watchlist items ([#3351](https://github.com/fallenbagel/jellyseerr/issues/3351)) ([af880a6](https://github.com/fallenbagel/jellyseerr/commit/af880a6c839794b34bddcd7e0fe56353aa48ba36))
+
+
+### Features
+
+* add a button in ManageSlideOver to remove the movie and the file from Radarr/Sonarr ([2e74584](https://github.com/fallenbagel/jellyseerr/commit/2e7458457e995dd3ec6dd96035fe997646cdd446))
+* availability sync rework ([#3219](https://github.com/fallenbagel/jellyseerr/issues/3219)) ([ae38183](https://github.com/fallenbagel/jellyseerr/commit/ae3818304b2f75222d1bd223ece94f829a3b42d0)), closes [#377](https://github.com/fallenbagel/jellyseerr/issues/377)
+* full title of download item on hover with tooltip ([#3296](https://github.com/fallenbagel/jellyseerr/issues/3296)) ([33e7691](https://github.com/fallenbagel/jellyseerr/commit/33e7691b94d7d369a0a1410e434850bc51e5572e))
+
+
+### Performance Improvements
+
+* **imageproxy:** do not set cookies to image proxy so CDNs can cache images ([#3332](https://github.com/fallenbagel/jellyseerr/issues/3332)) ([966639d](https://github.com/fallenbagel/jellyseerr/commit/966639df430d32f6bfebdb16314dc4590d21caf8))
+
+## [1.4.1](https://github.com/fallenbagel/jellyseerr/compare/v1.4.0...v1.4.1) (2023-01-31)
+
+
+### Bug Fixes
+
+* pass in library type when scanning recently added items ([#3287](https://github.com/fallenbagel/jellyseerr/issues/3287)) ([8942eb8](https://github.com/fallenbagel/jellyseerr/commit/8942eb8b7c4fa1d16aa2e72e8ba7120a653c9aa2))
+* **ui:** air date will use UTC for timezone ([#3297](https://github.com/fallenbagel/jellyseerr/issues/3297)) ([3e43586](https://github.com/fallenbagel/jellyseerr/commit/3e43586acc0804c3fff524509caa890a104e132b))
+* **ui:** correct range slider styling in chrome ([#3299](https://github.com/fallenbagel/jellyseerr/issues/3299)) ([d954328](https://github.com/fallenbagel/jellyseerr/commit/d9543289111d72245564d25d300a71b0ea3954ba))
+* **ui:** show 5 icons when possible on mobile menu ([#3298](https://github.com/fallenbagel/jellyseerr/issues/3298)) ([7040da1](https://github.com/fallenbagel/jellyseerr/commit/7040da1334f6d18e19a494c73caa17f7df552dfe))
+* **ui:** style range thumbs correctly for firefox ([#3294](https://github.com/fallenbagel/jellyseerr/issues/3294)) ([9d10e6a](https://github.com/fallenbagel/jellyseerr/commit/9d10e6a88c0996671f1d9d20792e1930dbc82329))
+
+# [1.4.0](https://github.com/fallenbagel/jellyseerr/compare/v1.3.0...v1.4.0) (2023-01-29)
+
+
+### Bug Fixes
+
+* add bg-opacity to in-progress status badges ([#3190](https://github.com/fallenbagel/jellyseerr/issues/3190)) ([68223f4](https://github.com/fallenbagel/jellyseerr/commit/68223f4b1e98b01825516dcba39cbb2d3df31a70))
+* added download status and title to request card/item error components ([#3186](https://github.com/fallenbagel/jellyseerr/issues/3186)) ([3309f77](https://github.com/fallenbagel/jellyseerr/commit/3309f77aa4be1d70b27693531c119a8e26822518))
+* arrow icons were misplaced on mobile in slider edit ([#3260](https://github.com/fallenbagel/jellyseerr/issues/3260)) ([d328485](https://github.com/fallenbagel/jellyseerr/commit/d328485161b9cae6a70ef0713b4878207bc6015e))
+* **build:** update usage of publish snap action ([#3272](https://github.com/fallenbagel/jellyseerr/issues/3272)) ([51b05cd](https://github.com/fallenbagel/jellyseerr/commit/51b05cd8fbb5d332807d8c00b2ffb7b10c3d0179))
+* changed overflow scroll to only if necessary ([#3184](https://github.com/fallenbagel/jellyseerr/issues/3184)) ([27feeea](https://github.com/fallenbagel/jellyseerr/commit/27feeea69121336557deda1f32b65a5daa146f82))
+* convert genre/studio to string in create slider ([#3201](https://github.com/fallenbagel/jellyseerr/issues/3201)) ([93afead](https://github.com/fallenbagel/jellyseerr/commit/93afead92e497f2e5bce67a34fffdaa08d20c7f2))
+* correct checkbox position (again) for slider edits ([#3227](https://github.com/fallenbagel/jellyseerr/issues/3227)) ([3ba6df1](https://github.com/fallenbagel/jellyseerr/commit/3ba6df1a41c084c4a6a90354338047623abef521))
+* correct grid sizing for webkit on streaming services ([#3248](https://github.com/fallenbagel/jellyseerr/issues/3248)) ([6fd11cf](https://github.com/fallenbagel/jellyseerr/commit/6fd11cf4254e1a19310592bec78a6de52bc073a8))
+* correct issue detail bottom padding on mobile displays ([#3268](https://github.com/fallenbagel/jellyseerr/issues/3268)) ([3db010b](https://github.com/fallenbagel/jellyseerr/commit/3db010b9eaec62aa08d973a61caf1801471bbf3e))
+* correct link to correct keyword results for series ([#3208](https://github.com/fallenbagel/jellyseerr/issues/3208)) ([4e9be7a](https://github.com/fallenbagel/jellyseerr/commit/4e9be7a3f7304ee7be5ee6fd34b1ea8f6c0cf399))
+* correct spacing between sliders ([#3225](https://github.com/fallenbagel/jellyseerr/issues/3225)) ([62e2de7](https://github.com/fallenbagel/jellyseerr/commit/62e2de70bf37b72d5f63370b662d4103a642775b))
+* correctly check mobile menu permissions ([#3271](https://github.com/fallenbagel/jellyseerr/issues/3271)) ([f4a22dc](https://github.com/fallenbagel/jellyseerr/commit/f4a22dc437404558f301ccfc195cf0a300dd1ff2))
+* correctly restore selected streaming service filters ([#3249](https://github.com/fallenbagel/jellyseerr/issues/3249)) ([154f3e7](https://github.com/fallenbagel/jellyseerr/commit/154f3e72efbf0b663358b3029156f54516f01a2f))
+* create shared class to add bottom spacing ([#3269](https://github.com/fallenbagel/jellyseerr/issues/3269)) ([5d1c6f7](https://github.com/fallenbagel/jellyseerr/commit/5d1c6f706555613d97ed9e61d8b665543c2f239b))
+* **deps:** pin dependency @headlessui/react to 1.7.7 ([#3194](https://github.com/fallenbagel/jellyseerr/issues/3194)) [skip ci] ([c4b16ab](https://github.com/fallenbagel/jellyseerr/commit/c4b16abc62647c74215155942a4230a31a238677))
+* **deps:** update dependency @heroicons/react to v2 ([#2970](https://github.com/fallenbagel/jellyseerr/issues/2970)) ([dd48d59](https://github.com/fallenbagel/jellyseerr/commit/dd48d59b20e2d1800ea30912116f4a4f1bb7928f))
+* **deps:** update dependency axios to v1 ([#3202](https://github.com/fallenbagel/jellyseerr/issues/3202)) ([421029e](https://github.com/fallenbagel/jellyseerr/commit/421029ebab66c9a6622ba47e56d7f6473524cce4))
+* **deps:** update dependency swr to v2 ([#3212](https://github.com/fallenbagel/jellyseerr/issues/3212)) ([7b6db50](https://github.com/fallenbagel/jellyseerr/commit/7b6db50ae55b1fc60d19a5cff62dd46bb989fa51))
+* **experimental:** use new RT API (sorta) ([#3179](https://github.com/fallenbagel/jellyseerr/issues/3179)) ([357cab8](https://github.com/fallenbagel/jellyseerr/commit/357cab87ac7752b8e119b51c938b343c661d83c2))
+* improve small screen layout for discover editing ([#3221](https://github.com/fallenbagel/jellyseerr/issues/3221)) ([d23b213](https://github.com/fallenbagel/jellyseerr/commit/d23b2132de05f072f7f9daad83d81421d747cf99))
+* include new package calendar css in build ([#3235](https://github.com/fallenbagel/jellyseerr/issues/3235)) ([c2a1a20](https://github.com/fallenbagel/jellyseerr/commit/c2a1a20a3bb20039a1936c7fe0ecb9e8311a0aea))
+* issues with issues ([#3267](https://github.com/fallenbagel/jellyseerr/issues/3267)) ([fd21971](https://github.com/fallenbagel/jellyseerr/commit/fd219717c01c558814d7a80de6304272b5a7944e))
+* multiple genre filtering now works ([#3282](https://github.com/fallenbagel/jellyseerr/issues/3282)) ([5076938](https://github.com/fallenbagel/jellyseerr/commit/507693881b939819413f0959df5ef6b7a357eb5c))
+* prevent double encode if we are on /search endpoint ([#3238](https://github.com/fallenbagel/jellyseerr/issues/3238)) ([a343f8a](https://github.com/fallenbagel/jellyseerr/commit/a343f8ad915491a9c81512c7e541a1dac8906025))
+* **request:** approve request when retrying request ([#3234](https://github.com/fallenbagel/jellyseerr/issues/3234)) ([b515701](https://github.com/fallenbagel/jellyseerr/commit/b5157010c46cd9083993d5ee0172007b83d631da))
+* **request:** mark request as approved if media is already available when retrying failed request ([#3244](https://github.com/fallenbagel/jellyseerr/issues/3244)) ([cb65074](https://github.com/fallenbagel/jellyseerr/commit/cb650745f6a33e69391a633e6d272831f314e098))
+* restore border to ghost button and fix discover slider visibility toggle position ([#3226](https://github.com/fallenbagel/jellyseerr/issues/3226)) ([2eebb7f](https://github.com/fallenbagel/jellyseerr/commit/2eebb7fd3941b34fe9472aaf9d28265df8cce311))
+* restore status badges on titles on actors page when hide available media enabled ([#3206](https://github.com/fallenbagel/jellyseerr/issues/3206)) ([9d3446d](https://github.com/fallenbagel/jellyseerr/commit/9d3446d370499c3251159393e5c791b01225e05c))
+* screen would zoom on mobile if date picker input was selected ([#3241](https://github.com/fallenbagel/jellyseerr/issues/3241)) ([3aefddd](https://github.com/fallenbagel/jellyseerr/commit/3aefddd48834d86150d5f5cceb2d08af3a78847b))
+* series displayed an empty season with series list/request modal ([#3147](https://github.com/fallenbagel/jellyseerr/issues/3147)) ([2179637](https://github.com/fallenbagel/jellyseerr/commit/2179637d437999290eaa4152f6f37c71fc3d8ba3))
+* tooltip shows properly if not in progress ([#3185](https://github.com/fallenbagel/jellyseerr/issues/3185)) ([6face8c](https://github.com/fallenbagel/jellyseerr/commit/6face8cc4564b978fb98af32659b326d8c5cede8))
+* **ui:** series first air date sorting ([#3283](https://github.com/fallenbagel/jellyseerr/issues/3283)) ([374c78c](https://github.com/fallenbagel/jellyseerr/commit/374c78c989cc86bb144a954a91d5d183c4b591c0))
+* update StatusBadgeMini to shrink on title cards (and remove ring) ([#3210](https://github.com/fallenbagel/jellyseerr/issues/3210)) ([042a1a9](https://github.com/fallenbagel/jellyseerr/commit/042a1a950fdd4d4a61edf4bc19657f9b7a526da8))
+
+
+### Features
+
+* add discover customization ([#3182](https://github.com/fallenbagel/jellyseerr/issues/3182)) ([cd35748](https://github.com/fallenbagel/jellyseerr/commit/cd3574851a12517cbfadc109e6412a7a9e44c114))
+* add keywords to movie/series detail pages ([#3204](https://github.com/fallenbagel/jellyseerr/issues/3204)) ([e084649](https://github.com/fallenbagel/jellyseerr/commit/e084649878a58c296786141d12dd69a69a27ee85))
+* add streaming services filter ([#3247](https://github.com/fallenbagel/jellyseerr/issues/3247)) ([1154156](https://github.com/fallenbagel/jellyseerr/commit/1154156459403494e8daf0c89a3ba356aeea1d97))
+* discover inline customization ([#3220](https://github.com/fallenbagel/jellyseerr/issues/3220)) ([8bd10b5](https://github.com/fallenbagel/jellyseerr/commit/8bd10b5bf3d1b8069872b616c7c8596caeb4937e))
+* discover overhaul (filters!) ([#3232](https://github.com/fallenbagel/jellyseerr/issues/3232)) ([dd00e48](https://github.com/fallenbagel/jellyseerr/commit/dd00e48f59054b44bef6b32a2c169e59f6175051))
+* discover slider edit arrow buttons for reordering ([#3259](https://github.com/fallenbagel/jellyseerr/issues/3259)) ([da00d45](https://github.com/fallenbagel/jellyseerr/commit/da00d454e17e8b00d04f6e26f6dd5153ed6ced81))
+* **lang:** translations update from Hosted Weblate ([#3030](https://github.com/fallenbagel/jellyseerr/issues/3030)) ([0d8b390](https://github.com/fallenbagel/jellyseerr/commit/0d8b390b678731e76bd1f0f8a0a4952c11e77f4d))
+* new mobile menu ([#3251](https://github.com/fallenbagel/jellyseerr/issues/3251)) ([fcbca17](https://github.com/fallenbagel/jellyseerr/commit/fcbca1722f31f32633a57bc5048f46c9da057d87))
+* translations update from Hosted Weblate ([#3218](https://github.com/fallenbagel/jellyseerr/issues/3218)) ([5940ff7](https://github.com/fallenbagel/jellyseerr/commit/5940ff7f5f62eed9ac5aa6f02803418aaa09813a))
+* **ui:** add episode number to front of episode name in season details ([#3086](https://github.com/fallenbagel/jellyseerr/issues/3086)) ([a672b32](https://github.com/fallenbagel/jellyseerr/commit/a672b324ec391a20f6f3a1daed82a8d276a52c2c))
+* **ui:** request card progress bar ([#3123](https://github.com/fallenbagel/jellyseerr/issues/3123)) ([03853a1](https://github.com/fallenbagel/jellyseerr/commit/03853a1b9155c8a2153c8885022a74619af1bc15))
+
 # [1.3.0](https://github.com/fallenbagel/jellyseerr/compare/v1.2.1...v1.3.0) (2023-01-02)
 
 ### Bug Fixes
