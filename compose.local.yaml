@@ -1,0 +1,11 @@
+services:
+  jellyseerr:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    ports:
+      - 5055:5055
+    volumes:
+      - .:/app:rw,cached
+      - /app/node_modules
+      - /app/.next
