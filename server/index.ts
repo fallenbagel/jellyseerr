@@ -160,11 +160,13 @@ app
     });
     if (settings.network.csrfProtection) {
       server.use(
+        `${process.env.NEXT_PUBLIC_BASE_PATH || ''}`,
         csurf({
           cookie: {
             httpOnly: true,
             sameSite: true,
             secure: !dev,
+            path: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}` || '/',
           },
         })
       );
@@ -180,7 +182,7 @@ app
     // Set up sessions
     const sessionRespository = getRepository(Session);
     server.use(
-      '/api',
+      `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api`,
       session({
         secret: settings.clientId,
         resave: false,
@@ -190,6 +192,7 @@ app
           httpOnly: true,
           sameSite: settings.network.csrfProtection ? 'strict' : 'lax',
           secure: 'auto',
+          path: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}` || '/',
         },
         store: new TypeormStore({
           cleanupLimit: 2,
@@ -198,8 +201,13 @@ app
       })
     );
     const apiDocs = YAML.load(API_SPEC_PATH);
-    server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
     server.use(
+      `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api-docs`,
+      swaggerUi.serve,
+      swaggerUi.setup(apiDocs)
+    );
+    server.use(
+      `${process.env.NEXT_PUBLIC_BASE_PATH || ''}`,
       OpenApiValidator.middleware({
         apiSpec: API_SPEC_PATH,
         validateRequests: true,
@@ -217,11 +225,12 @@ app
       };
       next();
     });
-    server.use('/api/v1', routes);
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+    server.use(`${basePath}/api/v1`, routes);
 
     // Do not set cookies so CDNs can cache them
-    server.use('/imageproxy', clearCookies, imageproxy);
-    server.use('/avatarproxy', clearCookies, avatarproxy);
+    server.use(`${basePath}/imageproxy`, clearCookies, imageproxy);
+    server.use(`${basePath}/avatarproxy`, clearCookies, avatarproxy);
 
     server.get('*', (req, res) => handle(req, res));
     server.use(
