@@ -128,10 +128,14 @@ discoverRoutes.get('/movies', async (req, res, next) => {
     if (keywords) {
       const splitKeywords = keywords.split(',');
 
-      keywordData = await Promise.all(
+      const keywordResults = await Promise.all(
         splitKeywords.map(async (keywordId) => {
           return await tmdb.getKeywordDetails({ keywordId: Number(keywordId) });
         })
+      );
+
+      keywordData = keywordResults.filter(
+        (keyword): keyword is TmdbKeyword => keyword !== null
       );
     }
 
@@ -415,10 +419,14 @@ discoverRoutes.get('/tv', async (req, res, next) => {
     if (keywords) {
       const splitKeywords = keywords.split(',');
 
-      keywordData = await Promise.all(
+      const keywordResults = await Promise.all(
         splitKeywords.map(async (keywordId) => {
           return await tmdb.getKeywordDetails({ keywordId: Number(keywordId) });
         })
+      );
+
+      keywordData = keywordResults.filter(
+        (keyword): keyword is TmdbKeyword => keyword !== null
       );
     }
 
