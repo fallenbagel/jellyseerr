@@ -1,3 +1,16 @@
+## [2.7.3](https://github.com/fallenbagel/jellyseerr/compare/v2.7.2...v2.7.3) (2025-08-14)
+
+
+### Bug Fixes
+
+* **api:** add missing user settings' api docs ([#1820](https://github.com/fallenbagel/jellyseerr/issues/1820)) ([e52c631](https://github.com/fallenbagel/jellyseerr/commit/e52c63164fcf0fa1d35b61e4a9dedfae92764bdd))
+* **api:** make username field nullable in UserSettings API schema ([#1835](https://github.com/fallenbagel/jellyseerr/issues/1835)) ([c86ee0d](https://github.com/fallenbagel/jellyseerr/commit/c86ee0ddb1b1e24c296a2935aa964e7e2fb2b905))
+* **api:** update Plex Watchlist URL ([#1847](https://github.com/fallenbagel/jellyseerr/issues/1847)) ([17d4f13](https://github.com/fallenbagel/jellyseerr/commit/17d4f13afe389a9d0edd6eaa9a0728380a80d892))
+* **blacklist:** handle invalid keywords gracefully ([#1815](https://github.com/fallenbagel/jellyseerr/issues/1815)) ([ca16864](https://github.com/fallenbagel/jellyseerr/commit/ca1686425bcd34b05ebd3aa0b52ae939d2becc9d))
+* **MediaRequestSubscriber:** use event manager to get fresh media state for MEDIA_AVAILABLE notifications ([#1825](https://github.com/fallenbagel/jellyseerr/issues/1825)) ([3292f11](https://github.com/fallenbagel/jellyseerr/commit/3292f113081cf83aa01d522c9d19c3b5ce0e281a))
+* **media:** update delete media file logic to include is4k parameter ([#1832](https://github.com/fallenbagel/jellyseerr/issues/1832)) ([e02ee24](https://github.com/fallenbagel/jellyseerr/commit/e02ee24f70bae47731ddf445057703ce273b42ef))
+* **proxy:** initialize image proxies after the proxy is set up ([#1794](https://github.com/fallenbagel/jellyseerr/issues/1794)) ([e98f31e](https://github.com/fallenbagel/jellyseerr/commit/e98f31e66cd2c9836a24169be0b3446d0923d9f9)), closes [#1787](https://github.com/fallenbagel/jellyseerr/issues/1787)
+
 ## [2.7.2](https://github.com/fallenbagel/jellyseerr/compare/v2.7.1...v2.7.2) (2025-07-21)
 
 
