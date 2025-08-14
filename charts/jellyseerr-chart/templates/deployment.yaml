@@ -104,8 +104,12 @@ spec:
           {{- end }}
       volumes:
         - name: config
+          {{- if .Values.config.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ include "jellyseerr.configPersistenceName" . }}
+            claimName: {{ if .Values.config.persistence.existingClaim }}{{ .Values.config.persistence.existingClaim }}{{- else }}{{ include "jellyseerr.configPersistenceName" . }}{{- end }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
