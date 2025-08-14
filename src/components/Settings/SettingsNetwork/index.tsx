@@ -45,6 +45,11 @@ const messages = defineMessages('components.Settings.SettingsNetwork', {
   forceIpv4First: 'Force IPv4 Resolution First',
   forceIpv4FirstTip:
     'Force Jellyseerr to resolve IPv4 addresses first instead of IPv6',
+  dnsCache: 'DNS Cache',
+  dnsCacheTip:
+    'Enable caching of DNS lookups to optimize performance and avoid making unnecessary API calls',
+  dnsCacheHoverTip:
+    'Do NOT enable this if you are experiencing issues with DNS lookups',
 });
 
 const SettingsNetwork = () => {
@@ -90,6 +95,7 @@ const SettingsNetwork = () => {
           initialValues={{
             csrfProtection: data?.csrfProtection,
             forceIpv4First: data?.forceIpv4First,
+            dnsCache: data?.dnsCache,
             trustProxy: data?.trustProxy,
             proxyEnabled: data?.proxy?.enabled,
             proxyHostname: data?.proxy?.hostname,
@@ -108,6 +114,7 @@ const SettingsNetwork = () => {
                 csrfProtection: values.csrfProtection,
                 forceIpv4First: values.forceIpv4First,
                 trustProxy: values.trustProxy,
+                dnsCache: values.dnsCache,
                 proxy: {
                   enabled: values.proxyEnabled,
                   hostname: values.proxyHostname,
@@ -219,6 +226,33 @@ const SettingsNetwork = () => {
                         setFieldValue('forceIpv4First', !values.forceIpv4First);
                       }}
                     />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="dnsCache" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.dnsCache)}
+                    </span>
+                    <SettingsBadge badgeType="advanced" className="mr-2" />
+                    <SettingsBadge badgeType="restartRequired" />
+                    <SettingsBadge badgeType="experimental" className="mr-2" />
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.dnsCacheTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Tooltip
+                      content={intl.formatMessage(messages.dnsCacheHoverTip)}
+                    >
+                      <Field
+                        type="checkbox"
+                        id="dnsCache"
+                        name="dnsCache"
+                        onChange={() => {
+                          setFieldValue('dnsCache', !values.dnsCache);
+                        }}
+                      />
+                    </Tooltip>
                   </div>
                 </div>
                 <div className="form-row">
