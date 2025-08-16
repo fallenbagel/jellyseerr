@@ -1,4 +1,5 @@
 import { MediaServerType } from '@server/constants/server';
+import blacklistedGenresProcessor from '@server/job/blacklistedGenresProcessor';
 import blacklistedTagsProcessor from '@server/job/blacklistedTagsProcessor';
 import availabilitySync from '@server/lib/availabilitySync';
 import downloadTracker from '@server/lib/downloadtracker';
@@ -252,6 +253,25 @@ export const startJobs = (): void => {
     }),
     running: () => blacklistedTagsProcessor.status().running,
     cancelFn: () => blacklistedTagsProcessor.cancel(),
+  });
+
+  scheduledJobs.push({
+    id: 'process-blacklisted-genres',
+    name: 'Process Blacklisted Genres',
+    type: 'process',
+    interval: 'days',
+    cronSchedule: jobs['process-blacklisted-genres'].schedule,
+    job: schedule.scheduleJob(
+      jobs['process-blacklisted-genres'].schedule,
+      () => {
+        logger.info('Starting scheduled job: Process Blacklisted Genres', {
+          label: 'Jobs',
+        });
+        blacklistedGenresProcessor.run();
+      }
+    ),
+    running: () => blacklistedGenresProcessor.status().running,
+    cancelFn: () => blacklistedGenresProcessor.cancel(),
   });
 
   logger.info('Scheduled jobs loaded', { label: 'Jobs' });

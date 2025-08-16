@@ -69,6 +69,7 @@ const messages: { [messageName: string]: MessageDescriptor } = defineMessages(
     'download-sync-reset': 'Download Sync Reset',
     'image-cache-cleanup': 'Image Cache Cleanup',
     'process-blacklisted-tags': 'Process Blacklisted Tags',
+    'process-blacklisted-genres': 'Process Blacklisted Genres',
     editJobSchedule: 'Modify Job',
     jobScheduleEditSaved: 'Job edited successfully!',
     jobScheduleEditFailed: 'Something went wrong while saving the job.',

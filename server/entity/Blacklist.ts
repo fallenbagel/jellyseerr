@@ -47,6 +47,12 @@ export class Blacklist implements BlacklistItem {
   @Column({ nullable: true, type: 'varchar' })
   public blacklistedTags?: string;
 
+  @Column({ nullable: true, type: 'varchar' })
+  public blacklistedGenresMovies?: string;
+
+  @Column({ nullable: true, type: 'varchar' })
+  public blacklistedGenresTvShows?: string;
+
   @DbAwareColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   public createdAt: Date;
 
@@ -63,6 +69,8 @@ export class Blacklist implements BlacklistItem {
         title?: ZodOptional<ZodString>['_output'];
         tmdbId: ZodNumber['_output'];
         blacklistedTags?: string;
+        blacklistedGenresMovies?: string;
+        blacklistedGenresTvShows?: string;
       };
     },
     entityManager?: EntityManager

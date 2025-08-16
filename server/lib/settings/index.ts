@@ -131,6 +131,10 @@ export interface MainSettings {
   originalLanguage: string;
   blacklistedTags: string;
   blacklistedTagsLimit: number;
+  blacklistedGenresMovies: string;
+  blacklistedGenresMoviesLimit: number;
+  blacklistedGenresTvShows: string;
+  blacklistedGenresTvShowsLimit: number;
   mediaServerType: number;
   partialRequestsEnabled: boolean;
   enableSpecialEpisodes: boolean;
@@ -316,7 +320,8 @@ export type JobId =
   | 'jellyfin-full-scan'
   | 'image-cache-cleanup'
   | 'availability-sync'
-  | 'process-blacklisted-tags';
+  | 'process-blacklisted-tags'
+  | 'process-blacklisted-genres';
 
 export interface AllSettings {
   clientId: string;
@@ -366,6 +371,10 @@ class Settings {
         originalLanguage: '',
         blacklistedTags: '',
         blacklistedTagsLimit: 50,
+        blacklistedGenresMovies: '',
+        blacklistedGenresMoviesLimit: 50,
+        blacklistedGenresTvShows: '',
+        blacklistedGenresTvShowsLimit: 50,
         mediaServerType: MediaServerType.NOT_CONFIGURED,
         partialRequestsEnabled: true,
         enableSpecialEpisodes: false,
@@ -526,6 +535,9 @@ class Settings {
         },
         'process-blacklisted-tags': {
           schedule: '0 30 1 */7 * *',
+        },
+        'process-blacklisted-genres': {
+          schedule: '0 0 2 */7 * *',
         },
       },
       network: {

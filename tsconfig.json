@@ -25,6 +25,11 @@
       "@app/*": ["*"]
     }
   },
-  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "server/types/**/*.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

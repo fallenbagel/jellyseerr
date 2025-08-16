@@ -8,6 +8,8 @@ export interface BlacklistItem {
   createdAt?: Date;
   user?: User;
   blacklistedTags?: string;
+  blacklistedGenresMovies?: string;
+  blacklistedGenresTvShows?: string;
 }
 
 export interface BlacklistResultsResponse extends PaginatedResponse {

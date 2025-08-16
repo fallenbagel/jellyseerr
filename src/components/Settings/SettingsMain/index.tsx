@@ -5,6 +5,7 @@ import PageTitle from '@app/components/Common/PageTitle';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import LanguageSelector from '@app/components/LanguageSelector';
 import RegionSelector from '@app/components/RegionSelector';
+import { GenreSelector } from '@app/components/Selector';
 import CopyButton from '@app/components/Settings/CopyButton';
 import SettingsBadge from '@app/components/Settings/SettingsBadge';
 import type { AvailableLocale } from '@app/context/LanguageContext';
@@ -44,6 +45,18 @@ const messages = defineMessages('components.Settings.SettingsMain', {
   blacklistedTagsLimit: 'Limit Content Blacklisted per Tag',
   blacklistedTagsLimitTip:
     'The "Process Blacklisted Tags" job will blacklist this many pages into each sort. Larger numbers will create a more accurate blacklist, but use more space.',
+  blacklistedGenresMovies: 'Blacklist Movie Genres',
+  blacklistedGenresMoviesTip:
+    'Automatically add movies with these genres to the blacklist using the "Process Blacklisted Genres" job',
+  blacklistedGenresMoviesLimit: 'Limit Movies Blacklisted per Genre',
+  blacklistedGenresMoviesLimitTip:
+    'The "Process Blacklisted Movie Genres" job will blacklist this many pages into each sort.',
+  blacklistedGenresTvShows: 'Blacklist TV Show Genres',
+  blacklistedGenresTvShowsTip:
+    'Automatically add TV shows with these genres to the blacklist using the "Process Blacklisted Genres" job',
+  blacklistedGenresTvShowsLimit: 'Limit TV Shows Blacklisted per Genre',
+  blacklistedGenresTvShowsLimitTip:
+    'The "Process Blacklisted TV Show Genres" job will blacklist this many pages into each sort.',
   streamingRegion: 'Streaming Region',
   streamingRegionTip: 'Show streaming sites by regional availability',
   hideBlacklisted: 'Hide Blacklisted Items',
@@ -102,6 +115,28 @@ const SettingsMain = () => {
         (value) => !value || !value.endsWith('/')
       ),
     blacklistedTagsLimit: Yup.number()
+      .test(
+        'positive',
+        'Number must be greater than 0.',
+        (value) => (value ?? 0) >= 0
+      )
+      .test(
+        'lte-250',
+        'Number must be less than or equal to 250.',
+        (value) => (value ?? 0) <= 250
+      ),
+    blacklistedGenresMoviesLimit: Yup.number()
+      .test(
+        'positive',
+        'Number must be greater than 0.',
+        (value) => (value ?? 0) >= 0
+      )
+      .test(
+        'lte-250',
+        'Number must be less than or equal to 250.',
+        (value) => (value ?? 0) <= 250
+      ),
+    blacklistedGenresTvShowsLimit: Yup.number()
       .test(
         'positive',
         'Number must be greater than 0.',
@@ -171,6 +206,12 @@ const SettingsMain = () => {
             streamingRegion: data?.streamingRegion || 'US',
             blacklistedTags: data?.blacklistedTags,
             blacklistedTagsLimit: data?.blacklistedTagsLimit || 50,
+            blacklistedGenresMovies: data?.blacklistedGenresMovies,
+            blacklistedGenresMoviesLimit:
+              data?.blacklistedGenresMoviesLimit || 50,
+            blacklistedGenresTvShows: data?.blacklistedGenresTvShows,
+            blacklistedGenresTvShowsLimit:
+              data?.blacklistedGenresTvShowsLimit || 50,
             partialRequestsEnabled: data?.partialRequestsEnabled,
             enableSpecialEpisodes: data?.enableSpecialEpisodes,
             cacheImages: data?.cacheImages,
@@ -191,6 +232,12 @@ const SettingsMain = () => {
                 originalLanguage: values.originalLanguage,
                 blacklistedTags: values.blacklistedTags,
                 blacklistedTagsLimit: values.blacklistedTagsLimit,
+                blacklistedGenresMovies: values.blacklistedGenresMovies,
+                blacklistedGenresMoviesLimit:
+                  values.blacklistedGenresMoviesLimit,
+                blacklistedGenresTvShows: values.blacklistedGenresTvShows,
+                blacklistedGenresTvShowsLimit:
+                  values.blacklistedGenresTvShowsLimit,
                 partialRequestsEnabled: values.partialRequestsEnabled,
                 enableSpecialEpisodes: values.enableSpecialEpisodes,
                 cacheImages: values.cacheImages,
@@ -443,6 +490,120 @@ const SettingsMain = () => {
                           {errors.blacklistedTagsLimit}
                         </div>
                       )}
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label
+                    htmlFor="blacklistedGenresMovies"
+                    className="text-label"
+                  >
+                    <span>
+                      {intl.formatMessage(messages.blacklistedGenresMovies)}
+                    </span>
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.blacklistedGenresMoviesTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field relative z-20">
+                      <GenreSelector
+                        isMulti={true}
+                        defaultValue={values.blacklistedGenresMovies}
+                        type="movie"
+                        onChange={(value) => {
+                          const genreIds = Array.isArray(value)
+                            ? value.map((v) => v.value).join(',')
+                            : '';
+                          setFieldValue('blacklistedGenresMovies', genreIds);
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label
+                    htmlFor="blacklistedGenresMoviesLimit"
+                    className="text-label"
+                  >
+                    <span className="mr-2">
+                      {intl.formatMessage(
+                        messages.blacklistedGenresMoviesLimit
+                      )}
+                    </span>
+                    <SettingsBadge badgeType="advanced" />
+                    <span className="label-tip">
+                      {intl.formatMessage(
+                        messages.blacklistedGenresMoviesLimitTip
+                      )}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      id="blacklistedGenresMoviesLimit"
+                      name="blacklistedGenresMoviesLimit"
+                      type="text"
+                      inputMode="numeric"
+                      className="short"
+                      placeholder={50}
+                    />
+                  </div>
+                </div>
+
+                {/* TV Show Genres Section */}
+                <div className="form-row">
+                  <label
+                    htmlFor="blacklistedGenresTvShows"
+                    className="text-label"
+                  >
+                    <span>
+                      {intl.formatMessage(messages.blacklistedGenresTvShows)}
+                    </span>
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.blacklistedGenresTvShowsTip)}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field relative z-10">
+                      <GenreSelector
+                        isMulti={true}
+                        defaultValue={values.blacklistedGenresTvShows}
+                        type="tv"
+                        onChange={(value) => {
+                          const genreIds = Array.isArray(value)
+                            ? value.map((v) => v.value).join(',')
+                            : '';
+                          setFieldValue('blacklistedGenresTvShows', genreIds);
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label
+                    htmlFor="blacklistedGenresTvShowsLimit"
+                    className="text-label"
+                  >
+                    <span className="mr-2">
+                      {intl.formatMessage(
+                        messages.blacklistedGenresTvShowsLimit
+                      )}
+                    </span>
+                    <SettingsBadge badgeType="advanced" />
+                    <span className="label-tip">
+                      {intl.formatMessage(
+                        messages.blacklistedGenresTvShowsLimitTip
+                      )}
+                    </span>
+                  </label>
+                  <div className="form-input-area">
+                    <Field
+                      id="blacklistedGenresTvShowsLimit"
+                      name="blacklistedGenresTvShowsLimit"
+                      type="text"
+                      inputMode="numeric"
+                      className="short"
+                      placeholder={50}
+                    />
                   </div>
                 </div>
                 <div className="form-row">

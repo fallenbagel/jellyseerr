@@ -23,7 +23,15 @@ const blacklistGet = z.object({
   take: z.coerce.number().int().positive().default(25),
   skip: z.coerce.number().int().nonnegative().default(0),
   search: z.string().optional(),
-  filter: z.enum(['all', 'manual', 'blacklistedTags']).optional(),
+  filter: z
+    .enum([
+      'all',
+      'manual',
+      'blacklistedTags',
+      'blacklistedGenresMovies',
+      'blacklistedGenresTvShows',
+    ])
+    .optional(),
 });
 
 blacklistRoutes.get(
@@ -46,6 +54,16 @@ blacklistRoutes.get(
           break;
         case 'blacklistedTags':
           query = query.andWhere('blacklist.blacklistedTags IS NOT NULL');
+          break;
+        case 'blacklistedGenresMovies':
+          query = query.andWhere(
+            'blacklist.blacklistedGenresMovies IS NOT NULL'
+          );
+          break;
+        case 'blacklistedGenresTvShows':
+          query = query.andWhere(
+            'blacklist.blacklistedGenresTvShows IS NOT NULL'
+          );
           break;
       }
 
