@@ -378,7 +378,7 @@ const UserProfile = () => {
       {user.userType === UserType.PLEX &&
         (user.id === currentUser?.id ||
           currentHasPermission(Permission.ADMIN)) &&
-        (!watchData || !!watchData.recentlyWatched.length) &&
+        (!watchData || !!watchData.recentlyWatched?.length) &&
         !watchDataError && (
           <>
             <div className="slider-header">
@@ -389,7 +389,7 @@ const UserProfile = () => {
             <Slider
               sliderKey="media"
               isLoading={!watchData}
-              items={watchData?.recentlyWatched.map((item) => (
+              items={watchData?.recentlyWatched?.map((item) => (
                 <TmdbTitleCard
                   key={`media-slider-item-${item.id}`}
                   id={item.id}
