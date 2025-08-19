@@ -1,7 +1,7 @@
 import logger from '@server/logger';
 import { DnsCacheManager } from 'dns-caching';
 
-let dnsCache: DnsCacheManager | undefined;
+export let dnsCache: DnsCacheManager | undefined;
 
 export function initializeDnsCache({
   forceMinTtl,
@@ -24,5 +24,3 @@ export function initializeDnsCache({
   });
   dnsCache.initialize();
 }
-
-export default dnsCache;

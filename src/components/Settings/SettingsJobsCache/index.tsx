@@ -65,7 +65,6 @@ const messages: { [messageName: string]: MessageDescriptor } = defineMessages(
     dnscachehits: 'Hits',
     dnscachemisses: 'Misses',
     dnscacheage: 'Age',
-    dnscachenetworkerrors: 'Network Errors',
     flushdnscache: 'Flush DNS Cache',
     dnsCacheGlobalStats: 'Global DNS Cache Stats',
     dnsCacheGlobalStatsDescription:
@@ -629,9 +628,6 @@ const SettingsJobs = () => {
               <Table.TH>{intl.formatMessage(messages.dnscachehits)}</Table.TH>
               <Table.TH>{intl.formatMessage(messages.dnscachemisses)}</Table.TH>
               <Table.TH>{intl.formatMessage(messages.dnscacheage)}</Table.TH>
-              <Table.TH>
-                {intl.formatMessage(messages.dnscachenetworkerrors)}
-              </Table.TH>
               <Table.TH></Table.TH>
             </tr>
           </thead>
@@ -644,7 +640,6 @@ const SettingsJobs = () => {
                   <Table.TD>{intl.formatNumber(data.hits)}</Table.TD>
                   <Table.TD>{intl.formatNumber(data.misses)}</Table.TD>
                   <Table.TD>{formatAge(data.age)}</Table.TD>
-                  <Table.TD>{intl.formatNumber(data.networkErrors)}</Table.TD>
                   <Table.TD alignText="right">
                     <Button
                       buttonType="danger"

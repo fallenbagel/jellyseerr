@@ -1,3 +1,4 @@
+import type { DnsEntries, DnsStats } from 'dns-caching';
 import type { PaginatedResponse } from './common';
 
 export type LogMessage = {
@@ -61,38 +62,12 @@ export interface CacheItem {
   };
 }
 
-export interface DNSAddresses {
-  ipv4: number;
-  ipv6: number;
-}
-
-export interface DNSRecord {
-  addresses: DNSAddresses;
-  activeAddress: string;
-  family: number;
-  age: number;
-  ttl: number;
-  networkErrors: number;
-  hits: number;
-  misses: number;
-}
-
-export interface DNSStats {
-  size: number;
-  maxSize: number;
-  hits: number;
-  misses: number;
-  failures: number;
-  ipv4Fallbacks: number;
-  hitRate: number;
-}
-
 export interface CacheResponse {
   apiCaches: CacheItem[];
   imageCache: Record<'tmdb' | 'avatar', { size: number; imageCount: number }>;
   dnsCache: {
-    entries: Record<string, DNSRecord>;
-    stats: DNSStats;
+    stats: DnsStats | undefined;
+    entries: DnsEntries | undefined;
   };
 }
 
