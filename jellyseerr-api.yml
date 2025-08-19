@@ -260,9 +260,51 @@ components:
         csrfProtection:
           type: boolean
           example: false
+        forceIpv4First:
+          type: boolean
+          example: false
         trustProxy:
           type: boolean
-          example: true
+          example: false
+        proxy:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: false
+            hostname:
+              type: string
+              example: ''
+            port:
+              type: number
+              example: 8080
+            useSsl:
+              type: boolean
+              example: false
+            user:
+              type: string
+              example: ''
+            password:
+              type: string
+              example: ''
+            bypassFilter:
+              type: string
+              example: ''
+            bypassLocalAddresses:
+              type: boolean
+              example: true
+        dnsCache:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: false
+            forceMinTtl:
+              type: number
+              example: 0
+            forceMaxTtl:
+              type: number
+              example: -1
     PlexLibrary:
       type: object
       properties:

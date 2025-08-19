@@ -50,6 +50,8 @@ const messages = defineMessages('components.Settings.SettingsNetwork', {
     'Enable caching of DNS lookups to optimize performance and avoid making unnecessary API calls',
   dnsCacheHoverTip:
     'Do NOT enable this if you are experiencing issues with DNS lookups',
+  dnsCacheForceMinTtl: 'DNS Cache Minimum TTL',
+  dnsCacheForceMaxTtl: 'DNS Cache Maximum TTL',
 });
 
 const SettingsNetwork = () => {
@@ -95,7 +97,9 @@ const SettingsNetwork = () => {
           initialValues={{
             csrfProtection: data?.csrfProtection,
             forceIpv4First: data?.forceIpv4First,
-            dnsCache: data?.dnsCache,
+            dnsCacheEnabled: data?.dnsCache.enabled,
+            dnsCacheForceMinTtl: data?.dnsCache.forceMinTtl,
+            dnsCacheForceMaxTtl: data?.dnsCache.forceMaxTtl,
             trustProxy: data?.trustProxy,
             proxyEnabled: data?.proxy?.enabled,
             proxyHostname: data?.proxy?.hostname,
@@ -114,7 +118,11 @@ const SettingsNetwork = () => {
                 csrfProtection: values.csrfProtection,
                 forceIpv4First: values.forceIpv4First,
                 trustProxy: values.trustProxy,
-                dnsCache: values.dnsCache,
+                dnsCache: {
+                  enabled: values.dnsCacheEnabled,
+                  forceMinTtl: values.dnsCacheForceMinTtl,
+                  forceMaxTtl: values.dnsCacheForceMaxTtl,
+                },
                 proxy: {
                   enabled: values.proxyEnabled,
                   hostname: values.proxyHostname,
@@ -229,7 +237,7 @@ const SettingsNetwork = () => {
                   </div>
                 </div>
                 <div className="form-row">
-                  <label htmlFor="dnsCache" className="checkbox-label">
+                  <label htmlFor="dnsCacheEnabled" className="checkbox-label">
                     <span className="mr-2">
                       {intl.formatMessage(messages.dnsCache)}
                     </span>
@@ -246,15 +254,72 @@ const SettingsNetwork = () => {
                     >
                       <Field
                         type="checkbox"
-                        id="dnsCache"
-                        name="dnsCache"
+                        id="dnsCacheEnabled"
+                        name="dnsCacheEnabled"
                         onChange={() => {
-                          setFieldValue('dnsCache', !values.dnsCache);
+                          setFieldValue(
+                            'dnsCacheEnabled',
+                            !values.dnsCacheEnabled
+                          );
                         }}
                       />
                     </Tooltip>
                   </div>
                 </div>
+                {values.dnsCacheEnabled && (
+                  <>
+                    <div className="mr-2 ml-4">
+                      <div className="form-row">
+                        <label
+                          htmlFor="dnsCacheForceMinTtl"
+                          className="checkbox-label"
+                        >
+                          {intl.formatMessage(messages.dnsCacheForceMinTtl)}
+                        </label>
+                        <div className="form-input-area">
+                          <div className="form-input-field">
+                            <Field
+                              id="dnsCacheForceMinTtl"
+                              name="dnsCacheForceMinTtl"
+                              type="text"
+                            />
+                          </div>
+                          {errors.dnsCacheForceMinTtl &&
+                            touched.dnsCacheForceMinTtl &&
+                            typeof errors.dnsCacheForceMinTtl === 'string' && (
+                              <div className="error">
+                                {errors.dnsCacheForceMinTtl}
+                              </div>
+                            )}
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <label
+                          htmlFor="dnsCacheForceMaxTtl"
+                          className="checkbox-label"
+                        >
+                          {intl.formatMessage(messages.dnsCacheForceMaxTtl)}
+                        </label>
+                        <div className="form-input-area">
+                          <div className="form-input-field">
+                            <Field
+                              id="dnsCacheForceMaxTtl"
+                              name="dnsCacheForceMaxTtl"
+                              type="text"
+                            />
+                          </div>
+                          {errors.dnsCacheForceMaxTtl &&
+                            touched.dnsCacheForceMaxTtl &&
+                            typeof errors.dnsCacheForceMaxTtl === 'string' && (
+                              <div className="error">
+                                {errors.dnsCacheForceMaxTtl}
+                              </div>
+                            )}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
                 <div className="form-row">
                   <label htmlFor="proxyEnabled" className="checkbox-label">
                     <span className="mr-2">

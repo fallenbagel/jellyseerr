@@ -25,7 +25,7 @@ import imageproxy from '@server/routes/imageproxy';
 import { appDataPermissions } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
 import createCustomProxyAgent from '@server/utils/customProxyAgent';
-import dnsCache from '@server/utils/dnsCache';
+import { initializeDnsCache } from '@server/utils/dnsCache';
 import restartFlag from '@server/utils/restartFlag';
 import { getClientIp } from '@supercharge/request-ip';
 import axios from 'axios';
@@ -83,7 +83,10 @@ app
 
     // Add DNS caching
     if (settings.network.dnsCache) {
-      dnsCache.initialize();
+      initializeDnsCache({
+        forceMinTtl: settings.network.dnsCache.forceMinTtl,
+        forceMaxTtl: settings.network.dnsCache.forceMaxTtl,
+      });
     }
 
     // Register HTTP proxy

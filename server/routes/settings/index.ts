@@ -756,8 +756,8 @@ settingsRoutes.get('/cache', async (_req, res) => {
   const tmdbImageCache = await ImageProxy.getImageStats('tmdb');
   const avatarImageCache = await ImageProxy.getImageStats('avatar');
 
-  const stats = dnsCache.getStats();
-  const entries = dnsCache.getCacheEntries();
+  const stats = dnsCache?.getStats();
+  const entries = dnsCache?.getCacheEntries();
 
   return res.status(200).json({
     apiCaches,

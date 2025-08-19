@@ -195,6 +195,10 @@
       "bypassFilter": "",
       "bypassLocalAddresses": true
     },
-    "dnsCache": true
+    "dnsCache": {
+      "enabled": false,
+      "forceMinTtl": 0,
+      "forceMaxTtl": -1
+    }
   }
 }
