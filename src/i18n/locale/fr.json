@@ -144,6 +144,8 @@
   "components.RequestModal.numberofepisodes": "Nombre d'épisodes",
   "components.RequestModal.pendingrequest": "Demande en attente",
   "components.RequestModal.requestCancel": "Demande pour <strong>{title}</strong> refusée.",
+  "components.RequestModal.requestMovieHasNoNonTheatricalRealease": "Il n'y a pas de sortie hors cinéma",
+  "components.RequestModal.requestmovieNonTheattricalInTheFuture": "La sortie hors cinéma est prévue dans le futur",
   "components.RequestModal.requestSuccess": "<strong>{title}</strong> demandé avec succès !",
   "components.RequestModal.requestadmin": "Cette demande sera validée automatiquement.",
   "components.RequestModal.requestfrom": "La demande de {username} est en attente de validation.",
