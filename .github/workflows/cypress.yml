@@ -21,7 +21,7 @@ jobs:
       - name: Pnpm Setup
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:

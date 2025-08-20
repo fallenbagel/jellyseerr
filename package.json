@@ -179,7 +179,7 @@
   },
   "engines": {
     "node": "^22.0.0",
-    "pnpm": "^9.0.0"
+    "pnpm": "^10.0.0"
   },
   "overrides": {
     "sqlite3/node-gyp": "8.4.1",
@@ -282,6 +282,12 @@
     "publish": [
       "@codedependant/semantic-release-docker",
       "@semantic-release/github"
+    ]
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sqlite3",
+      "bcrypt"
     ]
   }
 }
