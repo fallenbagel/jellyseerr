@@ -31,6 +31,8 @@ overrideRuleRoutes.post<
     genre?: string;
     language?: string;
     keywords?: string;
+    years?: string;
+    serviceSwitch?: string;
     profileId?: number;
     rootFolder?: string;
     tags?: string;
@@ -46,6 +48,8 @@ overrideRuleRoutes.post<
       genre: req.body.genre,
       language: req.body.language,
       keywords: req.body.keywords,
+      years: req.body.years,
+      serviceSwitch: req.body.serviceSwitch,
       profileId: req.body.profileId,
       rootFolder: req.body.rootFolder,
       tags: req.body.tags,
@@ -69,6 +73,8 @@ overrideRuleRoutes.put<
     genre?: string;
     language?: string;
     keywords?: string;
+    years?: string;
+    serviceSwitch?: string;
     profileId?: number;
     rootFolder?: string;
     tags?: string;
@@ -93,6 +99,8 @@ overrideRuleRoutes.put<
     rule.genre = req.body.genre;
     rule.language = req.body.language;
     rule.keywords = req.body.keywords;
+    rule.years = req.body.years;
+    rule.serviceSwitch = req.body.serviceSwitch;
     rule.profileId = req.body.profileId;
     rule.rootFolder = req.body.rootFolder;
     rule.tags = req.body.tags;

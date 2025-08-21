@@ -257,21 +257,126 @@ mediaRoutes.delete(
       }
 
       if (isMovie) {
-        await (service as RadarrAPI).removeMovie(
-          parseInt(
-            is4k
-              ? (media.externalServiceSlug4k as string)
-              : (media.externalServiceSlug as string)
-          )
-        );
-      } else {
-        const tmdb = new TheMovieDb();
-        const series = await tmdb.getTvShow({ tvId: media.tmdbId });
-        const tvdbId = series.external_ids.tvdb_id ?? media.tvdbId;
-        if (!tvdbId) {
-          throw new Error('TVDB ID not found');
+        // First try the requested type, then try the other type (for service switching cases)
+        let movieId = is4k
+          ? media.externalServiceId4k
+          : media.externalServiceId;
+        let actualIs4k = is4k;
+
+        // If movie ID not found in the expected field, check the other field
+        if (!movieId) {
+          movieId = is4k ? media.externalServiceId : media.externalServiceId4k;
+          actualIs4k = !is4k;
+
+          // If found in the other field, we need to use the correct service for that type
+          if (movieId) {
+            const settings = getSettings();
+            // Get the specific service ID that was used for this type
+            const specificServiceId = actualIs4k
+              ? media.serviceId4k
+              : media.serviceId;
+
+            let correctService;
+            if (
+              specificServiceId !== null &&
+              specificServiceId !== undefined &&
+              specificServiceId >= 0
+            ) {
+              // Use the specific service that was used
+              correctService = settings.radarr.find(
+                (radarr) => radarr.id === specificServiceId
+              );
+            } else {
+              // Fallback to default service for that type
+              correctService = settings.radarr.find(
+                (radarr) => radarr.isDefault && radarr.is4k === actualIs4k
+              );
+            }
+
+            if (correctService) {
+              service = new RadarrAPI({
+                apiKey: correctService.apiKey,
+                url: RadarrAPI.buildUrl(correctService, '/api/v3'),
+              });
+            }
+          }
         }
-        await (service as SonarrAPI).removeSerie(tvdbId);
+
+        if (!movieId) {
+          throw new Error('External service ID not found for movie');
+        }
+
+        // Delete directly using Radarr internal movie ID (more efficient than TMDB lookup)
+        await (service as RadarrAPI)['axios'].delete(`/movie/${movieId}`, {
+          params: {
+            deleteFiles: true,
+            addImportExclusion: false,
+          },
+        });
+      } else {
+        // TV Show deletion with smart service switching
+        let seriesId = is4k
+          ? media.externalServiceId4k
+          : media.externalServiceId;
+        let actualIs4k = is4k;
+
+        // If series ID not found in the expected field, check the other field (for service switching cases)
+        if (!seriesId) {
+          seriesId = is4k ? media.externalServiceId : media.externalServiceId4k;
+          actualIs4k = !is4k;
+
+          // If found in the other field, we need to use the correct service for that type
+          if (seriesId) {
+            const settings = getSettings();
+            // Get the specific service ID that was used for this type
+            const specificServiceId = actualIs4k
+              ? media.serviceId4k
+              : media.serviceId;
+
+            let correctService;
+            if (
+              specificServiceId !== null &&
+              specificServiceId !== undefined &&
+              specificServiceId >= 0
+            ) {
+              // Use the specific service that was used
+              correctService = settings.sonarr.find(
+                (sonarr) => sonarr.id === specificServiceId
+              );
+            } else {
+              // Fallback to default service for that type
+              correctService = settings.sonarr.find(
+                (sonarr) => sonarr.isDefault && sonarr.is4k === actualIs4k
+              );
+            }
+
+            if (correctService) {
+              service = new SonarrAPI({
+                apiKey: correctService.apiKey,
+                url: SonarrAPI.buildUrl(correctService, '/api/v3'),
+              });
+            }
+          }
+        }
+
+        if (!seriesId) {
+          // Fallback to TVDB lookup if no external service ID found
+          const tmdb = new TheMovieDb();
+          const series = await tmdb.getTvShow({ tvId: media.tmdbId });
+          const tvdbId = series.external_ids.tvdb_id ?? media.tvdbId;
+          if (!tvdbId) {
+            throw new Error('TVDB ID not found');
+          }
+          await (service as SonarrAPI).removeSerie(tvdbId);
+        } else {
+          // Use Sonarr internal series ID directly (more efficient)
+          await (service as SonarrAPI)['axios'].delete(`/series/${seriesId}`, {
+            params: {
+              deleteFiles: true,
+              addImportExclusion: false,
+            },
+          });
+        }
       }
 
       return res.status(204).send();
