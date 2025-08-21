@@ -25,6 +25,11 @@ const messages = defineMessages('components.Settings.OverrideRuleTile', {
   genre: 'Genre',
   language: 'Language',
   keywords: 'Keywords',
+  years: 'Years',
+  serviceSwitch: 'Service Switch',
+  serviceSwitchForce4k: 'Force 4K',
+  serviceSwitchForceStandard: 'Force Standard',
+  serviceSwitchAuto: 'Keep Original',
   conditions: 'Conditions',
   settings: 'Settings',
 });
@@ -224,9 +229,29 @@ const OverrideRuleTiles = ({
                   </div>
                 </p>
               )}
+              {rule.years && (
+                <p className="truncate text-sm leading-5 text-gray-300">
+                  <span className="mr-2 font-bold">
+                    {intl.formatMessage(messages.years)}
+                  </span>
+                  {rule.years}
+                </p>
+              )}
               <span className="text-lg">
                 {intl.formatMessage(messages.settings)}
               </span>
+              {rule.serviceSwitch && (
+                <p className="truncate text-sm leading-5 text-gray-300">
+                  <span className="mr-2 font-bold">
+                    {intl.formatMessage(messages.serviceSwitch)}
+                  </span>
+                  {rule.serviceSwitch === 'force4k'
+                    ? intl.formatMessage(messages.serviceSwitchForce4k)
+                    : rule.serviceSwitch === 'forceStandard'
+                    ? intl.formatMessage(messages.serviceSwitchForceStandard)
+                    : intl.formatMessage(messages.serviceSwitchAuto)}
+                </p>
+              )}
               {rule.profileId && (
                 <p className="runcate text-sm leading-5 text-gray-300">
                   <span className="mr-2 font-bold">

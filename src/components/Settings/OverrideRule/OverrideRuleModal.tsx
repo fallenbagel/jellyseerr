@@ -40,6 +40,15 @@ const messages = defineMessages('components.Settings.OverrideRuleModal', {
   genres: 'Genres',
   languages: 'Languages',
   keywords: 'Keywords',
+  years: 'Years',
+  yearsDescription:
+    'Filter by release/air date year. Use comma-separated values (e.g., 1980,1995) or ranges (e.g., 2000-2010)',
+  serviceSwitch: 'Service Switch',
+  serviceSwitchDescription:
+    'Automatically switch between 4K and standard quality based on the rule conditions',
+  serviceSwitchAuto: 'Keep Original Request Type',
+  serviceSwitchForce4k: 'Force 4K Quality',
+  serviceSwitchForceStandard: 'Force Standard Quality',
   rootfolder: 'Root Folder',
   selectRootFolder: 'Select root folder',
   qualityprofile: 'Quality Profile',
@@ -157,6 +166,8 @@ const OverrideRuleModal = ({
           genre: rule?.genre,
           language: rule?.language,
           keywords: rule?.keywords,
+          years: rule?.years,
+          serviceSwitch: rule?.serviceSwitch,
           profileId: rule?.profileId,
           rootFolder: rule?.rootFolder,
           tags: rule?.tags,
@@ -168,6 +179,8 @@ const OverrideRuleModal = ({
               genre: values.genre || null,
               language: values.language || null,
               keywords: values.keywords || null,
+              years: values.years || null,
+              serviceSwitch: values.serviceSwitch || null,
               profileId: Number(values.profileId) || null,
               rootFolder: values.rootFolder || null,
               tags: values.tags || null,
@@ -219,7 +232,9 @@ const OverrideRuleModal = ({
                 (!values.users &&
                   !values.genre &&
                   !values.language &&
-                  !values.keywords) ||
+                  !values.keywords &&
+                  !values.years &&
+                  !values.serviceSwitch) ||
                 (!values.rootFolder && !values.profileId && !values.tags)
               }
               onOk={() => handleSubmit()}
@@ -403,12 +418,77 @@ const OverrideRuleModal = ({
                       )}
                   </div>
                 </div>
+                <div className="form-row">
+                  <label htmlFor="years" className="text-label">
+                    {intl.formatMessage(messages.years)}
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field">
+                      <Field
+                        type="text"
+                        id="years"
+                        name="years"
+                        placeholder="1980,1995,2000-2010"
+                        disabled={!isValidated || isTesting}
+                      />
+                    </div>
+                    <div className="form-input-help">
+                      {intl.formatMessage(messages.yearsDescription)}
+                      <br />
+                      <span className="text-xs text-gray-400">
+                        Recommendations: 1980-{new Date().getFullYear()} (all),
+                        2000-{new Date().getFullYear()} (modern), 1980-1999
+                        (classic)
+                      </span>
+                    </div>
+                    {errors.years &&
+                      touched.years &&
+                      typeof errors.years === 'string' && (
+                        <div className="error">{errors.years}</div>
+                      )}
+                  </div>
+                </div>
                 <h3 className="mt-4 text-lg font-bold leading-8 text-gray-100">
                   {intl.formatMessage(messages.settings)}
                 </h3>
                 <p className="description">
                   {intl.formatMessage(messages.settingsDescription)}
                 </p>
+                <div className="form-row">
+                  <label htmlFor="serviceSwitch" className="text-label">
+                    {intl.formatMessage(messages.serviceSwitch)}
+                  </label>
+                  <div className="form-input-area">
+                    <div className="form-input-field">
+                      <Field
+                        as="select"
+                        id="serviceSwitch"
+                        name="serviceSwitch"
+                        disabled={!isValidated || isTesting}
+                      >
+                        <option value="">
+                          {intl.formatMessage(messages.serviceSwitchAuto)}
+                        </option>
+                        <option value="force4k">
+                          {intl.formatMessage(messages.serviceSwitchForce4k)}
+                        </option>
+                        <option value="forceStandard">
+                          {intl.formatMessage(
+                            messages.serviceSwitchForceStandard
+                          )}
+                        </option>
+                      </Field>
+                    </div>
+                    <div className="form-input-help">
+                      {intl.formatMessage(messages.serviceSwitchDescription)}
+                    </div>
+                    {errors.serviceSwitch &&
+                      touched.serviceSwitch &&
+                      typeof errors.serviceSwitch === 'string' && (
+                        <div className="error">{errors.serviceSwitch}</div>
+                      )}
+                  </div>
+                </div>
                 <div className="form-row">
                   <label htmlFor="rootFolderRule" className="text-label">
                     {intl.formatMessage(messages.rootfolder)}

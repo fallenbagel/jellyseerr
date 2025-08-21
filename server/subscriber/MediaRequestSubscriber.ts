@@ -365,13 +365,15 @@ export class MediaRequestSubscriber
               throw new Error('Media data not found');
             }
 
-            media[entity.is4k ? 'externalServiceId4k' : 'externalServiceId'] =
+            const actualIs4k = radarrSettings?.is4k ?? entity.is4k;
+            media[actualIs4k ? 'externalServiceId4k' : 'externalServiceId'] =
               radarrMovie.id;
             media[
-              entity.is4k ? 'externalServiceSlug4k' : 'externalServiceSlug'
+              actualIs4k ? 'externalServiceSlug4k' : 'externalServiceSlug'
             ] = radarrMovie.titleSlug;
-            media[entity.is4k ? 'serviceId4k' : 'serviceId'] =
+            media[actualIs4k ? 'serviceId4k' : 'serviceId'] =
               radarrSettings?.id;
+
             await mediaRepository.save(media);
           })
           .catch(async () => {
@@ -661,12 +663,13 @@ export class MediaRequestSubscriber
               throw new Error('Media data not found');
             }
 
-            media[entity.is4k ? 'externalServiceId4k' : 'externalServiceId'] =
+            const actualIs4k = sonarrSettings?.is4k ?? entity.is4k;
+            media[actualIs4k ? 'externalServiceId4k' : 'externalServiceId'] =
               sonarrSeries.id;
             media[
-              entity.is4k ? 'externalServiceSlug4k' : 'externalServiceSlug'
+              actualIs4k ? 'externalServiceSlug4k' : 'externalServiceSlug'
             ] = sonarrSeries.titleSlug;
-            media[entity.is4k ? 'serviceId4k' : 'serviceId'] =
+            media[actualIs4k ? 'serviceId4k' : 'serviceId'] =
               sonarrSettings?.id;
             await mediaRepository.save(media);
           })

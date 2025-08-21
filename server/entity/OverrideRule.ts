@@ -24,6 +24,12 @@ class OverrideRule {
   @Column({ nullable: true })
   public keywords?: string;
 
+  @Column({ nullable: true })
+  public years?: string;
+
+  @Column({ nullable: true })
+  public serviceSwitch?: string;
+
   @Column({ type: 'int', nullable: true })
   public profileId?: number;
 

@@ -134,8 +134,8 @@ export class MediaRequest {
       media = new Media({
         tmdbId: tmdbMedia.id,
         tvdbId: requestBody.tvdbId ?? tmdbMedia.external_ids.tvdb_id,
-        status: !requestBody.is4k ? MediaStatus.PENDING : MediaStatus.UNKNOWN,
-        status4k: requestBody.is4k ? MediaStatus.PENDING : MediaStatus.UNKNOWN,
+        status: MediaStatus.UNKNOWN,
+        status4k: MediaStatus.UNKNOWN,
         mediaType: requestBody.mediaType,
       });
     } else {
@@ -147,14 +147,6 @@ export class MediaRequest {
         });
 
         throw new BlacklistedMediaError('This media is blacklisted.');
-      }
-
-      if (media.status === MediaStatus.UNKNOWN && !requestBody.is4k) {
-        media.status = MediaStatus.PENDING;
-      }
-
-      if (media.status4k === MediaStatus.UNKNOWN && requestBody.is4k) {
-        media.status4k = MediaStatus.PENDING;
       }
     }
 
@@ -211,20 +203,29 @@ export class MediaRequest {
     let tags = requestBody.tags;
 
     if (useOverrides) {
-      const defaultRadarrId = requestBody.is4k
-        ? settings.radarr.findIndex((r) => r.is4k && r.isDefault)
-        : settings.radarr.findIndex((r) => !r.is4k && r.isDefault);
-      const defaultSonarrId = requestBody.is4k
-        ? settings.sonarr.findIndex((s) => s.is4k && s.isDefault)
-        : settings.sonarr.findIndex((s) => !s.is4k && s.isDefault);
-
       const overrideRuleRepository = getRepository(OverrideRule);
-      const overrideRules = await overrideRuleRepository.find({
-        where:
-          requestBody.mediaType === MediaType.MOVIE
-            ? { radarrServiceId: defaultRadarrId }
-            : { sonarrServiceId: defaultSonarrId },
-      });
+
+      // Get override rules for all services (both 4K and non-4K) to allow service type switching
+      let overrideRules: OverrideRule[] = [];
+      if (requestBody.mediaType === MediaType.MOVIE) {
+        // Get rules for all Radarr services
+        const radarrServiceIds = settings.radarr.map((_, index) => index);
+        overrideRules = await overrideRuleRepository
+          .createQueryBuilder('rule')
+          .where('rule.radarrServiceId IN (:...serviceIds)', {
+            serviceIds: radarrServiceIds,
+          })
+          .getMany();
+      } else {
+        // Get rules for all Sonarr services
+        const sonarrServiceIds = settings.sonarr.map((_, index) => index);
+        overrideRules = await overrideRuleRepository
+          .createQueryBuilder('rule')
+          .where('rule.sonarrServiceId IN (:...serviceIds)', {
+            serviceIds: sonarrServiceIds,
+          })
+          .getMany();
+      }
 
       const appliedOverrideRules = overrideRules.filter((rule) => {
         const hasAnimeKeyword =
@@ -291,13 +292,47 @@ export class MediaRequest {
         ) {
           return false;
         }
+        if (rule.years) {
+          let releaseYear: number;
+          if (requestBody.mediaType === MediaType.MOVIE) {
+            releaseYear = new Date(
+              (tmdbMedia as any).release_date
+            ).getFullYear();
+          } else {
+            releaseYear = new Date(
+              (tmdbMedia as any).first_air_date
+            ).getFullYear();
+          }
+
+          const yearMatches = rule.years.split(',').some((yearRange) => {
+            const trimmedRange = yearRange.trim();
+            if (trimmedRange.includes('-')) {
+              // Handle ranges like "2000-2010"
+              const [startYear, endYear] = trimmedRange.split('-').map(Number);
+              return releaseYear >= startYear && releaseYear <= endYear;
+            } else {
+              // Handle individual years
+              return Number(trimmedRange) === releaseYear;
+            }
+          });
+
+          if (!yearMatches) {
+            return false;
+          }
+        }
         return true;
       });
 
       // hacky way to prioritize rules
       // TODO: make this better
       const prioritizedRule = appliedOverrideRules.sort((a, b) => {
-        const keys: (keyof OverrideRule)[] = ['genre', 'language', 'keywords'];
+        const keys: (keyof OverrideRule)[] = [
+          'genre',
+          'language',
+          'keywords',
+          'years',
+          'serviceSwitch',
+        ];
 
         const aSpecificity = keys.filter((key) => a[key] !== null).length;
         const bSpecificity = keys.filter((key) => b[key] !== null).length;
@@ -307,11 +342,82 @@ export class MediaRequest {
       })[0];
 
       if (prioritizedRule) {
-        if (prioritizedRule.rootFolder) {
-          rootFolder = prioritizedRule.rootFolder;
+        let serviceSwitched = false;
+
+        // Handle intelligent service switching based on serviceSwitch field
+        if (prioritizedRule.serviceSwitch) {
+          const originalIs4k = requestBody.is4k;
+          let targetIs4k = originalIs4k;
+
+          // Determine target service type based on serviceSwitch setting
+          switch (prioritizedRule.serviceSwitch) {
+            case 'force4k':
+              targetIs4k = true;
+              break;
+            case 'forceStandard':
+              targetIs4k = false;
+              break;
+            case 'auto':
+              // Keep original request type
+              targetIs4k = originalIs4k;
+              break;
+          }
+
+          // Apply service switching if type changed
+          if (targetIs4k !== originalIs4k) {
+            serviceSwitched = true;
+            requestBody.is4k = targetIs4k;
+
+            // Find appropriate default service for the target type and use its defaults
+            if (requestBody.mediaType === MediaType.MOVIE) {
+              const targetService = targetIs4k
+                ? settings.radarr.find((r) => r.is4k && r.isDefault)
+                : settings.radarr.find((r) => !r.is4k && r.isDefault);
+
+              if (targetService) {
+                requestBody.serverId = targetService.id;
+                // Reset to service defaults when switching to prevent conflicts
+                profileId = targetService.activeProfileId;
+                rootFolder = targetService.activeDirectory;
+              }
+            } else {
+              const targetService = targetIs4k
+                ? settings.sonarr.find((s) => s.is4k && s.isDefault)
+                : settings.sonarr.find((s) => !s.is4k && s.isDefault);
+
+              if (targetService) {
+                requestBody.serverId = targetService.id;
+                // Reset to service defaults when switching to prevent conflicts
+                profileId = targetService.activeProfileId;
+                rootFolder = targetService.activeDirectory;
+              }
+            }
+          }
+
+          // When service switching is enabled, ignore specific service IDs to prevent conflicts
+        } else {
+          // No service switching - apply specific service IDs from override rule
+          if (
+            prioritizedRule.radarrServiceId !== null &&
+            prioritizedRule.radarrServiceId !== undefined
+          ) {
+            requestBody.serverId = prioritizedRule.radarrServiceId;
+          } else if (
+            prioritizedRule.sonarrServiceId !== null &&
+            prioritizedRule.sonarrServiceId !== undefined
+          ) {
+            requestBody.serverId = prioritizedRule.sonarrServiceId;
+          }
         }
-        if (prioritizedRule.profileId) {
-          profileId = prioritizedRule.profileId;
+
+        // Only apply override rule's profile and root folder if no service switching occurred
+        if (!serviceSwitched) {
+          if (prioritizedRule.rootFolder) {
+            rootFolder = prioritizedRule.rootFolder;
+          }
+          if (prioritizedRule.profileId) {
+            profileId = prioritizedRule.profileId;
+          }
         }
         if (prioritizedRule.tags) {
           tags = [
@@ -326,6 +432,17 @@ export class MediaRequest {
           label: 'Media Request',
           overrides: prioritizedRule,
         });
+      }
+    }
+
+    // Update media status based on final request type (after potential service switching)
+    if (media.status !== MediaStatus.BLACKLISTED) {
+      if (!requestBody.is4k && media.status === MediaStatus.UNKNOWN) {
+        media.status = MediaStatus.PENDING;
+      }
+
+      if (requestBody.is4k && media.status4k === MediaStatus.UNKNOWN) {
+        media.status4k = MediaStatus.PENDING;
       }
     }
 
