@@ -60,6 +60,11 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       regex: /^\/settings\/network/,
     },
     {
+      text: 'Metadata',
+      route: '/settings/metadata',
+      regex: /^\/settings\/metadata/,
+    },
+    {
       text: intl.formatMessage(messages.menuNotifications),
       route: '/settings/notifications/email',
       regex: /^\/settings\/notifications/,
