@@ -266,7 +266,7 @@ class JellyfinScanner {
       if (!tvShow && metadata.ProviderIds.Tvdb) {
         try {
           tvShow = await this.getTvShow({
-            tvdbId: Number(metadata.ProviderIds.Tmdb),
+            tvdbId: Number(metadata.ProviderIds.Tvdb),
           });
         } catch {
           this.log('Unable to find TVDb ID for this title.', 'debug', {
