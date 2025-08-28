@@ -519,6 +519,20 @@ components:
         serverID:
           type: string
           readOnly: true
+    MetadataSettings:
+      type: object
+      properties:
+        settings:
+          type: object
+          properties:
+            tv:
+              type: string
+              enum: [tvdb, tmdb]
+              example: 'tvdb'
+            anime:
+              type: string
+              enum: [tvdb, tmdb]
+              example: 'tvdb'
     TautulliSettings:
       type: object
       properties:
@@ -2568,6 +2582,67 @@ paths:
                       type: string
                     thumb:
                       type: string
+  /settings/metadatas:
+    get:
+      summary: Get Metadata settings
+      description: Retrieves current Metadata settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetadataSettings'
+    put:
+      summary: Update Metadata settings
+      description: Updates Metadata settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetadataSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetadataSettings'
+  /settings/metadatas/test:
+    post:
+      summary: Test Provider configuration
+      description: Tests if the TVDB configuration is valid. Returns a list of available languages on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tmdb:
+                  type: boolean
+                  example: true
+                tvdb:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Succesfully connected to TVDB
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Successfully connected to TVDB'
   /settings/tautulli:
     get:
       summary: Get Tautulli settings
@@ -6472,7 +6547,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TvDetails'
-  /tv/{tvId}/season/{seasonId}:
+  /tv/{tvId}/season/{seasonNumber}:
     get:
       summary: Get season details and episode list
       description: Returns season details with a list of episodes in a JSON object.
@@ -6486,11 +6561,11 @@ paths:
             type: number
             example: 76479
         - in: path
-          name: seasonId
+          name: seasonNumber
           required: true
           schema:
             type: number
-            example: 1
+            example: 123456
         - in: query
           name: language
           schema:
