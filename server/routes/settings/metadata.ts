@@ -59,7 +59,7 @@ metadataRoutes.put('/', async (req, res) => {
     });
   }
 
-  // Si un test a échoué, renvoyez les résultats des tests
+  // If a test failed, return the test results
   if (tvdbTest === 0 || tmdbTest === 0) {
     return res.status(500).json({
       success: false,

@@ -18,21 +18,23 @@ import useSWR from 'swr';
 const messages = defineMessages('components.Settings', {
   general: 'General',
   settings: 'Settings',
-  seriesIndexer: 'Series Indexer',
-  animeIndexer: 'Anime Indexer',
+  seriesIndexer: 'Series metadata provider',
+  animeIndexer: 'Anime metadata provider',
   metadataSettings: 'Settings for metadata provider',
-  clickTest: 'Click on the "Test" button to check connectivity with providers',
+  clickTest:
+    'Click on the "Test" button to check connectivity with metadata providers',
   notTested: 'Not Tested',
   failed: 'Does not work',
   operational: 'Operational',
-  providerStatus: 'Provider Status',
+  providerStatus: 'Metadata Provider Status',
   chooseProvider: 'Choose metadata providers for different content types',
-  indexerSelection: 'Provider Selection',
+  indexerSelection: 'Metadata Provider Selection',
   tmdbProviderDoesnotWork:
-    'TMDB provider does not work, please select another provider',
+    'TMDB provider does not work, please select another metadata provider',
   tvdbProviderDoesnotWork:
-    'TVDB provider does not work, please select another provider',
-  allChosenProvidersAreOperational: 'All chosen providers are operational',
+    'TVDB provider does not work, please select metadata another provider',
+  allChosenProvidersAreOperational:
+    'All chosen metadata providers are operational',
 });
 
 type ProviderStatus = 'ok' | 'not tested' | 'failed';

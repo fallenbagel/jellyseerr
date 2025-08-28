@@ -18,9 +18,9 @@ type IndexerOptionType = {
 };
 
 const messages = defineMessages('components.MetadataSelector', {
-  tmdbLabel: 'TheMovieDB',
+  tmdbLabel: 'The Movie Database (TMDB)',
   tvdbLabel: 'TheTVDB',
-  selectIndexer: 'Select an indexer',
+  selectIndexer: 'Select a metadata provider',
 });
 
 interface MetadataSelectorProps {
