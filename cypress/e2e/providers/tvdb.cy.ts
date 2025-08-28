@@ -45,7 +45,6 @@ describe('TVDB Integration', () => {
   };
 
   const saveMetadataSettings = (customBody = null) => {
-    // Si un corps personnalisé est fourni, utilisez-le pour modifier la requête
     if (customBody) {
       cy.intercept('PUT', '/api/v1/settings/metadatas', (req) => {
         req.body = customBody;
@@ -67,10 +66,9 @@ describe('TVDB Integration', () => {
     navigateToMetadataSettings();
 
     // Verify we're on the correct settings page
-    cy.contains('h3', 'Metadata').should('be.visible');
+    cy.contains('h3', 'Metadata Providers').should('be.visible');
 
     // Configure TVDB as TV provider and test connection
-    // Supposons que vous avez ajouté data-testid au div parent du Select
     cy.get('[data-testid="tv-indexer-selector"]').click();
 
     // get id react-select-4-option-1
@@ -98,7 +96,7 @@ describe('TVDB Integration', () => {
     cy.visit(ROUTES.tomorrowIsOursTvShow);
 
     // Verify that multiple seasons are displayed (TMDB has only 1 season, TVDB has multiple)
-    //cy.get(SELECTORS.seasonSelector).should('exist');
+    // cy.get(SELECTORS.seasonSelector).should('exist');
     cy.intercept('/api/v1/tv/225634/season/1').as('season1');
     // Select Season 2 and verify it loads
     cy.contains(SELECTORS.season2)

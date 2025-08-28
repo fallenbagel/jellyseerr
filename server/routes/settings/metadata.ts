@@ -53,8 +53,8 @@ metadataRoutes.put('/', async (req, res) => {
       tmdbTest = 1;
     }
   } catch (e) {
-    logger.error('Failed to test indexers', {
-      label: 'Metadata',
+    logger.error('Failed to test metadata provider', {
+      label: 'MetadataProvider',
       message: e.message,
     });
   }
@@ -102,8 +102,8 @@ metadataRoutes.post('/test', async (req, res) => {
         tmdbTest = 1;
       }
     } catch (e) {
-      logger.error('Failed to test indexers', {
-        label: 'Metadata',
+      logger.error('Failed to test metadata provider', {
+        label: 'MetadataProvider',
         message: e.message,
       });
     }
@@ -116,8 +116,8 @@ metadataRoutes.post('/test', async (req, res) => {
         tvdbTest = 1;
       }
     } catch (e) {
-      logger.error('Failed to test indexers', {
-        label: 'Metadata',
+      logger.error('Failed to test metadata provider', {
+        label: 'MetadataProvider',
         message: e.message,
       });
     }
