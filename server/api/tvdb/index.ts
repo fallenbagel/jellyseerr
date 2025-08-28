@@ -65,13 +65,8 @@ class Tvdb extends ExternalAPI implements TvShowProvider {
 
   public static async getInstance(): Promise<Tvdb> {
     if (!this.instance) {
-      try {
-        this.instance = new Tvdb();
-        await this.instance.login();
-      } catch (error) {
-        logger.error(`Failed to login to TVDB: ${error.message}`);
-        throw new Error('TVDB API key is not set');
-      }
+      this.instance = new Tvdb();
+      await this.instance.login();
     }
 
     return this.instance;
