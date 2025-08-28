@@ -1151,6 +1151,7 @@
   "components.Settings.menuJellyfinSettings": "{mediaServerName}",
   "components.Settings.menuJobs": "Jobs & Cache",
   "components.Settings.menuLogs": "Logs",
+  "components.Settings.menuMetadataProviders": "Metadata Providers",
   "components.Settings.menuNetwork": "Network",
   "components.Settings.menuNotifications": "Notifications",
   "components.Settings.menuPlexSettings": "Plex",

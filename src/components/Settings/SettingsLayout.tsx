@@ -18,6 +18,7 @@ const messages = defineMessages('components.Settings', {
   menuLogs: 'Logs',
   menuJobs: 'Jobs & Cache',
   menuAbout: 'About',
+  menuMetadataProviders: 'Metadata Providers',
 });
 
 type SettingsLayoutProps = {
@@ -60,7 +61,7 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       regex: /^\/settings\/network/,
     },
     {
-      text: 'Metadata',
+      text: intl.formatMessage(messages.menuMetadataProviders),
       route: '/settings/metadata',
       regex: /^\/settings\/metadata/,
     },
