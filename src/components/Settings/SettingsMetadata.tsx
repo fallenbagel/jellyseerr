@@ -32,9 +32,12 @@ const messages = defineMessages('components.Settings', {
   tmdbProviderDoesnotWork:
     'TMDB provider does not work, please select another metadata provider',
   tvdbProviderDoesnotWork:
-    'TVDB provider does not work, please select metadata another provider',
+    'TVDB provider does not work, please select another metadata provider',
   allChosenProvidersAreOperational:
     'All chosen metadata providers are operational',
+  connectionTestFailed: 'Connection test failed',
+  failedToSaveMetadataSettings: 'Failed to save metadata provider settings',
+  metadataSettingsSaved: 'Metadata provider settings saved',
 });
 
 type ProviderStatus = 'ok' | 'not tested' | 'failed';
@@ -310,11 +313,16 @@ const SettingsMetadata = () => {
                 data.metadata = result.metadata;
               }
 
-              addToast('Metadata settings saved', { appearance: 'success' });
-            } catch (e) {
-              addToast('Failed to save metadata settings', {
-                appearance: 'error',
+              addToast(intl.formatMessage(messages.metadataSettingsSaved), {
+                appearance: 'success',
               });
+            } catch (e) {
+              addToast(
+                intl.formatMessage(messages.failedToSaveMetadataSettings),
+                {
+                  appearance: 'error',
+                }
+              );
             }
           }}
         >
@@ -407,10 +415,13 @@ const SettingsMetadata = () => {
                               );
                             }
                           } catch (e) {
-                            addToast('Connection test failed', {
-                              appearance: 'error',
-                              autoDismiss: true,
-                            });
+                            addToast(
+                              intl.formatMessage(messages.connectionTestFailed),
+                              {
+                                appearance: 'error',
+                                autoDismiss: true,
+                              }
+                            );
                           } finally {
                             setIsTesting(false);
                           }
