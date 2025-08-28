@@ -110,7 +110,7 @@ const SettingsMetadata = () => {
       return newStatus;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        // Si nous recevons une réponse d'erreur avec un format valide
+        // If we receive an error response with a valid format
         const errorData = error.response.data as {
           success: boolean;
           tests: ProviderResponse;
@@ -127,7 +127,7 @@ const SettingsMetadata = () => {
         }
       }
 
-      // En cas d'erreur sans données utilisables
+      // In case of error without usable data
       throw new Error('Failed to test connection');
     }
   };
@@ -149,7 +149,7 @@ const SettingsMetadata = () => {
         anime: values.anime,
       });
 
-      // Mettre à jour le statut des providers si disponible
+      // Update metadata provider status if available
       if (response.data.tests) {
         const mapStatusValue = (status: string): ProviderStatus => {
           if (status === 'ok') return 'ok';
@@ -163,7 +163,7 @@ const SettingsMetadata = () => {
         });
       }
 
-      // Adapter la réponse au format attendu par le composant
+      // Adapt the response to the format expected by the component
       return {
         metadata: {
           tv: response.data.tv,
@@ -171,7 +171,7 @@ const SettingsMetadata = () => {
         },
       };
     } catch (error) {
-      // Récupérer les données de test en cas d'erreur
+      // Retrieve test data in case of error
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data as {
           success: boolean;
@@ -181,7 +181,7 @@ const SettingsMetadata = () => {
           };
         };
 
-        // Si des données de test sont disponibles dans la réponse d'erreur
+        // If test data is available in the error response
         if (errorData.tests) {
           const mapStatusValue = (status: string): ProviderStatus => {
             if (status === 'ok') return 'ok';
@@ -189,7 +189,7 @@ const SettingsMetadata = () => {
             return 'not tested';
           };
 
-          // Mettre à jour le statut des providers avec les données d'erreur
+          // Update metadata provider status with error data
           setProviderStatus({
             tmdb: mapStatusValue(errorData.tests.tmdb),
             tvdb: mapStatusValue(errorData.tests.tvdb),
