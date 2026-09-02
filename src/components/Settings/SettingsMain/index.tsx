@@ -237,6 +237,7 @@ const SettingsMain = () => {
                 ],
               });
               mutate('/api/v1/settings/public');
+              mutate('/api/v1/status');
               mutate('/api/v1/status?checkUpdateAvailable=false');
 
               if (setLocale) {
