@@ -43,12 +43,14 @@ import { URL } from 'url';
 import { z } from 'zod';
 import metadataRoutes from './metadata';
 import notificationRoutes from './notifications';
+import oidcRoutes from './oidc';
 import radarrRoutes from './radarr';
 import sonarrRoutes from './sonarr';
 
 const settingsRoutes = Router();
 
 settingsRoutes.use('/notifications', notificationRoutes);
+settingsRoutes.use('/oidc', oidcRoutes);
 settingsRoutes.use('/radarr', radarrRoutes);
 settingsRoutes.use('/sonarr', sonarrRoutes);
 settingsRoutes.use('/discover', discoverSettingRoutes);

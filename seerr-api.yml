@@ -253,6 +253,78 @@ components:
         versionCheck:
           type: boolean
           example: false
+        oidcLogin:
+          type: boolean
+          example: false
+    PublicOidcProvider:
+      type: object
+      readOnly: true
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+        logo:
+          type: string
+      required:
+        - slug
+        - name
+    OidcProvider:
+      type: object
+      required:
+        - slug
+        - name
+        - issuerUrl
+        - clientId
+        - clientSecret
+      properties:
+        slug:
+          type: string
+          description: URL- and cookie-safe provider identifier
+          example: keycloak
+        name:
+          type: string
+          example: Keycloak
+        issuerUrl:
+          type: string
+          format: uri
+          description: Base URL of the provider's OpenID Connect discovery endpoint
+          example: https://keycloak.example.com/realms/master/
+        clientId:
+          type: string
+        clientSecret:
+          type: string
+        logo:
+          type: string
+          description: URL of a logo shown on the login button
+        requiredClaims:
+          type: string
+          description: Space-separated list of ID token claims the user must satisfy
+          example: email_verified
+        scopes:
+          type: string
+          description: Space-separated OAuth scopes to request
+          example: openid profile email
+        newUserLogin:
+          type: boolean
+          description: Create a new user account on first sign-in
+          example: false
+    OidcSettings:
+      type: object
+      properties:
+        providers:
+          type: array
+          items:
+            $ref: '#/components/schemas/OidcProvider'
+    LinkedAccount:
+      type: object
+      properties:
+        id:
+          type: number
+        username:
+          type: string
+        provider:
+          $ref: '#/components/schemas/PublicOidcProvider'
     NetworkSettings:
       type: object
       properties:
@@ -717,6 +789,13 @@ components:
           format: uuid
           description: Instance Plex OAuth client identifier
           example: 6919275e-142a-48d8-be6b-93594cbd4626
+        openIdProviders:
+          type: array
+          description: >-
+            OpenID Connect providers available for sign-in. Only exposed when
+            OpenID Connect sign-in is enabled.
+          items:
+            $ref: '#/components/schemas/PublicOidcProvider'
     MovieResult:
       type: object
       required:
@@ -2211,6 +2290,89 @@ paths:
                   appDataPermissions:
                     type: boolean
                     example: true
+  /settings/oidc:
+    get:
+      summary: Get OpenID Connect settings
+      description: Retrieves all configured OpenID Connect providers.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OidcSettings'
+    post:
+      summary: Update OpenID Connect settings
+      description: >-
+        Replaces the full list of OpenID Connect providers. Linked accounts
+        referencing providers that no longer exist are removed automatically.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OidcSettings'
+      responses:
+        '200':
+          description: Providers were successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OidcSettings'
+        '400':
+          description: Invalid provider configuration (e.g. duplicate or malformed slugs)
+  /settings/oidc/test:
+    post:
+      summary: Test OpenID Connect provider discovery
+      description: >-
+        Attempts OIDC discovery against the provided issuer URL and client
+        credentials without saving anything.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - issuerUrl
+                - clientId
+                - clientSecret
+              properties:
+                issuerUrl:
+                  type: string
+                  format: uri
+                clientId:
+                  type: string
+                clientSecret:
+                  type: string
+      responses:
+        '200':
+          description: Discovery succeeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          description: Invalid request body
+        '500':
+          description: Discovery failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'OIDC_PROVIDER_DISCOVERY_FAILED'
   /settings/main:
     get:
       summary: Get main settings
@@ -4192,6 +4354,134 @@ paths:
               required:
                 - email
                 - password
+  /auth/oidc/login/{slug}:
+    get:
+      summary: Initiate OpenID Connect login
+      description: Initiates the OpenID Connect authorization code flow with PKCE for the specified provider. Returns a redirect URL to the provider's authorization endpoint.
+      security: []
+      tags:
+        - auth
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+          description: Provider slug
+        - in: query
+          name: returnUrl
+          required: false
+          allowReserved: true
+          schema:
+            type: string
+            format: uri-reference
+          description: URL to redirect to after login. Defaults to /login if not specified.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  redirectUrl:
+                    type: string
+        '403':
+          description: OpenID Connect sign-in is disabled or provider not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'UNAUTHORIZED'
+        '500':
+          description: An error occurred while creating the authorization redirect
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'OIDC_AUTHORIZATION_FAILED'
+  /auth/oidc/callback/{slug}:
+    post:
+      summary: Handle OpenID Connect callback
+      description: Handles the authorization code callback from the OpenID Connect provider. Exchanges the code for tokens, validates claims, and either logs in an existing user, links the account to the currently logged-in user, or creates a new user if allowed.
+      security: []
+      tags:
+        - auth
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+          description: Provider slug
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - callbackUrl
+              properties:
+                callbackUrl:
+                  type: string
+                  format: uri
+                  description: The full callback URL including the authorization code and any other parameters returned by the OIDC provider (e.g. https://example.com/login?code=xxx).
+                  example: 'https://example.com/login?code=xxx'
+      responses:
+        '204':
+          description: Authentication successful. No response body.
+        '400':
+          description: >-
+            Unable to create account (e.g. missing email address), or the
+            signed correlation cookies (state / PKCE verifier) are missing or
+            invalid, or the callback URL is not a valid absolute URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    enum:
+                      - 'OIDC_MISSING_EMAIL'
+                      - 'OIDC_AUTHORIZATION_FAILED'
+        '403':
+          description: OpenID Connect sign-in is disabled, provider not found, or user does not meet required claims
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'UNAUTHORIZED'
+        '409':
+          description: The OIDC account is already linked to a different user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'OIDC_ACCOUNT_ALREADY_LINKED'
+        '500':
+          description: An error occurred (e.g. provider discovery failed, authorization failed)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'OIDC_AUTHORIZATION_FAILED'
   /auth/logout:
     post:
       summary: Sign out and clear session cookie
@@ -5229,6 +5519,29 @@ paths:
       responses:
         '204':
           description: User password updated
+  /user/{userId}/settings/linked-accounts:
+    get:
+      summary: Lists the user's linked OpenID Connect accounts
+      description: Lists the user's linked OpenID Connect accounts
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: List of linked accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LinkedAccount'
+        '403':
+          description: Insufficient permissions
   /user/{userId}/settings/linked-accounts/plex:
     post:
       summary: Link the provided Plex account to the current user
@@ -5361,6 +5674,32 @@ paths:
           description: Account already linked
         '500':
           description: Server error
+  /user/{userId}/settings/linked-accounts/{acctId}:
+    delete:
+      summary: Remove a linked account for a user
+      description: Removes the linked account with the given ID for a specific user. Requires `MANAGE_USERS` permission if editing other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: path
+          name: acctId
+          required: true
+          schema:
+            type: number
+      responses:
+        '204':
+          description: Unlinking account succeeded
+        '400':
+          description: Unlink request invalid
+        '403':
+          description: Insufficient permissions
+        '404':
+          description: User or linked account does not exist
   /user/{userId}/settings/notifications:
     get:
       summary: Get notification settings for a user

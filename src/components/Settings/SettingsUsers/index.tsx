@@ -1,19 +1,27 @@
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
+import ConfirmButton from '@app/components/Common/ConfirmButton';
 import LabeledCheckbox from '@app/components/Common/LabeledCheckbox';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
 import PermissionEdit from '@app/components/PermissionEdit';
 import QuotaSelector from '@app/components/QuotaSelector';
+import OidcProviderModal from '@app/components/Settings/SettingsUsers/OidcProviderModal';
 import useSettings from '@app/hooks/useSettings';
 import useToasts from '@app/hooks/useToasts';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
-import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowDownOnSquareIcon,
+  PencilIcon,
+  PlusIcon,
+} from '@heroicons/react/24/outline';
+import { TrashIcon } from '@heroicons/react/24/solid';
 import { MediaServerType } from '@server/constants/server';
-import type { MainSettings } from '@server/lib/settings';
+import type { MainSettings, OidcProvider } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
 import * as yup from 'yup';
@@ -32,6 +40,16 @@ const messages = defineMessages('components.Settings.SettingsUsers', {
   mediaServerLogin: 'Enable {mediaServerName} Sign-In',
   mediaServerLoginTip:
     'Allow users to sign in using their {mediaServerName} account',
+  oidcLogin: 'Enable OpenID Connect Sign-In',
+  oidcLoginTip: 'Allow users to sign in with an OpenID Connect provider',
+  oidcProviders: 'OpenID Connect Providers',
+  oidcProvidersTip: 'Configure OpenID Connect identity providers.',
+  addProvider: 'Add Provider',
+  noProviders: 'No OpenID Connect providers configured.',
+  toastProviderSuccess: 'Provider saved successfully!',
+  toastProviderFailure: 'Something went wrong while saving the provider.',
+  toastProviderDeleteFailure:
+    'Something went wrong while deleting the provider.',
   atLeastOneAuth: 'At least one authentication method must be selected.',
   newPlexLogin: 'Enable New {mediaServerName} Sign-In',
   newPlexLoginTip:
@@ -52,6 +70,12 @@ const SettingsUsers = () => {
     error,
     mutate: revalidate,
   } = useSWR<MainSettings>('/api/v1/settings/main');
+  const { data: oidcSettings, mutate: revalidateOidcSettings } = useSWR<{
+    providers: OidcProvider[];
+  }>('/api/v1/settings/oidc');
+  const [modalProvider, setModalProvider] = useState<
+    OidcProvider | null | undefined
+  >(undefined);
   const settings = useSettings();
 
   const schema = yup
@@ -59,12 +83,17 @@ const SettingsUsers = () => {
     .shape({
       localLogin: yup.boolean(),
       mediaServerLogin: yup.boolean(),
+      oidcLogin: yup.boolean(),
     })
     .test({
       name: 'atLeastOneAuth',
       test: function (values) {
         const isValid = (
-          ['localLogin', 'mediaServerLogin'] as (keyof typeof values)[]
+          [
+            'localLogin',
+            'mediaServerLogin',
+            'oidcLogin',
+          ] as (keyof typeof values)[]
         ).some((field) => !!values[field]);
 
         if (isValid) return true;
@@ -90,6 +119,27 @@ const SettingsUsers = () => {
             : undefined,
   };
 
+  const deleteProvider = async (provider: OidcProvider) => {
+    try {
+      await axios.post('/api/v1/settings/oidc', {
+        providers: (oidcSettings?.providers ?? []).filter(
+          (p) => p.slug !== provider.slug
+        ),
+      });
+      await revalidateOidcSettings();
+      mutate('/api/v1/settings/public');
+      addToast(intl.formatMessage(messages.toastProviderSuccess), {
+        autoDismiss: true,
+        appearance: 'success',
+      });
+    } catch {
+      addToast(intl.formatMessage(messages.toastProviderDeleteFailure), {
+        autoDismiss: true,
+        appearance: 'error',
+      });
+    }
+  };
+
   return (
     <>
       <PageTitle
@@ -109,6 +159,7 @@ const SettingsUsers = () => {
           initialValues={{
             localLogin: data?.localLogin,
             mediaServerLogin: data?.mediaServerLogin,
+            oidcLogin: data?.oidcLogin,
             newPlexLogin: data?.newPlexLogin,
             movieQuotaLimit: data?.defaultQuotas.movie.quotaLimit ?? 0,
             movieQuotaDays: data?.defaultQuotas.movie.quotaDays ?? 7,
@@ -123,6 +174,7 @@ const SettingsUsers = () => {
               await axios.post('/api/v1/settings/main', {
                 localLogin: values.localLogin,
                 mediaServerLogin: values.mediaServerLogin,
+                oidcLogin: values.oidcLogin,
                 newPlexLogin: values.newPlexLogin,
                 defaultQuotas: {
                   movie: {
@@ -201,6 +253,15 @@ const SettingsUsers = () => {
                             'mediaServerLogin',
                             !values.mediaServerLogin
                           )
+                        }
+                      />
+                      <LabeledCheckbox
+                        id="oidcLogin"
+                        className="mt-4"
+                        label={intl.formatMessage(messages.oidcLogin)}
+                        description={intl.formatMessage(messages.oidcLoginTip)}
+                        onChange={() =>
+                          setFieldValue('oidcLogin', !values.oidcLogin)
                         }
                       />
                       {!values.mediaServerLogin && values.localLogin && (
@@ -323,6 +384,104 @@ const SettingsUsers = () => {
           }}
         </Formik>
       </div>
+
+      <div className="section">
+        <div role="group" aria-labelledby="group-label" className="form-group">
+          <div className="form-row">
+            <span id="group-label" className="group-label">
+              {intl.formatMessage(messages.oidcProviders)}
+              <span className="label-tip">
+                {intl.formatMessage(messages.oidcProvidersTip)}
+              </span>
+            </span>
+            <div className="form-input-area">
+              <div className="flex max-w-lg flex-col">
+                {oidcSettings?.providers.length ? (
+                  <ul className="flex flex-col gap-4">
+                    {oidcSettings.providers.map((provider) => (
+                      <li
+                        key={provider.slug}
+                        className="flex items-center gap-4 overflow-hidden rounded-lg bg-gray-800/50 px-4 py-5 shadow ring-1 ring-gray-700 sm:p-6"
+                      >
+                        <div className="w-10 shrink-0">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={provider.logo || '/images/openid.svg'}
+                            alt={provider.name}
+                            className="h-10 w-10"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="truncate text-sm font-bold text-gray-300">
+                            {provider.name}
+                          </div>
+                          <div className="text-xl font-semibold text-white">
+                            {provider.slug}
+                          </div>
+                          <div className="truncate text-sm text-gray-400">
+                            {provider.issuerUrl}
+                          </div>
+                        </div>
+                        <div className="flex-grow" />
+                        <Button
+                          buttonType="primary"
+                          onClick={() => setModalProvider(provider)}
+                        >
+                          <PencilIcon />
+                          <span>{intl.formatMessage(globalMessages.edit)}</span>
+                        </Button>
+                        <ConfirmButton
+                          onClick={() => deleteProvider(provider)}
+                          confirmText={intl.formatMessage(
+                            globalMessages.areyousure
+                          )}
+                        >
+                          <TrashIcon />
+                          <span>
+                            {intl.formatMessage(globalMessages.delete)}
+                          </span>
+                        </ConfirmButton>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-center font-semibold text-gray-400">
+                    {intl.formatMessage(messages.noProviders)}
+                  </p>
+                )}
+                <div className="mt-4 flex justify-end">
+                  <span className="inline-flex rounded-md shadow-sm">
+                    <Button
+                      buttonType="primary"
+                      onClick={() => setModalProvider(null)}
+                    >
+                      <PlusIcon />
+                      <span>{intl.formatMessage(messages.addProvider)}</span>
+                    </Button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {modalProvider !== undefined && (
+        <OidcProviderModal
+          provider={modalProvider}
+          providers={oidcSettings?.providers ?? []}
+          onClose={() => setModalProvider(undefined)}
+          onSaved={async () => {
+            setModalProvider(undefined);
+            await revalidateOidcSettings();
+            mutate('/api/v1/settings/public');
+            addToast(intl.formatMessage(messages.toastProviderSuccess), {
+              autoDismiss: true,
+              appearance: 'success',
+            });
+          }}
+        />
+      )}
     </>
   );
 };
