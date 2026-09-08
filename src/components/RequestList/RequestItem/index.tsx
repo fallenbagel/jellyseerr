@@ -14,6 +14,7 @@ import {
   getRequestDownloadStatus,
   refreshIntervalHelper,
 } from '@app/utils/refreshIntervalHelper';
+import getRequestedSeasonsStatus from '@app/utils/requestStatus';
 import {
   ArrowPathIcon,
   CheckIcon,
@@ -146,11 +147,7 @@ const RequestItemError = ({
                   </Badge>
                 ) : (
                   <StatusBadge
-                    status={
-                      requestData.media[
-                        requestData.is4k ? 'status4k' : 'status'
-                      ]
-                    }
+                    status={getRequestedSeasonsStatus(requestData)}
                     downloadItem={requestDownloadStatus}
                     title={intl.formatMessage(messages.unknowntitle)}
                     inProgress={requestDownloadStatus.length > 0}
@@ -544,9 +541,7 @@ const RequestItem = ({ request, revalidateList }: RequestItemProps) => {
                 </Badge>
               ) : (
                 <StatusBadge
-                  status={
-                    requestData.media[requestData.is4k ? 'status4k' : 'status']
-                  }
+                  status={getRequestedSeasonsStatus(requestData)}
                   downloadItem={requestDownloadStatus}
                   title={isMovie(title) ? title.title : title.name}
                   inProgress={requestDownloadStatus.length > 0}
