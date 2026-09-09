@@ -1,6 +1,6 @@
 import csurf from '@dr.pogodin/csurf';
 import PlexAPI from '@server/api/plexapi';
-import dataSource, { getRepository, isPgsql } from '@server/datasource';
+import dataSource, { getRepository } from '@server/datasource';
 import DiscoverSlider from '@server/entity/DiscoverSlider';
 import { Session } from '@server/entity/Session';
 import { User } from '@server/entity/User';
@@ -29,8 +29,10 @@ import { getAppVersion } from '@server/utils/appVersion';
 import createCustomProxyAgent, {
   setForceIpv4First,
 } from '@server/utils/customProxyAgent';
+import { isPgsql } from '@server/utils/dbType';
 import { initializeDnsCache } from '@server/utils/dnsCache';
 import restartFlag from '@server/utils/restartFlag';
+import '@server/utils/userAgent';
 import { getClientIp } from '@supercharge/request-ip';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
@@ -120,7 +122,17 @@ app
         });
 
         const plexapi = new PlexAPI({ plexToken: admin.plexToken });
-        await plexapi.syncLibraries();
+
+        try {
+          await plexapi.syncLibraries();
+        } catch {
+          // Leave the existing libraries untouched so the migration retries on
+          // the next startup instead of discarding the user's configuration
+          logger.warn(
+            'Failed to migrate Plex libraries; will retry on next startup',
+            { label: 'Settings' }
+          );
+        }
       }
     }
 

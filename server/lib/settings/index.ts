@@ -142,6 +142,7 @@ export interface MainSettings {
   hideAvailable: boolean;
   hideBlocklisted: boolean;
   skipBlocklistModal: boolean;
+  hideRequested: boolean;
   localLogin: boolean;
   mediaServerLogin: boolean;
   newPlexLogin: boolean;
@@ -157,6 +158,7 @@ export interface MainSettings {
   enableSpecialEpisodes: boolean;
   locale: string;
   youtubeUrl: string;
+  versionCheck: boolean;
 }
 
 export interface ProxySettings {
@@ -195,6 +197,7 @@ interface FullPublicSettings extends PublicSettings {
   hideAvailable: boolean;
   hideBlocklisted: boolean;
   skipBlocklistModal: boolean;
+  hideRequested: boolean;
   localLogin: boolean;
   mediaServerLogin: boolean;
   movie4kEnabled: boolean;
@@ -216,6 +219,7 @@ interface FullPublicSettings extends PublicSettings {
   userEmailRequired: boolean;
   newPlexLogin: boolean;
   youtubeUrl: string;
+  versionCheck: boolean;
   plexClientIdentifier: string;
 }
 
@@ -312,6 +316,7 @@ export interface NotificationAgentNtfy extends NotificationAgentConfig {
   options: {
     url: string;
     topic: string;
+    tags?: string;
     authMethodUsernamePassword?: boolean;
     username?: string;
     password?: string;
@@ -417,6 +422,7 @@ class Settings {
         hideAvailable: false,
         hideBlocklisted: false,
         skipBlocklistModal: false,
+        hideRequested: false,
         localLogin: true,
         mediaServerLogin: true,
         newPlexLogin: true,
@@ -432,6 +438,7 @@ class Settings {
         enableSpecialEpisodes: false,
         locale: 'en',
         youtubeUrl: '',
+        versionCheck: true,
       },
       plex: {
         name: '',
@@ -563,6 +570,7 @@ class Settings {
             options: {
               url: '',
               topic: '',
+              tags: '',
               priority: 3,
               locale: 'en',
             },
@@ -712,7 +720,9 @@ class Settings {
       applicationUrl: this.data.main.applicationUrl,
       hideAvailable: this.data.main.hideAvailable,
       hideBlocklisted: this.data.main.hideBlocklisted,
-      skipBlocklistModal: this.data.main.skipBlocklistModal,
+      
+      BlocklistModal: this.data.main.skipBlocklistModal,
+      hideRequested: this.data.main.hideRequested,
       localLogin: this.data.main.localLogin,
       mediaServerLogin: this.data.main.mediaServerLogin,
       jellyfinExternalHost: this.data.jellyfin.externalHostname,
@@ -738,6 +748,7 @@ class Settings {
         this.data.notifications.agents.email.options.userEmailRequired,
       newPlexLogin: this.data.main.newPlexLogin,
       youtubeUrl: this.data.main.youtubeUrl,
+      versionCheck: this.data.main.versionCheck,
       plexClientIdentifier: this.data.clientId,
     };
   }

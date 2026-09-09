@@ -1,5 +1,6 @@
 import logger from '@server/logger';
 import { proxyRequestInterceptor } from '@server/utils/customProxyAgent';
+import { userAgentRequestInterceptor } from '@server/utils/userAgent';
 import axios, { type AxiosInstance } from 'axios';
 import rateLimit, { type rateLimitOptions } from 'axios-rate-limit';
 import { createHash } from 'crypto';
@@ -148,6 +149,7 @@ class ImageProxy {
       headers: options.headers,
     });
     this.axios.interceptors.request.use(proxyRequestInterceptor);
+    this.axios.interceptors.request.use(userAgentRequestInterceptor);
 
     if (options.rateLimitOptions) {
       this.axios = rateLimit(this.axios, options.rateLimitOptions);
@@ -270,7 +272,10 @@ class ImageProxy {
       const buffer = Buffer.from(response.data, 'binary');
 
       const contentType = response.headers['content-type'] || '';
-      const extension = mime.getExtension(contentType) || '';
+      const extension = (mime.getExtension(contentType) || '').replace(
+        /[^\w-]/g,
+        ''
+      );
 
       let maxAge = Number(
         (response.headers['cache-control'] ?? '0').split('=')[1]
@@ -278,7 +283,7 @@ class ImageProxy {
 
       if (!maxAge) maxAge = 86400;
       const expireAt = Date.now() + maxAge * 1000;
-      const etag = (response.headers.etag ?? '').replace(/"/g, '');
+      const etag = (response.headers.etag ?? '').replace(/[^\w-]/g, '');
 
       await this.writeToCacheDir(
         directory,
