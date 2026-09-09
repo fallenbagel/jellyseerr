@@ -197,6 +197,42 @@ export class MediaRequest {
       ) {
         media.status4k = MediaStatus.PENDING;
       }
+
+      const resolvedTvdbId =
+        media.tvdbId ?? requestBody.tvdbId ?? tmdbMedia.external_ids.tvdb_id;
+
+      if (resolvedTvdbId && resolvedTvdbId !== media.tvdbId) {
+        const conflict = await mediaRepository.findOne({
+          where: { tvdbId: resolvedTvdbId },
+        });
+
+        // written on its own so a unique violation cannot take the status
+        // changes above down with it
+        if (!conflict) {
+          try {
+            await mediaRepository.update(media.id, {
+              tvdbId: resolvedTvdbId,
+            });
+            media.tvdbId = resolvedTvdbId;
+          } catch (e) {
+            logger.warn('Failed to persist TVDB ID for existing media', {
+              label: 'Media Request',
+              mediaId: media.id,
+              tvdbId: resolvedTvdbId,
+              errorMessage: e instanceof Error ? e.message : String(e),
+            });
+          }
+        } else {
+          logger.info(
+            'Skipped TVDB ID backfill, already owned by another media row',
+            {
+              label: 'Media Request',
+              mediaId: media.id,
+              tvdbId: resolvedTvdbId,
+            }
+          );
+        }
+      }
     }
 
     const existing = await requestRepository
