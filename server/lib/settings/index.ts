@@ -720,7 +720,6 @@ class Settings {
       applicationUrl: this.data.main.applicationUrl,
       hideAvailable: this.data.main.hideAvailable,
       hideBlocklisted: this.data.main.hideBlocklisted,
-      
       BlocklistModal: this.data.main.skipBlocklistModal,
       hideRequested: this.data.main.hideRequested,
       localLogin: this.data.main.localLogin,
