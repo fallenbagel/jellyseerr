@@ -292,13 +292,15 @@ class Tvdb extends ExternalAPI implements TvShowProvider {
 
   public async getOfficialSeasons(
     tvdbId: number
-  ): Promise<TvdbOfficialSeason[]> {
+  ): Promise<TvdbOfficialSeason[] | null> {
     await this.refreshToken();
 
     const tvdbData = await this.fetchTvdbShowData(tvdbId);
 
+    // an incomplete record confirms nothing, unlike a show that really has
+    // no official seasons
     if (!tvdbData?.seasons || !tvdbData.episodes) {
-      return [];
+      return null;
     }
 
     return tvdbData.seasons

@@ -505,13 +505,13 @@ export class MediaRequestSubscriber implements EntitySubscriberInterface<MediaRe
 
   private async getOfficialTvdbSeasons(
     tvdbId: number
-  ): Promise<TvdbOfficialSeason[]> {
+  ): Promise<TvdbOfficialSeason[] | null> {
     try {
       const tvdb = await Tvdb.getInstance();
 
       return await tvdb.getOfficialSeasons(tvdbId);
     } catch {
-      return [];
+      return null;
     }
   }
 
@@ -671,6 +671,29 @@ export class MediaRequestSubscriber implements EntitySubscriberInterface<MediaRe
         // can diverge from Sonarr's
         if (!series.external_ids.tvdb_id) {
           const tvdbSeasons = await this.getOfficialTvdbSeasons(tvdbId);
+
+          if (!tvdbSeasons) {
+            const requestRepository = manager.getRepository(MediaRequest);
+            entity.status = MediaRequestStatus.FAILED;
+            await requestRepository.save(entity);
+
+            logger.warn(
+              'Could not confirm the TVDB season numbering for series request, marking status as FAILED',
+              {
+                label: 'Media Request',
+                requestId: entity.id,
+                mediaId: entity.media.id,
+                tvdbId,
+              }
+            );
+
+            MediaRequest.sendNotification(
+              entity,
+              media,
+              Notification.MEDIA_FAILED
+            );
+            return;
+          }
 
           const unmatchedSeasons = entity.seasons
             .map((season) => season.seasonNumber)

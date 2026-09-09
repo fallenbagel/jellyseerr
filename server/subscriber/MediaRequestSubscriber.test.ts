@@ -90,7 +90,7 @@ function stubProviders({
   sonarrSeries = null,
 }: {
   resolveTvdbId?: number | null;
-  officialSeasons?: TvdbOfficialSeason[];
+  officialSeasons?: TvdbOfficialSeason[] | null | Error;
   sonarrSeries?: Partial<SonarrSeries> | null;
 }) {
   mock.method(
@@ -99,7 +99,13 @@ function stubProviders({
     async () =>
       ({
         resolveTvdbId: async () => resolveTvdbId,
-        getOfficialSeasons: async () => officialSeasons,
+        getOfficialSeasons: async () => {
+          if (officialSeasons instanceof Error) {
+            throw officialSeasons;
+          }
+
+          return officialSeasons;
+        },
       }) as unknown as Tvdb
   );
 
@@ -355,6 +361,53 @@ describe('MediaRequestSubscriber sendToSonarr, season guard', () => {
 
     const options = addSeries.calls[0].arguments[0] as { seasons: number[] };
     assert.deepStrictEqual(options.seasons.sort(), [0, 1]);
+  });
+
+  it('fails the request when the TVDB season lookup throws', async () => {
+    tvShow = fakeShow(90016, [{ season_number: 1, air_date: '2020-01-05' }]);
+    const addSeries = stubProviders({
+      resolveTvdbId: 184871,
+      officialSeasons: new Error('connect ECONNREFUSED'),
+    });
+
+    const { entity } = await seedApprovedRequest(90016, [1]);
+    await run(entity);
+
+    assert.strictEqual(entity.status, MediaRequestStatus.FAILED);
+    assert.strictEqual(addSeries.callCount(), 0);
+    assert.strictEqual(
+      sendNotification.calls[0].arguments[2],
+      Notification.MEDIA_FAILED
+    );
+  });
+
+  it('fails the request when TheTVDB returns an incomplete record', async () => {
+    tvShow = fakeShow(90017, [{ season_number: 1, air_date: '2020-01-05' }]);
+    const addSeries = stubProviders({
+      resolveTvdbId: 184871,
+      officialSeasons: null,
+    });
+
+    const { entity } = await seedApprovedRequest(90017, [1]);
+    await run(entity);
+
+    assert.strictEqual(entity.status, MediaRequestStatus.FAILED);
+    assert.strictEqual(addSeries.callCount(), 0);
+    assert.strictEqual(sendNotification.callCount(), 1);
+  });
+
+  it('dispatches when TheTVDB confirms the show has no official seasons', async () => {
+    tvShow = fakeShow(90018, [{ season_number: 1, air_date: '2020-01-05' }]);
+    const addSeries = stubProviders({
+      resolveTvdbId: 184871,
+      officialSeasons: [],
+    });
+
+    const { entity } = await seedApprovedRequest(90018, [1]);
+    await run(entity);
+
+    assert.strictEqual(addSeries.callCount(), 1);
+    assert.strictEqual(entity.status, MediaRequestStatus.APPROVED);
   });
 
   it('dispatches a specials-only request', async () => {
