@@ -1129,6 +1129,28 @@ describe('POST /request (tv), TVDB ID backfill', () => {
     assert.strictEqual(updated.tvdbId, 184871);
   });
 
+  it('creates untracked media without the TVDB ID when another row owns it', async () => {
+    getSettings().radarr = [];
+    getSettings().sonarr = [];
+
+    await seedUntrackedShow(87012, 184871);
+
+    const agent = await loginAs('friend@seerr.dev', 'test1234');
+    const res = await agent.post('/request').send({
+      mediaType: MediaType.TV,
+      mediaId: 34549,
+      seasons: [1],
+      tvdbId: 184871,
+    });
+
+    assert.strictEqual(res.status, 201);
+
+    const created = await getRepository(Media).findOneOrFail({
+      where: { tmdbId: 34549 },
+    });
+    assert.strictEqual(created.tvdbId, null);
+  });
+
   it('skips the backfill when another media row already owns the TVDB ID', async () => {
     getSettings().radarr = [];
     getSettings().sonarr = [];
