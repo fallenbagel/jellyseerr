@@ -658,7 +658,23 @@ class BaseScanner<T> {
                   ? MediaStatus.PROCESSING
                   : MediaStatus.UNKNOWN,
         });
-        await mediaRepository.save(newMedia);
+
+        try {
+          await mediaRepository.save(newMedia);
+        } catch (e) {
+          if (!newMedia.tvdbId) {
+            throw e;
+          }
+
+          // the ownership check above is per-tmdbId, so a concurrent entry for
+          // the same series can claim the ID between checking and saving
+          this.log(
+            `Dropped TVDB ID ${newMedia.tvdbId} for ${title} after a conflict on save`
+          );
+          newMedia.tvdbId = undefined;
+          await mediaRepository.save(newMedia);
+        }
+
         this.log(`Saved ${title}`);
       }
     });
