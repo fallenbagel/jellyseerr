@@ -28,7 +28,8 @@ collectionRoutes.get<{ id: string }>('/:id', async (req, res, next) => {
       parts.map((part) => ({
         tmdbId: part.id,
         mediaType: MediaType.MOVIE,
-      }))
+      })),
+      { includeActiveRequest: true }
     );
 
     return res.status(200).json(mapCollection({ ...collection, parts }, media));

@@ -95,7 +95,8 @@ movieRoutes.get('/:id/recommendations', async (req, res, next) => {
       filteredResults.map((result) => ({
         tmdbId: result.id,
         mediaType: MediaType.MOVIE,
-      }))
+      })),
+      { includeActiveRequest: true }
     );
 
     return res.status(200).json({
@@ -143,7 +144,8 @@ movieRoutes.get('/:id/similar', async (req, res, next) => {
       filteredResults.map((result) => ({
         tmdbId: result.id,
         mediaType: MediaType.MOVIE,
-      }))
+      })),
+      { includeActiveRequest: true }
     );
 
     return res.status(200).json({
