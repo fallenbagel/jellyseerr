@@ -670,6 +670,23 @@ requestRoutes.post<{
       // aliases must land before the status flip, since saving the request is
       // what triggers dispatch
       if (seasonOverrides?.length) {
+        const requestedSeasons = request.seasons.map(
+          (season) => season.seasonNumber
+        );
+
+        // an alias is stored against the show, so accepting one for a season
+        // outside this request would affect media nobody asked about
+        if (
+          seasonOverrides.some(
+            (override) => !requestedSeasons.includes(override.seasonNumber)
+          )
+        ) {
+          return next({
+            status: 400,
+            message: 'Season overrides must refer to seasons in this request.',
+          });
+        }
+
         for (const override of seasonOverrides) {
           const season = request.media.seasons.find(
             (s) => s.seasonNumber === override.seasonNumber

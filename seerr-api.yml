@@ -6779,12 +6779,17 @@ paths:
                   type: array
                   items:
                     type: object
+                    required:
+                      - seasonNumber
+                      - dispatchedSeasonNumber
                     properties:
                       seasonNumber:
-                        type: number
+                        type: integer
+                        minimum: 0
                         example: 8
                       dispatchedSeasonNumber:
-                        type: number
+                        type: integer
+                        minimum: 0
                         example: 15
       responses:
         '200':

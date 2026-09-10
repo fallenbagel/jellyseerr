@@ -712,7 +712,8 @@ export class MediaRequestSubscriber implements EntitySubscriberInterface<MediaRe
               );
 
               // a season someone mapped by hand needs no year check
-              if (mediaSeason?.dispatchedSeasonNumber) {
+              // zero is a real season, and externalSeasonNumber accepts it too
+              if (mediaSeason?.dispatchedSeasonNumber != null) {
                 return false;
               }
 
