@@ -570,26 +570,11 @@ class BaseScanner<T> {
             (s) => s.status4k === MediaStatus.AVAILABLE
           );
 
-        let mediaTvdbId = tvdbId;
-
-        if (mediaTvdbId) {
-          const tvdbConflict = await mediaRepository.findOne({
-            where: { tvdbId: mediaTvdbId },
-          });
-
-          if (tvdbConflict) {
-            this.log(
-              `Skipping TVDB ID ${mediaTvdbId} for ${title}, already owned by TMDB ${tvdbConflict.tmdbId}`
-            );
-            mediaTvdbId = undefined;
-          }
-        }
-
         const newMedia = new Media({
           mediaType: MediaType.TV,
           seasons: newSeasons,
           tmdbId,
-          tvdbId: mediaTvdbId,
+          tvdbId,
           mediaAddedAt,
           serviceId: !is4k ? serviceId : undefined,
           serviceId4k: is4k ? serviceId : undefined,

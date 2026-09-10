@@ -635,16 +635,8 @@ export class MediaRequestSubscriber implements EntitySubscriberInterface<MediaRe
           );
 
           if (resolvedTvdbId) {
-            const conflict = await mediaRepository.findOne({
-              where: { tvdbId: resolvedTvdbId },
-            });
-
-            // deliberately uncaught: a unique violation would abort the request
-            // transaction on Postgres and break the FAILED save below
-            if (!conflict) {
-              media.tvdbId = resolvedTvdbId;
-              await mediaRepository.save(media);
-            }
+            media.tvdbId = resolvedTvdbId;
+            await mediaRepository.save(media);
           }
         }
 
