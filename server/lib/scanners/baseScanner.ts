@@ -546,6 +546,12 @@ class BaseScanner<T> {
                 : media.status4k === MediaStatus.DELETED
                   ? MediaStatus.DELETED
                   : MediaStatus.UNKNOWN;
+        // rows created before the series had an ID would otherwise never be
+        // found by a later scan, since that lookup is by TVDB ID
+        if (tvdbId && !media.tvdbId) {
+          media.tvdbId = tvdbId;
+        }
+
         await mediaRepository.save(media);
         this.log(`Updating existing title: ${title}`);
       } else {

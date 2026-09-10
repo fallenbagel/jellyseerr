@@ -914,8 +914,9 @@ describe('Sonarr Scanner', () => {
 
       // the unaliased row reads Sonarr season 1, which has every file
       assert.strictEqual(plain.seasons[0].status, MediaStatus.AVAILABLE);
-      // the aliased row reads Sonarr season 2, which has none
-      assert.notStrictEqual(aliased.seasons[0].status, MediaStatus.AVAILABLE);
+      // the aliased row reads Sonarr season 2, which has none, so it is
+      // demoted from PROCESSING rather than merely skipped
+      assert.strictEqual(aliased.seasons[0].status, MediaStatus.UNKNOWN);
     });
 
     it('resets every sibling row when the series leaves Sonarr', async () => {
