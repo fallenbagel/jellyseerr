@@ -267,8 +267,11 @@ app
         res: Response,
         // We must provide a next function for the function signature here even though its not used
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _next: NextFunction
+        next: NextFunction
       ) => {
+        if (res.headersSent) {
+          return next(err);
+        }
         // format error
         res.status(err.status || 500).json({
           message: err.message,
