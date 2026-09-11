@@ -140,9 +140,9 @@ const FilterSlideover = ({
         </div>
         {type === 'movie' && (
           <>
-            <span className="text-lg font-semibold">
+            <label htmlFor="releaseType" className="text-lg font-semibold">
               {intl.formatMessage(messages.minimumRelease)}
-            </span>
+            </label>
             <select
               id="releaseType"
               name="releaseType"
