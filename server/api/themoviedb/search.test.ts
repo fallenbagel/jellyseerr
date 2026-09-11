@@ -10,6 +10,7 @@ describe('normalizeSearchQuery', () => {
     );
     assert.equal(normalizeSearchQuery('Dune: Part Two'), 'dune part two');
     assert.equal(normalizeSearchQuery("don't"), 'dont');
+    assert.equal(normalizeSearchQuery('don\u2019t'), 'dont');
     assert.equal(normalizeSearchQuery('café'), 'cafe');
     assert.equal(normalizeSearchQuery('A   B\tC'), 'a b c');
   });

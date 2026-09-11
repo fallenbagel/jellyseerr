@@ -174,11 +174,12 @@ const stripUnreadTvCredits = <T>(data: T): T => {
 };
 
 // Canonical search form so punctuation, spacing, and diacritics don't hide
-// titles from TMDB's literal matching. Apostrophes are contracted ("don't" ->
-// "dont") rather than turned into spaces so the words stay joined.
+// titles from TMDB's literal matching. Apostrophes (straight and typographic)
+// are contracted ("don't"/"don’t" -> "dont") rather than turned into spaces so
+// the words stay joined.
 export const normalizeSearchQuery = (query: string): string =>
   query
-    .replace(/'/g, '')
+    .replace(/['\u2019]/g, '')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^\p{L}\p{N}\s]+/gu, ' ')
