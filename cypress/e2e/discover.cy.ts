@@ -176,6 +176,27 @@ describe('Discover', () => {
       .contains('Movie Not Found');
   });
 
+  it('filters movies by minimum release', () => {
+    cy.intercept('/api/v1/discover/movies*').as('getMovies');
+    // match only the filtered request so infinite-scroll paging doesn't race us
+    cy.intercept({
+      pathname: '/api/v1/discover/movies',
+      query: { releaseType: '4' },
+    }).as('getFiltered');
+    cy.visit('/discover/movies');
+    cy.wait('@getMovies');
+
+    // open the filters slideover and pick Digital (release type 4)
+    cy.contains('button', 'Active Filter').click();
+    cy.get('#releaseType').select('4');
+
+    // since the "To" date was empty it should default to today, otherwise
+    // with_release_type wouldn't actually filter anything
+    cy.wait('@getFiltered')
+      .its('request.url')
+      .should('include', 'primaryReleaseDateLte=');
+  });
+
   it('loads plex watchlist', () => {
     cy.intercept('/api/v1/discover/watchlist', {
       fixture: 'watchlist.json',

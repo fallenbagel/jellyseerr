@@ -716,7 +716,7 @@ class TheMovieDb extends ExternalAPI implements TvShowProvider {
         .toISOString()
         .split('T')[0];
 
-      // "Minimum availability" is cumulative: picking Digital (4) should also
+      // "Minimum Release" is cumulative: picking Digital (4) should also
       // match Physical (5) and TV (6), so expand the selected type up to 6.
       // with_release_type is a no-op on TMDB unless it's paired with a
       // release_date range, so when it's set we filter on release_date instead
@@ -730,6 +730,13 @@ class TheMovieDb extends ExternalAPI implements TvShowProvider {
       const releaseDateField = releaseType
         ? 'release_date'
         : 'primary_release_date';
+
+      // The UI defaults the "To" date to today when a release type is picked,
+      // but a direct API call might not, and without an upper bound
+      // with_release_type does nothing. Fall back to today so it still filters.
+      const today = new Date().toISOString().split('T')[0];
+      const releaseDateLte =
+        primaryReleaseDateLte ?? (releaseType ? today : undefined);
 
       const data = await this.get<TmdbSearchMovieResponse>('/discover/movie', {
         params: {
@@ -748,13 +755,13 @@ class TheMovieDb extends ExternalAPI implements TvShowProvider {
           // Set our release date values, but check if one is set and not the other,
           // so we can force a past date or a future date. TMDB Requires both values if one is set!
           [`${releaseDateField}.gte`]:
-            !primaryReleaseDateGte && primaryReleaseDateLte
+            !primaryReleaseDateGte && releaseDateLte
               ? defaultPastDate
               : primaryReleaseDateGte,
           [`${releaseDateField}.lte`]:
-            !primaryReleaseDateLte && primaryReleaseDateGte
+            !releaseDateLte && primaryReleaseDateGte
               ? defaultFutureDate
-              : primaryReleaseDateLte,
+              : releaseDateLte,
           with_release_type: releaseTypeFilter,
           with_genres: genre,
           with_companies: studio,
