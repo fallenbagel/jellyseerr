@@ -24,6 +24,54 @@ Several templates from Unraid Community are available right now
 
 In case you still want to do it manually, please follow the instructions below.
 
+## Running the Watchlist branch
+
+The Watchlist branch has a separate multi-architecture image published from the [JamyPatch44/seerr fork](https://github.com/JamyPatch44/seerr). This is a personal preview image for running this version on Unraid and is not an official Seerr release.
+
+:::warning
+The `watchlist` image follows the current Watchlist branch and may change as the pull request is updated. Back up `/mnt/user/appdata/seerr-watchlist` before changing images or switching to an official Seerr release.
+:::
+
+### Pull the image
+
+Open the Unraid terminal and run:
+
+```bash
+docker pull ghcr.io/jamypatch44/seerr:watchlist
+```
+
+If GHCR reports that the package is private, build the same image locally from the public branch instead:
+
+```bash
+docker build --pull -t seerr-watchlist:local https://github.com/JamyPatch44/seerr.git#codex/local-watchlist
+```
+
+Use `ghcr.io/jamypatch44/seerr:watchlist` as the repository below when using the published image, or `seerr-watchlist:local` when using the local build.
+
+### Unraid container settings
+
+In the **Docker** tab, click **Add Container** and use:
+
+| Field | Value |
+|---|---|
+| **Name** | `seerr-watchlist` |
+| **Repository** | `ghcr.io/jamypatch44/seerr:watchlist` |
+| **Icon URL** | `https://raw.githubusercontent.com/JamyPatch44/seerr/codex/local-watchlist/public/android-chrome-512x512.png` |
+| **WebUI** | `http://[IP]:[PORT:5055]` |
+| **Extra Parameters** | `--init --restart=unless-stopped` |
+| **Network Type** | `bridge` |
+| **Privileged** | `Off` |
+
+Add the following port, path, and variable:
+
+| Type | Container | Host | Value |
+|---|---|---|---|
+| **Port** | `5055` | `5055` | `TCP` |
+| **Path** | `/app/config` | `/mnt/user/appdata/seerr-watchlist` | — |
+| **Variable** | `TZ` | — | Your [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), for example `Europe/London` |
+
+Click **Apply**, then open `http://<your-unraid-ip>:5055` and complete the setup wizard.
+
 ## Manual Installation
 
 Before proceeding, choose which installation method best suits your server:
