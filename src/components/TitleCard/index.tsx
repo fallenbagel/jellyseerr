@@ -39,6 +39,7 @@ interface TitleCardProps {
   userScore?: number;
   mediaType: MediaType;
   status?: MediaStatus;
+  hasActiveRequest?: boolean;
   canExpand?: boolean;
   inProgress?: boolean;
   isAddedToWatchlist?: number | boolean;
@@ -47,6 +48,7 @@ interface TitleCardProps {
 
 const messages = defineMessages('components.TitleCard', {
   addToWatchList: 'Add to watchlist',
+  onWatchlist: 'On My Watchlist',
   watchlistSuccess:
     '<strong>{title}</strong> added to watchlist  successfully!',
   watchlistDeleted:
@@ -55,6 +57,8 @@ const messages = defineMessages('components.TitleCard', {
   watchlistError: 'Something went wrong. Please try again.',
 });
 
+let lastPointerPosition: { x: number; y: number } | null = null;
+
 const TitleCard = ({
   id,
   image,
@@ -62,6 +66,7 @@ const TitleCard = ({
   year,
   title,
   status,
+  hasActiveRequest = false,
   mediaType,
   isAddedToWatchlist = false,
   inProgress = false,
@@ -90,6 +95,59 @@ const TitleCard = ({
     setCurrentStatus(status);
   }, [status]);
 
+  const hasStatusBadge = Boolean(
+    (currentStatus && currentStatus !== MediaStatus.UNKNOWN) || hasActiveRequest
+  );
+
+  useEffect(() => {
+    setToggleWatchlist(!isAddedToWatchlist);
+  }, [isAddedToWatchlist]);
+
+  useEffect(() => {
+    if (isTouch) {
+      return;
+    }
+
+    const handlePointerMove = (event: PointerEvent) => {
+      lastPointerPosition = { x: event.clientX, y: event.clientY };
+    };
+
+    window.addEventListener('pointermove', handlePointerMove, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+    };
+  }, [isTouch]);
+
+  useEffect(() => {
+    if (isTouch || !lastPointerPosition || !cardRef.current) {
+      return;
+    }
+
+    const { x, y } = lastPointerPosition;
+    const cardBounds = cardRef.current.getBoundingClientRect();
+    const pointerIsOverCard =
+      x >= cardBounds.left &&
+      x <= cardBounds.right &&
+      y >= cardBounds.top &&
+      y <= cardBounds.bottom;
+
+    if (pointerIsOverCard) {
+      setShowDetail(true);
+    }
+  }, [currentStatus, hasActiveRequest, id, isTouch, toggleWatchlist]);
+
+  const refreshWatchlistCaches = async (): Promise<void> => {
+    await mutate(
+      (key) =>
+        typeof key === 'string' &&
+        (key.includes('/watchlist') || key.includes('watchlist='))
+    );
+    await Promise.resolve(mutateParent?.());
+  };
+
   const requestComplete = useCallback((newStatus: MediaStatus) => {
     setCurrentStatus(newStatus);
     setShowRequestModal(false);
@@ -113,8 +171,8 @@ const TitleCard = ({
         mediaType,
         title,
       });
-      mutate('/api/v1/discover/watchlist');
       if (response.data) {
+        setToggleWatchlist(false);
         addToast(
           <span>
             {intl.formatMessage(messages.watchlistSuccess, {
@@ -132,7 +190,7 @@ const TitleCard = ({
       });
     } finally {
       setIsUpdating(false);
-      setToggleWatchlist((prevState) => !prevState);
+      await refreshWatchlistCaches();
     }
   };
 
@@ -144,6 +202,7 @@ const TitleCard = ({
       );
 
       if (response.status === 204) {
+        setToggleWatchlist(true);
         addToast(
           <span>
             {intl.formatMessage(messages.watchlistDeleted, {
@@ -161,11 +220,7 @@ const TitleCard = ({
       });
     } finally {
       setIsUpdating(false);
-      mutate('/api/v1/discover/watchlist');
-      if (mutateParent) {
-        mutateParent();
-      }
-      setToggleWatchlist((prevState) => !prevState);
+      await refreshWatchlistCaches();
     }
   };
 
@@ -385,7 +440,7 @@ const TitleCard = ({
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             fill
           />
-          <div className="absolute left-0 right-0 flex items-center justify-between p-2">
+          <div className="absolute left-0 right-0 flex items-start justify-between p-2">
             <div
               className={`pointer-events-none z-40 self-start rounded-full border shadow-md ${
                 mediaType === 'movie' || mediaType === 'collection'
@@ -467,7 +522,29 @@ const TitleCard = ({
                 </div>
               </div>
             )}
+            {hasActiveRequest &&
+              (!currentStatus || currentStatus === MediaStatus.UNKNOWN) && (
+                <div className="flex flex-col items-center gap-1">
+                  <div className="pointer-events-none z-40 flex">
+                    <StatusBadgeMini status={MediaStatus.PENDING} shrink />
+                  </div>
+                </div>
+              )}
           </div>
+          {user?.userType !== UserType.PLEX &&
+            !toggleWatchlist &&
+            (!showDetail || hasStatusBadge) && (
+              <div
+                className={`pointer-events-none absolute right-2 z-40 flex h-5 w-5 items-center justify-center rounded-full border border-amber-300 bg-amber-500/80 text-amber-100 shadow-md ${hasStatusBadge ? 'top-8' : 'top-2'}`}
+                aria-label={intl.formatMessage(messages.onWatchlist)}
+                title={intl.formatMessage(messages.onWatchlist)}
+              >
+                <StarIcon className="h-3.5 w-3.5 fill-amber-300" />
+                <span className="sr-only">
+                  {intl.formatMessage(messages.onWatchlist)}
+                </span>
+              </div>
+            )}
           <Transition
             as={Fragment}
             show={isUpdating}

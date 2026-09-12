@@ -73,10 +73,45 @@ components:
           example: 1
         ratingKey:
           type: string
+        mediaType:
+          type: string
+          enum: [movie, tv]
         type:
           type: string
         title:
           type: string
+        posterPath:
+          type: string
+          nullable: true
+        backdropPath:
+          type: string
+          nullable: true
+        overview:
+          type: string
+          nullable: true
+        releaseDate:
+          type: string
+          nullable: true
+        originalLanguage:
+          type: string
+          nullable: true
+        certification:
+          type: string
+          nullable: true
+        runtime:
+          type: number
+          nullable: true
+        voteAverage:
+          type: number
+          nullable: true
+        voteCount:
+          type: number
+          nullable: true
+        popularity:
+          type: number
+          nullable: true
+        metadataUpdated:
+          type: boolean
         media:
           $ref: '#/components/schemas/MediaInfo'
         createdAt:
@@ -5092,9 +5127,9 @@ paths:
           description: Succesfully removed watchlist item
   /user/{userId}/watchlist:
     get:
-      summary: Get the Plex watchlist for a specific user
+      summary: Get a user's watchlist
       description: |
-        Retrieves a user's Plex Watchlist in a JSON object.
+        Retrieves a user's local watchlist with server-side filtering for local, Jellyfin, and Emby users. Plex users are served from Plex's watchlist API.
       tags:
         - users
         - watchlist
@@ -5110,6 +5145,53 @@ paths:
             type: number
             example: 1
             default: 1
+        - in: query
+          name: mediaType
+          schema:
+            type: string
+            enum: [all, movie, tv]
+        - in: query
+          name: query
+          description: Case-insensitive title search for local watchlists.
+          schema:
+            type: string
+        - in: query
+          name: mediaStatus
+          schema:
+            type: string
+            enum: [all, notrequested, requested, available, partiallyavailable]
+        - in: query
+          name: releaseState
+          schema:
+            type: string
+            enum: [all, released, upcoming]
+        - in: query
+          name: watchRegion
+          description: Region used with watchProviders for local watchlists.
+          schema:
+            type: string
+            example: US
+        - in: query
+          name: watchProviders
+          description: Pipe-separated TMDB watch provider IDs.
+          schema:
+            type: string
+            example: 8|9
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+            enum:
+              [
+                watchlistAddedAsc,
+                watchlistAddedDesc,
+                title.asc,
+                title.desc,
+                releaseDate.asc,
+                releaseDate.desc,
+                voteAverage.desc,
+                popularity.desc,
+              ]
       responses:
         '200':
           description: Watchlist data returned
@@ -5639,6 +5721,12 @@ paths:
             type: string
             example: en
         - in: query
+          name: watchlist
+          description: Filter to items on or not on the current user's local watchlist. Ignored for Plex users.
+          schema:
+            type: string
+            enum: [all, on, not]
+        - in: query
           name: genre
           schema:
             type: string
@@ -5964,6 +6052,12 @@ paths:
           schema:
             type: string
             example: en
+        - in: query
+          name: watchlist
+          description: Filter to items on or not on the current user's local watchlist. Ignored for Plex users.
+          schema:
+            type: string
+            enum: [all, on, not]
         - in: query
           name: genre
           schema:
@@ -6447,7 +6541,7 @@ paths:
                       example: Genre Name
   /discover/watchlist:
     get:
-      summary: Get the Plex watchlist.
+      summary: Get the current user's watchlist.
       tags:
         - search
       parameters:
@@ -6457,6 +6551,53 @@ paths:
             type: number
             example: 1
             default: 1
+        - in: query
+          name: mediaType
+          schema:
+            type: string
+            enum: [all, movie, tv]
+        - in: query
+          name: query
+          description: Case-insensitive title search for local watchlists.
+          schema:
+            type: string
+        - in: query
+          name: mediaStatus
+          schema:
+            type: string
+            enum: [all, notrequested, requested, available, partiallyavailable]
+        - in: query
+          name: releaseState
+          schema:
+            type: string
+            enum: [all, released, upcoming]
+        - in: query
+          name: watchRegion
+          description: Region used with watchProviders for local watchlists.
+          schema:
+            type: string
+            example: US
+        - in: query
+          name: watchProviders
+          description: Pipe-separated TMDB watch provider IDs.
+          schema:
+            type: string
+            example: 8|9
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+            enum:
+              [
+                watchlistAddedAsc,
+                watchlistAddedDesc,
+                title.asc,
+                title.desc,
+                releaseDate.asc,
+                releaseDate.desc,
+                voteAverage.desc,
+                popularity.desc,
+              ]
       responses:
         '200':
           description: Watchlist data returned

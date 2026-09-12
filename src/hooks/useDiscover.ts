@@ -1,7 +1,7 @@
 import useToasts from '@app/hooks/useToasts';
 import globalMessages from '@app/i18n/globalMessages';
 import { MediaStatus } from '@server/constants/media';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import useSWRInfinite from 'swr/infinite';
 import useSettings from './useSettings';
@@ -59,7 +59,17 @@ const useDiscover = <
 >(
   endpoint: string,
   options?: O,
-  { hideAvailable = true, hideBlocklisted = true, hideRequested = true } = {}
+  {
+    hideAvailable = true,
+    hideBlocklisted = true,
+    hideRequested = true,
+    revalidateOnMount = false,
+  }: {
+    hideAvailable?: boolean;
+    hideBlocklisted?: boolean;
+    hideRequested?: boolean;
+    revalidateOnMount?: boolean;
+  } = {}
 ): DiscoverResult<T, S> => {
   const settings = useSettings();
   const { hasPermission } = useUser();
@@ -90,10 +100,21 @@ const useDiscover = <
     {
       initialSize: 3,
       revalidateFirstPage: false,
+      revalidateOnMount,
       dedupingInterval: 30000,
       revalidateOnFocus: false,
     }
   );
+
+  const optionsKey = JSON.stringify(options ?? {});
+  const previousOptionsKey = useRef(optionsKey);
+
+  useEffect(() => {
+    if (previousOptionsKey.current !== optionsKey) {
+      previousOptionsKey.current = optionsKey;
+      setSize(1);
+    }
+  }, [optionsKey, setSize]);
 
   const resultIds: Set<number> = new Set<number>();
 

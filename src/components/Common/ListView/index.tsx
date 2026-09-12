@@ -17,6 +17,7 @@ import { useIntl } from 'react-intl';
 type ListViewProps = {
   items?: (TvResult | MovieResult | PersonResult | CollectionResult)[];
   plexItems?: WatchlistItem[];
+  watchlistItems?: WatchlistItem[];
   isEmpty?: boolean;
   isLoading?: boolean;
   isReachingEnd?: boolean;
@@ -31,6 +32,7 @@ const ListView = ({
   onScrollBottom,
   isReachingEnd,
   plexItems,
+  watchlistItems,
   mutateParent,
 }: ListViewProps) => {
   const intl = useIntl();
@@ -64,6 +66,43 @@ const ListView = ({
             </li>
           );
         })}
+        {watchlistItems
+          ?.filter(
+            (title) =>
+              blocklistVisibility ||
+              title.mediaInfo?.status !== MediaStatus.BLOCKLISTED
+          )
+          .map((title, index) => {
+            const titleCard = title.metadataUpdated ? (
+              <TitleCard
+                id={title.tmdbId}
+                image={title.posterPath ?? undefined}
+                summary={title.overview ?? undefined}
+                title={title.title}
+                year={title.releaseDate ?? undefined}
+                userScore={title.voteAverage ?? undefined}
+                mediaType={title.mediaType}
+                status={title.mediaInfo?.status}
+                hasActiveRequest={title.mediaInfo?.hasActiveRequest}
+                isAddedToWatchlist
+                canExpand
+                mutateParent={mutateParent}
+              />
+            ) : (
+              <TmdbTitleCard
+                id={title.tmdbId}
+                tmdbId={title.tmdbId}
+                type={title.mediaType}
+                isAddedToWatchlist
+                canExpand
+                mutateParent={mutateParent}
+              />
+            );
+
+            return (
+              <li key={`watchlist-${title.tmdbId}-${index}`}>{titleCard}</li>
+            );
+          })}
         {items
           ?.filter((title) => {
             if (!blocklistVisibility)
@@ -87,6 +126,7 @@ const ListView = ({
                     }
                     image={title.posterPath}
                     status={title.mediaInfo?.status}
+                    hasActiveRequest={title.mediaInfo?.hasActiveRequest}
                     summary={title.overview}
                     title={title.title}
                     userScore={title.voteAverage}
@@ -109,6 +149,7 @@ const ListView = ({
                     }
                     image={title.posterPath}
                     status={title.mediaInfo?.status}
+                    hasActiveRequest={title.mediaInfo?.hasActiveRequest}
                     summary={title.overview}
                     title={title.name}
                     userScore={title.voteAverage}

@@ -17,9 +17,11 @@ import {
   useBatchUpdateQueryParams,
   useUpdateQueryParams,
 } from '@app/hooks/useUpdateQueryParams';
+import { useUser } from '@app/hooks/useUser';
 import defineMessages from '@app/utils/defineMessages';
 import { XCircleIcon } from '@heroicons/react/24/outline';
 import Datepicker from '@seerr-team/react-tailwindcss-datepicker';
+import { UserType } from '@server/constants/user';
 import { useIntl } from 'react-intl';
 
 const messages = defineMessages('components.Discover.FilterSlideover', {
@@ -45,6 +47,10 @@ const messages = defineMessages('components.Discover.FilterSlideover', {
   voteCount: 'Number of votes between {minValue} and {maxValue}',
   status: 'Status',
   certification: 'Content Rating',
+  watchlist: 'Watchlist',
+  allWatchlist: 'All',
+  onWatchlist: 'On My Watchlist',
+  notOnWatchlist: 'Not On My Watchlist',
 });
 
 type FilterSlideoverProps = {
@@ -62,6 +68,7 @@ const FilterSlideover = ({
 }: FilterSlideoverProps) => {
   const intl = useIntl();
   const { currentSettings } = useSettings();
+  const { user } = useUser();
   const updateQueryParams = useUpdateQueryParams({});
   const batchUpdateQueryParams = useBatchUpdateQueryParams({});
 
@@ -80,6 +87,33 @@ const FilterSlideover = ({
       onClose={() => onClose()}
     >
       <div className="flex flex-col space-y-4">
+        {user && user.userType !== UserType.PLEX && (
+          <div>
+            <div className="mb-2 text-lg font-semibold">
+              {intl.formatMessage(messages.watchlist)}
+            </div>
+            <select
+              className="w-full rounded-md"
+              value={currentFilters.watchlist ?? 'all'}
+              onChange={(e) =>
+                updateQueryParams(
+                  'watchlist',
+                  e.target.value === 'all' ? undefined : e.target.value
+                )
+              }
+            >
+              <option value="all">
+                {intl.formatMessage(messages.allWatchlist)}
+              </option>
+              <option value="on">
+                {intl.formatMessage(messages.onWatchlist)}
+              </option>
+              <option value="not">
+                {intl.formatMessage(messages.notOnWatchlist)}
+              </option>
+            </select>
+          </div>
+        )}
         <div>
           <div className="mb-2 text-lg font-semibold">
             {intl.formatMessage(

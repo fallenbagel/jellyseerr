@@ -63,10 +63,13 @@ const TmdbTitleCard = ({
       key={title.id}
       id={title.id}
       isAddedToWatchlist={
-        title.mediaInfo?.watchlists?.length || isAddedToWatchlist
+        title.mediaInfo?.watchlists?.length ||
+        title.onUserWatchlist ||
+        isAddedToWatchlist
       }
       image={title.posterPath}
       status={title.mediaInfo?.status}
+      hasActiveRequest={title.mediaInfo?.hasActiveRequest}
       summary={title.overview}
       title={title.title}
       userScore={title.voteAverage}
@@ -80,10 +83,13 @@ const TmdbTitleCard = ({
       key={title.id}
       id={title.id}
       isAddedToWatchlist={
-        title.mediaInfo?.watchlists?.length || isAddedToWatchlist
+        title.mediaInfo?.watchlists?.length ||
+        title.onUserWatchlist ||
+        isAddedToWatchlist
       }
       image={title.posterPath}
       status={title.mediaInfo?.status}
+      hasActiveRequest={title.mediaInfo?.hasActiveRequest}
       summary={title.overview}
       title={title.name}
       userScore={title.voteAverage}

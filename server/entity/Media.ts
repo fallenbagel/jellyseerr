@@ -36,7 +36,10 @@ class Media {
   public static async getRelatedMedia(
     user: User | undefined,
     items: { tmdbId: number; mediaType: string }[],
-    { includeActiveRequest = false }: { includeActiveRequest?: boolean } = {}
+    {
+      includeActiveRequest = false,
+      forceActiveRequest = false,
+    }: { includeActiveRequest?: boolean; forceActiveRequest?: boolean } = {}
   ): Promise<Media[]> {
     const mediaRepository = getRepository(Media);
 
@@ -64,7 +67,7 @@ class Media {
 
       if (
         includeActiveRequest &&
-        getSettings().main.hideRequested &&
+        (forceActiveRequest || getSettings().main.hideRequested) &&
         relatedMedia.length > 0
       ) {
         const activeRequestMediaIds = await mediaRepository
@@ -80,7 +83,9 @@ class Media {
           })
           .getRawMany<{ id: number }>();
 
-        const activeIds = new Set(activeRequestMediaIds.map((row) => row.id));
+        const activeIds = new Set(
+          activeRequestMediaIds.map((row) => Number(row.id))
+        );
 
         relatedMedia.forEach((m) => {
           m.hasActiveRequest = activeIds.has(m.id);

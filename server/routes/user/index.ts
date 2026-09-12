@@ -19,6 +19,7 @@ import type {
 } from '@server/interfaces/api/userInterfaces';
 import { Permission, hasPermission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
+import { parseWatchlistQuery } from '@server/lib/watchlist';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { getHostname } from '@server/utils/getHostname';
@@ -958,25 +959,22 @@ router.get<{ id: string }, WatchlistResponse>(
 
     const user = await getRepository(User).findOneOrFail({
       where: { id: Number(req.params.id) },
-      select: ['id', 'plexToken'],
+      select: ['id', 'plexToken', 'userType'],
     });
 
-    if (user) {
-      const [result, total] = await getRepository(Watchlist).findAndCount({
-        where: { requestedBy: { id: user?.id } },
-        relations: {
-          /*requestedBy: true,media:true*/
-        },
-        // loadRelationIds: true,
-        take: itemsPerPage,
-        skip: offset,
-      });
-      if (total) {
-        return res.json({
-          page: page,
-          totalPages: Math.ceil(total / itemsPerPage),
-          totalResults: total,
-          results: result,
+    if (user.userType !== UserType.PLEX) {
+      try {
+        return res.json(
+          await Watchlist.getLocalWatchlist({
+            userId: user.id,
+            filters: parseWatchlistQuery(req.query),
+          })
+        );
+      } catch (e) {
+        return next({
+          status: 500,
+          message: 'Unable to retrieve local watchlist.',
+          error: e,
         });
       }
     }

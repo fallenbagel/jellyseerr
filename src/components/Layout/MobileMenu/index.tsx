@@ -11,6 +11,7 @@ import {
   EyeSlashIcon,
   FilmIcon,
   SparklesIcon,
+  StarIcon,
   TvIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline';
@@ -21,10 +22,12 @@ import {
   EyeSlashIcon as FilledEyeSlashIcon,
   FilmIcon as FilledFilmIcon,
   SparklesIcon as FilledSparklesIcon,
+  StarIcon as FilledStarIcon,
   TvIcon as FilledTvIcon,
   UsersIcon as FilledUsersIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid';
+import { UserType } from '@server/constants/user';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { cloneElement, useEffect, useRef, useState, type JSX } from 'react';
@@ -46,6 +49,7 @@ interface MenuLink {
   as?: string;
   requiredPermission?: Permission | Permission[];
   permissionType?: 'and' | 'or';
+  requiredUserType?: UserType[];
   dataTestId?: string;
 }
 
@@ -58,7 +62,7 @@ const MobileMenu = ({
   const ref = useRef<HTMLDivElement>(null);
   const intl = useIntl();
   const [isOpen, setIsOpen] = useState(false);
-  const { hasPermission } = useUser();
+  const { hasPermission, user } = useUser();
   const router = useRouter();
   useClickOutside(ref, () => {
     setTimeout(() => {
@@ -91,6 +95,14 @@ const MobileMenu = ({
       svgIcon: <TvIcon className="h-6 w-6" />,
       svgIconSelected: <FilledTvIcon className="h-6 w-6" />,
       activeRegExp: /^\/discover\/tv$/,
+    },
+    {
+      href: '/profile/watchlist',
+      content: intl.formatMessage(menuMessages.watchlist),
+      svgIcon: <StarIcon className="h-6 w-6" />,
+      svgIconSelected: <FilledStarIcon className="h-6 w-6" />,
+      activeRegExp: /^\/profile\/watchlist$/,
+      requiredUserType: [UserType.LOCAL, UserType.JELLYFIN, UserType.EMBY],
     },
     {
       href: '/requests',
@@ -146,10 +158,12 @@ const MobileMenu = ({
 
   const filteredLinks = menuLinks.filter(
     (link) =>
-      !link.requiredPermission ||
-      hasPermission(link.requiredPermission, {
-        type: link.permissionType ?? 'and',
-      })
+      (!link.requiredPermission ||
+        hasPermission(link.requiredPermission, {
+          type: link.permissionType ?? 'and',
+        })) &&
+      (!link.requiredUserType ||
+        (!!user && link.requiredUserType.includes(user.userType)))
   );
 
   useEffect(() => {

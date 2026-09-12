@@ -92,6 +92,18 @@ export const sliderTitles = defineMessages('components.Discover', {
 
 export const QueryFilterOptions = z.object({
   sortBy: z.string().optional(),
+  mediaType: z.enum(['all', 'movie', 'tv']).optional(),
+  query: z.string().optional(),
+  mediaStatus: z
+    .enum([
+      'all',
+      'notrequested',
+      'requested',
+      'available',
+      'partiallyavailable',
+    ])
+    .optional(),
+  releaseState: z.enum(['all', 'released', 'upcoming']).optional(),
   primaryReleaseDateGte: z.string().optional(),
   primaryReleaseDateLte: z.string().optional(),
   firstAirDateGte: z.string().optional(),
@@ -115,6 +127,7 @@ export const QueryFilterOptions = z.object({
   certificationLte: z.string().optional(),
   certificationCountry: z.string().optional(),
   certificationMode: z.enum(['exact', 'range']).optional(),
+  watchlist: z.enum(['all', 'on', 'not']).optional(),
 });
 
 export type FilterOptions = z.infer<typeof QueryFilterOptions>;
@@ -128,6 +141,22 @@ export const prepareFilterValues = (
 
   if (values.sortBy) {
     filterValues.sortBy = values.sortBy;
+  }
+
+  if (values.mediaType && values.mediaType !== 'all') {
+    filterValues.mediaType = values.mediaType;
+  }
+
+  if (values.query) {
+    filterValues.query = values.query;
+  }
+
+  if (values.mediaStatus && values.mediaStatus !== 'all') {
+    filterValues.mediaStatus = values.mediaStatus;
+  }
+
+  if (values.releaseState && values.releaseState !== 'all') {
+    filterValues.releaseState = values.releaseState;
   }
 
   if (values.primaryReleaseDateGte) {
@@ -224,6 +253,10 @@ export const prepareFilterValues = (
     filterValues.certificationMode = 'exact';
   } else if (values.certificationGte || values.certificationLte) {
     filterValues.certificationMode = 'range';
+  }
+
+  if (values.watchlist && values.watchlist !== 'all') {
+    filterValues.watchlist = values.watchlist;
   }
 
   return filterValues;

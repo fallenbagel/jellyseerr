@@ -5,6 +5,7 @@ import TheMovieDb, {
 } from '@server/api/themoviedb';
 import type { TmdbKeyword } from '@server/api/themoviedb/interfaces';
 import { MediaType } from '@server/constants/media';
+import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
 import Media from '@server/entity/Media';
 import { User } from '@server/entity/User';
@@ -14,6 +15,7 @@ import type {
   WatchlistResponse,
 } from '@server/interfaces/api/discoverInterfaces';
 import { getSettings } from '@server/lib/settings';
+import { parseWatchlistQuery } from '@server/lib/watchlist';
 import logger from '@server/logger';
 import { mapProductionCompany } from '@server/models/Movie';
 import {
@@ -88,6 +90,7 @@ const QueryFilterOptions = z.object({
   certificationLte: z.coerce.string().optional(),
   certificationCountry: z.coerce.string().optional(),
   certificationMode: z.enum(['exact', 'range']).optional(),
+  watchlist: z.enum(['all', 'on', 'not']).optional(),
 });
 
 export type FilterOptions = z.infer<typeof QueryFilterOptions>;
@@ -145,8 +148,25 @@ discoverRoutes.get('/movies', async (req, res, next) => {
         tmdbId: result.id,
         mediaType: MediaType.MOVIE,
       })),
-      { includeActiveRequest: true }
+      { includeActiveRequest: true, forceActiveRequest: true }
     );
+
+    const shouldFilterWatchlist =
+      query.watchlist &&
+      query.watchlist !== 'all' &&
+      req.user?.userType !== UserType.PLEX;
+    const watchlistedIds = new Set(
+      media
+        .filter((item) => (item.watchlists?.length ?? 0) > 0)
+        .map((item) => item.tmdbId)
+    );
+    const results = shouldFilterWatchlist
+      ? data.results.filter((result) =>
+          query.watchlist === 'on'
+            ? watchlistedIds.has(result.id)
+            : !watchlistedIds.has(result.id)
+        )
+      : data.results;
 
     let keywordData: TmdbKeyword[] = [];
     if (keywords) {
@@ -168,7 +188,7 @@ discoverRoutes.get('/movies', async (req, res, next) => {
       totalPages: data.total_pages,
       totalResults: data.total_results,
       keywords: keywordData,
-      results: data.results.map((result) =>
+      results: results.map((result) =>
         mapMovieResult(
           result,
           media.find(
@@ -386,7 +406,7 @@ discoverRoutes.get('/movies/upcoming', async (req, res, next) => {
         tmdbId: result.id,
         mediaType: MediaType.MOVIE,
       })),
-      { includeActiveRequest: true }
+      { includeActiveRequest: true, forceActiveRequest: true }
     );
 
     return res.status(200).json({
@@ -422,6 +442,7 @@ discoverRoutes.get('/tv', async (req, res, next) => {
     const query = TvApiQuerySchema.parse(req.query);
     const keywords = query.keywords;
     const excludeKeywords = query.excludeKeywords;
+
     const data = await tmdb.getDiscoverTv({
       page: Number(query.page),
       sortBy: query.sortBy,
@@ -458,8 +479,25 @@ discoverRoutes.get('/tv', async (req, res, next) => {
         tmdbId: result.id,
         mediaType: MediaType.TV,
       })),
-      { includeActiveRequest: true }
+      { includeActiveRequest: true, forceActiveRequest: true }
     );
+
+    const shouldFilterWatchlist =
+      query.watchlist &&
+      query.watchlist !== 'all' &&
+      req.user?.userType !== UserType.PLEX;
+    const watchlistedIds = new Set(
+      media
+        .filter((item) => (item.watchlists?.length ?? 0) > 0)
+        .map((item) => item.tmdbId)
+    );
+    const results = shouldFilterWatchlist
+      ? data.results.filter((result) =>
+          query.watchlist === 'on'
+            ? watchlistedIds.has(result.id)
+            : !watchlistedIds.has(result.id)
+        )
+      : data.results;
 
     let keywordData: TmdbKeyword[] = [];
     if (keywords) {
@@ -481,7 +519,7 @@ discoverRoutes.get('/tv', async (req, res, next) => {
       totalPages: data.total_pages,
       totalResults: data.total_results,
       keywords: keywordData,
-      results: data.results.map((result) =>
+      results: results.map((result) =>
         mapTvResult(
           result,
           media.find(
@@ -941,7 +979,7 @@ discoverRoutes.get<{ language: string }, GenreSliderItem[]>(
 
 discoverRoutes.get<Record<string, unknown>, WatchlistResponse>(
   '/watchlist',
-  async (req, res) => {
+  async (req, res, next) => {
     const userRepository = getRepository(User);
     const itemsPerPage = 20;
     const page = req.query.page ? Number(req.query.page) : 1;
@@ -949,33 +987,29 @@ discoverRoutes.get<Record<string, unknown>, WatchlistResponse>(
 
     const activeUser = await userRepository.findOne({
       where: { id: req.user?.id },
-      select: ['id', 'plexToken'],
+      select: ['id', 'plexToken', 'userType'],
     });
 
-    if (activeUser && !activeUser?.plexToken) {
-      // Non-Plex users can only see their own watchlist
-      const [result, total] = await getRepository(Watchlist).findAndCount({
-        where: { requestedBy: { id: activeUser?.id } },
-        relations: {
-          /*requestedBy: true,media:true*/
-        },
-        // loadRelationIds: true,
-        take: itemsPerPage,
-        skip: offset,
-      });
-      if (total) {
-        return res.json({
-          page: page,
-          totalPages: Math.ceil(total / itemsPerPage),
-          totalResults: total,
-          results: result,
+    if (activeUser?.userType !== UserType.PLEX) {
+      try {
+        return res.json(
+          await Watchlist.getLocalWatchlist({
+            userId: activeUser!.id,
+            filters: parseWatchlistQuery(req.query),
+          })
+        );
+      } catch (e) {
+        return next({
+          status: 500,
+          message: 'Unable to retrieve local watchlist.',
+          error: e,
         });
       }
     }
-    if (!activeUser?.plexToken) {
-      // We will just return an empty array if the user has no Plex token
+
+    if (!activeUser.plexToken) {
       return res.json({
-        page: 1,
+        page,
         totalPages: 1,
         totalResults: 0,
         results: [],

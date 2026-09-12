@@ -11,10 +11,12 @@ import {
   EyeSlashIcon,
   FilmIcon,
   SparklesIcon,
+  StarIcon,
   TvIcon,
   UsersIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import { UserType } from '@server/constants/user';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -25,6 +27,7 @@ export const menuMessages = defineMessages('components.Layout.Sidebar', {
   dashboard: 'Discover',
   browsemovies: 'Movies',
   browsetv: 'Series',
+  watchlist: 'Watchlist',
   requests: 'Requests',
   blocklist: 'Blocklist',
   issues: 'Issues',
@@ -49,6 +52,7 @@ interface SidebarLinkProps {
   as?: string;
   requiredPermission?: Permission | Permission[];
   permissionType?: 'and' | 'or';
+  requiredUserType?: UserType[];
   dataTestId?: string;
 }
 
@@ -70,6 +74,13 @@ const SidebarLinks: SidebarLinkProps[] = [
     messagesKey: 'browsetv',
     svgIcon: <TvIcon className="mr-3 h-6 w-6" />,
     activeRegExp: /^\/discover\/tv$/,
+  },
+  {
+    href: '/profile/watchlist',
+    messagesKey: 'watchlist',
+    svgIcon: <StarIcon className="mr-3 h-6 w-6" />,
+    activeRegExp: /^\/profile\/watchlist$/,
+    requiredUserType: [UserType.LOCAL, UserType.JELLYFIN, UserType.EMBY],
   },
   {
     href: '/requests',
@@ -129,7 +140,7 @@ const Sidebar = ({
   const navRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const intl = useIntl();
-  const { hasPermission } = useUser();
+  const { hasPermission, user } = useUser();
   useClickOutside(navRef, () => setClosed());
 
   useEffect(() => {
@@ -197,12 +208,15 @@ const Sidebar = ({
                       </span>
                     </div>
                     <nav className="mt-10 flex-1 space-y-4 px-4">
-                      {SidebarLinks.filter((link) =>
-                        link.requiredPermission
-                          ? hasPermission(link.requiredPermission, {
+                      {SidebarLinks.filter(
+                        (link) =>
+                          (!link.requiredPermission ||
+                            hasPermission(link.requiredPermission, {
                               type: link.permissionType ?? 'and',
-                            })
-                          : true
+                            })) &&
+                          (!link.requiredUserType ||
+                            (!!user &&
+                              link.requiredUserType.includes(user.userType)))
                       ).map((sidebarLink) => {
                         return (
                           <Link
@@ -265,12 +279,14 @@ const Sidebar = ({
                 </span>
               </div>
               <nav className="mt-8 flex-1 space-y-4 px-4">
-                {SidebarLinks.filter((link) =>
-                  link.requiredPermission
-                    ? hasPermission(link.requiredPermission, {
+                {SidebarLinks.filter(
+                  (link) =>
+                    (!link.requiredPermission ||
+                      hasPermission(link.requiredPermission, {
                         type: link.permissionType ?? 'and',
-                      })
-                    : true
+                      })) &&
+                    (!link.requiredUserType ||
+                      (!!user && link.requiredUserType.includes(user.userType)))
                 ).map((sidebarLink) => {
                   return (
                     <Link
