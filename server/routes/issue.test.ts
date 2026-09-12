@@ -10,6 +10,7 @@ import { User } from '@server/entity/User';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import { checkUser } from '@server/middleware/auth';
+import { IssueCommentSubscriber } from '@server/subscriber/IssueCommentSubscriber';
 import { IssueSubscriber } from '@server/subscriber/IssueSubscriber';
 import { setupTestDb } from '@server/test/db';
 import type { Express } from 'express';
@@ -26,6 +27,14 @@ const sendIssueNotificationMock = mock.method(
   'sendIssueNotification',
   async () => undefined
 ).mock;
+
+mock.method(
+  IssueCommentSubscriber.prototype as unknown as {
+    sendIssueCommentNotification: (...args: unknown[]) => Promise<void>;
+  },
+  'sendIssueCommentNotification',
+  async () => undefined
+);
 
 let app: Express;
 
