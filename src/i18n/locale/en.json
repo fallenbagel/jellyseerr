@@ -83,6 +83,7 @@
   "components.Discover.DiscoverWatchlist.discoverwatchlist": "Your Watchlist",
   "components.Discover.DiscoverWatchlist.localwatchlist": "Watchlist",
   "components.Discover.DiscoverWatchlist.sortAddedNewest": "Watchlist Added: Newest First",
+  "components.Discover.DiscoverWatchlist.sortBy": "Sort By",
   "components.Discover.DiscoverWatchlist.sortAddedOldest": "Watchlist Added: Oldest First",
   "components.Discover.DiscoverWatchlist.sortPopularity": "Popularity: Highest",
   "components.Discover.DiscoverWatchlist.sortRating": "TMDB Rating: Highest",

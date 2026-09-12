@@ -34,6 +34,8 @@ export class AddWatchlistMetadata1789200000000 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "watchlist" ADD "metadataUpdatedAt" datetime`
     );
+    // Existing rows are hydrated lazily by Watchlist.getLocalWatchlist after
+    // application settings and TMDB credentials are available.
     await queryRunner.query(
       `CREATE INDEX "IDX_watchlist_release_date" ON "watchlist" ("releaseDate")`
     );
@@ -41,21 +43,23 @@ export class AddWatchlistMetadata1789200000000 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP INDEX "IDX_watchlist_release_date"`);
-    await queryRunner.dropColumn('watchlist', 'metadataUpdatedAt');
-    await queryRunner.dropColumn('watchlist', 'watchProviderRegions');
-    await queryRunner.dropColumn('watchlist', 'watchProviders');
-    await queryRunner.dropColumn('watchlist', 'popularity');
-    await queryRunner.dropColumn('watchlist', 'voteCount');
-    await queryRunner.dropColumn('watchlist', 'voteAverage');
-    await queryRunner.dropColumn('watchlist', 'runtime');
-    await queryRunner.dropColumn('watchlist', 'tmdbStatus');
-    await queryRunner.dropColumn('watchlist', 'certification');
-    await queryRunner.dropColumn('watchlist', 'originalLanguage');
-    await queryRunner.dropColumn('watchlist', 'studioIds');
-    await queryRunner.dropColumn('watchlist', 'genreIds');
-    await queryRunner.dropColumn('watchlist', 'releaseDate');
-    await queryRunner.dropColumn('watchlist', 'overview');
-    await queryRunner.dropColumn('watchlist', 'backdropPath');
-    await queryRunner.dropColumn('watchlist', 'posterPath');
+    await queryRunner.dropColumns('watchlist', [
+      'metadataUpdatedAt',
+      'watchProviderRegions',
+      'watchProviders',
+      'popularity',
+      'voteCount',
+      'voteAverage',
+      'runtime',
+      'tmdbStatus',
+      'certification',
+      'originalLanguage',
+      'studioIds',
+      'genreIds',
+      'releaseDate',
+      'overview',
+      'backdropPath',
+      'posterPath',
+    ]);
   }
 }

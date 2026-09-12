@@ -48,6 +48,13 @@ docker build --pull -t seerr-watchlist:local https://github.com/JamyPatch44/seer
 
 Use `ghcr.io/jamypatch44/seerr:watchlist` as the repository below when using the published image, or `seerr-watchlist:local` when using the local build.
 
+Before creating the container, create the config directory and give it to the container's default user:
+
+```bash
+mkdir -p /mnt/user/appdata/seerr-watchlist
+chown -R 1000:1000 /mnt/user/appdata/seerr-watchlist
+```
+
 ### Unraid container settings
 
 In the **Docker** tab, click **Add Container** and use:

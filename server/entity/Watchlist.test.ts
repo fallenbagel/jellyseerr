@@ -117,7 +117,7 @@ describe('Watchlist.getLocalWatchlist', () => {
 
     const notRequested = await Watchlist.getLocalWatchlist({
       userId: user.id,
-      filters: { mediaStatus: 'notrequested' },
+      filters: { mediaStatus: 'notrequested', sortBy: 'title.asc' },
     });
     assert.deepEqual(
       notRequested.results.map((item) => item.tmdbId),
@@ -154,6 +154,7 @@ describe('Watchlist.getLocalWatchlist', () => {
             tmdbId: 2000 + index,
             mediaType: MediaType.MOVIE,
             title: `Pagination ${String(index).padStart(2, '0')}`,
+            metadataUpdatedAt: new Date(),
             requestedBy: user,
           })
       )
@@ -208,6 +209,7 @@ describe('Watchlist.getLocalWatchlist', () => {
         tmdbId: 1003,
         mediaType: MediaType.MOVIE,
         title: 'Requested Movie',
+        metadataUpdatedAt: new Date(),
         requestedBy: user,
         media,
       }),
@@ -216,6 +218,7 @@ describe('Watchlist.getLocalWatchlist', () => {
         tmdbId: 1003,
         mediaType: MediaType.MOVIE,
         title: 'Other User Movie',
+        metadataUpdatedAt: new Date(),
         requestedBy: otherUser,
         media,
       }),
@@ -252,6 +255,7 @@ describe('Watchlist.getLocalWatchlist', () => {
         tmdbId: 1004,
         mediaType: MediaType.MOVIE,
         title: 'Mine',
+        metadataUpdatedAt: new Date(),
         requestedBy: user,
       }),
       new Watchlist({
@@ -259,6 +263,7 @@ describe('Watchlist.getLocalWatchlist', () => {
         tmdbId: 1004,
         mediaType: MediaType.MOVIE,
         title: 'Admin',
+        metadataUpdatedAt: new Date(),
         requestedBy: admin,
       }),
     ]);

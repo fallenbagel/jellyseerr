@@ -42,6 +42,8 @@ export class NotFoundError extends Error {
 @Entity()
 @Unique('UNIQUE_USER_DB', ['tmdbId', 'mediaType', 'requestedBy'])
 export class Watchlist {
+  private static metadataRefreshes = new Map<number, Promise<void>>();
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -145,6 +147,9 @@ export class Watchlist {
     return Object.values(providers ?? {}).flatMap((provider) => [
       ...(provider.buy ?? []).map((item) => item.provider_id),
       ...(provider.flatrate ?? []).map((item) => item.provider_id),
+      ...(provider.rent ?? []).map((item) => item.provider_id),
+      ...(provider.free ?? []).map((item) => item.provider_id),
+      ...(provider.ads ?? []).map((item) => item.provider_id),
     ]);
   }
 
@@ -241,6 +246,54 @@ export class Watchlist {
     };
   }
 
+  private static async refreshMissingMetadata(userId: number): Promise<void> {
+    const pendingRefresh = this.metadataRefreshes.get(userId);
+    if (pendingRefresh) {
+      return pendingRefresh;
+    }
+
+    const refresh = (async () => {
+      const repository = getRepository(this);
+      const missingMetadata = await repository
+        .createQueryBuilder('watchlist')
+        .leftJoin('watchlist.requestedBy', 'requestedBy')
+        .where('requestedBy.id = :userId', { userId })
+        .andWhere('watchlist.metadataUpdatedAt IS NULL')
+        .getMany();
+
+      if (missingMetadata.length === 0) {
+        return;
+      }
+
+      const tmdb = new TheMovieDb();
+
+      for (const watchlist of missingMetadata) {
+        try {
+          const metadata =
+            watchlist.mediaType === MediaType.MOVIE
+              ? await tmdb.getMovie({ movieId: watchlist.tmdbId })
+              : await tmdb.getTvShow({ tvId: watchlist.tmdbId });
+
+          watchlist.applyMetadata(metadata);
+          await repository.save(watchlist);
+        } catch (error) {
+          logger.warn('Unable to refresh Watchlist metadata', {
+            label: 'Watchlist',
+            userId,
+            tmdbId: watchlist.tmdbId,
+            errorMessage:
+              error instanceof Error ? error.message : String(error),
+          });
+        }
+      }
+    })().finally(() => {
+      this.metadataRefreshes.delete(userId);
+    });
+
+    this.metadataRefreshes.set(userId, refresh);
+    await refresh;
+  }
+
   public static async getLocalWatchlist({
     userId,
     filters = {},
@@ -248,11 +301,13 @@ export class Watchlist {
     userId: number;
     filters?: WatchlistQuery;
   }): Promise<WatchlistResponse> {
+    await this.refreshMissingMetadata(userId);
+
     const itemsPerPage = 20;
     const page = Math.max(1, Number(filters.page) || 1);
     const query = getRepository(this)
       .createQueryBuilder('watchlist')
-      .leftJoinAndSelect('watchlist.media', 'media')
+      .leftJoin('watchlist.media', 'media')
       .leftJoin('watchlist.requestedBy', 'requestedBy')
       .where('requestedBy.id = :userId', { userId });
 

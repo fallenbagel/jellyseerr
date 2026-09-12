@@ -28,6 +28,7 @@ const messages = defineMessages('components.Discover.DiscoverWatchlist', {
   activefilters:
     '{count, plural, one {# Active Filter} other {# Active Filters}}',
   sortAddedNewest: 'Watchlist Added: Newest First',
+  sortBy: 'Sort By',
   sortAddedOldest: 'Watchlist Added: Oldest First',
   sortTitleAsc: 'Title: A-Z',
   sortTitleDesc: 'Title: Z-A',
@@ -127,6 +128,7 @@ const DiscoverWatchlist = () => {
               <select
                 id="watchlistSortBy"
                 name="watchlistSortBy"
+                aria-label={intl.formatMessage(messages.sortBy)}
                 className="rounded-r-only"
                 value={preparedFilters.sortBy || SortOptions.AddedNewest}
                 onChange={(e) => updateQueryParams('sortBy', e.target.value)}

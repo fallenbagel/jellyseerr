@@ -30,6 +30,7 @@ import gravatarUrl from 'gravatar-url';
 import { findIndex, sortBy } from 'lodash';
 import type { EntityManager } from 'typeorm';
 import { In, Not } from 'typeorm';
+import { ZodError } from 'zod';
 import userSettingsRoutes from './usersettings';
 
 const router = Router();
@@ -963,11 +964,30 @@ router.get<{ id: string }, WatchlistResponse>(
     });
 
     if (user.userType !== UserType.PLEX) {
+      let filters;
+      try {
+        filters = parseWatchlistQuery(req.query);
+      } catch (error) {
+        if (error instanceof ZodError) {
+          return next({
+            status: 400,
+            message: 'Invalid watchlist query.',
+            error,
+          });
+        }
+
+        return next({
+          status: 500,
+          message: 'Unable to retrieve local watchlist.',
+          error,
+        });
+      }
+
       try {
         return res.json(
           await Watchlist.getLocalWatchlist({
             userId: user.id,
-            filters: parseWatchlistQuery(req.query),
+            filters,
           })
         );
       } catch (e) {

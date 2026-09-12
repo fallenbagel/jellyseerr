@@ -92,7 +92,7 @@ export const sliderTitles = defineMessages('components.Discover', {
 
 export const QueryFilterOptions = z.object({
   sortBy: z.string().optional(),
-  mediaType: z.enum(['all', 'movie', 'tv']).optional(),
+  mediaType: z.enum(['all', 'movie', 'tv']).optional().catch(undefined),
   query: z.string().optional(),
   mediaStatus: z
     .enum([
@@ -102,8 +102,12 @@ export const QueryFilterOptions = z.object({
       'available',
       'partiallyavailable',
     ])
-    .optional(),
-  releaseState: z.enum(['all', 'released', 'upcoming']).optional(),
+    .optional()
+    .catch(undefined),
+  releaseState: z
+    .enum(['all', 'released', 'upcoming'])
+    .optional()
+    .catch(undefined),
   primaryReleaseDateGte: z.string().optional(),
   primaryReleaseDateLte: z.string().optional(),
   firstAirDateGte: z.string().optional(),
@@ -126,8 +130,8 @@ export const QueryFilterOptions = z.object({
   certificationGte: z.string().optional(),
   certificationLte: z.string().optional(),
   certificationCountry: z.string().optional(),
-  certificationMode: z.enum(['exact', 'range']).optional(),
-  watchlist: z.enum(['all', 'on', 'not']).optional(),
+  certificationMode: z.enum(['exact', 'range']).optional().catch(undefined),
+  watchlist: z.enum(['all', 'on', 'not']).optional().catch(undefined),
 });
 
 export type FilterOptions = z.infer<typeof QueryFilterOptions>;
@@ -195,7 +199,7 @@ export const prepareFilterValues = (
     filterValues.excludeKeywords = values.excludeKeywords;
   }
 
-  if (values.language) {
+  if (values.language && values.language !== 'all') {
     filterValues.language = values.language;
   }
 

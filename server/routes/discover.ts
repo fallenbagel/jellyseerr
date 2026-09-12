@@ -14,6 +14,7 @@ import type {
   GenreSliderItem,
   WatchlistResponse,
 } from '@server/interfaces/api/discoverInterfaces';
+import type { WatchlistQuery } from '@server/interfaces/api/watchlistInterfaces';
 import { getSettings } from '@server/lib/settings';
 import { parseWatchlistQuery } from '@server/lib/watchlist';
 import logger from '@server/logger';
@@ -23,6 +24,8 @@ import {
   mapMovieResult,
   mapPersonResult,
   mapTvResult,
+  mapWatchlistItemToMovieResult,
+  mapWatchlistItemToTvResult,
 } from '@server/models/Search';
 import { mapNetwork } from '@server/models/Tv';
 import { isCollection, isMovie, isPerson } from '@server/utils/typeHelpers';
@@ -105,6 +108,97 @@ const TvApiQuerySchema = QueryFilterOptions.omit({
   sortBy: z.enum(TvSortOptionsIterable).optional().catch(undefined),
 });
 
+const LocalWatchlistSortOptions = new Set([
+  'watchlistAddedAsc',
+  'watchlistAddedDesc',
+  'title.asc',
+  'title.desc',
+  'releaseDate.asc',
+  'releaseDate.desc',
+  'voteAverage.desc',
+  'vote_average.asc',
+  'vote_average.desc',
+  'release_date.asc',
+  'release_date.desc',
+  'primary_release_date.asc',
+  'primary_release_date.desc',
+  'first_air_date.asc',
+  'first_air_date.desc',
+  'original_title.asc',
+  'original_title.desc',
+  'original_name.asc',
+  'original_name.desc',
+  'popularity.asc',
+  'popularity.desc',
+]);
+
+const getLocalWatchlistFilters = (
+  query: FilterOptions & { sortBy?: string },
+  mediaType: MediaType
+): WatchlistQuery => ({
+  page: query.page === undefined ? undefined : Number(query.page),
+  mediaType,
+  studio: mediaType === MediaType.MOVIE ? query.studio : undefined,
+  genre: query.genre,
+  language: query.language,
+  primaryReleaseDateGte:
+    mediaType === MediaType.MOVIE ? query.primaryReleaseDateGte : undefined,
+  primaryReleaseDateLte:
+    mediaType === MediaType.MOVIE ? query.primaryReleaseDateLte : undefined,
+  firstAirDateGte:
+    mediaType === MediaType.TV ? query.firstAirDateGte : undefined,
+  firstAirDateLte:
+    mediaType === MediaType.TV ? query.firstAirDateLte : undefined,
+  withRuntimeGte: query.withRuntimeGte,
+  withRuntimeLte: query.withRuntimeLte,
+  voteAverageGte: query.voteAverageGte,
+  voteAverageLte: query.voteAverageLte,
+  voteCountGte: query.voteCountGte,
+  voteCountLte: query.voteCountLte,
+  watchRegion: query.watchRegion,
+  watchProviders: query.watchProviders,
+  certification: query.certification,
+  status: mediaType === MediaType.TV ? query.status : undefined,
+  sortBy:
+    query.sortBy && LocalWatchlistSortOptions.has(query.sortBy)
+      ? query.sortBy
+      : 'popularity.desc',
+});
+
+const getLocalWatchlistDiscoverResults = async (
+  user: User,
+  query: FilterOptions,
+  mediaType: MediaType
+) => {
+  const watchlist = await Watchlist.getLocalWatchlist({
+    userId: user.id,
+    filters: getLocalWatchlistFilters(query, mediaType),
+  });
+  const media = await Media.getRelatedMedia(
+    user,
+    watchlist.results.map((item) => ({
+      tmdbId: item.tmdbId,
+      mediaType: item.mediaType,
+    })),
+    { includeActiveRequest: true, forceActiveRequest: true }
+  );
+
+  return {
+    ...watchlist,
+    results: watchlist.results.map((item) => {
+      const relatedMedia = media.find(
+        (candidate) =>
+          candidate.tmdbId === item.tmdbId &&
+          candidate.mediaType === item.mediaType
+      );
+
+      return mediaType === MediaType.MOVIE
+        ? mapWatchlistItemToMovieResult(item, relatedMedia)
+        : mapWatchlistItemToTvResult(item, relatedMedia);
+    }),
+  };
+};
+
 discoverRoutes.get('/movies', async (req, res, next) => {
   const tmdb = createTmdbWithRegionLanguage(req.user);
 
@@ -112,6 +206,25 @@ discoverRoutes.get('/movies', async (req, res, next) => {
     const query = MovieApiQuerySchema.parse(req.query);
     const keywords = query.keywords;
     const excludeKeywords = query.excludeKeywords;
+
+    if (
+      query.watchlist === 'on' &&
+      req.user &&
+      req.user.userType !== UserType.PLEX &&
+      !keywords &&
+      !excludeKeywords
+    ) {
+      const watchlist = await getLocalWatchlistDiscoverResults(
+        req.user,
+        query,
+        MediaType.MOVIE
+      );
+
+      return res.status(200).json({
+        ...watchlist,
+        keywords: [],
+      });
+    }
 
     const data = await tmdb.getDiscoverMovies({
       page: Number(query.page),
@@ -442,6 +555,25 @@ discoverRoutes.get('/tv', async (req, res, next) => {
     const query = TvApiQuerySchema.parse(req.query);
     const keywords = query.keywords;
     const excludeKeywords = query.excludeKeywords;
+
+    if (
+      query.watchlist === 'on' &&
+      req.user &&
+      req.user.userType !== UserType.PLEX &&
+      !keywords &&
+      !excludeKeywords
+    ) {
+      const watchlist = await getLocalWatchlistDiscoverResults(
+        req.user,
+        query,
+        MediaType.TV
+      );
+
+      return res.status(200).json({
+        ...watchlist,
+        keywords: [],
+      });
+    }
 
     const data = await tmdb.getDiscoverTv({
       page: Number(query.page),
@@ -990,12 +1122,30 @@ discoverRoutes.get<Record<string, unknown>, WatchlistResponse>(
       select: ['id', 'plexToken', 'userType'],
     });
 
-    if (activeUser?.userType !== UserType.PLEX) {
+    if (!activeUser) {
+      return next({
+        status: 404,
+        message: 'Unable to find the current user.',
+      });
+    }
+
+    if (activeUser.userType !== UserType.PLEX) {
+      let filters;
+      try {
+        filters = parseWatchlistQuery(req.query);
+      } catch (error) {
+        return next({
+          status: 400,
+          message: 'Invalid watchlist query.',
+          error,
+        });
+      }
+
       try {
         return res.json(
           await Watchlist.getLocalWatchlist({
-            userId: activeUser!.id,
-            filters: parseWatchlistQuery(req.query),
+            userId: activeUser.id,
+            filters,
           })
         );
       } catch (e) {

@@ -38,6 +38,8 @@ export class AddWatchlistMetadata1789200000000 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "watchlist" ADD "metadataUpdatedAt" timestamp with time zone`
     );
+    // Existing rows are hydrated lazily by Watchlist.getLocalWatchlist after
+    // application settings and TMDB credentials are available.
     await queryRunner.query(
       `CREATE INDEX "IDX_watchlist_release_date" ON "watchlist" ("releaseDate")`
     );

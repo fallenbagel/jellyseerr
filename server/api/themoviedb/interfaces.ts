@@ -452,6 +452,9 @@ export interface TmdbWatchProviders {
   link?: string;
   buy?: TmdbWatchProviderDetails[];
   flatrate?: TmdbWatchProviderDetails[];
+  rent?: TmdbWatchProviderDetails[];
+  free?: TmdbWatchProviderDetails[];
+  ads?: TmdbWatchProviderDetails[];
 }
 
 export interface TmdbWatchProviderDetails {

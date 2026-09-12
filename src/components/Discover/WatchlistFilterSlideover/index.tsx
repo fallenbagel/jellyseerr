@@ -10,6 +10,7 @@ import {
   USCertificationSelector,
   WatchProviderSelector,
 } from '@app/components/Selector';
+import useDebouncedState from '@app/hooks/useDebouncedState';
 import useSettings from '@app/hooks/useSettings';
 import {
   useBatchUpdateQueryParams,
@@ -18,6 +19,7 @@ import {
 import defineMessages from '@app/utils/defineMessages';
 import { XCircleIcon } from '@heroicons/react/24/outline';
 import Datepicker from '@seerr-team/react-tailwindcss-datepicker';
+import { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
 const messages = defineMessages(
@@ -74,11 +76,36 @@ const WatchlistFilterSlideover = ({
   const { currentSettings } = useSettings();
   const updateQueryParams = useUpdateQueryParams({});
   const batchUpdateQueryParams = useBatchUpdateQueryParams({});
-  const selectorType = currentFilters.mediaType === 'tv' ? 'tv' : 'movie';
+  const selectorType =
+    currentFilters.mediaType === 'tv'
+      ? 'tv'
+      : currentFilters.mediaType === 'movie'
+        ? 'movie'
+        : undefined;
+  const dateFilterKeys =
+    selectorType === 'tv'
+      ? (['firstAirDateGte', 'firstAirDateLte'] as const)
+      : (['primaryReleaseDateGte', 'primaryReleaseDateLte'] as const);
+  const [searchValue, debouncedSearchValue, setSearchValue] = useDebouncedState(
+    currentFilters.query ?? ''
+  );
 
-  const updateFilter = (key: string, value?: string) => {
-    updateQueryParams(key, value || undefined);
-  };
+  const updateFilter = useCallback(
+    (key: string, value?: string) => {
+      updateQueryParams(key, value || undefined);
+    },
+    [updateQueryParams]
+  );
+
+  useEffect(() => {
+    setSearchValue(currentFilters.query ?? '');
+  }, [currentFilters.query, setSearchValue]);
+
+  useEffect(() => {
+    if (debouncedSearchValue !== (currentFilters.query ?? '')) {
+      updateFilter('query', debouncedSearchValue);
+    }
+  }, [currentFilters.query, debouncedSearchValue, updateFilter]);
 
   return (
     <SlideOver
@@ -97,7 +124,32 @@ const WatchlistFilterSlideover = ({
           <select
             className="w-full rounded-md"
             value={currentFilters.mediaType ?? 'all'}
-            onChange={(e) => updateFilter('mediaType', e.target.value)}
+            onChange={(e) => {
+              const mediaType =
+                e.target.value === 'all' ? undefined : e.target.value;
+              const mediaTypeChanged = mediaType !== currentFilters.mediaType;
+
+              batchUpdateQueryParams({
+                mediaType,
+                ...(mediaTypeChanged
+                  ? {
+                      genre: undefined,
+                      primaryReleaseDateGte: undefined,
+                      primaryReleaseDateLte: undefined,
+                      firstAirDateGte: undefined,
+                      firstAirDateLte: undefined,
+                      certification: undefined,
+                      certificationGte: undefined,
+                      certificationLte: undefined,
+                      certificationCountry: undefined,
+                      certificationMode: undefined,
+                      watchProviders: undefined,
+                      watchRegion: undefined,
+                      status: undefined,
+                    }
+                  : {}),
+              });
+            }}
           >
             <option value="all">{intl.formatMessage(messages.allMedia)}</option>
             <option value="movie">{intl.formatMessage(messages.movies)}</option>
@@ -111,9 +163,9 @@ const WatchlistFilterSlideover = ({
           <input
             className="w-full rounded-md"
             type="search"
-            value={currentFilters.query ?? ''}
+            value={searchValue}
             placeholder={intl.formatMessage(messages.searchPlaceholder)}
-            onChange={(e) => updateFilter('query', e.target.value)}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
         </div>
         <div>
@@ -167,45 +219,47 @@ const WatchlistFilterSlideover = ({
             {intl.formatMessage(messages.releaseDate)}
           </div>
           <div className="relative z-40 flex space-x-2">
-            {(['primaryReleaseDateGte', 'primaryReleaseDateLte'] as const).map(
-              (key, index) => (
-                <div className="flex min-w-0 flex-col" key={key}>
-                  <div className="mb-2">
-                    {intl.formatMessage(
-                      index === 0 ? messages.from : messages.to
-                    )}
-                  </div>
-                  <Datepicker
-                    primaryColor="indigo"
-                    value={{
-                      startDate: currentFilters[key] ?? null,
-                      endDate: currentFilters[key] ?? null,
-                    }}
-                    onChange={(value) =>
-                      updateFilter(key, value?.startDate as string | undefined)
-                    }
-                    inputName={key}
-                    useRange={false}
-                    asSingle
-                    containerClassName="datepicker-wrapper"
-                    inputClassName="pr-1 text-base leading-5 sm:pr-4"
-                  />
+            {dateFilterKeys.map((key, index) => (
+              <div className="flex min-w-0 flex-col" key={key}>
+                <div className="mb-2">
+                  {intl.formatMessage(
+                    index === 0 ? messages.from : messages.to
+                  )}
                 </div>
-              )
-            )}
+                <Datepicker
+                  primaryColor="indigo"
+                  value={{
+                    startDate: currentFilters[key] ?? null,
+                    endDate: currentFilters[key] ?? null,
+                  }}
+                  onChange={(value) =>
+                    updateFilter(key, value?.startDate as string | undefined)
+                  }
+                  inputName={key}
+                  useRange={false}
+                  asSingle
+                  containerClassName="datepicker-wrapper"
+                  inputClassName="pr-1 text-base leading-5 sm:pr-4"
+                />
+              </div>
+            ))}
           </div>
         </div>
-        <span className="text-lg font-semibold">
-          {intl.formatMessage(messages.genres)}
-        </span>
-        <GenreSelector
-          type={selectorType}
-          defaultValue={currentFilters.genre}
-          isMulti
-          onChange={(value) =>
-            updateFilter('genre', value?.map((v) => v.value).join(','))
-          }
-        />
+        {selectorType && (
+          <>
+            <span className="text-lg font-semibold">
+              {intl.formatMessage(messages.genres)}
+            </span>
+            <GenreSelector
+              type={selectorType}
+              defaultValue={currentFilters.genre}
+              isMulti
+              onChange={(value) =>
+                updateFilter('genre', value?.map((v) => v.value).join(','))
+              }
+            />
+          </>
+        )}
         <span className="text-lg font-semibold">
           {intl.formatMessage(messages.studio)}
         </span>
@@ -220,16 +274,25 @@ const WatchlistFilterSlideover = ({
           value={currentFilters.language}
           serverValue={currentSettings.originalLanguage}
           isUserSettings
-          setFieldValue={(_key, value) => updateFilter('language', value)}
+          setFieldValue={(_key, value) =>
+            updateFilter(
+              'language',
+              value === 'all' || value === 'server' ? undefined : value
+            )
+          }
         />
-        <span className="text-lg font-semibold">
-          {intl.formatMessage(messages.contentRating)}
-        </span>
-        <USCertificationSelector
-          type={selectorType}
-          certification={currentFilters.certification}
-          onChange={(params) => batchUpdateQueryParams(params)}
-        />
+        {selectorType && (
+          <>
+            <span className="text-lg font-semibold">
+              {intl.formatMessage(messages.contentRating)}
+            </span>
+            <USCertificationSelector
+              type={selectorType}
+              certification={currentFilters.certification}
+              onChange={(params) => batchUpdateQueryParams(params)}
+            />
+          </>
+        )}
         <span className="text-lg font-semibold">
           {intl.formatMessage(messages.runtime)}
         </span>
@@ -326,23 +389,30 @@ const WatchlistFilterSlideover = ({
             maxValue: currentFilters.voteCountLte ?? 1000,
           })}
         />
-        <span className="text-lg font-semibold">
-          {intl.formatMessage(messages.streamingservices)}
-        </span>
-        <WatchProviderSelector
-          type={selectorType}
-          region={currentFilters.watchRegion}
-          activeProviders={
-            currentFilters.watchProviders?.split('|').map(Number) ?? []
-          }
-          onChange={(region, providers) =>
-            batchUpdateQueryParams(
-              providers.length
-                ? { watchRegion: region, watchProviders: providers.join('|') }
-                : { watchRegion: undefined, watchProviders: undefined }
-            )
-          }
-        />
+        {selectorType && (
+          <>
+            <span className="text-lg font-semibold">
+              {intl.formatMessage(messages.streamingservices)}
+            </span>
+            <WatchProviderSelector
+              type={selectorType}
+              region={currentFilters.watchRegion}
+              activeProviders={
+                currentFilters.watchProviders?.split('|').map(Number) ?? []
+              }
+              onChange={(region, providers) =>
+                batchUpdateQueryParams(
+                  providers.length
+                    ? {
+                        watchRegion: region,
+                        watchProviders: providers.join('|'),
+                      }
+                    : { watchRegion: undefined, watchProviders: undefined }
+                )
+              }
+            />
+          </>
+        )}
         <div className="pt-4">
           <Button
             className="w-full"

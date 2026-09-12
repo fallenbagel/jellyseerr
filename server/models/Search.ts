@@ -9,6 +9,7 @@ import type {
 } from '@server/api/themoviedb/interfaces';
 import { MediaType as MainMediaType } from '@server/constants/media';
 import type Media from '@server/entity/Media';
+import type { WatchlistItem } from '@server/interfaces/api/watchlistInterfaces';
 
 export type MediaType = 'tv' | 'movie' | 'person' | 'collection';
 
@@ -109,6 +110,49 @@ export const mapTvResult = (
   voteCount: tvResult.vote_count,
   backdropPath: tvResult.backdrop_path,
   posterPath: tvResult.poster_path,
+  mediaInfo: media,
+});
+
+export const mapWatchlistItemToMovieResult = (
+  item: WatchlistItem,
+  media?: Media
+): MovieResult => ({
+  id: item.tmdbId,
+  mediaType: 'movie',
+  adult: false,
+  genreIds: item.genreIds ?? [],
+  originalLanguage: item.originalLanguage ?? '',
+  originalTitle: item.originalTitle ?? item.title,
+  overview: item.overview ?? '',
+  popularity: item.popularity ?? 0,
+  releaseDate: item.releaseDate ?? '',
+  title: item.title,
+  video: false,
+  voteAverage: item.voteAverage ?? 0,
+  voteCount: item.voteCount ?? 0,
+  backdropPath: item.backdropPath ?? undefined,
+  posterPath: item.posterPath ?? undefined,
+  mediaInfo: media,
+});
+
+export const mapWatchlistItemToTvResult = (
+  item: WatchlistItem,
+  media?: Media
+): TvResult => ({
+  id: item.tmdbId,
+  mediaType: 'tv',
+  firstAirDate: item.releaseDate ?? '',
+  genreIds: item.genreIds ?? [],
+  name: item.title,
+  originCountry: [],
+  originalLanguage: item.originalLanguage ?? '',
+  originalName: item.originalTitle ?? item.title,
+  overview: item.overview ?? '',
+  popularity: item.popularity ?? 0,
+  voteAverage: item.voteAverage ?? 0,
+  voteCount: item.voteCount ?? 0,
+  backdropPath: item.backdropPath ?? undefined,
+  posterPath: item.posterPath ?? undefined,
   mediaInfo: media,
 });
 

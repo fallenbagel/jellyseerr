@@ -76,8 +76,6 @@ components:
         mediaType:
           type: string
           enum: [movie, tv]
-        type:
-          type: string
         title:
           type: string
         posterPath:
@@ -92,6 +90,14 @@ components:
         releaseDate:
           type: string
           nullable: true
+        genreIds:
+          type: array
+          items:
+            type: number
+        studioIds:
+          type: array
+          items:
+            type: number
         originalLanguage:
           type: string
           nullable: true
@@ -110,6 +116,10 @@ components:
         popularity:
           type: number
           nullable: true
+        watchProviders:
+          type: array
+          items:
+            type: number
         metadataUpdated:
           type: boolean
         media:
@@ -124,6 +134,92 @@ components:
           readOnly: true
         requestedBy:
           $ref: '#/components/schemas/User'
+    WatchlistItem:
+      type: object
+      required: [id, ratingKey, tmdbId, mediaType, title]
+      properties:
+        id:
+          type: number
+        ratingKey:
+          type: string
+        tmdbId:
+          type: number
+        mediaType:
+          type: string
+          enum: [movie, tv]
+        title:
+          type: string
+        originalTitle:
+          type: string
+        posterPath:
+          type: string
+          nullable: true
+        backdropPath:
+          type: string
+          nullable: true
+        overview:
+          type: string
+          nullable: true
+        releaseDate:
+          type: string
+          nullable: true
+        genreIds:
+          type: array
+          items:
+            type: number
+        studioIds:
+          type: array
+          items:
+            type: number
+        originalLanguage:
+          type: string
+          nullable: true
+        certification:
+          type: string
+          nullable: true
+        runtime:
+          type: number
+          nullable: true
+        voteAverage:
+          type: number
+          nullable: true
+        voteCount:
+          type: number
+          nullable: true
+        popularity:
+          type: number
+          nullable: true
+        watchProviders:
+          type: array
+          items:
+            type: number
+        metadataUpdated:
+          type: boolean
+        mediaInfo:
+          type: object
+          properties:
+            status:
+              type: number
+              enum: [1, 2, 3, 4, 5, 6, 7]
+            hasActiveRequest:
+              type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    WatchlistResponse:
+      type: object
+      required: [page, totalPages, totalResults, results]
+      properties:
+        page:
+          type: number
+        totalPages:
+          type: number
+        totalResults:
+          type: number
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WatchlistItem'
     User:
       type: object
       properties:
@@ -5141,12 +5237,14 @@ paths:
             type: number
         - in: query
           name: page
+          description: One-based result page.
           schema:
             type: number
             example: 1
             default: 1
         - in: query
           name: mediaType
+          description: Filter by movie, TV, or all media types.
           schema:
             type: string
             enum: [all, movie, tv]
@@ -5157,14 +5255,64 @@ paths:
             type: string
         - in: query
           name: mediaStatus
+          description: Filter by local request or availability status.
           schema:
             type: string
             enum: [all, notrequested, requested, available, partiallyavailable]
         - in: query
           name: releaseState
+          description: Filter by whether the release date has passed.
           schema:
             type: string
             enum: [all, released, upcoming]
+        - in: query
+          name: status
+          description: Pipe-separated TMDB TV status values.
+          schema:
+            type: string
+            example: 0|2
+        - in: query
+          name: primaryReleaseDateGte
+          description: Minimum movie release date.
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: primaryReleaseDateLte
+          description: Maximum movie release date.
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: firstAirDateGte
+          description: Minimum TV first-air date.
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: firstAirDateLte
+          description: Maximum TV first-air date.
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: studio
+          description: Comma-separated TMDB production company IDs.
+          schema:
+            type: string
+            example: 10,20
+        - in: query
+          name: genre
+          description: Comma-separated TMDB genre IDs.
+          schema:
+            type: string
+            example: 18,35
+        - in: query
+          name: language
+          description: Pipe-separated original language codes.
+          schema:
+            type: string
+            example: en|fr
         - in: query
           name: watchRegion
           description: Region used with watchProviders for local watchlists.
@@ -5178,6 +5326,41 @@ paths:
             type: string
             example: 8|9
         - in: query
+          name: withRuntimeGte
+          description: Minimum runtime in minutes.
+          schema:
+            type: string
+        - in: query
+          name: withRuntimeLte
+          description: Maximum runtime in minutes.
+          schema:
+            type: string
+        - in: query
+          name: voteAverageGte
+          description: Minimum TMDB vote average.
+          schema:
+            type: string
+        - in: query
+          name: voteAverageLte
+          description: Maximum TMDB vote average.
+          schema:
+            type: string
+        - in: query
+          name: voteCountGte
+          description: Minimum TMDB vote count.
+          schema:
+            type: string
+        - in: query
+          name: voteCountLte
+          description: Maximum TMDB vote count.
+          schema:
+            type: string
+        - in: query
+          name: certification
+          description: Pipe-separated content ratings.
+          schema:
+            type: string
+        - in: query
           name: sortBy
           schema:
             type: string
@@ -5190,6 +5373,19 @@ paths:
                 releaseDate.asc,
                 releaseDate.desc,
                 voteAverage.desc,
+                vote_average.asc,
+                vote_average.desc,
+                release_date.asc,
+                release_date.desc,
+                primary_release_date.asc,
+                primary_release_date.desc,
+                first_air_date.asc,
+                first_air_date.desc,
+                original_title.asc,
+                original_title.desc,
+                original_name.asc,
+                original_name.desc,
+                popularity.asc,
                 popularity.desc,
               ]
       responses:
@@ -5198,28 +5394,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  page:
-                    type: number
-                  totalPages:
-                    type: number
-                  totalResults:
-                    type: number
-                  results:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        tmdbId:
-                          type: number
-                          example: 1
-                        ratingKey:
-                          type: string
-                        type:
-                          type: string
-                        title:
-                          type: string
+                $ref: '#/components/schemas/WatchlistResponse'
   /user/{userId}/settings/main:
     get:
       summary: Get general settings for a user
@@ -6547,12 +6722,14 @@ paths:
       parameters:
         - in: query
           name: page
+          description: One-based result page.
           schema:
             type: number
             example: 1
             default: 1
         - in: query
           name: mediaType
+          description: Filter by movie, TV, or all media types.
           schema:
             type: string
             enum: [all, movie, tv]
@@ -6563,14 +6740,64 @@ paths:
             type: string
         - in: query
           name: mediaStatus
+          description: Filter by local request or availability status.
           schema:
             type: string
             enum: [all, notrequested, requested, available, partiallyavailable]
         - in: query
           name: releaseState
+          description: Filter by whether the release date has passed.
           schema:
             type: string
             enum: [all, released, upcoming]
+        - in: query
+          name: status
+          description: Pipe-separated TMDB TV status values.
+          schema:
+            type: string
+            example: 0|2
+        - in: query
+          name: primaryReleaseDateGte
+          description: Minimum movie release date.
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: primaryReleaseDateLte
+          description: Maximum movie release date.
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: firstAirDateGte
+          description: Minimum TV first-air date.
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: firstAirDateLte
+          description: Maximum TV first-air date.
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: studio
+          description: Comma-separated TMDB production company IDs.
+          schema:
+            type: string
+            example: 10,20
+        - in: query
+          name: genre
+          description: Comma-separated TMDB genre IDs.
+          schema:
+            type: string
+            example: 18,35
+        - in: query
+          name: language
+          description: Pipe-separated original language codes.
+          schema:
+            type: string
+            example: en|fr
         - in: query
           name: watchRegion
           description: Region used with watchProviders for local watchlists.
@@ -6584,6 +6811,41 @@ paths:
             type: string
             example: 8|9
         - in: query
+          name: withRuntimeGte
+          description: Minimum runtime in minutes.
+          schema:
+            type: string
+        - in: query
+          name: withRuntimeLte
+          description: Maximum runtime in minutes.
+          schema:
+            type: string
+        - in: query
+          name: voteAverageGte
+          description: Minimum TMDB vote average.
+          schema:
+            type: string
+        - in: query
+          name: voteAverageLte
+          description: Maximum TMDB vote average.
+          schema:
+            type: string
+        - in: query
+          name: voteCountGte
+          description: Minimum TMDB vote count.
+          schema:
+            type: string
+        - in: query
+          name: voteCountLte
+          description: Maximum TMDB vote count.
+          schema:
+            type: string
+        - in: query
+          name: certification
+          description: Pipe-separated content ratings.
+          schema:
+            type: string
+        - in: query
           name: sortBy
           schema:
             type: string
@@ -6596,6 +6858,19 @@ paths:
                 releaseDate.asc,
                 releaseDate.desc,
                 voteAverage.desc,
+                vote_average.asc,
+                vote_average.desc,
+                release_date.asc,
+                release_date.desc,
+                primary_release_date.asc,
+                primary_release_date.desc,
+                first_air_date.asc,
+                first_air_date.desc,
+                original_title.asc,
+                original_title.desc,
+                original_name.asc,
+                original_name.desc,
+                popularity.asc,
                 popularity.desc,
               ]
       responses:
@@ -6604,28 +6879,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  page:
-                    type: number
-                  totalPages:
-                    type: number
-                  totalResults:
-                    type: number
-                  results:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        tmdbId:
-                          type: number
-                          example: 1
-                        ratingKey:
-                          type: string
-                        type:
-                          type: string
-                        title:
-                          type: string
+                $ref: '#/components/schemas/WatchlistResponse'
   /request:
     get:
       summary: Get all requests
