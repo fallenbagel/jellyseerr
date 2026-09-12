@@ -265,8 +265,6 @@ app
         err: { status: number; message: string; errors: string[] },
         _req: Request,
         res: Response,
-        // We must provide a next function for the function signature here even though its not used
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         next: NextFunction
       ) => {
         if (res.headersSent) {
