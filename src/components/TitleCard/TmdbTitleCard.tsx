@@ -69,6 +69,7 @@ const TmdbTitleCard = ({
       }
       image={title.posterPath}
       status={title.mediaInfo?.status}
+      mediaUrl={title.mediaInfo?.mediaUrl}
       hasActiveRequest={title.mediaInfo?.hasActiveRequest}
       summary={title.overview}
       title={title.title}
@@ -89,6 +90,7 @@ const TmdbTitleCard = ({
       }
       image={title.posterPath}
       status={title.mediaInfo?.status}
+      mediaUrl={title.mediaInfo?.mediaUrl}
       hasActiveRequest={title.mediaInfo?.hasActiveRequest}
       summary={title.overview}
       title={title.name}

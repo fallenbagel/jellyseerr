@@ -83,6 +83,7 @@ const ListView = ({
                 userScore={title.voteAverage ?? undefined}
                 mediaType={title.mediaType}
                 status={title.mediaInfo?.status}
+                mediaUrl={title.mediaInfo?.mediaUrl}
                 hasActiveRequest={title.mediaInfo?.hasActiveRequest}
                 isAddedToWatchlist
                 canExpand

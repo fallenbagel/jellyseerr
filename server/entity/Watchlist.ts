@@ -240,6 +240,7 @@ export class Watchlist {
         ? {
             status: media.status,
             hasActiveRequest: media.hasActiveRequest,
+            mediaUrl: media.mediaUrl,
           }
         : undefined,
       createdAt: this.createdAt?.toISOString(),

@@ -5,6 +5,7 @@ export type WatchlistItemMediaType = 'movie' | 'tv';
 export interface WatchlistMediaInfo {
   status: MediaStatus;
   hasActiveRequest?: boolean;
+  mediaUrl?: string;
 }
 
 export interface WatchlistItem {
