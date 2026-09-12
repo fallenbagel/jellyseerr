@@ -2,6 +2,8 @@ import Spinner from '@app/assets/spinner.svg';
 import BlocklistModal from '@app/components/BlocklistModal';
 import Button from '@app/components/Common/Button';
 import CachedImage from '@app/components/Common/CachedImage';
+import type { PlayButtonLink } from '@app/components/Common/PlayButton';
+import PlayButton from '@app/components/Common/PlayButton';
 import StatusBadgeMini from '@app/components/Common/StatusBadgeMini';
 import Tooltip from '@app/components/Common/Tooltip';
 import RequestModal from '@app/components/RequestModal';
@@ -46,6 +48,7 @@ interface TitleCardProps {
   inProgress?: boolean;
   isAddedToWatchlist?: number | boolean;
   mediaUrl?: string;
+  mediaUrl4k?: string;
   mutateParent?: () => void;
 }
 
@@ -58,6 +61,7 @@ const messages = defineMessages('components.TitleCard', {
   watchlistCancel: 'watchlist for <strong>{title}</strong> canceled.',
   watchlistError: 'Something went wrong. Please try again.',
   playOnMediaServer: 'Play on {mediaServerName}',
+  playOnMediaServer4k: 'Play 4K on {mediaServerName}',
 });
 
 const TitleCard = ({
@@ -70,6 +74,7 @@ const TitleCard = ({
   mediaType,
   isAddedToWatchlist = false,
   mediaUrl,
+  mediaUrl4k,
   inProgress = false,
   canExpand = false,
   mutateParent,
@@ -331,6 +336,63 @@ const TitleCard = ({
     messages.playOnMediaServer,
     { mediaServerName }
   );
+  const playOnMediaServer4kLabel = intl.formatMessage(
+    messages.playOnMediaServer4k,
+    { mediaServerName }
+  );
+  const isPlayableMedia = mediaType === 'movie' || mediaType === 'tv';
+  const isAvailable =
+    currentStatus === MediaStatus.AVAILABLE ||
+    currentStatus === MediaStatus.PARTIALLY_AVAILABLE;
+  const mediaLinks: PlayButtonLink[] = [];
+
+  if (
+    isPlayableMedia &&
+    isAvailable &&
+    mediaUrl &&
+    hasPermission(
+      [
+        Permission.REQUEST,
+        mediaType === 'movie'
+          ? Permission.REQUEST_MOVIE
+          : Permission.REQUEST_TV,
+      ],
+      { type: 'or' }
+    )
+  ) {
+    mediaLinks.push({
+      text: playOnMediaServerLabel,
+      url: mediaUrl,
+      svg: <PlayIcon />,
+    });
+  }
+
+  const media4kEnabled =
+    mediaType === 'movie'
+      ? settings.currentSettings.movie4kEnabled
+      : mediaType === 'tv' && settings.currentSettings.series4kEnabled;
+
+  if (
+    isPlayableMedia &&
+    isAvailable &&
+    media4kEnabled &&
+    mediaUrl4k &&
+    hasPermission(
+      [
+        Permission.REQUEST_4K,
+        mediaType === 'movie'
+          ? Permission.REQUEST_4K_MOVIE
+          : Permission.REQUEST_4K_TV,
+      ],
+      { type: 'or' }
+    )
+  ) {
+    mediaLinks.push({
+      text: playOnMediaServer4kLabel,
+      url: mediaUrl4k,
+      svg: <PlayIcon />,
+    });
+  }
 
   return (
     <div
@@ -421,24 +483,6 @@ const TitleCard = ({
             </div>
             {showDetail && currentStatus !== MediaStatus.BLOCKLISTED && (
               <div className="flex flex-col gap-1">
-                {mediaUrl &&
-                  (currentStatus === MediaStatus.AVAILABLE ||
-                    currentStatus === MediaStatus.PARTIALLY_AVAILABLE) && (
-                    <Button
-                      as="a"
-                      buttonType="ghost"
-                      buttonSize="sm"
-                      className="z-40"
-                      href={mediaUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={playOnMediaServerLabel}
-                      title={playOnMediaServerLabel}
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      <PlayIcon className="h-3" />
-                    </Button>
-                  )}
                 {user?.userType !== UserType.PLEX &&
                   (toggleWatchlist ? (
                     <Button
@@ -593,6 +637,12 @@ const TitleCard = ({
               </Link>
 
               <div className="absolute bottom-0 left-0 right-0 flex justify-between px-2 py-2">
+                {mediaLinks.length > 0 && (
+                  <PlayButton
+                    links={mediaLinks}
+                    className="!px-2 !py-1 text-xs"
+                  />
+                )}
                 {showRequestButton &&
                   (!currentStatus ||
                     currentStatus === MediaStatus.UNKNOWN ||

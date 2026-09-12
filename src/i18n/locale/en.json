@@ -1361,6 +1361,7 @@
   "components.TitleCard.cleardata": "Clear Data",
   "components.TitleCard.mediaerror": "{mediaType} Not Found",
   "components.TitleCard.playOnMediaServer": "Play on {mediaServerName}",
+  "components.TitleCard.playOnMediaServer4k": "Play 4K on {mediaServerName}",
   "components.TitleCard.tmdbid": "TMDB ID",
   "components.TitleCard.tvdbid": "TheTVDB ID",
   "components.TitleCard.watchlistCancel": "watchlist for <strong>{title}</strong> canceled.",
