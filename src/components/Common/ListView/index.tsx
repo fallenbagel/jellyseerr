@@ -84,6 +84,7 @@ const ListView = ({
                 mediaType={title.mediaType}
                 status={title.mediaInfo?.status}
                 mediaUrl={title.mediaInfo?.mediaUrl}
+                mediaUrl4k={title.mediaInfo?.mediaUrl4k}
                 hasActiveRequest={title.mediaInfo?.hasActiveRequest}
                 isAddedToWatchlist
                 canExpand

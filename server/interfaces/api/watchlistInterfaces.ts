@@ -6,6 +6,7 @@ export interface WatchlistMediaInfo {
   status: MediaStatus;
   hasActiveRequest?: boolean;
   mediaUrl?: string;
+  mediaUrl4k?: string;
 }
 
 export interface WatchlistItem {

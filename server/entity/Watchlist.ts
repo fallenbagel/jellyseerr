@@ -241,6 +241,7 @@ export class Watchlist {
             status: media.status,
             hasActiveRequest: media.hasActiveRequest,
             mediaUrl: media.mediaUrl,
+            mediaUrl4k: media.mediaUrl4k,
           }
         : undefined,
       createdAt: this.createdAt?.toISOString(),

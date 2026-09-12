@@ -2,6 +2,7 @@ import ButtonWithDropdown from '@app/components/Common/ButtonWithDropdown';
 
 interface PlayButtonProps {
   links: PlayButtonLink[];
+  className?: string;
 }
 
 export interface PlayButtonLink {
@@ -10,7 +11,7 @@ export interface PlayButtonLink {
   svg: React.ReactNode;
 }
 
-const PlayButton = ({ links }: PlayButtonProps) => {
+const PlayButton = ({ links, className }: PlayButtonProps) => {
   if (!links || !links.length) {
     return null;
   }
@@ -25,7 +26,9 @@ const PlayButton = ({ links }: PlayButtonProps) => {
           <span>{links[0].text}</span>
         </>
       }
+      className={className}
       href={links[0].url}
+      rel="noreferrer"
       target="_blank"
     >
       {links.length > 1 &&
@@ -35,6 +38,7 @@ const PlayButton = ({ links }: PlayButtonProps) => {
               key={`play-button-dropdown-item-${i}`}
               buttonType="ghost"
               href={link.url}
+              rel="noreferrer"
               target="_blank"
             >
               {link.svg}
