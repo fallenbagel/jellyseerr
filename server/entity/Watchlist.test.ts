@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { beforeEach, describe, it, mock } from 'node:test';
 
+import TheMovieDb from '@server/api/themoviedb';
+import type { TmdbMovieDetails } from '@server/api/themoviedb/interfaces';
 import {
   MediaRequestStatus,
   MediaStatus,
@@ -179,6 +181,85 @@ describe('Watchlist.getLocalWatchlist', () => {
       ]).size,
       21
     );
+  });
+
+  it('hydrates legacy entries before applying metadata filters', async () => {
+    const watchlistRepository = getRepository(Watchlist);
+    const movieMetadata = {
+      id: 3001,
+      title: 'Hydrated Movie',
+      original_title: 'Hydrated Movie',
+      poster_path: '/poster.jpg',
+      backdrop_path: '/backdrop.jpg',
+      overview: 'Metadata fetched for a legacy watchlist entry.',
+      release_date: '2024-01-01',
+      genres: [{ id: 18, name: 'Drama' }],
+      production_companies: [
+        { id: 10, name: 'Test Studio', origin_country: 'US' },
+      ],
+      original_language: 'en',
+      status: 'Released',
+      runtime: 120,
+      vote_average: 8.5,
+      vote_count: 500,
+      popularity: 42,
+      release_dates: { results: [] },
+    } as unknown as TmdbMovieDetails;
+    let getMovieCallCount = 0;
+    const originalGetMovie = Object.getOwnPropertyDescriptor(
+      TheMovieDb.prototype,
+      'getMovie'
+    );
+    Object.defineProperty(TheMovieDb.prototype, 'getMovie', {
+      get() {
+        return async ({ movieId }: { movieId: number }) => {
+          getMovieCallCount += 1;
+          assert.equal(movieId, 3001);
+          return movieMetadata;
+        };
+      },
+      set() {},
+      configurable: true,
+    });
+
+    try {
+      await watchlistRepository.save(
+        new Watchlist({
+          ratingKey: 'legacy-3001',
+          tmdbId: 3001,
+          mediaType: MediaType.MOVIE,
+          title: 'Legacy title',
+          requestedBy: user,
+        })
+      );
+
+      const response = await Watchlist.getLocalWatchlist({
+        userId: user.id,
+        filters: { genre: '18', language: 'en' },
+      });
+
+      assert.equal(response.totalResults, 1);
+      assert.equal(response.results[0].title, 'Hydrated Movie');
+      assert.equal(response.results[0].metadataUpdated, true);
+      assert.deepEqual(response.results[0].genreIds, [18]);
+      assert.equal(getMovieCallCount, 1);
+
+      const persisted = await watchlistRepository.findOneOrFail({
+        where: { tmdbId: 3001, requestedBy: { id: user.id } },
+      });
+      assert.ok(persisted.metadataUpdatedAt);
+      assert.equal(persisted.posterPath, '/poster.jpg');
+    } finally {
+      if (originalGetMovie) {
+        Object.defineProperty(
+          TheMovieDb.prototype,
+          'getMovie',
+          originalGetMovie
+        );
+      } else {
+        delete (TheMovieDb.prototype as Partial<TheMovieDb>).getMovie;
+      }
+    }
   });
 
   it('excludes another user’s local watchlist items and finds active requests', async () => {

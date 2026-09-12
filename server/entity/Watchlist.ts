@@ -246,6 +246,11 @@ export class Watchlist {
     };
   }
 
+  /**
+   * Hydrate rows created before the metadata migration. Migrations stay
+   * network-independent, so legacy rows are refreshed once application
+   * settings and TMDB credentials are available, before filtering them.
+   */
   private static async refreshMissingMetadata(userId: number): Promise<void> {
     const pendingRefresh = this.metadataRefreshes.get(userId);
     if (pendingRefresh) {
