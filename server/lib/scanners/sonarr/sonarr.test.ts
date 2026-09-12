@@ -15,6 +15,7 @@ import Media from '@server/entity/Media';
 import MediaRequest from '@server/entity/MediaRequest';
 import Season from '@server/entity/Season';
 import { User } from '@server/entity/User';
+import { sonarrScanner } from '@server/lib/scanners/sonarr';
 import type { SonarrSettings } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import { setupTestDb } from '@server/test/db';
@@ -116,7 +117,16 @@ Object.defineProperty(TheMovieDb.prototype, 'getTvShowForScan', {
   configurable: true,
 });
 
-import { sonarrScanner } from '@server/lib/scanners/sonarr';
+// both are assigned in the constructor, so the prototype stubs miss the instance
+// sonarrScanner built when it was first imported
+for (const method of ['getTvShow', 'getTvShowForScan'] as const) {
+  Object.defineProperty(sonarrScanner.tmdb, method, {
+    value: async (args: { tvId: number; language?: string }) =>
+      getTvShowImpl(args),
+    configurable: true,
+  });
+}
+
 mock.method(MediaRequest, 'sendNotification', async () => undefined);
 
 setupTestDb();
