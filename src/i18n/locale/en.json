@@ -144,6 +144,7 @@
   "components.Discover.WatchlistFilterSlideover.partiallyAvailable": "Partially Available",
   "components.Discover.WatchlistFilterSlideover.ratingText": "Ratings between {minValue} and {maxValue}",
   "components.Discover.WatchlistFilterSlideover.releaseDate": "Release Date",
+  "components.Discover.WatchlistFilterSlideover.firstAirDate": "First Air Date",
   "components.Discover.WatchlistFilterSlideover.releaseState": "Release State",
   "components.Discover.WatchlistFilterSlideover.released": "Released",
   "components.Discover.WatchlistFilterSlideover.requested": "Requested",
