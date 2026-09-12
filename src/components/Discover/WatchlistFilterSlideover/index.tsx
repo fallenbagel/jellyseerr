@@ -44,6 +44,7 @@ const messages = defineMessages(
     released: 'Released',
     upcoming: 'Upcoming',
     releaseDate: 'Release Date',
+    firstAirDate: 'First Air Date',
     from: 'From',
     to: 'To',
     studio: 'Studio',
@@ -216,7 +217,11 @@ const WatchlistFilterSlideover = ({
         </div>
         <div>
           <div className="mb-2 text-lg font-semibold">
-            {intl.formatMessage(messages.releaseDate)}
+            {intl.formatMessage(
+              selectorType === 'tv'
+                ? messages.firstAirDate
+                : messages.releaseDate
+            )}
           </div>
           <div className="relative z-40 flex space-x-2">
             {dateFilterKeys.map((key, index) => (
