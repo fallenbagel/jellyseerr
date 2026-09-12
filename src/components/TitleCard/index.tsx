@@ -8,6 +8,7 @@ import RequestModal from '@app/components/RequestModal';
 import ErrorCard from '@app/components/TitleCard/ErrorCard';
 import Placeholder from '@app/components/TitleCard/Placeholder';
 import { useIsTouch } from '@app/hooks/useIsTouch';
+import useSettings from '@app/hooks/useSettings';
 import useToasts from '@app/hooks/useToasts';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
@@ -19,9 +20,11 @@ import {
   EyeIcon,
   EyeSlashIcon,
   MinusCircleIcon,
+  PlayIcon,
   StarIcon,
 } from '@heroicons/react/24/outline';
 import { MediaStatus } from '@server/constants/media';
+import { MediaServerType } from '@server/constants/server';
 import type { Watchlist } from '@server/entity/Watchlist';
 import type { MediaType } from '@server/models/Search';
 import axios from 'axios';
@@ -42,6 +45,7 @@ interface TitleCardProps {
   canExpand?: boolean;
   inProgress?: boolean;
   isAddedToWatchlist?: number | boolean;
+  mediaUrl?: string;
   mutateParent?: () => void;
 }
 
@@ -53,6 +57,7 @@ const messages = defineMessages('components.TitleCard', {
     '<strong>{title}</strong> Removed from watchlist  successfully!',
   watchlistCancel: 'watchlist for <strong>{title}</strong> canceled.',
   watchlistError: 'Something went wrong. Please try again.',
+  playOnMediaServer: 'Play on {mediaServerName}',
 });
 
 const TitleCard = ({
@@ -64,6 +69,7 @@ const TitleCard = ({
   status,
   mediaType,
   isAddedToWatchlist = false,
+  mediaUrl,
   inProgress = false,
   canExpand = false,
   mutateParent,
@@ -71,6 +77,7 @@ const TitleCard = ({
   const isTouch = useIsTouch();
   const intl = useIntl();
   const { user, hasPermission } = useUser();
+  const settings = useSettings();
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(status);
   const [showDetail, setShowDetail] = useState(false);
@@ -314,6 +321,17 @@ const TitleCard = ({
     type: 'or',
   });
 
+  const mediaServerName =
+    settings.currentSettings.mediaServerType === MediaServerType.PLEX
+      ? 'Plex'
+      : settings.currentSettings.mediaServerType === MediaServerType.EMBY
+        ? 'Emby'
+        : 'Jellyfin';
+  const playOnMediaServerLabel = intl.formatMessage(
+    messages.playOnMediaServer,
+    { mediaServerName }
+  );
+
   return (
     <div
       className={canExpand ? 'w-full' : 'w-36 sm:w-36 md:w-44'}
@@ -403,6 +421,24 @@ const TitleCard = ({
             </div>
             {showDetail && currentStatus !== MediaStatus.BLOCKLISTED && (
               <div className="flex flex-col gap-1">
+                {mediaUrl &&
+                  (currentStatus === MediaStatus.AVAILABLE ||
+                    currentStatus === MediaStatus.PARTIALLY_AVAILABLE) && (
+                    <Button
+                      as="a"
+                      buttonType="ghost"
+                      buttonSize="sm"
+                      className="z-40"
+                      href={mediaUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={playOnMediaServerLabel}
+                      title={playOnMediaServerLabel}
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <PlayIcon className="h-3" />
+                    </Button>
+                  )}
                 {user?.userType !== UserType.PLEX &&
                   (toggleWatchlist ? (
                     <Button
