@@ -799,7 +799,7 @@ authRoutes.post(
         await userRepository.save(user);
       }
 
-      if (user && user.jellyfinUserId) {
+      if (user.jellyfinUserId) {
         try {
           const { changed } = await checkAvatarChanged(user);
 
